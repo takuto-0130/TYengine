@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{50200b18-e96d-42ff-9e69-482f83361714}</ProjectGuid>
+    <RootNamespace>CG20001</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>TYengine</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(SolutionDir)..\generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\generated\outputs\$(Configuration)\</OutDir>
+    <LibraryPath>$(ProjectDir)externals\assimp\lib;$(LibraryPath);$(ProjectDir)externals\assimp\lib</LibraryPath>
+    <IncludePath>$(ProjectDir)externals\assimp\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IntDir>$(SolutionDir)..\generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\generated\outputs\$(Configuration)\</OutDir>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(ProjectDir)externals\assimp\lib</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Debug;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>XInput.lib;dinput8.lib;dxguid.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies);XInput.lib;dinput8.lib;dxguid.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Debug;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>XInput.lib;dinput8.lib;dxguid.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);assimp-vc143-mt.lib;XInput.lib;dinput8.lib;dxguid.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="application\GameScene.cpp" />
+    <ClCompile Include="engine\Audio\Audio.cpp" />
+    <ClCompile Include="engine\Camera\Camera.cpp" />
+    <ClCompile Include="engine\Debug\ImGuiManager.cpp" />
+    <ClCompile Include="engine\Effect\ParticleClass.cpp" />
+    <ClCompile Include="engine\EngineCore\D3DResourceLeakChecker.cpp" />
+    <ClCompile Include="engine\EngineCore\DirectXBasis.cpp" />
+    <ClCompile Include="engine\EngineCore\Logger.cpp" />
+    <ClCompile Include="engine\EngineCore\WindowsApp.cpp" />
+    <ClCompile Include="engine\Framework\GameCore.cpp" />
+    <ClCompile Include="engine\Framework\SceneManager.cpp" />
+    <ClCompile Include="engine\Framework\TYFrameWork.cpp" />
+    <ClCompile Include="engine\Graphics\Model\Model.cpp" />
+    <ClCompile Include="engine\Graphics\Model\ModelLoader.cpp" />
+    <ClCompile Include="engine\Graphics\Model\ModelManager.cpp" />
+    <ClCompile Include="engine\Graphics\Model\Object3d.cpp" />
+    <ClCompile Include="engine\Graphics\Model\Object3dBasis.cpp" />
+    <ClCompile Include="engine\Graphics\Sprite\Sprite.cpp" />
+    <ClCompile Include="engine\Graphics\Sprite\SpriteBasis.cpp" />
+    <ClCompile Include="engine\Graphics\Sprite\TextureManager.cpp" />
+    <ClCompile Include="engine\Graphics\SRV\SrvManager.cpp" />
+    <ClCompile Include="engine\Utility\GlobalVariables.cpp" />
+    <ClCompile Include="engine\Utility\Input.cpp" />
+    <ClCompile Include="engine\Utility\mathFunc.cpp" />
+    <ClCompile Include="engine\Utility\Matrix4x4Func.cpp" />
+    <ClCompile Include="engine\Utility\operatorOverload.cpp" />
+    <ClCompile Include="engine\Utility\StringUtility.cpp" />
+    <ClCompile Include="engine\Utility\WorldTransform.cpp" />
+    <ClCompile Include="externals\imgui\imgui.cpp" />
+    <ClCompile Include="externals\imgui\imgui_demo.cpp" />
+    <ClCompile Include="externals\imgui\imgui_draw.cpp" />
+    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="externals\imgui\imgui_tables.cpp" />
+    <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="application\main.cpp" />
+    <ClCompile Include="application\TitleScene.cpp" />
+    <ClCompile Include="engine\Audio\StreamingAudio.cpp" />
+    <ClCompile Include="application\SceneFactory.cpp" />
+    <ClCompile Include="engine\Effect\PrimitiveRing.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="application\GameScene.h" />
+    <ClInclude Include="application\Object\BaseObject.h" />
+    <ClInclude Include="engine\Audio\Audio.h" />
+    <ClInclude Include="engine\Camera\Camera.h" />
+    <ClInclude Include="engine\Debug\ImGuiManager.h" />
+    <ClInclude Include="engine\Effect\ParticleClass.h" />
+    <ClInclude Include="engine\EngineCore\D3DResourceLeakChecker.h" />
+    <ClInclude Include="engine\EngineCore\DirectXBasis.h" />
+    <ClInclude Include="engine\EngineCore\Logger.h" />
+    <ClInclude Include="engine\EngineCore\WindowsApp.h" />
+    <ClInclude Include="engine\Framework\AbstractSceneFactory.h" />
+    <ClInclude Include="engine\Framework\GameCore.h" />
+    <ClInclude Include="engine\Framework\SceneManager.h" />
+    <ClInclude Include="engine\Framework\TYFrameWork.h" />
+    <ClInclude Include="engine\Graphics\Model\Model.h" />
+    <ClInclude Include="engine\Graphics\Model\ModelLoader.h" />
+    <ClInclude Include="engine\Graphics\Model\ModelManager.h" />
+    <ClInclude Include="engine\Graphics\Model\Object3d.h" />
+    <ClInclude Include="engine\Graphics\Model\Object3dBasis.h" />
+    <ClInclude Include="engine\Graphics\Sprite\Sprite.h" />
+    <ClInclude Include="engine\Graphics\Sprite\SpriteBasis.h" />
+    <ClInclude Include="engine\Graphics\Sprite\TextureManager.h" />
+    <ClInclude Include="engine\Graphics\SRV\SrvManager.h" />
+    <ClInclude Include="engine\Utility\GlobalVariables.h" />
+    <ClInclude Include="engine\Utility\Input.h" />
+    <ClInclude Include="engine\Utility\mathFunc.h" />
+    <ClInclude Include="engine\Utility\Matrix4x4Func.h" />
+    <ClInclude Include="engine\Utility\operatorOverload.h" />
+    <ClInclude Include="engine\Utility\StringUtility.h" />
+    <ClInclude Include="engine\Utility\struct.h" />
+    <ClInclude Include="engine\Utility\WorldTransform.h" />
+    <ClInclude Include="externals\imgui\imconfig.h" />
+    <ClInclude Include="externals\imgui\imgui.h" />
+    <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="externals\imgui\imgui_internal.h" />
+    <ClInclude Include="externals\imgui\imstb_rectpack.h" />
+    <ClInclude Include="externals\imgui\imstb_textedit.h" />
+    <ClInclude Include="externals\imgui\imstb_truetype.h" />
+    <ClInclude Include="application\IScene.h" />
+    <ClInclude Include="application\TitleScene.h" />
+    <ClInclude Include="engine\Audio\StreamingAudio.h" />
+    <ClInclude Include="application\SceneFactory.h" />
+    <ClInclude Include="engine\Effect\PrimitiveRing.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="externals\imgui\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
+      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -8,6 +8,7 @@
 #include "WorldTransform.h"
 #include <sstream>
 #include "../engine/Audio/Audio.h"
+#include "Rail/Rail.h"
 
 /// <summary>
 /// ゲームシーン
@@ -38,12 +39,35 @@ public: // メンバ関数
 
 	void CheckAllCollisions();
 
-
 private:
+	/// <summary>
+/// re-ruのスポーン()
+/// </summary>
+	void PopRail(Vector3 position, Vector3 rota) {
 
+		std::unique_ptr<Rail> rail = std::make_unique<Rail>();
+		rail->Initialize(position);
+		rail->SetRotate(rota);
+		rail->UpdateTransform();
+
+		rails_.push_back(std::move(rail));
+	}
+
+	void RailCustom();
+
+	void RailLineReDraw();
+
+	void RailReDraw();
+
+	void RailCameraMove();
+
+	void RailCameraDebug();
+
+	void SetSegment();
+
+	void ResetRailCamera();
 
 private: // メンバ変数
-
 
 	float pitch_ = 1.0f;
 
@@ -59,5 +83,18 @@ private: // メンバ変数
 	// ワールド行列
 	WorldTransform worldTransform_;
 
+	std::list<std::unique_ptr<Rail>> rails_;
+
+	std::vector<Vector3> controlPoints_;
+	std::vector<Vector3> pointsDrawing_;
+	size_t oneSegmentCount = 20;
+	size_t segmentCount = oneSegmentCount;
+
+	const float kDivisionSpan = 100.0f;
+	float cameraSegmentCount = 1.0f / 600.0f;
+	float cameraEyeT = 0;
+	float cameraForwardT = 30.0f / 600.0f;
+
+	bool isRailCameraMove_ = false;
 };
 

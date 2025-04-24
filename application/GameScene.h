@@ -9,6 +9,7 @@
 #include <sstream>
 #include "../engine/Audio/Audio.h"
 #include "Rail/Rail.h"
+#include "Skydome/Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -77,12 +78,12 @@ private: // メンバ変数
 	bool isEffect_ = false;
 #endif // _DEBUG
 
-	// 3Dオブジェクト
-	std::unique_ptr<Object3d> obj_;
-
 	// ワールド行列
 	WorldTransform worldTransform_;
 
+	// 3Dオブジェクト
+	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<Skydome> skydome_;
 	std::list<std::unique_ptr<Rail>> rails_;
 
 	std::vector<Vector3> controlPoints_;

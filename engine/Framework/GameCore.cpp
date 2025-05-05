@@ -38,7 +38,7 @@ void GameCore::Initialize()
 	renderTexture->Initialize(directXBasis.get(), srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1,0,0,1 });
 
 	copyPass = std::make_unique<CopyPass>();
-	copyPass->Initialize(directXBasis.get(), srvManager.get(), L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
+	copyPass->Initialize(directXBasis.get(), srvManager.get(), L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Grayscale.PS.hlsl");
 }
 
 void GameCore::Finalize()
@@ -78,7 +78,10 @@ void GameCore::Draw()
 	// ---------- SwapChainへの描画 ----------
 	directXBasis->DrawBegin();
 
-	copyPass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
+	/*auto handle = renderTexture->GetGPUHandle().ptr;
+	std::string debugStr = std::format("RenderTexture SRV GPU handle: 0x{:016llX}\n", handle);
+	OutputDebugStringA(debugStr.c_str());*/
+	copyPass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle()); 
 
 	// ImGuiはSwapChainに描く（上書き）
 	imgui->Draw();

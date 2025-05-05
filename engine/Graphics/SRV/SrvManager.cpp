@@ -79,7 +79,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandle(uint32_t index) c
 }
 
 void SrvManager::BeginDraw() {
-    currentIndex_ = 0;
+    //currentIndex_ = 0;
 }
 
 

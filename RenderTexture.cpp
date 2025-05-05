@@ -64,6 +64,25 @@ void RenderTexture::BeginRender() {
 
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dxBasis_->GetDSVHandle();
     dxBasis_->GetCommandList()->OMSetRenderTargets(1, &rtvHandle_, FALSE, &dsvHandle);
+
+    // ✅ ビューポートとシザー設定（←これが抜けていた）
+    D3D12_VIEWPORT viewport{};
+    viewport.TopLeftX = 0.0f;
+    viewport.TopLeftY = 0.0f;
+    viewport.Width = static_cast<float>(width_);
+    viewport.Height = static_cast<float>(height_);
+    viewport.MinDepth = 0.0f;
+    viewport.MaxDepth = 1.0f;
+
+    D3D12_RECT scissorRect{};
+    scissorRect.left = 0;
+    scissorRect.top = 0;
+    scissorRect.right = static_cast<LONG>(width_);
+    scissorRect.bottom = static_cast<LONG>(height_);
+
+    dxBasis_->GetCommandList()->RSSetViewports(1, &viewport);
+    dxBasis_->GetCommandList()->RSSetScissorRects(1, &scissorRect);
+
     float clearColor[] = { clearColor_.x, clearColor_.y, clearColor_.z, clearColor_.w };
     dxBasis_->GetCommandList()->ClearRenderTargetView(rtvHandle_, clearColor, 0, nullptr);
 }

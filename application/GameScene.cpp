@@ -28,8 +28,8 @@ void GameScene::Init() {
 	Audio::GetInstance()->StartStreaming("BGM_2.wav", true);*/
 
 	worldTransform_.Initialize();
-	ModelManager::GetInstance()->LoadModel("Resources", "cube.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "skydome.obj");
+	ModelManager::GetInstance()->LoadModel("Resources", "cube.obj");
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();

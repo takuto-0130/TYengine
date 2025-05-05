@@ -180,12 +180,12 @@ void ParticleClass::Draw()
 	// Root Param 0: Material
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	// Root Param 1: StructuredBuffer (パーティクル情報)
-	srvManager_->SetGraphicsRootDescriptorTable(1, srvIndex);
+	srvManager_->SetGraphicsRootDescriptorTable(commandList, 1, srvIndex);
 
 	// Root Param 2: テクスチャ
 	uint32_t texIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 	Logger::Log(std::format("テクスチャ Index: {}", texIndex));
-	srvManager_->SetGraphicsRootDescriptorTable(2, texIndex);
+	srvManager_->SetGraphicsRootDescriptorTable(commandList, 2, texIndex);
 
 	// === ✅ 最後に描画前にログ出し ===
 	Logger::Log("→ DrawInstanced 呼び出し直前！");

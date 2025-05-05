@@ -123,7 +123,10 @@ private: // メンバ関数
 public:
 
 	// デスクリプターヒープを生成する
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDeacriptorHeap(const D3D12_DESCRIPTOR_HEAP_TYPE& heapType, const UINT& numDescriptors, const bool& shaderVisible);
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_TYPE& heapType, const UINT& numDescriptors, const bool& shaderVisible);
+
+
+	void CreateSamplerHeap();
 
 	/// <summary>
 	/// 指定番号のCPUデスクリプタハンドルを取得する
@@ -137,6 +140,23 @@ public:
 
 	// バックバッファの数を取得
 	size_t GetBackBufferCount() { return backBuffers_.size(); }
+
+	uint32_t GetDescriptorSizeRTV() const { return descriptorSizeRTV_; }
+
+	uint32_t GetDescriptorSizeDSV() const { return descriptorSizeDSV_; }
+
+	ID3D12DescriptorHeap* GetSamplerHeap() const {
+		return samplerHeap_.Get();
+	}
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSamplerDescriptorHandle() const {
+		return samplerHeap_->GetGPUDescriptorHandleForHeapStart();
+	}
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle() const { return dsvHandle_; }
+
+	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVHandle(uint32_t index) const {
+		return rtvHandles_[index];
+	}
+	IDXGISwapChain4* GetSwapChain() const { return swapChain_.Get(); }
 
 public: // メンバ変数
 	// 最大SRV数(最大テクスチャ数)
@@ -157,6 +177,8 @@ private: // メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescripterHeap_;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
+
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> samplerHeap_;
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_{};
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};

@@ -109,6 +109,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\GameScene.cpp" />
     <ClCompile Include="application\Rail\Rail.cpp" />
     <ClCompile Include="application\Skydome\Skydome.cpp" />
+    <ClCompile Include="CopyPass.cpp" />
     <ClCompile Include="engine\Audio\Audio.cpp" />
     <ClCompile Include="engine\Camera\Camera.cpp" />
     <ClCompile Include="engine\Debugger\ImGuiManager.cpp" />
@@ -148,12 +149,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\Audio\StreamingAudio.cpp" />
     <ClCompile Include="application\SceneFactory.cpp" />
     <ClCompile Include="engine\Effect\PrimitiveRing.cpp" />
+    <ClCompile Include="RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\GameScene.h" />
     <ClInclude Include="application\Object\BaseObject.h" />
     <ClInclude Include="application\Rail\Rail.h" />
     <ClInclude Include="application\Skydome\Skydome.h" />
+    <ClInclude Include="CopyPass.h" />
     <ClInclude Include="engine\Audio\Audio.h" />
     <ClInclude Include="engine\Camera\Camera.h" />
     <ClInclude Include="engine\Debugger\ImGuiManager.h" />
@@ -196,6 +199,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Audio\StreamingAudio.h" />
     <ClInclude Include="application\SceneFactory.h" />
     <ClInclude Include="engine\Effect\PrimitiveRing.h" />
+    <ClInclude Include="RenderTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

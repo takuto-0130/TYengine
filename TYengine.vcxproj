@@ -196,6 +196,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Audio\StreamingAudio.h" />
     <ClInclude Include="application\SceneFactory.h" />
     <ClInclude Include="engine\Effect\PrimitiveRing.h" />
+    <ClInclude Include="pati.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

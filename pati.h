@@ -880,7 +880,65 @@ bool IsCollisionP(const AABBP& a, const Vector3P& point) {
 	}
 	return false;
 }
+
+std::vector<std::vector<VertexDataP>> MakeRingVertices(const uint32_t kRingDivide, const float kOuterRadius, const float kInnerRadius)
+{
+	std::vector<std::vector<VertexDataP>> result;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / static_cast<float>(kRingDivide);
+	for (uint32_t index = 0; index < kRingDivide; ++index)
+	{
+		std::vector<VertexDataP> vertices;
+		float sin = std::sinf(index * radianPerDivide);
+		float cos = std::cosf(index * radianPerDivide);
+		float sinNext = std::sinf((index + 1) * radianPerDivide);
+		float cosNext = std::cosf((index + 1) * radianPerDivide);
+		float u = static_cast<float>(index) / static_cast<float>(kRingDivide);
+		float uNext = static_cast<float>(index + 1) / static_cast<float>(kRingDivide);
+
+	}
+
+}
 #pragma endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
 #pragma region

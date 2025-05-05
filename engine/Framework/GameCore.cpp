@@ -32,6 +32,13 @@ void GameCore::Initialize()
 	sceneManager_->ChangeScene("TITLE");
 
 	ParticleClass::GetInstance()->Initialize(directXBasis.get(), srvManager.get(), camera.get());
+
+
+	renderTexture = std::make_unique<RenderTexture>();
+	renderTexture->Initialize(directXBasis.get(), srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1,0,0,1 });
+
+	copyPass = std::make_unique<CopyPass>();
+	copyPass->Initialize(directXBasis.get(), srvManager.get(), L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
 }
 
 void GameCore::Finalize()
@@ -59,14 +66,21 @@ void GameCore::Update()
 
 void GameCore::Draw()
 {
-	///// 描画処理
+	// ---------- オフスクリーン描画 ----------
+	renderTexture->BeginRender();
+
+	srvManager->BeginDraw(); // SRVマネージャでIDリセットなど
+	sceneManager_->Draw();   // 実際の描画
+
+	renderTexture->EndRender();
+
+	// ---------- SwapChainへの描画 ----------
 	directXBasis->DrawBegin();
 
-	srvManager->BeginDraw();
+	copyPass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
 
-	// 描画コマンド
-	sceneManager_->Draw();
-
+	// ImGuiはSwapChainに描く（上書き）
 	imgui->Draw();
+
 	directXBasis->DrawEnd();
 }

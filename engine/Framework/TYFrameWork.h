@@ -19,6 +19,8 @@
 #include "Input.h"
 #include "SceneManager.h"
 #include "AbstractSceneFactory.h"
+#include "../CopyPass.h"
+#include "../RenderTexture.h"
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG
@@ -69,6 +71,9 @@ protected:
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 
 	bool endRequest_ = false;
+
+	std::unique_ptr<RenderTexture> renderTexture;
+	std::unique_ptr<CopyPass> copyPass;
 };
 
 

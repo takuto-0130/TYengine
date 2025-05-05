@@ -72,6 +72,7 @@ void GameCore::Draw()
 	srvManager->BeginDraw(); // SRVマネージャでIDリセットなど
 	sceneManager_->Draw();   // 実際の描画
 
+
 	renderTexture->EndRender();
 
 	// ---------- SwapChainへの描画 ----------

@@ -65,7 +65,7 @@ void RenderTexture::BeginRender() {
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dxBasis_->GetDSVHandle();
     dxBasis_->GetCommandList()->OMSetRenderTargets(1, &rtvHandle_, FALSE, &dsvHandle);
 
-    // ✅ ビューポートとシザー設定（←これが抜けていた）
+    // ビューポートとシザー設定
     D3D12_VIEWPORT viewport{};
     viewport.TopLeftX = 0.0f;
     viewport.TopLeftY = 0.0f;

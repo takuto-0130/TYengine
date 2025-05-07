@@ -149,6 +149,7 @@ void GameScene::RailCustom()
 		segmentCount = oneSegmentCount * controlPoints_.size();
 		SetSegment();
 		RailLineReDraw();
+		RailReDraw();
 		RailEditor::Instance()->ResetPreviewFlag();
 	}
 #endif // _DEBUG
@@ -205,7 +206,7 @@ void GameScene::RailCameraMove()
 		Vector3 forward = CatmullRomPosition(controlPoints_, cameraForwardT);
 		forward.y += 0.5f;
 		forward = forward - eye;
-		if (cameraForwardT <= 1.0f) 
+		if (cameraForwardT <= 1.0f)
 		{
 			Vector3 rotateCametra{};
 			// Y軸周り角度(θy)
@@ -215,6 +216,10 @@ void GameScene::RailCameraMove()
 			rotateCametra.x = std::atan2(-forward.y, length);
 			camera_->SetRotate(rotateCametra);
 		}
+	}
+	else
+	{
+		isRailCameraMove_ = false;
 	}
 #ifdef _DEBUG
 	ImGui::Begin("RailCamera");

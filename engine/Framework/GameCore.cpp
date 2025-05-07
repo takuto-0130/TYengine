@@ -31,7 +31,7 @@ void GameCore::Initialize()
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 	sceneManager_->ChangeScene("TITLE");
 
-	ParticleClass::GetInstance()->Initialize(directXBasis.get(), srvManager.get(), camera.get());
+	//ParticleClass::GetInstance()->Initialize(directXBasis.get(), srvManager.get(), camera.get());
 }
 
 void GameCore::Finalize()

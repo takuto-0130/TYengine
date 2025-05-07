@@ -148,6 +148,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\Audio\StreamingAudio.cpp" />
     <ClCompile Include="application\SceneFactory.cpp" />
     <ClCompile Include="engine\Effect\PrimitiveRing.cpp" />
+    <ClCompile Include="application\Rail\RailEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\GameScene.h" />
@@ -196,6 +197,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Audio\StreamingAudio.h" />
     <ClInclude Include="application\SceneFactory.h" />
     <ClInclude Include="engine\Effect\PrimitiveRing.h" />
+    <ClInclude Include="application\Rail\RailEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

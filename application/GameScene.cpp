@@ -123,26 +123,34 @@ void GameScene::CheckAllCollisions()
 void GameScene::RailCustom()
 {
 #ifdef _DEBUG
-	int32_t i = 0;
-	ImGui::Begin("Rail");
-	ImGui::Text("ReDraw : P");
-	for (Vector3& pos : controlPoints_) 
-	{
-		i++;
-		/*ImGui::Text("%d.", i);
-		ImGui::SameLine();*/
-		std::string label = "controlPoint." + std::to_string(i);
-		ImGui::DragFloat3(label.c_str(), &pos.x, 0.1f);
-	}
-	if (ImGui::Button("addControlPoint"))
-	{
-		Vector3 pos = controlPoints_.back();
-		controlPoints_.push_back(pos);
+	//int32_t i = 0;
+	//ImGui::Begin("Rail");
+	//ImGui::Text("ReDraw : P");
+	//for (Vector3& pos : controlPoints_) 
+	//{
+	//	i++;
+	//	/*ImGui::Text("%d.", i);
+	//	ImGui::SameLine();*/
+	//	std::string label = "controlPoint." + std::to_string(i);
+	//	ImGui::DragFloat3(label.c_str(), &pos.x, 0.1f);
+	//}
+	//if (ImGui::Button("addControlPoint"))
+	//{
+	//	Vector3 pos = controlPoints_.back();
+	//	controlPoints_.push_back(pos);
+	//	segmentCount = oneSegmentCount * controlPoints_.size();
+	//	SetSegment();
+	//	RailLineReDraw();
+	//}
+	//ImGui::End();
+	RailEditor::Instance()->DrawEditorUI();
+	if (RailEditor::Instance()->NeedsPreviewUpdate()) {
+		controlPoints_ = RailEditor::Instance()->GetControlPoints();
 		segmentCount = oneSegmentCount * controlPoints_.size();
 		SetSegment();
 		RailLineReDraw();
+		RailEditor::Instance()->ResetPreviewFlag();
 	}
-	ImGui::End();
 #endif // _DEBUG
 }
 
@@ -155,15 +163,7 @@ void GameScene::RailLineReDraw()
 		Vector3 pos = CatmullRomPosition(controlPoints_, t);
 		pointsDrawing_.push_back(pos);
 	}
-	rails_.clear();/*remove_if([](Rail* rail)
-		{
-		if (!rail->IsDead()) 
-		{
-			delete rail;
-			return true;
-		}
-		return false;
-		});*/
+	rails_.clear();
 	for (Vector3& pos : controlPoints_) 
 	{
 		PopRail(pos, { 0,0,0 });
@@ -172,15 +172,7 @@ void GameScene::RailLineReDraw()
 
 void GameScene::RailReDraw()
 {
-	rails_.clear();/*remove_if([](Rail* rail)
-		{
-		if (!rail->IsDead()) 
-		{
-			delete rail;
-			return true;
-		}
-		return false;
-		});*/
+	rails_.clear();
 
 	size_t i = 0;
 	for (Vector3& v : pointsDrawing_) 
@@ -236,14 +228,16 @@ void GameScene::RailCameraDebug()
 {
 #ifdef _DEBUG
 	ImGui::Begin("RailCamera");
-	if (ImGui::Button("StartCamera")) 
+	if (ImGui::Button("Start/Stop")) 
 	{
-		isRailCameraMove_ = true;
-	}
-
-	if (ImGui::Button("StopCamera"))
-	{
-		isRailCameraMove_ = false;
+		if (isRailCameraMove_)
+		{
+			isRailCameraMove_ = false;
+		}
+		else
+		{
+			isRailCameraMove_ = true;
+		}
 	}
 
 	if (ImGui::Button("ResetCamera")) 

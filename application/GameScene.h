@@ -9,6 +9,7 @@
 #include <sstream>
 #include "../engine/Audio/Audio.h"
 #include "Rail/Rail.h"
+#include "Rail/RailEditor.h"
 #include "Skydome/Skydome.h"
 
 /// <summary>

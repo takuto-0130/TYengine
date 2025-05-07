@@ -22,6 +22,7 @@ void RailEditor::Save(const std::string& filename) {
         };
         if (i < railSegments_.size()) {
             pointJson["segmentSpeed"] = railSegments_[i].speed;
+            pointJson["triggerEvent"] = railSegments_[i].triggerEvent;
         }
         j["controlPoints"].push_back(pointJson);
     }
@@ -48,6 +49,9 @@ void RailEditor::Load(const std::string& filename) {
         RailSegment seg;
         if (pointJson.contains("segmentSpeed")) {
             seg.speed = pointJson["segmentSpeed"];
+        }
+        if (pointJson.contains("triggerEvent")) {
+            seg.triggerEvent = pointJson["triggerEvent"];
         }
         railSegments_.push_back(seg);
     }
@@ -80,6 +84,7 @@ void RailEditor::DrawEditorUI() {
             ImGui::PushID(static_cast<int>(idx));
             ImGui::DragFloat3("Position", &p.x, 0.1f);
             ImGui::DragFloat("Speed", &seg.speed, 0.1f, 0.1f, 10.0f);
+            ImGui::Checkbox("Trigger Event", &seg.triggerEvent);
 
             if (ImGui::Button("Up") && idx > 0) {
                 std::swap(controlPoints_[idx], controlPoints_[idx - 1]);

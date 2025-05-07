@@ -11,92 +11,78 @@
 #include "Rail/Rail.h"
 #include "Rail/RailEditor.h"
 #include "Skydome/Skydome.h"
+#include <memory>
+#include <vector>
+#include <list>
+#include <unordered_set>
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene : public IScene {
-
-public: // メンバ関数
-
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
+class GameScene : public IScene
+{
+public:
 	~GameScene() override;
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
 	void Init() override;
-
-	/// <summary>
-	/// 毎フレーム処理
-	/// </summary>
 	void Update() override;
-
-	/// <summary>
-	/// 描画
-	/// </summary>
 	void Draw() override;
-
 	void CheckAllCollisions();
 
 private:
-	/// <summary>
-/// re-ruのスポーン()
-/// </summary>
-	void PopRail(Vector3 position, Vector3 rota) {
-
-		std::unique_ptr<Rail> rail = std::make_unique<Rail>();
-		rail->Initialize(position);
-		rail->SetRotate(rota);
-		rail->UpdateTransform();
-
-		rails_.push_back(std::move(rail));
-	}
-
+	void PopRail(Vector3 position, Vector3 rota);
 	void RailCustom();
-
 	void RailLineReDraw();
-
 	void RailReDraw();
-
 	void RailCameraMove();
-
 	void RailCameraDebug();
-
 	void SetSegment();
-
 	void ResetRailCamera();
 
-private: // メンバ変数
-
+private:
 	float pitch_ = 1.0f;
-
 	Vector3 cameraOffset_;
 
 #ifdef _DEBUG
 	bool isEffect_ = false;
-#endif // _DEBUG
+#endif
 
-	// ワールド行列
 	WorldTransform worldTransform_;
-
-	// 3Dオブジェクト
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Skydome> skydome_;
 	std::list<std::unique_ptr<Rail>> rails_;
 
+	std::vector<bool> triggeredFlags_;
 	std::vector<Vector3> controlPoints_;
 	std::vector<Vector3> pointsDrawing_;
 	size_t oneSegmentCount = 20;
 	size_t segmentCount = oneSegmentCount;
-
 	const float kDivisionSpan = 100.0f;
 	float cameraSegmentCount = 1.0f / 600.0f;
 	float cameraEyeT = 0;
 	float cameraForwardT = 30.0f / 600.0f;
-
 	bool isRailCameraMove_ = false;
-};
 
+	std::unordered_set<size_t> alreadyTriggeredIndices_;
+
+	struct TriggerObject
+	{
+		WorldTransform world;
+		Object3d object;
+
+		explicit TriggerObject(const Vector3& pos)
+		{
+			world.Initialize();
+			world.translation_ = pos;
+			object.Initialize();
+			object.SetModel("cube.obj");
+		}
+
+		TriggerObject(const TriggerObject&) = delete;
+		TriggerObject& operator=(const TriggerObject&) = delete;
+
+		TriggerObject(TriggerObject&&) noexcept = default;
+		TriggerObject& operator=(TriggerObject&&) noexcept = default;
+	};
+
+	std::vector<std::unique_ptr<TriggerObject>> triggerObjects_;
+};

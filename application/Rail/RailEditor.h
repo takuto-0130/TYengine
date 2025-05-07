@@ -9,6 +9,7 @@
 
 struct RailSegment {
     float speed = 1.0f;
+    bool triggerEvent = false;
 };
 
 class RailEditor {

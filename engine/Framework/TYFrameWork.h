@@ -19,8 +19,8 @@
 #include "Input.h"
 #include "SceneManager.h"
 #include "AbstractSceneFactory.h"
-#include "../CopyPass.h"
-#include "../RenderTexture.h"
+#include "CopyPass.h"
+#include "RenderTexture.h"
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG

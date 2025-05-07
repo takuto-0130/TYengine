@@ -106,29 +106,29 @@ ComPtr<IDxcBlob> DirectXBasis::CompileShader(const std::wstring& filePath, const
 
 ComPtr<ID3D12Resource> DirectXBasis::CreateBufferResource(const size_t& sizeInBytes)
 {
-	//頂点リソース用のヒープの設定
+	//バッファリソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
 	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-	//頂点リソースの設定
-	D3D12_RESOURCE_DESC vertexResourceDesc{};
+	//バッファリソースの設定
+	D3D12_RESOURCE_DESC bufferResourceDesc{};
 	//バッファリソース。テクスチャの場合はまた別の設定をする
-	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc.Width = sizeInBytes;
+	bufferResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	bufferResourceDesc.Width = sizeInBytes;
 	//バッファの場合はこれらは1にする決まり
-	vertexResourceDesc.Height = 1;
-	vertexResourceDesc.DepthOrArraySize = 1;
-	vertexResourceDesc.MipLevels = 1;
-	vertexResourceDesc.SampleDesc.Count = 1;
+	bufferResourceDesc.Height = 1;
+	bufferResourceDesc.DepthOrArraySize = 1;
+	bufferResourceDesc.MipLevels = 1;
+	bufferResourceDesc.SampleDesc.Count = 1;
 	//バッファの場合はこれにする決まり
-	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	//実際に頂点リソースを作る
-	ComPtr<ID3D12Resource> vertexResource = nullptr;
+	bufferResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	//実際にバッファリソースを作る
+	ComPtr<ID3D12Resource> bufferResource = nullptr;
 	HRESULT hr = device_->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
-		&vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-		IID_PPV_ARGS(&vertexResource));
+		&bufferResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+		IID_PPV_ARGS(&bufferResource));
 	assert(SUCCEEDED(hr));
 
-	return vertexResource;
+	return bufferResource;
 }
 
 ComPtr<ID3D12Resource> DirectXBasis::CreateTextureResource(const DirectX::TexMetadata& metadata)

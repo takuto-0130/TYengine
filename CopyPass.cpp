@@ -2,11 +2,18 @@
 #include "DirectXBasis.h"
 #include "DirectXTex/d3dx12.h"
 #include "SrvManager.h"
+#include "imgui.h"
 #include <cassert>
 
 void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::wstring& vsPath, const std::wstring& psPath) {
     dxBasis_ = dxBasis;
     srvMgr_ = srvMgr;
+
+    copyParamBuffer_ = dxBasis_->CreateBufferResource(sizeof(CopyPassParam));
+
+    // Map して書き込み先ポインタを取得
+    CD3DX12_RANGE readRange(0, 0);
+    copyParamBuffer_->Map(0, &readRange, reinterpret_cast<void**>(&mappedParam_));
 
     CD3DX12_DESCRIPTOR_RANGE range{};
     range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -14,9 +21,10 @@ void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::
     CD3DX12_DESCRIPTOR_RANGE samplerRange{};
     samplerRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
-    CD3DX12_ROOT_PARAMETER rootParams[2]{};
+    CD3DX12_ROOT_PARAMETER rootParams[3]{};
     rootParams[0].InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_PIXEL);
     rootParams[1].InitAsDescriptorTable(1, &samplerRange, D3D12_SHADER_VISIBILITY_PIXEL);
+    rootParams[2].InitAsConstantBufferView(0); // b0: CopyPassParam
 
     CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc{};
     rootSigDesc.Init(_countof(rootParams), rootParams, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -48,6 +56,19 @@ void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::
 
     // --- Create Sampler Heap in DirectXBasis ---
     dxBasis_->CreateSamplerHeap();
+    mappedParam_->offset = { 0.0f, 0.0f }; // 中央
+    mappedParam_->scale = { 1.0f, 1.0f }; // フルサイズ
+}
+
+void CopyPass::Update()
+{
+#ifdef _DEBUG
+    ImGui::Begin("render");
+    ImGui::DragFloat2("offset", &mappedParam_->offset.x, 0.01f);
+    ImGui::DragFloat2("scale", &mappedParam_->scale.x, 0.01f);
+    ImGui::End();
+#endif // _DEBUG
+
 }
 
 void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE srvHandle) {
@@ -64,6 +85,7 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
 
     cmdList->SetGraphicsRootDescriptorTable(0, srvHandle);
     cmdList->SetGraphicsRootDescriptorTable(1, dxBasis_->GetSamplerDescriptorHandle());
+    cmdList->SetGraphicsRootConstantBufferView(2, copyParamBuffer_->GetGPUVirtualAddress());
 
     cmdList->DrawInstanced(3, 1, 0, 0);
 }

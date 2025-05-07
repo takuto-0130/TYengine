@@ -57,7 +57,7 @@ void GameCore::Update()
 		imgui->Begin();
 		TYFrameWork::Update();
 		camera->Update();
-
+		copyPass->Update();
 		/// ↓更新処理ここから
 
 		imgui->End();

@@ -1,5 +1,11 @@
 #include "CopyImage.hlsli"
 
+cbuffer CopyPassParam : register(b0)
+{
+    float2 offset;
+    float2 scale;
+};
+
 static const uint kNumVertex = 3;
 
 static const float4 kPositions[kNumVertex] =
@@ -19,7 +25,8 @@ static const float2 kTexcoords[kNumVertex] =
 VertexShaderOutput main(uint vertexId : SV_VertexID)
 {
     VertexShaderOutput output;
-    output.position = kPositions[vertexId];
+    output.position = kPositions[vertexId] * float4(scale, 1, 1) + float4(offset, 0, 0);
     output.texcoord = kTexcoords[vertexId];
+
     return output;
 }

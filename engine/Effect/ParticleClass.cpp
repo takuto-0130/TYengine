@@ -74,7 +74,7 @@ void ParticleClass::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager, Ca
 
 	isAccel = false;
 
-	useBillboard = true;
+	useBillboard = false;
 
 }
 
@@ -344,9 +344,44 @@ void ParticleClass::CreatePipelineState()
 
 void ParticleClass::CreateParticleResource()
 {
-	// インスタンス用のTransformationMatrixリソースを作る
-	instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
+	//// インスタンス用のTransformationMatrixリソースを作る
+	//instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 
+	//instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
+	//for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
+	//	instancingData_[index].WVP = MakeIdentity4x4();
+	//	instancingData_[index].World = MakeIdentity4x4();
+	//	instancingData_[index].color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//}
+
+	//// モデルの読み込み
+	//modelData.vertices = {
+	//	{ { 1.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+	//	{ {-1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+	//	{ { 1.0f,-1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },
+	//	{ { 1.0f,-1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },
+	//	{ {-1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+	//	{ {-1.0f,-1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } }
+	//};
+	//modelData.material.textureFilePath = "Resources/circle.png";
+
+	//// テクスチャ読み込み＆SRV作成（TextureManagerに任せる）
+	//TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
+	//textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
+
+	//// 頂点リソース作成
+	//vertexResource = dxBasis_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	//vertexBufferView_.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	//vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	//vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	//std::memcpy(vertexData_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+
+	//// StructuredBuffer 用の SRV を新たにインデックスを確保して作成
+	//srvIndex = srvManager_->Allocate(); // 新規インデックス確保
+	//srvManager_->CreateSRVforStructuredBuffer(srvIndex, instancingResource_.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
+	 // インスタンス用のTransformationMatrixリソースを作る
+	instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
 	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
 		instancingData_[index].WVP = MakeIdentity4x4();
@@ -354,22 +389,41 @@ void ParticleClass::CreateParticleResource()
 		instancingData_[index].color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	}
 
-	// モデルの読み込み
-	modelData.vertices = {
-		{ { 1.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
-		{ {-1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
-		{ { 1.0f,-1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },
-		{ { 1.0f,-1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },
-		{ {-1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
-		{ {-1.0f,-1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } }
-	};
-	modelData.material.textureFilePath = "Resources/circle.png";
+	// ==== 🔽 リング型頂点の生成開始 ====
+	const uint32_t kRingDivide = 32;
+	const float kOuterRadius = 1.0f;
+	const float kInnerRadius = 0.5f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
 
-	// テクスチャ読み込み＆SRV作成（TextureManagerに任せる）
+	modelData.vertices.clear();
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+		float angle = index * radianPerDivide;
+		float nextAngle = (index + 1) * radianPerDivide;
+
+		float cosA = std::cos(angle), sinA = std::sin(angle);
+		float cosB = std::cos(nextAngle), sinB = std::sin(nextAngle);
+
+		Vector3 outerA = { cosA * kOuterRadius, sinA * kOuterRadius, 0.0f };
+		Vector3 outerB = { cosB * kOuterRadius, sinB * kOuterRadius, 0.0f };
+		Vector3 innerA = { cosA * kInnerRadius, sinA * kInnerRadius, 0.0f };
+		Vector3 innerB = { cosB * kInnerRadius, sinB * kInnerRadius, 0.0f };
+
+		// 三角形①：outerA, innerA, outerB
+		modelData.vertices.push_back({ { outerA.x, outerA.y, outerA.z, 1.0f }, { 0.0f, 0.0f }, { 0, 0, 1 } });
+		modelData.vertices.push_back({ { innerA.x, innerA.y, innerA.z, 1.0f }, { 0.0f, 1.0f }, { 0, 0, 1 } });
+		modelData.vertices.push_back({ { outerB.x, outerB.y, outerB.z, 1.0f }, { 1.0f, 0.0f }, { 0, 0, 1 } });
+
+		// 三角形②：outerB, innerA, innerB
+		modelData.vertices.push_back({ { outerB.x, outerB.y, outerB.z, 1.0f }, { 1.0f, 0.0f }, { 0, 0, 1 } });
+		modelData.vertices.push_back({ { innerA.x, innerA.y, innerA.z, 1.0f }, { 0.0f, 1.0f }, { 0, 0, 1 } });
+		modelData.vertices.push_back({ { innerB.x, innerB.y, innerB.z, 1.0f }, { 1.0f, 1.0f }, { 0, 0, 1 } });
+	}
+
+	modelData.material.textureFilePath = "Resources/uvChecker.png";
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
 	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 
-	// 頂点リソース作成
+	// 頂点バッファ作成
 	vertexResource = dxBasis_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 	vertexBufferView_.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
@@ -378,8 +432,9 @@ void ParticleClass::CreateParticleResource()
 	std::memcpy(vertexData_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
 	// StructuredBuffer 用の SRV を新たにインデックスを確保して作成
-	srvIndex = srvManager_->Allocate(); // 新規インデックス確保
+	srvIndex = srvManager_->Allocate();
 	srvManager_->CreateSRVforStructuredBuffer(srvIndex, instancingResource_.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
+
 }
 
 void ParticleClass::CreateMaterialResource()
@@ -398,13 +453,6 @@ void ParticleClass::CreateMaterialResource()
 
 void ParticleClass::CreateCameraResource()
 {
-	//// カメラ用のリソースを作る
-	//cameraResource_ = dxBasis_->CreateBufferResource(sizeof(CameraForGPUP));
-	//// 書き込むためのアドレスを取得
-	//cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
-	//// 初期値を入れる
-	//cameraData_->worldPosition = { 1.0f, 1.0f, 1.0f };
-	//AlignTo256(sizeof(CameraForGPUP))
 	cameraResource_ = dxBasis_->CreateBufferResource(AlignTo256(sizeof(CameraForGPUP)));
 
 	if (!cameraResource_) {

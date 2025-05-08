@@ -4,8 +4,8 @@
 #include <numbers>
 #include <imgui.h>
 
-ParticleClass::Particle ParticleClass::MakeNewParticle(std::mt19937& random, const Vector3& translate) {
-	Particle parti;
+ParticleClass::ParticleP ParticleClass::MakeNewParticle(std::mt19937& random, const Vector3& translate) {
+	ParticleP parti;
 
 	std::uniform_real_distribution<float> distVec(-1.0f, 1.0f);
 	parti.transform.scale = { 1.f,1.f,1.f };
@@ -24,8 +24,8 @@ ParticleClass::Particle ParticleClass::MakeNewParticle(std::mt19937& random, con
 	return parti;
 }
 
-std::list<ParticleClass::Particle> ParticleClass::Emit(const Emitter& emitter, std::mt19937& random) {
-	std::list<Particle> particles;
+std::list<ParticleClass::ParticleP> ParticleClass::Emit(const Emitter& emitter, std::mt19937& random) {
+	std::list<ParticleP> particles;
 	for (uint32_t count = 0; count < emitter.count; ++count) {
 		particles.push_back(MakeNewParticle(random, emitter.transform.translate));
 	}
@@ -96,7 +96,7 @@ void ParticleClass::Update()
 		emitter_.frequencyTime -= emitter_.frequency;
 	}
 
-	for (std::list<Particle>::iterator partiIterator = particles.begin(); partiIterator != particles.end();) {
+	for (std::list<ParticleP>::iterator partiIterator = particles.begin(); partiIterator != particles.end();) {
 		if ((*partiIterator).lifeTime <= (*partiIterator).currentTime) {
 			partiIterator = particles.erase(partiIterator);
 			continue;
@@ -150,15 +150,12 @@ void ParticleClass::Update()
 
 void ParticleClass::Draw()
 {
-	/*if(numInstance > 0)
-	{
-		commandList->Reset(dxBasis_->GetCommandAllocator(), graphicsPipelineState_.Get());
-	}*/
+	if (numInstance == 0) return;
+
 	srvManager_->BeginDraw();
 	auto commandList = dxBasis_->GetCommandList();
 
-	// === ✅ 各リソースが null かチェック！ ===
-	assert(commandList); // 念のため
+	assert(commandList);
 	assert(materialResource_);
 	assert(cameraResource_);
 	assert(instancingResource_);
@@ -166,32 +163,23 @@ void ParticleClass::Draw()
 
 	Logger::Log(std::format("Draw(): numInstance = {}", numInstance));
 
-	// RootSignature / PSO
 	commandList->SetGraphicsRootSignature(rootSignature_.Get());
 	commandList->SetPipelineState(graphicsPipelineState_.Get());
 
-	// 頂点情報
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-	// Root Param 3: Camera
 	commandList->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
-
-	// Root Param 0: Material
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	// Root Param 1: StructuredBuffer (パーティクル情報)
+
+	// StructuredBuffer を RootParam 1 に設定
 	srvManager_->SetGraphicsRootDescriptorTable(1, srvIndex);
+	// Texture2D を RootParam 2 に設定（修正ポイント）
+	srvManager_->SetGraphicsRootDescriptorTable(2, textureIndex_);
 
-	// Root Param 2: テクスチャ
-	uint32_t texIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
-	Logger::Log(std::format("テクスチャ Index: {}", texIndex));
-	srvManager_->SetGraphicsRootDescriptorTable(2, texIndex);
-
-	// === ✅ 最後に描画前にログ出し ===
 	Logger::Log("→ DrawInstanced 呼び出し直前！");
-	//commandList->DrawInstanced(UINT(modelData.vertices.size()), numInstance, 0, 0);
+	commandList->DrawInstanced(UINT(modelData.vertices.size()), numInstance, 0, 0);
 	Logger::Log("→ DrawInstanced 呼び出し完了！");
-
 }
 
 void ParticleClass::CreateRootSignature()
@@ -359,40 +347,38 @@ void ParticleClass::CreateParticleResource()
 	// インスタンス用のTransformationMatrixリソースを作る
 	instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 
-	// 書き込むためのアドレスを取得
 	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
-	// 単位行列を書き込んでおく
 	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
-
 		instancingData_[index].WVP = MakeIdentity4x4();
-
 		instancingData_[index].World = MakeIdentity4x4();
 		instancingData_[index].color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	}
 
 	// モデルの読み込み
-	modelData.vertices.push_back({ .position = {1.0f, 1.0f, 0.0f, 1.0f}, .texCoord = {0.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texCoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texCoord = {0.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texCoord = {0.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texCoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {-1.0f, -1.0f, 0.0f, 1.0f}, .texCoord = {1.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	modelData.vertices = {
+		{ { 1.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ {-1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ { 1.0f,-1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ { 1.0f,-1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ {-1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ {-1.0f,-1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } }
+	};
 	modelData.material.textureFilePath = "Resources/circle.png";
 
+	// テクスチャ読み込み＆SRV作成（TextureManagerに任せる）
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
-	srvIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 
-	// 頂点リソースを作る
+	// 頂点リソース作成
 	vertexResource = dxBasis_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-	// 頂点バッファビューを作成する
-	vertexBufferView_.BufferLocation = vertexResource->GetGPUVirtualAddress();	// リソースの先頭アドレスから使う
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());		// 使用するリソースのサイズは頂点のサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);	// 1頂点当たりのサイズ
-
-	// 頂点リソースにデータを書き込む
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));		// 書き込むためのアドレスを取得
+	vertexBufferView_.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	std::memcpy(vertexData_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
+	// StructuredBuffer 用の SRV を新たにインデックスを確保して作成
+	srvIndex = srvManager_->Allocate(); // 新規インデックス確保
 	srvManager_->CreateSRVforStructuredBuffer(srvIndex, instancingResource_.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
 }
 

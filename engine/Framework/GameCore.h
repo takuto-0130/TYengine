@@ -1,6 +1,7 @@
 #pragma once
 #include "TYFrameWork.h"
 #include "IScene.h"
+#include "ParticleManager.h"
 
 class GameCore : public TYFrameWork
 {
@@ -21,5 +22,6 @@ public: // メンバ変数
 private:
 	Input* input = nullptr;
 
+	std::unique_ptr<ParticleManager> particleManager;
 };
 

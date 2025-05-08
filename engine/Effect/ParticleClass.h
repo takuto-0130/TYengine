@@ -14,7 +14,7 @@ class ParticleClass
 {
 private:
 
-	struct Particle {
+	struct ParticleP {
 		Transform transform;
 		Vector3 velocity;
 		Vector4 color;
@@ -97,8 +97,8 @@ public:
 
 private:
 
-	Particle MakeNewParticle(std::mt19937& random, const Vector3& translate);
-	std::list<Particle> Emit(const Emitter& emitter, std::mt19937& random);
+	ParticleP MakeNewParticle(std::mt19937& random, const Vector3& translate);
+	std::list<ParticleP> Emit(const Emitter& emitter, std::mt19937& random);
 	bool IsCollision(const AABB& a, const Vector3& point);
 
 	constexpr UINT AlignTo256(UINT size) {
@@ -109,10 +109,12 @@ private:
 
 	ModelData modelData;
 
-	uint32_t srvIndex = 0;
+	uint32_t srvIndex = 0;         // StructuredBuffer用
+	uint32_t textureIndex_ = 0;    // Texture2D用（新規追加）
 
 
-	std::list<Particle> particles;
+
+	std::list<ParticleP> particles;
 	std::random_device seedGene;
 
 

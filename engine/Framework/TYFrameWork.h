@@ -56,7 +56,7 @@ protected:
 #endif // _DEBUG
 
 	std::unique_ptr<WindowsApp> windowsApp = nullptr;
-	std::unique_ptr<DirectXBasis> directXBasis = nullptr;
+	DirectXBasis* directXBasis = nullptr;
 	std::unique_ptr<SrvManager> srvManager = nullptr;
 	SpriteBasis* spriteBasis = nullptr;
 	Object3dBasis* object3dBasis = nullptr;

@@ -109,6 +109,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\GameScene.cpp" />
     <ClCompile Include="application\Rail\Rail.cpp" />
     <ClCompile Include="application\Skydome\Skydome.cpp" />
+    <ClCompile Include="engine\Effect\DefaultRenderer.cpp" />
+    <ClCompile Include="engine\Effect\BillboardRenderer.cpp" />
+    <ClCompile Include="engine\Effect\ConeEmitter.cpp" />
     <ClCompile Include="engine\Audio\Audio.cpp" />
     <ClCompile Include="engine\Camera\Camera.cpp" />
     <ClCompile Include="engine\Debugger\ImGuiManager.cpp" />
@@ -148,15 +151,26 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\Audio\StreamingAudio.cpp" />
     <ClCompile Include="application\SceneFactory.cpp" />
     <ClCompile Include="engine\Effect\PrimitiveRing.cpp" />
+    <ClCompile Include="engine\Effect\ParticleManager.cpp" />
+    <ClCompile Include="engine\Effect\SimpleUpdater.cpp" />
+    <ClCompile Include="engine\Effect\ParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\GameScene.h" />
     <ClInclude Include="application\Object\BaseObject.h" />
     <ClInclude Include="application\Rail\Rail.h" />
     <ClInclude Include="application\Skydome\Skydome.h" />
+    <ClInclude Include="engine\Effect\AlphaFadeUpdater .h" />
+    <ClInclude Include="engine\Effect\DefaultRenderer.h" />
+    <ClInclude Include="engine\Effect\BillboardRenderer.h" />
+    <ClInclude Include="engine\Effect\ConeEmitter.h" />
     <ClInclude Include="engine\Audio\Audio.h" />
     <ClInclude Include="engine\Camera\Camera.h" />
     <ClInclude Include="engine\Debugger\ImGuiManager.h" />
+    <ClInclude Include="engine\Effect\IEmitter.h" />
+    <ClInclude Include="engine\Effect\IRenderer.h" />
+    <ClInclude Include="engine\Effect\IUpdater.h" />
+    <ClInclude Include="engine\Effect\Particle.h" />
     <ClInclude Include="engine\Effect\ParticleClass.h" />
     <ClInclude Include="engine\EngineCore\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\EngineCore\DirectXBasis.h" />
@@ -196,7 +210,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Audio\StreamingAudio.h" />
     <ClInclude Include="application\SceneFactory.h" />
     <ClInclude Include="engine\Effect\PrimitiveRing.h" />
-    <ClInclude Include="pati.h" />
+    <ClInclude Include="engine\Effect\ParticleManager.h" />
+    <ClInclude Include="engine\Effect\ParticleSystem.h" />
+    <ClInclude Include="engine\Effect\SimpleUpdater.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

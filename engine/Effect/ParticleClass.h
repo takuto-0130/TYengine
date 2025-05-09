@@ -1,3 +1,4 @@
+#pragma once
 #include <DirectXBasis.h>
 #include <SrvManager.h>
 #include <random>
@@ -7,9 +8,13 @@
 const uint32_t kNumMaxInstance = 100; // インスタンス数
 const float kDeltaTime = 1.0f / 60.0f;
 
+enum ParticleType
+{
+	kPlane,
+	kRing,
+	kCylinder
+};
 
-
-#pragma once
 class ParticleClass
 {
 private:
@@ -96,6 +101,9 @@ public:
 	void SetEmitter(Emitter emitter) { emitter_ = emitter; }
 
 private:
+	void CreatePlane();
+	void CreateRing();
+	void CreateCylinder();
 
 	ParticleP MakeNewParticle(std::mt19937& random, const Vector3& translate);
 	std::list<ParticleP> Emit(const Emitter& emitter, std::mt19937& random);
@@ -164,5 +172,7 @@ private:
 	Transform transform = {};
 
 	uint32_t numInstance = 0;
+
+	ParticleType type = ParticleType::kCylinder;
 };
 

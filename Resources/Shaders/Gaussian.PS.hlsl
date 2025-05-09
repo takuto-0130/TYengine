@@ -9,9 +9,11 @@ struct PixelShaderOutput
     float4 color : SV_TARGET0;
 };
 
+static const int kKernelSizeMax = 7;
+
 void generateOffsetTable(
     in int kernelSize, // 3, 5, 7など（奇数）
-    out float2 indexOffset[7][7] // 最大7x7まで確保
+    out float2 indexOffset[kKernelSizeMax][kKernelSizeMax] // 最大サイズまで確保
 )
 {
     int halfSize = kernelSize / 2;
@@ -34,11 +36,11 @@ float gauss(float x, float y, float sigma)
     return exp(exponent) * rcp(denominator);
 }
 
-// カーネル（最大サイズ: 7x7）
+// カーネル
 void generateGaussianKernel(
-    in int kernelSize, // 3, 5, 7
+    in int kernelSize, // 3, 5, 7 とかの奇数
     in float sigma,
-    out float kernel[7][7] // 最大7x7まで
+    out float kernel[kKernelSizeMax][kKernelSizeMax]
 )
 {
     int halfSize = kernelSize / 2;
@@ -74,8 +76,8 @@ PixelShaderOutput main(VertexShaderOutput input)
     output.color.rgb = float3(0.0f, 0.0f, 0.0f);
     output.color.a = 1.0f;
     
-    float kernel[7][7]; // 十分なサイズを確保（最大7x7）
-    float2 kIndex[7][7];
+    float kernel[kKernelSizeMax][kKernelSizeMax]; // 最大サイズを確保
+    float2 kIndex[kKernelSizeMax][kKernelSizeMax];
     int kernelSize = 5;
     generateOffsetTable(kernelSize, kIndex);
     generateGaussianKernel(kernelSize, 5.0f, kernel);

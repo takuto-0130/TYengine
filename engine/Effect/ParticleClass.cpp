@@ -276,12 +276,6 @@ void ParticleClass::Update()
 		(*partiIterator).transform.rotate = transform.rotate;
 		(*partiIterator).transform.translate += (*partiIterator).velocity * kDeltaTime;
 		(*partiIterator).currentTime += kDeltaTime; // 経過時間を足す
-		/*for (uint32_t i = 0; i < 1; ++i) {
-			instancingData_[i].WVP = MakeIdentity4x4();
-			instancingData_[i].World = MakeIdentity4x4();
-			instancingData_[i].color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		}
-		numInstance = 1;*/
 		if (numInstance < kNumMaxInstance)
 		{
 			Matrix4x4 worldMatrixP = MakeAffineMatrix((*partiIterator).transform.scale, (*partiIterator).transform.rotate, (*partiIterator).transform.translate);
@@ -475,7 +469,6 @@ void ParticleClass::CreatePipelineState()
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();			// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_;			// InputLayout
-	//graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob_->GetBufferPointer(), vertexShaderBlob_->GetBufferSize() };			// vertexShader
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob_->GetBufferPointer(), pixelShaderBlob_->GetBufferSize() };			// PixelShade
 	graphicsPipelineStateDesc.BlendState = blendDesc_;					// BlendState
@@ -521,9 +514,6 @@ void ParticleClass::CreateParticleResource()
 		CreateCylinder();
 		break;
 	}
-	
-
-
 }
 
 void ParticleClass::CreateMaterialResource()

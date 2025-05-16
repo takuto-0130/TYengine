@@ -4,6 +4,7 @@ cbuffer CopyPassParam : register(b0)
 {
     float2 offset;
     float2 scale;
+    //float4x4 invProjection;
 };
 
 static const uint kNumVertex = 3;

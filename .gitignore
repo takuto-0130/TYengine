@@ -366,3 +366,4 @@ FodyWeavers.xsd
 
 # imgui.ini
 project/imgui.ini
+/imgui.ini

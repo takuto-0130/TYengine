@@ -363,3 +363,6 @@ FodyWeavers.xsd
 
 # Assimp lib
 !externals/assimp/lib/
+
+# imgui.ini
+project/imgui.ini

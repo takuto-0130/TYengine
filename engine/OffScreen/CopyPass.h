@@ -2,14 +2,21 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <string>
-#include <DirectXMath.h>
+#include "struct.h"
 
 class DirectXBasis;
 class SrvManager;
 
 struct CopyPassParam {
-    DirectX::XMFLOAT2 offset;
-    DirectX::XMFLOAT2 scale;
+    Vector2 offset;
+    Vector2 scale;
+};
+
+struct BlurSettings
+{
+    Vector2 kCenter = { 0.5f, 0.5f };
+    float kBlurWidth = 0.08f;
+    int kNumSamples = 10;
 };
 
 class CopyPass {
@@ -27,5 +34,8 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D12Resource> copyParamBuffer_;
     CopyPassParam* mappedParam_ = nullptr;
+
+    //Microsoft::WRL::ComPtr<ID3D12Resource> BlurBuffer_;
+    //BlurSettings* blurSettings_ = nullptr;
 };
 

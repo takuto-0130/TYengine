@@ -10,10 +10,12 @@ void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::
     srvMgr_ = srvMgr;
 
     copyParamBuffer_ = dxBasis_->CreateBufferResource(sizeof(CopyPassParam));
+    //BlurBuffer_ = dxBasis_->CreateBufferResource(sizeof(BlurSettings));
 
     // Map して書き込み先ポインタを取得
     CD3DX12_RANGE readRange(0, 0);
     copyParamBuffer_->Map(0, &readRange, reinterpret_cast<void**>(&mappedParam_));
+    //BlurBuffer_->Map(0, &readRange, reinterpret_cast<void**>(&blurSettings_));
 
     CD3DX12_DESCRIPTOR_RANGE range{};
     range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -25,6 +27,7 @@ void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::
     rootParams[0].InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_PIXEL);
     rootParams[1].InitAsDescriptorTable(1, &samplerRange, D3D12_SHADER_VISIBILITY_PIXEL);
     rootParams[2].InitAsConstantBufferView(0); // b0: CopyPassParam
+    //rootParams[3].InitAsConstantBufferView(1); // b1: CopyPassParam
 
     CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc{};
     rootSigDesc.Init(_countof(rootParams), rootParams, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -58,6 +61,10 @@ void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::
     dxBasis_->CreateSamplerHeap();
     mappedParam_->offset = { 0.0f, 0.0f }; // 中央
     mappedParam_->scale = { 1.0f, 1.0f }; // フルサイズ
+
+    /*blurSettings_->kCenter = { 0.5f, 0.5f };
+    blurSettings_->kBlurWidth = 0.08f;
+    blurSettings_->kNumSamples = 10;*/
 }
 
 void CopyPass::Update()
@@ -86,6 +93,7 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
     cmdList->SetGraphicsRootDescriptorTable(0, srvHandle);
     cmdList->SetGraphicsRootDescriptorTable(1, dxBasis_->GetSamplerDescriptorHandle());
     cmdList->SetGraphicsRootConstantBufferView(2, copyParamBuffer_->GetGPUVirtualAddress());
+    //cmdList->SetGraphicsRootConstantBufferView(3, BlurBuffer_->GetGPUVirtualAddress());
 
     cmdList->DrawInstanced(3, 1, 0, 0);
 }

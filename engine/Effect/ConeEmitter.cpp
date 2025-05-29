@@ -12,7 +12,7 @@ std::list<Particle> ConeEmitter::Emit(std::mt19937& rng) {
         p.transform.translate += { dist(rng), dist(rng), dist(rng) };
         p.velocity = { dist(rng), dist(rng), dist(rng) };
         p.color = { 1, 1, 1, 1 };
-        p.lifeTime = life(rng);
+        p.lifeTime = 100;
         p.currentTime = 0;
         particles.push_back(p);
     }

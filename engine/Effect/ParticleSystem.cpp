@@ -1,5 +1,7 @@
 #include "ParticleSystem.h"
 #include <random>
+#include "Logger.h"
+#include <format>
 
 void ParticleSystem::SetEmitter(std::unique_ptr<IEmitter> emitter) {
     emitter_ = std::move(emitter);
@@ -21,10 +23,13 @@ void ParticleSystem::Update(float deltaTime) {
         auto newParticles = emitter_->Emit(rng);
         particles_.splice(particles_.end(), newParticles);
     }
+    Logger::Log(std::format("[Update] Before update: {} particles", particles_.size()));
 
     for (auto& updater : updaters_) {
         updater->Update(particles_, deltaTime);
-    }
+    }  
+    Logger::Log(std::format("[Update] After update: {} particles", particles_.size()));
+
 }
 
 void ParticleSystem::Draw(ID3D12GraphicsCommandList* cmdList, ID3D12RootSignature* rootSig, ID3D12PipelineState* pso) {

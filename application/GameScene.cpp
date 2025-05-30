@@ -26,12 +26,15 @@ void GameScene::Init()
 	worldTransform_.Initialize();
 	ModelManager::GetInstance()->LoadModel("Resources", "cube.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "skydome.obj");
-
+	ModelManager::GetInstance()->LoadModel("Resources", "unitSphere.obj");
+	
 	Audio::GetInstance()->LoadWave("fanfare");
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("cube.obj");
+
+	enemyEditor_ = std::make_unique<EnemyEditor>(&enemyGroups_);
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
@@ -55,6 +58,27 @@ void GameScene::Init()
 	RailLineReDraw();
 	RailReDraw();
 	ResetRailCamera();
+
+
+	emitter.transform.scale = { 0.05f,1.0f,1.0f };
+	emitter.transform.rotate = { 0,0,0 };
+	emitter.transform.translate = { 0,0,0 };
+	emitter.count = 5;
+	emitter.frequency = 1.5f;
+
+
+	emitterRing.transform.scale = { 0.5f,0.5f,0.5f };
+	emitterRing.transform.rotate = { 0,0,0 };
+	emitterRing.transform.translate = { 0,0,0 };
+	emitterRing.count = 1;
+	emitterRing.frequency = 1.5f;
+#ifdef _DEBUG
+	isRailCameraMove_ = false;
+#else
+	isRailCameraMove_ = true;
+#endif // _DEBUG
+
+
 }
 
 void GameScene::Update()
@@ -63,10 +87,39 @@ void GameScene::Update()
 	RailCustom();
 	skydome_->Update();
 
+	if (input_->IsTriggerMouse(0)) Collision();
+
+	activeEnemies_.remove_if([](const std::unique_ptr<Enemy>& e) 
+		{
+		return e->IsDead();
+		});
+
+	for (auto& enemy : activeEnemies_) {
+		enemy->Update();
+	}
+
+	/*for (auto it = enemies_.begin(); it != enemies_.end(); ) {
+		if (it->empty()) {
+			it = enemies_.erase(it);
+		}
+		else {
+			++it;
+		}
+	}*/
+
 	for (auto& trigger : triggerObjects_)
 	{
 		trigger->world.TransferMatrix();
 	}
+	if (comboTimer_ > 0)
+	{
+		comboTimer_ -= 1.0f / 60.0f;
+	}
+	
+#ifdef _DEBUG
+#else
+	RailCameraMove();
+#endif // _DEBUG
 }
 
 void GameScene::Draw()
@@ -78,9 +131,13 @@ void GameScene::Draw()
 	{
 		rail->Draw();
 	}
-	for (auto& trigger : triggerObjects_)
+	/*for (auto& trigger : triggerObjects_)
 	{
 		trigger->object.Draw(trigger->world);
+	}*/
+
+	for (auto& enemy : activeEnemies_) {
+		enemy->Draw();
 	}
 
 	SpriteBasis::GetInstance()->BasisDrawSetting();
@@ -124,6 +181,7 @@ void GameScene::RailCustom()
 		RailReDraw();
 		RailEditor::Instance()->ResetPreviewFlag();
 	}
+	enemyEditor_->DrawEditorUI();
 #endif
 }
 
@@ -189,7 +247,8 @@ void GameScene::RailCameraMove()
 		{
 			if (alreadyTriggeredIndices_.find(currentIndex) == alreadyTriggeredIndices_.end())
 			{
-				Audio::GetInstance()->PlayWave("fanfare");
+				TriggerNextEnemyGroup();
+				//Audio::GetInstance()->PlayWave("fanfare");
 				alreadyTriggeredIndices_.insert(currentIndex);
 			}
 		}
@@ -239,4 +298,45 @@ void GameScene::ResetRailCamera()
 	float denom = kDivisionSpan * controlPoints_.size();
 	cameraEyeT = 0;
 	cameraForwardT = 30.0f / denom;
+}
+
+void GameScene::TriggerNextEnemyGroup()
+{
+	if (!enemyGroups_.empty()) {
+		std::list<std::unique_ptr<Enemy>>& nextGroup = enemyGroups_.front();
+		for (auto& enemy : nextGroup) {
+			activeEnemies_.push_back(std::move(enemy));
+		}
+		enemyGroups_.pop_front();
+	}
+}
+
+void GameScene::Collision()
+{
+	int i = 0;
+	for (auto& enemy : activeEnemies_) {
+		Vector3 pos = enemy->GetWorldPosition();
+		Matrix4x4 matView = MakeViewportMatrix(0, 0, WindowsApp::kClientWidth, WindowsApp::kClientHieght, 0, 1);
+		Matrix4x4 matVPV = camera_->GetViewMatrix() * camera_->GetProjectionMatrix() * matView;
+		pos = TransformM(pos, matVPV);
+		Vector2 mouse = input_->GetMousePosition();
+
+		if (Length(Vector2{ pos.x, pos.y } - Vector2{ mouse.x, mouse.y }) <= 50.0f && !enemy->IsDead()) {
+
+			if (comboTimer_ <= 0) comboCount_ = 0;
+
+			comboCount_++;
+			comboTimer_ = kComboTime_;
+			enemy->IsCollision();
+			emitter.transform.translate = enemy->GetWorldPosition();
+			emitter.count = comboCount_ + 2;
+			emitterRing.transform.translate = emitter.transform.translate;
+			emitterRing.count = comboCount_;
+			ParticleManager::GetInstance()->SetEmitter(0, emitter);
+			ParticleManager::GetInstance()->TriggerEmit(0, true);
+			ParticleManager::GetInstance()->SetEmitter(1, emitterRing);
+			ParticleManager::GetInstance()->TriggerEmit(1, true);
+		}
+		i++;
+	}
 }

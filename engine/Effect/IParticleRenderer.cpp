@@ -30,7 +30,7 @@ void IParticleRenderer::Update() {
     numInstance_ = 0;
 
     emitter_.frequencyTime += kDeltaTime;
-    if (emitter_.frequencyTime >= emitter_.frequency) {
+    if (!useTrigger_ &&  emitter_.frequencyTime >= emitter_.frequency) {
         particles_.splice(particles_.end(), Emit(random));
         emitter_.frequencyTime -= emitter_.frequency;
     }
@@ -78,6 +78,15 @@ void IParticleRenderer::Draw() {
     cmd->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
 
     cmd->DrawInstanced(vertexCount_, numInstance_, 0, 0);
+}
+
+void IParticleRenderer::TriggerEmit()
+{
+    if(useTrigger_)
+    {
+        std::mt19937 random(seedGene_());
+        particles_.splice(particles_.end(), Emit(random));
+    }
 }
 
 IParticleRenderer::ParticleP IParticleRenderer::MakeNewParticle(std::mt19937& random, const Emitter& emitter) {

@@ -27,3 +27,11 @@ void ParticleManager::SetEmitter(int index, IParticleRenderer::Emitter& emitter)
 {
     particles_[index]->SetEmitter(emitter);
 }
+
+void ParticleManager::TriggerEmit(int index, bool flag)
+{
+    if (flag)
+    {
+        particles_[index]->TriggerEmit();
+    }
+}

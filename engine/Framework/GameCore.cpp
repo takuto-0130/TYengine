@@ -64,7 +64,7 @@ void GameCore::Initialize()
 	emitterRing.transform.scale = { 0.5f,0.5f,0.5f };
 	emitterRing.transform.rotate = { 0,0,0 };
 	emitterRing.transform.translate = { 0,0,0 };
-	emitterRing.count = 1;
+	emitterRing.count = 4;
 	emitterRing.frequency = 1.5f;
 	particleManager->SetEmitter(indexRing, emitterRing);
 }

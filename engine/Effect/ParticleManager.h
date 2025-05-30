@@ -19,6 +19,8 @@ public:
 public:
     void SetEmitter(int index, IParticleRenderer::Emitter& emitter);
 
+    void TriggerEmit(int index, bool flag);
+
 private:
     std::vector<std::unique_ptr<IParticleRenderer>> particles_;
 };

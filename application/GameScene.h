@@ -17,7 +17,7 @@
 class GameScene : public IScene {
 
 public: // メンバ関数
-
+	 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>

@@ -47,12 +47,12 @@ void GameCore::Initialize()
 	auto ring = std::make_unique<RingParticle>();
 	auto cylinder = std::make_unique<CylinderParticle>();
 
-	/*int index = particleManager->Add(std::move(plane));
-	int indexRing = particleManager->Add(std::move(ring));*/
-	particleManager->Add(std::move(cylinder));
+	int index = particleManager->Add(std::move(plane));
+	int indexRing = particleManager->Add(std::move(ring));
+	// particleManager->Add(std::move(cylinder));
 
 	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
-	/*IParticleRenderer::Emitter emitter;
+	IParticleRenderer::Emitter emitter;
 	emitter.transform.scale = { 0.05f,1.0f,1.0f };
 	emitter.transform.rotate = { 0,0,0 };
 	emitter.transform.translate = { 0,0,0 };
@@ -66,7 +66,7 @@ void GameCore::Initialize()
 	emitterRing.transform.translate = { 0,0,0 };
 	emitterRing.count = 1;
 	emitterRing.frequency = 1.5f;
-	particleManager->SetEmitter(indexRing, emitterRing);*/
+	particleManager->SetEmitter(indexRing, emitterRing);
 }
 
 void GameCore::Finalize()

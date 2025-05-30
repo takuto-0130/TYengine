@@ -9,8 +9,11 @@
 #include <sstream>
 #include "../engine/Audio/Audio.h"
 #include "Rail/Rail.h"
+#include "Object/Enemy.h"
 #include "Rail/RailEditor.h"
+#include "Object/EnemyEditor.h"
 #include "Skydome/Skydome.h"
+#include "ParticleManager.h"
 #include <memory>
 #include <vector>
 #include <list>
@@ -38,6 +41,10 @@ private:
 	void SetSegment();
 	void ResetRailCamera();
 
+	void TriggerNextEnemyGroup();
+
+	void Collision();
+
 private:
 	float pitch_ = 1.0f;
 	Vector3 cameraOffset_;
@@ -51,12 +58,16 @@ private:
 	std::unique_ptr<Skydome> skydome_;
 	std::list<std::unique_ptr<Rail>> rails_;
 
+	std::list<std::list<std::unique_ptr<Enemy>>> enemyGroups_; // 全グループ（未出現）
+	std::list<std::unique_ptr<Enemy>> activeEnemies_;          // 今出現中の敵
+	std::unique_ptr<EnemyEditor> enemyEditor_;				   // 敵のエディタ
+
 	std::vector<bool> triggeredFlags_;
 	std::vector<Vector3> controlPoints_;
 	std::vector<Vector3> pointsDrawing_;
 	size_t oneSegmentCount = 20;
 	size_t segmentCount = oneSegmentCount;
-	const float kDivisionSpan = 100.0f;
+	const float kDivisionSpan = 200.0f;
 	float cameraSegmentCount = 1.0f / 600.0f;
 	float cameraEyeT = 0;
 	float cameraForwardT = 30.0f / 600.0f;
@@ -85,4 +96,16 @@ private:
 	};
 
 	std::vector<std::unique_ptr<TriggerObject>> triggerObjects_;
+
+	int comboCount_ = 0;
+
+	float comboTimer_ = 0;
+
+	float kComboTime_ = 5.0f;
+
+
+	IParticleRenderer::Emitter emitter;
+
+
+	IParticleRenderer::Emitter emitterRing;
 };

@@ -1,7 +1,10 @@
 #include "IParticleRenderer.h"
 #include "operatorOverload.h"
 #include <numbers>
+#ifdef _DEBUG
 #include <imgui.h>
+#endif // _DEBUG
+
 
 void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam) {
     dxBasis_ = dx;
@@ -43,11 +46,20 @@ void IParticleRenderer::Update() {
             it = particles_.erase(it);
             continue;
         }
+#ifdef _DEBUG
+        ImGui::Begin("parti");
+        ImGui::DragFloat3("tra", &it->transform.translate.x);
+        ImGui::End();
+#endif // _DEBUG
+
 
         if (numInstance_ < kMaxInstance) {
             Matrix4x4 world = MakeAffineMatrix(it->transform.scale, it->transform.rotate, it->transform.translate);
             if (useBillboard_) {
-                world = world * billboardMatrix;
+                world = MakeScaleMatrix(it->transform.scale) 
+                    * billboardMatrix
+                    * MakeRotateZMatrix(it->transform.rotate.z)
+                    * MakeTranslateMatrix(it->transform.translate);
             }
             Matrix4x4 WVP = world * camera_->GetViewProjectionMatrix();
             instancingData_[numInstance_].WVP = WVP;

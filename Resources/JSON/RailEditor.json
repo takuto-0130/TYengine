@@ -2,7 +2,7 @@
     "controlPoints": [
         {
             "segmentSpeed": 1.0,
-            "triggerEvent": false,
+            "triggerEvent": true,
             "x": 0.0,
             "y": 0.0,
             "z": 0.0
@@ -16,14 +16,14 @@
         },
         {
             "segmentSpeed": 1.0,
-            "triggerEvent": true,
+            "triggerEvent": false,
             "x": 10.0,
             "y": 15.0,
             "z": 20.0
         },
         {
             "segmentSpeed": 1.0,
-            "triggerEvent": false,
+            "triggerEvent": true,
             "x": 20.0,
             "y": 15.0,
             "z": 30.0
@@ -44,7 +44,7 @@
         },
         {
             "segmentSpeed": 1.0,
-            "triggerEvent": true,
+            "triggerEvent": false,
             "x": 30.0,
             "y": 0.0,
             "z": 50.0

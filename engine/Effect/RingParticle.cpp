@@ -72,7 +72,7 @@ IParticleRenderer::ParticleP RingParticle::MakeNewParticle(std::mt19937& random,
     std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
     parti.color = { colorDist(random), colorDist(random), colorDist(random), 1.0f };
 
-    std::uniform_real_distribution<float> timeDist(1.0f, 1.0f);
+    std::uniform_real_distribution<float> timeDist(0.5f, 0.5f);
     parti.lifeTime = timeDist(random);
     parti.currentTime = 0.0f;
 

@@ -4,5 +4,6 @@
 class RingParticle : public IParticleRenderer {
 protected:
     void CreateResources() override;
+    ParticleP MakeNewParticle(std::mt19937& random, const Emitter& emitter) override;
 };
 

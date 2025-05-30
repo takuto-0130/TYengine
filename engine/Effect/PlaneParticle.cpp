@@ -37,3 +37,22 @@ void PlaneParticle::CreateResources() {
 
     vertexCount_ = static_cast<uint32_t>(vertices.size());
 }
+
+PlaneParticle::ParticleP PlaneParticle::MakeNewParticle(std::mt19937& random, const Emitter& emitter) {
+    ParticleP parti;
+    std::uniform_real_distribution<float> distScale(0.6f, 1.4f);
+    parti.transform.scale = { emitter.transform.scale.x,distScale(random), emitter.transform.scale.z};
+    std::uniform_real_distribution<float> distRota(0.0f, 2.0f * std::numbers::pi_v<float>);
+    parti.transform.rotate = { 0.f,0.f,distRota(random) };
+    parti.transform.translate = emitter.transform.translate;
+    parti.velocity = { 0.f,0.f,0.f };
+
+    std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
+    parti.color = { colorDist(random), colorDist(random), colorDist(random), 1.0f };
+
+    std::uniform_real_distribution<float> timeDist(1.0f, 1.0f);
+    parti.lifeTime = timeDist(random);
+    parti.currentTime = 0.0f;
+
+    return parti;
+}

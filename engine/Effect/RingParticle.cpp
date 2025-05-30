@@ -3,7 +3,7 @@
 
 void RingParticle::CreateResources() {
     const uint32_t kDivide = 32;
-    const float outer = 1.0f, inner = 0.5f;
+    const float outer = 0.4f, inner = 0.1f;
     const float dTheta = 2.0f * std::numbers::pi_v<float> / float(kDivide);
 
     std::vector<VertexData> vertices;
@@ -57,4 +57,23 @@ void RingParticle::CreateResources() {
     cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
 
     vertexCount_ = static_cast<uint32_t>(vertices.size());
+}
+
+RingParticle::ParticleP RingParticle::MakeNewParticle(std::mt19937& random, const Emitter& emitter)
+{
+    ParticleP parti;
+    std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+    parti.transform.scale = emitter.transform.scale;
+    parti.transform.rotate = emitter.transform.rotate;
+    parti.transform.translate = emitter.transform.translate;
+    parti.velocity = { 0.f,0.f,0.f };
+
+    std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
+    parti.color = { colorDist(random), colorDist(random), colorDist(random), 1.0f };
+
+    std::uniform_real_distribution<float> timeDist(1.0f, 1.0f);
+    parti.lifeTime = timeDist(random);
+    parti.currentTime = 0.0f;
+
+    return parti;
 }

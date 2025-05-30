@@ -114,7 +114,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\Camera\Camera.cpp" />
     <ClCompile Include="engine\Debugger\ImGuiManager.cpp" />
     <ClCompile Include="engine\Effect\IParticleRenderer.cpp" />
-    <ClCompile Include="engine\Effect\ParticleClass.cpp" />
     <ClCompile Include="engine\EngineCore\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\EngineCore\DirectXBasis.cpp" />
     <ClCompile Include="engine\EngineCore\Logger.cpp" />
@@ -163,7 +162,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Camera\Camera.h" />
     <ClInclude Include="engine\Debugger\ImGuiManager.h" />
     <ClInclude Include="engine\Effect\IParticleRenderer.h" />
-    <ClInclude Include="engine\Effect\ParticleClass.h" />
     <ClInclude Include="engine\EngineCore\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\EngineCore\DirectXBasis.h" />
     <ClInclude Include="engine\EngineCore\Logger.h" />

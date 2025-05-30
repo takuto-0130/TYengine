@@ -6,7 +6,6 @@
 #include "ModelManager.h"
 #include "SpriteBasis.h"
 #include "Object3dBasis.h"
-#include "ParticleClass.h"
 #include <fstream>
 #include <istream>
 #include "../engine/Audio/Audio.h"

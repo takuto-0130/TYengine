@@ -1,5 +1,6 @@
 #include "RingParticle.h"
 #include <numbers>
+#include "operatorOverload.h"
 
 void RingParticle::CreateResources() {
     const uint32_t kDivide = 32;
@@ -59,7 +60,7 @@ void RingParticle::CreateResources() {
     vertexCount_ = static_cast<uint32_t>(vertices.size());
 }
 
-RingParticle::ParticleP RingParticle::MakeNewParticle(std::mt19937& random, const Emitter& emitter)
+IParticleRenderer::ParticleP RingParticle::MakeNewParticle(std::mt19937& random, const Emitter& emitter)
 {
     ParticleP parti;
     std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
@@ -76,4 +77,15 @@ RingParticle::ParticleP RingParticle::MakeNewParticle(std::mt19937& random, cons
     parti.currentTime = 0.0f;
 
     return parti;
+}
+
+std::list<IParticleRenderer::ParticleP> RingParticle::Emit(std::mt19937& random)
+{
+    std::list<ParticleP> result;
+    for (uint32_t i = 0; i < emitter_.count; ++i) {
+        Emitter emitter = emitter_;
+        emitter.transform.scale = emitter.transform.scale * ((2.0f + float(i)) / 2.0f);
+        result.push_back(MakeNewParticle(random, emitter));
+    }
+    return result;
 }

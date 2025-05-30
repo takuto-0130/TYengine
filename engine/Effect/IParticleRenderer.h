@@ -7,6 +7,7 @@
 #include <random>
 #include <list>
 #include <wrl.h>
+#include <numbers>
 
 class IParticleRenderer {
 public:
@@ -15,6 +16,16 @@ public:
     virtual void Update();
     virtual void Draw();
 
+
+    struct Emitter {
+        Transform transform;
+        uint32_t count = 5;
+        float frequency = 0.5f;
+        float frequencyTime = 0.0f;
+        Vector4 color = { 1,1,1,1 };
+    };
+
+    virtual void SetEmitter(Emitter& emitter) { emitter_ = emitter; }
 protected:
     struct ParticleP {
         Transform transform;
@@ -30,13 +41,6 @@ protected:
         Vector4 color;
     };
 
-    struct Emitter {
-        Transform transform;
-        uint32_t count = 5;
-        float frequency = 0.5f;
-        float frequencyTime = 0.0f;
-    };
-
     struct CameraForGPUP {
         Vector3 worldPosition;
     };
@@ -46,13 +50,15 @@ protected:
     void CreateRootSignature();
     void LoadShader();
     void CreatePipelineState();
-    ParticleP MakeNewParticle(std::mt19937& random, const Vector3& translate);
-    std::list<ParticleP> Emit(std::mt19937& random);
+    virtual ParticleP MakeNewParticle(std::mt19937& random, const Emitter& emitter);
+    virtual std::list<ParticleP> Emit(std::mt19937& random);
 
 protected:
     const float kDeltaTime = 1.0f / 60.0f;
     
     static const uint32_t kMaxInstance = 100;
+
+    bool useBillboard_ = true;
 
     uint32_t vertexCount_ = 0;
 

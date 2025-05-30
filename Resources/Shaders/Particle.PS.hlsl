@@ -33,9 +33,7 @@ PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
     
-    // Cylinder用に一時変更
     float2 texCoord = input.texCoord;
-    texCoord.y = 1.0f - texCoord.y;
     
     
     float4 transformedUV = mul(float4(texCoord, 0.0f, 1.0f), gMaterial.uvTransform);

@@ -27,16 +27,16 @@ void TYFrameWork::Initialize()
 	windowsApp = std::make_unique<WindowsApp>();
 	windowsApp->Initialize();
 
-	directXBasis = std::make_unique<DirectXBasis>();
+	directXBasis = DirectXBasis::GetInstance();
 	directXBasis->Initialize(windowsApp.get());
 
 	srvManager = std::make_unique<SrvManager>();
-	srvManager->Initialize(directXBasis.get());
+	srvManager->Initialize(directXBasis);
 
 	input = Input::GetInstance();
 	input->Initialize(windowsApp->GetHwnd());
 
-	TextureManager::GetInstance()->Initialize(directXBasis.get(), srvManager.get());
+	TextureManager::GetInstance()->Initialize(directXBasis, srvManager.get());
 
 	sceneManager_ = SceneManager::GetInstance();
 #pragma endregion

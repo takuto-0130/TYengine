@@ -26,6 +26,8 @@ public:
     };
 
     virtual void SetEmitter(Emitter& emitter) { emitter_ = emitter; }
+
+    virtual void TriggerEmit();
 protected:
     struct ParticleP {
         Transform transform;
@@ -59,6 +61,8 @@ protected:
     static const uint32_t kMaxInstance = 100;
 
     bool useBillboard_ = true;
+
+    bool useTrigger_ = true;
 
     uint32_t vertexCount_ = 0;
 

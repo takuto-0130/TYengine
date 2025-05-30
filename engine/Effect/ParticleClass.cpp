@@ -4,8 +4,172 @@
 #include <numbers>
 #include <imgui.h>
 
-ParticleClass::Particle ParticleClass::MakeNewParticle(std::mt19937& random, const Vector3& translate) {
-	Particle parti;
+void ParticleClass::CreatePlane()
+{
+#pragma region // 板ポリ
+	// インスタンス用のTransformationMatrixリソースを作る
+	instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
+
+	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
+	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
+		instancingData_[index].WVP = MakeIdentity4x4();
+		instancingData_[index].World = MakeIdentity4x4();
+		instancingData_[index].color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	}
+
+	// モデルの読み込み
+	modelData.vertices = {
+		{ { 1.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ {-1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ { 1.0f,-1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ { 1.0f,-1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ {-1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+		{ {-1.0f,-1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } }
+	};
+	modelData.material.textureFilePath = "Resources/circle.png";
+
+	// テクスチャ読み込み＆SRV作成（TextureManagerに任せる）
+	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
+
+	// 頂点リソース作成
+	vertexResource = dxBasis_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView_.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	std::memcpy(vertexData_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+
+	// StructuredBuffer 用の SRV を新たにインデックスを確保して作成
+	srvIndex = srvManager_->Allocate(); // 新規インデックス確保
+	srvManager_->CreateSRVforStructuredBuffer(srvIndex, instancingResource_.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
+#pragma endregion
+}
+
+void ParticleClass::CreateRing()
+{
+#pragma region // リング
+	// インスタンス用のTransformationMatrixリソースを作る
+	instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
+	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
+	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
+		instancingData_[index].WVP = MakeIdentity4x4();
+		instancingData_[index].World = MakeIdentity4x4();
+		instancingData_[index].color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	}
+
+	// ==== 🔽 リング型頂点の生成開始 ====
+	const uint32_t kRingDivide = 32;
+	const float kOuterRadius = 1.0f;
+	const float kInnerRadius = 0.5f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
+
+	modelData.vertices.clear();
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+		float angle = index * radianPerDivide;
+		float nextAngle = (index + 1) * radianPerDivide;
+
+		float cosA = std::cos(angle), sinA = std::sin(angle);
+		float cosB = std::cos(nextAngle), sinB = std::sin(nextAngle);
+
+		Vector3 outerA = { cosA * kOuterRadius, sinA * kOuterRadius, 0.0f };
+		Vector3 outerB = { cosB * kOuterRadius, sinB * kOuterRadius, 0.0f };
+		Vector3 innerA = { cosA * kInnerRadius, sinA * kInnerRadius, 0.0f };
+		Vector3 innerB = { cosB * kInnerRadius, sinB * kInnerRadius, 0.0f };
+
+		// 三角形①：outerA, innerA, outerB
+		modelData.vertices.push_back({ { outerA.x, outerA.y, outerA.z, 1.0f }, { 0.0f, 0.0f }, { 0, 0, 1 } });
+		modelData.vertices.push_back({ { innerA.x, innerA.y, innerA.z, 1.0f }, { 0.0f, 1.0f }, { 0, 0, 1 } });
+		modelData.vertices.push_back({ { outerB.x, outerB.y, outerB.z, 1.0f }, { 1.0f, 0.0f }, { 0, 0, 1 } });
+
+		// 三角形②：outerB, innerA, innerB
+		modelData.vertices.push_back({ { outerB.x, outerB.y, outerB.z, 1.0f }, { 1.0f, 0.0f }, { 0, 0, 1 } });
+		modelData.vertices.push_back({ { innerA.x, innerA.y, innerA.z, 1.0f }, { 0.0f, 1.0f }, { 0, 0, 1 } });
+		modelData.vertices.push_back({ { innerB.x, innerB.y, innerB.z, 1.0f }, { 1.0f, 1.0f }, { 0, 0, 1 } });
+	}
+
+	modelData.material.textureFilePath = "Resources/gradationLine.png";
+	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
+
+	// 頂点バッファ作成
+	vertexResource = dxBasis_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView_.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	std::memcpy(vertexData_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+
+	// StructuredBuffer 用の SRV を新たにインデックスを確保して作成
+	srvIndex = srvManager_->Allocate();
+	srvManager_->CreateSRVforStructuredBuffer(srvIndex, instancingResource_.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
+#pragma endregion
+}
+
+void ParticleClass::CreateCylinder()
+{
+#pragma region // シリンダー
+	// インスタンス用のTransformationMatrixリソースを作る
+	instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
+	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
+	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
+		instancingData_[index].WVP = MakeIdentity4x4();
+		instancingData_[index].World = MakeIdentity4x4();
+		instancingData_[index].color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	}
+
+	// ==== 🔽 円柱の側面の頂点生成 ====
+	const uint32_t kCylinderDivide = 32;
+	const float kTopRadius = 1.0f;
+	const float kBottomRadius = 1.0f;
+	const float kHeight = 2.0f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide);
+
+	modelData.vertices.clear();
+	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
+		float sinA = std::sin(index * radianPerDivide);
+		float cosA = std::cos(index * radianPerDivide);
+		float sinB = std::sin((index + 1) * radianPerDivide);
+		float cosB = std::cos((index + 1) * radianPerDivide);
+
+		// 上下それぞれのポイント
+		Vector3 topA = { cosA * kTopRadius,    kHeight * 0.5f, sinA * kTopRadius };
+		Vector3 topB = { cosB * kTopRadius,    kHeight * 0.5f, sinB * kTopRadius };
+		Vector3 bottomA = { cosA * kBottomRadius, -kHeight * 0.5f, sinA * kBottomRadius };
+		Vector3 bottomB = { cosB * kBottomRadius, -kHeight * 0.5f, sinB * kBottomRadius };
+
+		Vector3 normalA = { cosA, 0.0f, sinA };
+		Vector3 normalB = { cosB, 0.0f, sinB };
+
+		// 三角形①（topA, bottomA, topB）
+		modelData.vertices.push_back({ { topA.x, topA.y, topA.z, 1.0f }, { 0.0f, 0.0f }, normalA });
+		modelData.vertices.push_back({ { bottomA.x, bottomA.y, bottomA.z, 1.0f }, { 0.0f, 1.0f }, normalA });
+		modelData.vertices.push_back({ { topB.x, topB.y, topB.z, 1.0f }, { 1.0f, 0.0f }, normalB });
+
+		// 三角形②（topB, bottomA, bottomB）
+		modelData.vertices.push_back({ { topB.x, topB.y, topB.z, 1.0f }, { 1.0f, 0.0f }, normalB });
+		modelData.vertices.push_back({ { bottomA.x, bottomA.y, bottomA.z, 1.0f }, { 0.0f, 1.0f }, normalA });
+		modelData.vertices.push_back({ { bottomB.x, bottomB.y, bottomB.z, 1.0f }, { 1.0f, 1.0f }, normalB });
+	}
+
+	modelData.material.textureFilePath = "Resources/gradationLine.png";
+	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
+
+	vertexResource = dxBasis_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView_.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	std::memcpy(vertexData_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+
+	srvIndex = srvManager_->Allocate();
+	srvManager_->CreateSRVforStructuredBuffer(srvIndex, instancingResource_.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
+#pragma endregion
+}
+
+ParticleClass::ParticleP ParticleClass::MakeNewParticle(std::mt19937& random, const Vector3& translate) {
+	ParticleP parti;
 
 	std::uniform_real_distribution<float> distVec(-1.0f, 1.0f);
 	parti.transform.scale = { 1.f,1.f,1.f };
@@ -24,8 +188,8 @@ ParticleClass::Particle ParticleClass::MakeNewParticle(std::mt19937& random, con
 	return parti;
 }
 
-std::list<ParticleClass::Particle> ParticleClass::Emit(const Emitter& emitter, std::mt19937& random) {
-	std::list<Particle> particles;
+std::list<ParticleClass::ParticleP> ParticleClass::Emit(const Emitter& emitter, std::mt19937& random) {
+	std::list<ParticleP> particles;
 	for (uint32_t count = 0; count < emitter.count; ++count) {
 		particles.push_back(MakeNewParticle(random, emitter.transform.translate));
 	}
@@ -74,7 +238,7 @@ void ParticleClass::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager, Ca
 
 	isAccel = false;
 
-	useBillboard = true;
+	useBillboard = false;
 
 }
 
@@ -96,7 +260,7 @@ void ParticleClass::Update()
 		emitter_.frequencyTime -= emitter_.frequency;
 	}
 
-	for (std::list<Particle>::iterator partiIterator = particles.begin(); partiIterator != particles.end();) {
+	for (std::list<ParticleP>::iterator partiIterator = particles.begin(); partiIterator != particles.end();) {
 		if ((*partiIterator).lifeTime <= (*partiIterator).currentTime) {
 			partiIterator = particles.erase(partiIterator);
 			continue;
@@ -112,12 +276,6 @@ void ParticleClass::Update()
 		(*partiIterator).transform.rotate = transform.rotate;
 		(*partiIterator).transform.translate += (*partiIterator).velocity * kDeltaTime;
 		(*partiIterator).currentTime += kDeltaTime; // 経過時間を足す
-		/*for (uint32_t i = 0; i < 1; ++i) {
-			instancingData_[i].WVP = MakeIdentity4x4();
-			instancingData_[i].World = MakeIdentity4x4();
-			instancingData_[i].color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		}
-		numInstance = 1;*/
 		if (numInstance < kNumMaxInstance)
 		{
 			Matrix4x4 worldMatrixP = MakeAffineMatrix((*partiIterator).transform.scale, (*partiIterator).transform.rotate, (*partiIterator).transform.translate);
@@ -137,6 +295,7 @@ void ParticleClass::Update()
 		}
 		++partiIterator;
 	}
+	materialData_->uvTransform = Multiply(materialData_->uvTransform, MakeTranslateMatrix(Vector3{ 0.1f,0,0 }));
 #ifdef _DEBUG
 	int a = numInstance;
 	Vector3 cameraPos = camera_->GetTranslate();
@@ -150,15 +309,12 @@ void ParticleClass::Update()
 
 void ParticleClass::Draw()
 {
-	/*if(numInstance > 0)
-	{
-		commandList->Reset(dxBasis_->GetCommandAllocator(), graphicsPipelineState_.Get());
-	}*/
+	if (numInstance == 0) return;
+
 	srvManager_->BeginDraw();
 	auto commandList = dxBasis_->GetCommandList();
 
-	// === ✅ 各リソースが null かチェック！ ===
-	assert(commandList); // 念のため
+	assert(commandList);
 	assert(materialResource_);
 	assert(cameraResource_);
 	assert(instancingResource_);
@@ -166,32 +322,23 @@ void ParticleClass::Draw()
 
 	Logger::Log(std::format("Draw(): numInstance = {}", numInstance));
 
-	// RootSignature / PSO
 	commandList->SetGraphicsRootSignature(rootSignature_.Get());
 	commandList->SetPipelineState(graphicsPipelineState_.Get());
 
-	// 頂点情報
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-	// Root Param 3: Camera
 	commandList->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
-
-	// Root Param 0: Material
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	// Root Param 1: StructuredBuffer (パーティクル情報)
+
+	// StructuredBuffer を RootParam 1 に設定
 	srvManager_->SetGraphicsRootDescriptorTable(1, srvIndex);
+	// Texture2D を RootParam 2 に設定（修正ポイント）
+	srvManager_->SetGraphicsRootDescriptorTable(2, textureIndex_);
 
-	// Root Param 2: テクスチャ
-	uint32_t texIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
-	Logger::Log(std::format("テクスチャ Index: {}", texIndex));
-	srvManager_->SetGraphicsRootDescriptorTable(2, texIndex);
-
-	// === ✅ 最後に描画前にログ出し ===
 	Logger::Log("→ DrawInstanced 呼び出し直前！");
-	//commandList->DrawInstanced(UINT(modelData.vertices.size()), numInstance, 0, 0);
+	commandList->DrawInstanced(UINT(modelData.vertices.size()), numInstance, 0, 0);
 	Logger::Log("→ DrawInstanced 呼び出し完了！");
-
 }
 
 void ParticleClass::CreateRootSignature()
@@ -239,7 +386,7 @@ void ParticleClass::CreateRootSignature()
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;
@@ -322,7 +469,6 @@ void ParticleClass::CreatePipelineState()
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();			// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_;			// InputLayout
-	//graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;			// InputLayout
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob_->GetBufferPointer(), vertexShaderBlob_->GetBufferSize() };			// vertexShader
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob_->GetBufferPointer(), pixelShaderBlob_->GetBufferSize() };			// PixelShade
 	graphicsPipelineStateDesc.BlendState = blendDesc_;					// BlendState
@@ -356,44 +502,18 @@ void ParticleClass::CreatePipelineState()
 
 void ParticleClass::CreateParticleResource()
 {
-	// インスタンス用のTransformationMatrixリソースを作る
-	instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
-
-	// 書き込むためのアドレスを取得
-	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
-	// 単位行列を書き込んでおく
-	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
-
-		instancingData_[index].WVP = MakeIdentity4x4();
-
-		instancingData_[index].World = MakeIdentity4x4();
-		instancingData_[index].color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	switch (type)
+	{
+	case kPlane:
+		CreatePlane();
+		break;
+	case kRing:
+		CreateRing();
+		break;
+	case kCylinder:
+		CreateCylinder();
+		break;
 	}
-
-	// モデルの読み込み
-	modelData.vertices.push_back({ .position = {1.0f, 1.0f, 0.0f, 1.0f}, .texCoord = {0.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texCoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texCoord = {0.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texCoord = {0.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texCoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({ .position = {-1.0f, -1.0f, 0.0f, 1.0f}, .texCoord = {1.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.material.textureFilePath = "Resources/circle.png";
-
-	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
-	srvIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
-
-	// 頂点リソースを作る
-	vertexResource = dxBasis_->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-	// 頂点バッファビューを作成する
-	vertexBufferView_.BufferLocation = vertexResource->GetGPUVirtualAddress();	// リソースの先頭アドレスから使う
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());		// 使用するリソースのサイズは頂点のサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);	// 1頂点当たりのサイズ
-
-	// 頂点リソースにデータを書き込む
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));		// 書き込むためのアドレスを取得
-	std::memcpy(vertexData_, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
-
-	srvManager_->CreateSRVforStructuredBuffer(srvIndex, instancingResource_.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
 }
 
 void ParticleClass::CreateMaterialResource()
@@ -412,13 +532,6 @@ void ParticleClass::CreateMaterialResource()
 
 void ParticleClass::CreateCameraResource()
 {
-	//// カメラ用のリソースを作る
-	//cameraResource_ = dxBasis_->CreateBufferResource(sizeof(CameraForGPUP));
-	//// 書き込むためのアドレスを取得
-	//cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
-	//// 初期値を入れる
-	//cameraData_->worldPosition = { 1.0f, 1.0f, 1.0f };
-	//AlignTo256(sizeof(CameraForGPUP))
 	cameraResource_ = dxBasis_->CreateBufferResource(AlignTo256(sizeof(CameraForGPUP)));
 
 	if (!cameraResource_) {

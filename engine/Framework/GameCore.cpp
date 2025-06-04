@@ -109,20 +109,17 @@ void GameCore::Draw()
 	srvManager->BeginDraw(); // SRVマネージャでIDリセットなど
 	sceneManager_->Draw();   // 実際の描画
 
+	particleManager->DrawAll();
+
 	renderTexture->EndRender();
 
 	// ---------- SwapChainへの描画 ----------
 	directXBasis->DrawBegin();
 
-	//srvManager->BeginDraw();
-
-	// 描画コマンド
-	sceneManager_->Draw();
-	//ParticleClass::GetInstance()->Draw();
-	particleManager->DrawAll();
-
+	copyPass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
 	// ImGuiはSwapChainに描く（上書き）
 	imgui->Draw();
+
 
 	directXBasis->DrawEnd();
 }

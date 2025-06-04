@@ -7,10 +7,19 @@
 
 class ParticleManager {
 public:
-    void Add(std::unique_ptr<IParticleRenderer> particle);
+    static ParticleManager* GetInstance() {
+        static ParticleManager instance;
+        return &instance;
+    }
+    int Add(std::unique_ptr<IParticleRenderer> particle);
     void InitializeAll(DirectXBasis* dx, SrvManager* srv, Camera* cam);
     void UpdateAll();
     void DrawAll();
+
+public:
+    void SetEmitter(int index, IParticleRenderer::Emitter& emitter);
+
+    void TriggerEmit(int index, bool flag);
 
 private:
     std::vector<std::unique_ptr<IParticleRenderer>> particles_;

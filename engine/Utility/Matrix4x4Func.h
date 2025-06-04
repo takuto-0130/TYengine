@@ -31,6 +31,8 @@ Matrix4x4 MakeRotateYMatrix(float radian);
 //Z軸
 Matrix4x4 MakeRotateZMatrix(float radian);
 
+Matrix4x4 MakeRotateXYZMatrix(const Vector3& rotate);
+
 //アフィン変換3D
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
@@ -52,4 +54,4 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 
 Vector3 TransformM(const Vector3& vector, const Matrix4x4& matrix);
 
-
+Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraView);

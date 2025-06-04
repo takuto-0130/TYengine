@@ -22,6 +22,6 @@ public: // メンバ変数
 private:
 	Input* input = nullptr;
 
-	std::unique_ptr<ParticleManager> particleManager;
+	ParticleManager* particleManager;
 };
 

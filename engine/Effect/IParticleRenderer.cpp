@@ -1,7 +1,10 @@
 #include "IParticleRenderer.h"
 #include "operatorOverload.h"
 #include <numbers>
+#ifdef _DEBUG
 #include <imgui.h>
+#endif // _DEBUG
+
 
 void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam) {
     dxBasis_ = dx;
@@ -20,10 +23,17 @@ void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, Camera* ca
 
 void IParticleRenderer::Update() {
     std::mt19937 random(seedGene_());
+
+    Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
+    Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, camera_->GetWorldMatrix());
+    billboardMatrix.m[3][0] = 0.0f;
+    billboardMatrix.m[3][1] = 0.0f;
+    billboardMatrix.m[3][2] = 0.0f;
+
     numInstance_ = 0;
 
     emitter_.frequencyTime += kDeltaTime;
-    if (emitter_.frequencyTime >= emitter_.frequency) {
+    if (!useTrigger_ &&  emitter_.frequencyTime >= emitter_.frequency) {
         particles_.splice(particles_.end(), Emit(random));
         emitter_.frequencyTime -= emitter_.frequency;
     }
@@ -36,9 +46,21 @@ void IParticleRenderer::Update() {
             it = particles_.erase(it);
             continue;
         }
+#ifdef _DEBUG
+        ImGui::Begin("parti");
+        ImGui::DragFloat3("tra", &it->transform.translate.x);
+        ImGui::End();
+#endif // _DEBUG
+
 
         if (numInstance_ < kMaxInstance) {
             Matrix4x4 world = MakeAffineMatrix(it->transform.scale, it->transform.rotate, it->transform.translate);
+            if (useBillboard_) {
+                world = MakeScaleMatrix(it->transform.scale) 
+                    * billboardMatrix
+                    * MakeRotateZMatrix(it->transform.rotate.z)
+                    * MakeTranslateMatrix(it->transform.translate);
+            }
             Matrix4x4 WVP = world * camera_->GetViewProjectionMatrix();
             instancingData_[numInstance_].WVP = WVP;
             instancingData_[numInstance_].World = world;
@@ -70,12 +92,21 @@ void IParticleRenderer::Draw() {
     cmd->DrawInstanced(vertexCount_, numInstance_, 0, 0);
 }
 
-IParticleRenderer::ParticleP IParticleRenderer::MakeNewParticle(std::mt19937& random, const Vector3& translate) {
+void IParticleRenderer::TriggerEmit()
+{
+    if(useTrigger_)
+    {
+        std::mt19937 random(seedGene_());
+        particles_.splice(particles_.end(), Emit(random));
+    }
+}
+
+IParticleRenderer::ParticleP IParticleRenderer::MakeNewParticle(std::mt19937& random, const Emitter& emitter) {
     ParticleP parti;
     std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
     parti.transform.scale = { 1.f,1.f,1.f };
     parti.transform.rotate = { 0.f,0.f,0.f };
-    parti.transform.translate = Vector3{ dist(random),dist(random),dist(random) } + translate;
+    parti.transform.translate = Vector3{ dist(random),dist(random),dist(random) } + emitter.transform.translate;
     parti.velocity = { dist(random),dist(random),dist(random) };
 
     std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
@@ -91,7 +122,7 @@ IParticleRenderer::ParticleP IParticleRenderer::MakeNewParticle(std::mt19937& ra
 std::list<IParticleRenderer::ParticleP> IParticleRenderer::Emit(std::mt19937& random) {
     std::list<ParticleP> result;
     for (uint32_t i = 0; i < emitter_.count; ++i) {
-        result.push_back(MakeNewParticle(random, emitter_.transform.translate));
+        result.push_back(MakeNewParticle(random, emitter_));
     }
     return result;
 }

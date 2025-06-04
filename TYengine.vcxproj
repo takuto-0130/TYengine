@@ -109,12 +109,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\GameScene.cpp" />
     <ClCompile Include="application\Rail\Rail.cpp" />
     <ClCompile Include="application\Skydome\Skydome.cpp" />
+    <ClCompile Include="application\Object\Enemy.cpp" />
+    <ClCompile Include="application\Object\EnemyEditor.cpp" />
     <ClCompile Include="engine\Effect\CylinderParticle.cpp" />
     <ClCompile Include="engine\Audio\Audio.cpp" />
     <ClCompile Include="engine\Camera\Camera.cpp" />
     <ClCompile Include="engine\Debugger\ImGuiManager.cpp" />
     <ClCompile Include="engine\Effect\IParticleRenderer.cpp" />
-    <ClCompile Include="engine\Effect\ParticleClass.cpp" />
     <ClCompile Include="engine\EngineCore\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\EngineCore\DirectXBasis.cpp" />
     <ClCompile Include="engine\EngineCore\Logger.cpp" />
@@ -152,18 +153,20 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\Effect\ParticleManager.cpp" />
     <ClCompile Include="engine\Effect\PlaneParticle.cpp" />
     <ClCompile Include="engine\Effect\RingParticle.cpp" />
+    <ClCompile Include="application\Rail\RailEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\GameScene.h" />
     <ClInclude Include="application\Object\BaseObject.h" />
     <ClInclude Include="application\Rail\Rail.h" />
     <ClInclude Include="application\Skydome\Skydome.h" />
+    <ClInclude Include="application\Object\Enemy.h" />
+    <ClInclude Include="application\Object\EnemyEditor.h" />
     <ClInclude Include="engine\Effect\CylinderParticle.h" />
     <ClInclude Include="engine\Audio\Audio.h" />
     <ClInclude Include="engine\Camera\Camera.h" />
     <ClInclude Include="engine\Debugger\ImGuiManager.h" />
     <ClInclude Include="engine\Effect\IParticleRenderer.h" />
-    <ClInclude Include="engine\Effect\ParticleClass.h" />
     <ClInclude Include="engine\EngineCore\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\EngineCore\DirectXBasis.h" />
     <ClInclude Include="engine\EngineCore\Logger.h" />
@@ -204,6 +207,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Effect\ParticleManager.h" />
     <ClInclude Include="engine\Effect\PlaneParticle.h" />
     <ClInclude Include="engine\Effect\RingParticle.h" />
+    <ClInclude Include="application\Rail\RailEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

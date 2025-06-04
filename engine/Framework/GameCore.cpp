@@ -1,5 +1,4 @@
 #include "GameCore.h"
-#include "ParticleClass.h"
 #include "Audio/Audio.h"
 #include "SceneFactory.h"
 
@@ -42,47 +41,32 @@ void GameCore::Initialize()
 	sceneManager_->ChangeScene("TITLE");
 
 	//ParticleClass::GetInstance()->Initialize(directXBasis, srvManager.get(), camera.get());
-	particleManager = std::make_unique<ParticleManager>();
+	particleManager = ParticleManager::GetInstance();
 
 	auto plane = std::make_unique<PlaneParticle>();
 	auto ring = std::make_unique<RingParticle>();
 	auto cylinder = std::make_unique<CylinderParticle>();
 
-	//particleManager->Add(std::move(plane));
-	//particleManager->Add(std::move(ring));
-	particleManager->Add(std::move(cylinder));
+	int index = particleManager->Add(std::move(plane));
+	int indexRing = particleManager->Add(std::move(ring));
+	// particleManager->Add(std::move(cylinder));
 
 	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
+	IParticleRenderer::Emitter emitter;
+	emitter.transform.scale = { 0.05f,1.0f,1.0f };
+	emitter.transform.rotate = { 0,0.0f,0 };
+	emitter.transform.translate = { 0,0,0 };
+	emitter.count = 5;
+	emitter.frequency = 1.5f;
+	particleManager->SetEmitter(index, emitter);
 
-	// ParticleManager の作成と初期化
-	//particleManager = std::make_unique<ParticleManager>();
-	//particleManager->Initialize(directXBasis, srvManager.get());
-
-	//// ParticleSystem の作成
-	//auto* system = particleManager->CreateSystem("Test");
-
-	//// エミッタの作成と設定
-	//auto emitter = std::make_unique<ConeEmitter>();
-	//emitter->transform.translate = { 0, 0, 0 }; // 発生位置
-	//emitter->count = 50;                        // 一度に出す数
-	////emitter->angle = 360.0f;                    // 全方向に発射
-	////emitter->speed = 0.05f;                     // 速度
-	//system->SetEmitter(std::move(emitter));
-
-	//// アップデーターの設定
-	//system->AddUpdater(std::make_unique<AlphaFadeUpdater>());
-
-	//// レンダラーの設定
-	//auto renderer = std::make_unique<BillboardRenderer>(camera.get(), srvManager.get());
-	//renderer->Initialize();
-
-	//// テクスチャを読み込み、インデックスを設定
-	//TextureManager::GetInstance()->LoadTexture("Resources/circle.png");
-	//int texIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath("Resources/circle.png");
-	//renderer->SetTextureIndex(texIndex);
-
-	//// レンダラーをシステムに設定
-	//system->SetRenderer(std::move(renderer));
+	IParticleRenderer::Emitter emitterRing;
+	emitterRing.transform.scale = { 0.5f,0.5f,0.5f };
+	emitterRing.transform.rotate = { 0,0.0f,0 };
+	emitterRing.transform.translate = { 0,0,0 };
+	emitterRing.count = 4;
+	emitterRing.frequency = 1.5f;
+	particleManager->SetEmitter(indexRing, emitterRing);
 }
 
 void GameCore::Finalize()

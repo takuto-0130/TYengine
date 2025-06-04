@@ -17,13 +17,14 @@ void CylinderParticle::CreateResources() {
         Vector3 na = { std::cos(a), 0.0f, std::sin(a) };
         Vector3 nb = { std::cos(b), 0.0f, std::sin(b) };
 
-        vertices.push_back({ { ta.x, ta.y, ta.z, 1.0f }, { 0.0f, 0.0f }, na });
-        vertices.push_back({ { ba.x, ba.y, ba.z, 1.0f }, { 0.0f, 1.0f }, na });
-        vertices.push_back({ { tb.x, tb.y, tb.z, 1.0f }, { 1.0f, 0.0f }, nb });
+        // uvを反転している
+        vertices.push_back({ { ta.x, ta.y, ta.z, 1.0f }, { 1.0f, 1.0f }, na });
+        vertices.push_back({ { ba.x, ba.y, ba.z, 1.0f }, { 1.0f, 0.0f }, na });
+        vertices.push_back({ { tb.x, tb.y, tb.z, 1.0f }, { 0.0f, 1.0f }, nb });
 
-        vertices.push_back({ { tb.x, tb.y, tb.z, 1.0f }, { 1.0f, 0.0f }, nb });
-        vertices.push_back({ { ba.x, ba.y, ba.z, 1.0f }, { 0.0f, 1.0f }, na });
-        vertices.push_back({ { bb.x, bb.y, bb.z, 1.0f }, { 1.0f, 1.0f }, nb });
+        vertices.push_back({ { tb.x, tb.y, tb.z, 1.0f }, { 0.0f, 1.0f }, nb });
+        vertices.push_back({ { ba.x, ba.y, ba.z, 1.0f }, { 1.0f, 0.0f }, na });
+        vertices.push_back({ { bb.x, bb.y, bb.z, 1.0f }, { 0.0f, 0.0f }, nb });
     }
 
     vertexResource_ = dxBasis_->CreateBufferResource(sizeof(VertexData) * vertices.size());

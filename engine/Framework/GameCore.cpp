@@ -1,7 +1,16 @@
 #include "GameCore.h"
-#include "ParticleClass.h"
 #include "Audio/Audio.h"
 #include "SceneFactory.h"
+
+#include "PlaneParticle.h"
+#include "RingParticle.h"
+#include "CylinderParticle.h"
+
+//#include "SimpleUpdater.h"
+//#include "BillboardRenderer.h"
+//#include "ConeEmitter.h"
+//#include "AlphaFadeUpdater .h"
+
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG
@@ -11,19 +20,19 @@ void GameCore::Initialize()
 	TYFrameWork::Initialize();
 
 	imgui = ImGuiManager::GetInstance();
-	imgui->Initialize(windowsApp.get(), directXBasis.get());
+	imgui->Initialize(windowsApp.get(), directXBasis);
 
 	spriteBasis = SpriteBasis::GetInstance();
-	spriteBasis->Initialize(directXBasis.get());
+	spriteBasis->Initialize(directXBasis);
 
 	camera = std::make_unique<Camera>();
 
 	object3dBasis = Object3dBasis::GetInstance();
-	object3dBasis->Initialize(directXBasis.get());
+	object3dBasis->Initialize(directXBasis);
 	object3dBasis->SetDefaultCamera(camera.get());
 
 	modelManager = ModelManager::GetInstance();
-	modelManager->Initialize(directXBasis.get(), srvManager.get());
+	modelManager->Initialize(directXBasis, srvManager.get());
 
 	Audio::GetInstance()->Initialize();
 
@@ -31,14 +40,40 @@ void GameCore::Initialize()
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 	sceneManager_->ChangeScene("TITLE");
 
-	ParticleClass::GetInstance()->Initialize(directXBasis.get(), srvManager.get(), camera.get());
+	//ParticleClass::GetInstance()->Initialize(directXBasis, srvManager.get(), camera.get());
+	particleManager = ParticleManager::GetInstance();
+
+	auto plane = std::make_unique<PlaneParticle>();
+	auto ring = std::make_unique<RingParticle>();
+	auto cylinder = std::make_unique<CylinderParticle>();
+
+	int index = particleManager->Add(std::move(plane));
+	int indexRing = particleManager->Add(std::move(ring));
+	// particleManager->Add(std::move(cylinder));
+
+	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
+	IParticleRenderer::Emitter emitter;
+	emitter.transform.scale = { 0.05f,1.0f,1.0f };
+	emitter.transform.rotate = { 0,0.0f,0 };
+	emitter.transform.translate = { 0,0,0 };
+	emitter.count = 5;
+	emitter.frequency = 1.5f;
+	particleManager->SetEmitter(index, emitter);
+
+	IParticleRenderer::Emitter emitterRing;
+	emitterRing.transform.scale = { 0.5f,0.5f,0.5f };
+	emitterRing.transform.rotate = { 0,0.0f,0 };
+	emitterRing.transform.translate = { 0,0,0 };
+	emitterRing.count = 4;
+	emitterRing.frequency = 1.5f;
+	particleManager->SetEmitter(indexRing, emitterRing);
 
 
 	renderTexture = std::make_unique<RenderTexture>();
-	renderTexture->Initialize(directXBasis.get(), srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1,0,0,1 });
+	renderTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1,0,0,1 });
 
 	copyPass = std::make_unique<CopyPass>();
-	copyPass->Initialize(directXBasis.get(), srvManager.get(), L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/RadialBlur.PS.hlsl");
+	copyPass->Initialize(directXBasis, srvManager.get(), L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
 }
 
 void GameCore::Finalize()
@@ -56,6 +91,8 @@ void GameCore::Update()
 	else { //ゲーム処理
 		imgui->Begin();
 		TYFrameWork::Update();
+		//ParticleClass::GetInstance()->Update();
+		particleManager->UpdateAll();
 		camera->Update();
 		copyPass->Update();
 		/// ↓更新処理ここから
@@ -77,7 +114,12 @@ void GameCore::Draw()
 	// ---------- SwapChainへの描画 ----------
 	directXBasis->DrawBegin();
 
-	copyPass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle()); 
+	//srvManager->BeginDraw();
+
+	// 描画コマンド
+	sceneManager_->Draw();
+	//ParticleClass::GetInstance()->Draw();
+	particleManager->DrawAll();
 
 	// ImGuiはSwapChainに描く（上書き）
 	imgui->Draw();

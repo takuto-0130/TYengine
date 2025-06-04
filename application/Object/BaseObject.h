@@ -24,7 +24,7 @@ public:
 	virtual void Draw() = 0;
 
 
-private:
+protected:
 	// 3Dオブジェクト
 	std::unique_ptr<Object3d> obj_;
 

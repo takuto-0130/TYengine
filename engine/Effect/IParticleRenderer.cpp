@@ -84,8 +84,8 @@ void IParticleRenderer::Draw() {
     cmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     cmd->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-    srvManager_->SetGraphicsRootDescriptorTable(1, srvIndex_);
-    srvManager_->SetGraphicsRootDescriptorTable(2, textureIndex_);
+    srvManager_->SetGraphicsRootDescriptorTable(cmd, 1, srvIndex_);
+    srvManager_->SetGraphicsRootDescriptorTable(cmd, 2, textureIndex_);
     cmd->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
     cmd->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
 

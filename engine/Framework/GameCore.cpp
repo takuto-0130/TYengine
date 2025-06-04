@@ -67,6 +67,13 @@ void GameCore::Initialize()
 	emitterRing.count = 4;
 	emitterRing.frequency = 1.5f;
 	particleManager->SetEmitter(indexRing, emitterRing);
+
+
+	renderTexture = std::make_unique<RenderTexture>();
+	renderTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1,0,0,1 });
+
+	copyPass = std::make_unique<CopyPass>();
+	copyPass->Initialize(directXBasis, srvManager.get(), L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
 }
 
 void GameCore::Finalize()
@@ -87,7 +94,7 @@ void GameCore::Update()
 		//ParticleClass::GetInstance()->Update();
 		particleManager->UpdateAll();
 		camera->Update();
-
+		copyPass->Update();
 		/// ↓更新処理ここから
 
 		imgui->End();
@@ -96,16 +103,23 @@ void GameCore::Update()
 
 void GameCore::Draw()
 {
-	///// 描画処理
-	directXBasis->DrawBegin();
+	// ---------- オフスクリーン描画 ----------
+	renderTexture->BeginRender();
 
-	srvManager->BeginDraw();
+	srvManager->BeginDraw(); // SRVマネージャでIDリセットなど
+	sceneManager_->Draw();   // 実際の描画
 
-	// 描画コマンド
-	sceneManager_->Draw();
-	//ParticleClass::GetInstance()->Draw();
 	particleManager->DrawAll();
 
+	renderTexture->EndRender();
+
+	// ---------- SwapChainへの描画 ----------
+	directXBasis->DrawBegin();
+
+	copyPass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
+	// ImGuiはSwapChainに描く（上書き）
 	imgui->Draw();
+
+
 	directXBasis->DrawEnd();
 }

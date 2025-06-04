@@ -65,17 +65,16 @@ void WindowsApp::Initialize()
 bool WindowsApp::ProcessMessage()
 {
 	MSG msg{};
-
-	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
+		if (msg.message == WM_QUIT)
+		{
+			return true; // WM_QUIT を検出した時点で true を返す
+		}
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-
-	if (msg.message == WM_QUIT) {
-		return true;
-	}
-	return false;
+	return false; // 終了メッセージが無ければ false のまま
 }
 
 void WindowsApp::Finalize()

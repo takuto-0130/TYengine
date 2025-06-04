@@ -35,9 +35,15 @@ void Model::Draw(WorldTransform& transform, Camera* camera)
 	transform.SetMapWVP(modelData_.rootNode.localMatrix * worldViewProjectionMatrix);
 	transform.SetMapWorld(modelData_.rootNode.localMatrix * transform.GetMatWorld());
 
+	ID3D12DescriptorHeap* heaps[] = {
+	TextureManager::GetInstance()->GetSrvManager()->GetHeap(),
+	modelLoader_->GetDirectXBasis()->GetSamplerHeap()
+	};
+	modelLoader_->GetDirectXBasis()->GetCommandList()->SetDescriptorHeaps(_countof(heaps), heaps);
+
 	modelLoader_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transform.GetConstBuffer()->GetGPUVirtualAddress());
 	modelLoader_->GetDirectXBasis()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	modelLoader_->GetSrvManager()->SetGraphicsRootDescriptorTable(2, modelData_.material.textureIndex);
+	modelLoader_->GetSrvManager()->SetGraphicsRootDescriptorTable(modelLoader_->GetDirectXBasis()->GetCommandList(), 2, modelData_.material.textureIndex);
 	
 	modelLoader_->GetDirectXBasis()->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
 }

@@ -23,18 +23,15 @@ void GameScene::Init()
 {
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
-	worldTransform_.Initialize();
+
 	ModelManager::GetInstance()->LoadModel("Resources", "skydome.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "cube.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "unitSphere.obj");
 	
 	Audio::GetInstance()->LoadWave("fanfare");
 
-	obj_ = std::make_unique<Object3d>();
-	obj_->Initialize();
-	obj_->SetModel("cube.obj");
-
-	enemyEditor_ = std::make_unique<EnemyEditor>(&enemyGroups_);
+	enemyEditor_ = std::make_unique<EnemyEditor>(&enemyGroupsEditor_);
+	enemyGroups_ = DeepCopyEnemyGroups(enemyGroupsEditor_);
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
@@ -78,6 +75,20 @@ void GameScene::Init()
 	isRailCameraMove_ = true;
 #endif // _DEBUG
 
+	scoreDraw_ = std::make_unique<score>();
+	scoreDraw_->Initialze();
+
+	TextureManager::GetInstance()->LoadTexture("Resources/reticle.png");
+	reticle_ = std::make_unique<Sprite>();
+	reticle_->Initialize("Resources/reticle.png");
+	reticle_->SetAnchorPoint({ 0.5f,0.5f });
+
+	TextureManager::GetInstance()->LoadTexture("Resources/white2x2.png");
+	for (size_t i = 0; i < 2; ++i) {
+		lasers_[i] = std::make_unique<Sprite>();
+		lasers_[i]->Initialize("Resources/white2x2.png");
+		lasers_[i]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+	}
 
 }
 
@@ -87,7 +98,7 @@ void GameScene::Update()
 	RailCustom();
 	skydome_->Update();
 
-	if (input_->IsTriggerMouse(0)) Collision();
+	if (input_->PushKey(DIK_SPACE)) Collision();
 
 	activeEnemies_.remove_if([](const std::unique_ptr<Enemy>& e) 
 		{
@@ -115,8 +126,25 @@ void GameScene::Update()
 	{
 		comboTimer_ -= 1.0f / 60.0f;
 	}
+
+	scoreDraw_->Update();
+
+	Vector2 mouse = input_->GetMousePosition();
+#ifdef _DEBUG
+	ImGui::Begin("a");
+	ImGui::DragFloat2("b", &mouse.x, 0.1f);
+	ImGui::InputInt("score", &score_);
+	ImGui::Checkbox("Show Editor Enemies", &showEditorEnemies);
+	ImGui::End();
+#endif // _DEBUG
+	for (size_t i = 0; i < 2; ++i) {
+		lasers_[i]->Update();
+	}
+	reticle_->SetPosition(mouse);
+	reticle_->Update();
 	
 #ifdef _DEBUG
+	UpdateEditorEnemies();
 #else
 	RailCameraMove();
 #endif // _DEBUG
@@ -131,16 +159,29 @@ void GameScene::Draw()
 	{
 		rail->Draw();
 	}
-	/*for (auto& trigger : triggerObjects_)
-	{
-		trigger->object.Draw(trigger->world);
-	}*/
 
-	for (auto& enemy : activeEnemies_) {
-		enemy->Draw();
+	if (showEditorEnemies) {
+		DrawEditorEnemies();
+	}
+	else
+	{
+		for (auto& enemy : activeEnemies_) {
+			enemy->Draw();
+		}
 	}
 
 	SpriteBasis::GetInstance()->BasisDrawSetting();
+
+	Vector2 mouse = input_->GetMousePosition();
+	if (input_->PushKey(DIK_SPACE)) {
+		for (size_t i = 0; i < 2; ++i) {
+			lasers_[i]->DrawRect(mouse, mouse,
+				{ 426.7f * float(1 + i) - 20.0f, 720 },
+				{ 426.7f * float(1 + i) + 20.0f, 720 });
+		}
+	}
+	//reticle_->Draw();
+	scoreDraw_->Draw();
 }
 
 void GameScene::CheckAllCollisions()
@@ -326,6 +367,8 @@ void GameScene::Collision()
 			if (comboTimer_ <= 0) comboCount_ = 0;
 
 			comboCount_++;
+			score_ += kBasicScore_ * comboCount_;
+			scoreDraw_->SetScore(score_);
 			comboTimer_ = kComboTime_;
 			enemy->IsCollision();
 			emitter.transform.translate = enemy->GetWorldPosition();
@@ -340,3 +383,44 @@ void GameScene::Collision()
 		i++;
 	}
 }
+
+std::list<std::list<std::unique_ptr<Enemy>>> GameScene::DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src) {
+	std::list<std::list<std::unique_ptr<Enemy>>> copy;
+
+	for (const auto& group : src) {
+		std::list<std::unique_ptr<Enemy>> newGroup;
+		for (const auto& enemy : group) {
+			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
+			newEnemy->Init();
+			newEnemy->SetPos(enemy->GetWorldPosition());
+			newGroup.push_back(std::move(newEnemy));
+		}
+		copy.push_back(std::move(newGroup));
+	}
+
+	return copy;
+}
+
+#ifdef _DEBUG
+void GameScene::DrawEditorEnemies()
+{
+	for (const auto& group : enemyGroupsEditor_)
+	{
+		for (const auto& enemy : group)
+		{
+			enemy->Draw();
+		}
+	}
+}
+
+void GameScene::UpdateEditorEnemies()
+{
+	for (const auto& group : enemyGroupsEditor_)
+	{
+		for (const auto& enemy : group) 
+		{
+			enemy->Update(); // worldTransform.TransferMatrix()
+		}
+	}
+}
+#endif

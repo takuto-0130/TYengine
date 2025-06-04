@@ -14,6 +14,9 @@
 #include "Object/EnemyEditor.h"
 #include "Skydome/Skydome.h"
 #include "ParticleManager.h"
+#include "./Score/score.h"
+
+
 #include <memory>
 #include <vector>
 #include <list>
@@ -45,6 +48,14 @@ private:
 
 	void Collision();
 
+	std::list<std::list<std::unique_ptr<Enemy>>> DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src);
+
+#ifdef _DEBUG
+	void DrawEditorEnemies();
+	void UpdateEditorEnemies();
+#endif // _DEBUG
+
+
 private:
 	float pitch_ = 1.0f;
 	Vector3 cameraOffset_;
@@ -53,11 +64,10 @@ private:
 	bool isEffect_ = false;
 #endif
 
-	WorldTransform worldTransform_;
-	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Skydome> skydome_;
 	std::list<std::unique_ptr<Rail>> rails_;
 
+	std::list<std::list<std::unique_ptr<Enemy>>> enemyGroupsEditor_; // 編集用
 	std::list<std::list<std::unique_ptr<Enemy>>> enemyGroups_; // 全グループ（未出現）
 	std::list<std::unique_ptr<Enemy>> activeEnemies_;          // 今出現中の敵
 	std::unique_ptr<EnemyEditor> enemyEditor_;				   // 敵のエディタ
@@ -108,4 +118,15 @@ private:
 
 
 	IParticleRenderer::Emitter emitterRing;
+
+
+	std::unique_ptr<score> scoreDraw_;
+	int32_t score_ = 0;
+	const int32_t kBasicScore_ = 200;
+
+	std::unique_ptr<Sprite> reticle_;
+
+	std::array<std::unique_ptr<Sprite>, 2> lasers_;
+
+	bool showEditorEnemies = false;
 };

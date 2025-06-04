@@ -7,6 +7,7 @@ void Skydome::Initialize() {
 	skydome->SetModel("skydome.obj");
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { 500.0f, 500.0f, 500.0f };
+	skydome->SetIsLighting(false);
 }
 
 void Skydome::Update() {

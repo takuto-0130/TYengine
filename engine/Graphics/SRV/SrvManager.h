@@ -1,36 +1,71 @@
 #pragma once
-#include "DirectXBasis.h"
-class SrvManager
-{
-public: // メンバ関数
-	// 初期化
-	void Initialize(DirectXBasis* dxbasis);
-	// 確保
-	uint32_t Allocate();
-	void BeginDraw();
-	// SRVの確保が可能かどうかをチェックする関数
-	bool CanAllocate() const;
+#include <wrl.h>
+#include <d3d12.h>
+#include <vector>
+#include <cstdint>
+#include <unordered_map>
 
+class DirectXBasis;
+
+class SrvManager {
 public:
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
+    void Initialize(DirectXBasis* dxBasis, uint32_t maxDescriptors = 256);
 
-	// SRV生成 (テクスチャ用)
-	void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT MipLevels);
-	// SRV生成 (Structured Buffer用)
-	void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride);
+    uint32_t Allocate();
+    bool CanAllocate() const;
 
-	void SetGraphicsRootDescriptorTable(UINT PootParameterIndex, uint32_t srvIndex);
+    void CreateSRVforTexture2D(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels);
+    void CreateSRVforStructuredBuffer(uint32_t index, ID3D12Resource* resource, UINT elementCount, UINT elementSize);
 
+    void SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndex, uint32_t index);
 
-public:
-	// 最大SRV数
-	static const uint32_t kMaxCount;
+    D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index) const;
+    D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index) const;
+    ID3D12DescriptorHeap* GetHeap() const { return srvHeap_.Get(); }
+
+    void BeginDraw();
+
 private:
-	DirectXBasis* dxBasis_ = nullptr;
-
-	static inline uint32_t descriptorSize_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_ = nullptr;
-	uint32_t useIndex_ = 0;
+    DirectXBasis* dxBasis_ = nullptr;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
+    uint32_t descriptorSize_ = 0;
+    uint32_t currentIndex_ = 0;
+    uint32_t maxIndex_ = 0;
 };
+
+//#pragma once
+//#include "DirectXBasis.h"
+//class SrvManager
+//{
+//public: // メンバ関数
+//	// 初期化
+//	void Initialize(DirectXBasis* dxbasis);
+//	// 確保
+//	uint32_t Allocate();
+//	void BeginDraw();
+//	// SRVの確保が可能かどうかをチェックする関数
+//	bool CanAllocate() const;
+//
+//public:
+//	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
+//	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
+//
+//	// SRV生成 (テクスチャ用)
+//	void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT MipLevels);
+//	// SRV生成 (Structured Buffer用)
+//	void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride);
+//
+//	void SetGraphicsRootDescriptorTable(UINT PootParameterIndex, uint32_t srvIndex);
+//
+//
+//public:
+//	// 最大SRV数
+//	static const uint32_t kMaxCount;
+//private:
+//	DirectXBasis* dxBasis_ = nullptr;
+//
+//	static inline uint32_t descriptorSize_;
+//	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_ = nullptr;
+//	uint32_t useIndex_ = 0;
+//};
 

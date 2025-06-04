@@ -24,8 +24,8 @@ void GameScene::Init()
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 	worldTransform_.Initialize();
-	ModelManager::GetInstance()->LoadModel("Resources", "cube.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "skydome.obj");
+	ModelManager::GetInstance()->LoadModel("Resources", "cube.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "unitSphere.obj");
 	
 	Audio::GetInstance()->LoadWave("fanfare");

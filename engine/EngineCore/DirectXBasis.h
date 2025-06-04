@@ -14,6 +14,10 @@
 class DirectXBasis
 {
 public: // メンバ関数
+	static DirectXBasis* GetInstance() {
+		static DirectXBasis instance;
+		return &instance;
+	}
 	// 初期化
 	void Initialize(WindowsApp* windowsApp);
 

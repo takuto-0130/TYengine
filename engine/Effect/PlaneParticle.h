@@ -1,0 +1,14 @@
+#pragma once
+#include "IParticleRenderer.h"
+
+class PlaneParticle : public IParticleRenderer {
+public:
+    /*void Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam) override;
+    void Update() override;
+    void Draw() override;*/
+
+private:
+
+    void CreateResources() override;
+    ParticleP MakeNewParticle(std::mt19937& random, const Emitter& emitter) override;
+};

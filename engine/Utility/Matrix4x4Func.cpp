@@ -169,6 +169,16 @@ Matrix4x4 MakeRotateZMatrix(float radian) {
 	return result;
 }
 
+Matrix4x4 MakeRotateXYZMatrix(const Vector3& rotate) {
+	Matrix4x4 result{};
+	Matrix4x4 rotareXMatrix = MakeRotateXMatrix(rotate.x);
+	Matrix4x4 rotareYMatrix = MakeRotateYMatrix(rotate.y);
+	Matrix4x4 rotareZMatrix = MakeRotateZMatrix(rotate.z);
+	result = Multiply(rotareXMatrix, Multiply(rotareYMatrix, rotareZMatrix));
+	return result;
+}
+
+
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
 	Matrix4x4 result{};
 	Matrix4x4 rotareXMatrix = MakeRotateXMatrix(rotate.x);
@@ -266,4 +276,33 @@ Vector3 TransformM(const Vector3& vector, const Matrix4x4& matrix) {
 	result.y /= w;
 	result.z /= w;
 	return result;
+}
+
+Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraView)
+{
+	Matrix4x4 result = {};
+
+	// カメラの回転成分だけを使う（平行移動とスケーリングを除く）
+	result.m[0][0] = cameraView.m[0][0];
+	result.m[0][1] = cameraView.m[1][0];
+	result.m[0][2] = cameraView.m[2][0];
+	result.m[0][3] = 0.0f;
+
+	result.m[1][0] = cameraView.m[0][1];
+	result.m[1][1] = cameraView.m[1][1];
+	result.m[1][2] = cameraView.m[2][1];
+	result.m[1][3] = 0.0f;
+
+	result.m[2][0] = cameraView.m[0][2];
+	result.m[2][1] = cameraView.m[1][2];
+	result.m[2][2] = cameraView.m[2][2];
+	result.m[2][3] = 0.0f;
+
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
+
+	// 転置（ビュー行列の逆回転になる）
+	return Transpose(result);
 }

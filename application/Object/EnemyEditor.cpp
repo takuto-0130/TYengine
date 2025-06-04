@@ -93,7 +93,7 @@ void EnemyEditor::DrawEditorUI() {
             int enemyIdx = 0;
             for (auto& enemy : *groupIt) {
                 Vector3 pos = enemy->GetWorldPosition();
-                ImGui::PushID(enemyIdx);
+                ImGui::PushID(("Group" + std::to_string(groupIdx) + "_Enemy" + std::to_string(enemyIdx)).c_str());
                 if (ImGui::DragFloat3("Position", &pos.x, 0.1f)) {
                     enemy->SetPos(pos);
                 }

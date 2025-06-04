@@ -1,4 +1,6 @@
 #include "PlaneParticle.h"
+#include <numbers>
+#include "operatorOverload.h"
 
 void PlaneParticle::CreateResources() {
     std::vector<VertexData> vertices = {
@@ -40,7 +42,7 @@ void PlaneParticle::CreateResources() {
 
 PlaneParticle::ParticleP PlaneParticle::MakeNewParticle(std::mt19937& random, const Emitter& emitter) {
     ParticleP parti;
-    std::uniform_real_distribution<float> distScale(0.6f, 1.4f);
+    std::uniform_real_distribution<float> distScale(0.2f, 0.8f);
     parti.transform.scale = { emitter.transform.scale.x,distScale(random), emitter.transform.scale.z};
     std::uniform_real_distribution<float> distRota(0.0f, 2.0f * std::numbers::pi_v<float>);
     parti.transform.rotate = { 0.f,0.f,distRota(random) };
@@ -55,4 +57,55 @@ PlaneParticle::ParticleP PlaneParticle::MakeNewParticle(std::mt19937& random, co
     parti.currentTime = 0.0f;
 
     return parti;
+}
+
+void PlaneParticle::Update() {
+    std::mt19937 random(seedGene_());
+
+    Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
+    Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, camera_->GetWorldMatrix());
+    billboardMatrix.m[3][0] = 0.0f;
+    billboardMatrix.m[3][1] = 0.0f;
+    billboardMatrix.m[3][2] = 0.0f;
+
+    numInstance_ = 0;
+
+    emitter_.frequencyTime += kDeltaTime;
+    if (!useTrigger_ && emitter_.frequencyTime >= emitter_.frequency) {
+        particles_.splice(particles_.end(), Emit(random));
+        emitter_.frequencyTime -= emitter_.frequency;
+    }
+
+    for (auto it = particles_.begin(); it != particles_.end();) {
+        it->currentTime += kDeltaTime;
+        it->transform.translate += it->velocity * kDeltaTime;
+        float t = it->currentTime / it->lifeTime;
+        t = powf(t, 3.0f);
+        float scaleF = 2.0f;
+        scaleF = scaleF * t;
+        Vector3 scale = it->transform.scale;
+        scale.y += scaleF;
+
+        if (it->currentTime >= it->lifeTime) {
+            it = particles_.erase(it);
+            continue;
+        }
+
+        if (numInstance_ < kMaxInstance) {
+            Matrix4x4 world = MakeAffineMatrix(scale, it->transform.rotate, it->transform.translate);
+            if (useBillboard_) {
+                world = MakeScaleMatrix(scale)
+                    * billboardMatrix
+                    * MakeRotateZMatrix(it->transform.rotate.z)
+                    * MakeTranslateMatrix(it->transform.translate);
+            }
+            Matrix4x4 WVP = world * camera_->GetViewProjectionMatrix();
+            instancingData_[numInstance_].WVP = WVP;
+            instancingData_[numInstance_].World = world;
+            instancingData_[numInstance_].color = it->color;
+            instancingData_[numInstance_].color.w *= (1.0f - (it->currentTime / it->lifeTime));
+            ++numInstance_;
+        }
+        ++it;
+    }
 }

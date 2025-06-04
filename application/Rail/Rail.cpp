@@ -26,6 +26,7 @@ void Rail::Update()
 
 void Rail::Draw() 
 {
+
 	rail_->Draw(worldTransform_);
 }
 

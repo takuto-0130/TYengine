@@ -2,38 +2,38 @@
 
 // LuminanceBasedOutline.PS
 Texture2D<float4> gTexture : register(t0);
-SamplerState gSamplerLinear : register(s0);
+SamplerState gSampler : register(s0);
+//SamplerState gSamplerLinear : register(s1);
 
 struct PixelShaderOutput
 {
     float4 color : SV_TARGET0;
 };
 
+// Prewittカーネル定義
+static const float kPrewittHorizontalKernel[3][3] = {
+    { -1.0f / 6.0f,  0.0f, 1.0f / 6.0f },
+    { -1.0f / 6.0f,  0.0f, 1.0f / 6.0f },
+    { -1.0f / 6.0f,  0.0f, 1.0f / 6.0f },
+};
+
+static const float kPrewittVerticalKernel[3][3] = {
+    { -1.0f / 6.0f, -1.0f / 6.0f, -1.0f / 6.0f },
+    {  0.0f,         0.0f,         0.0f },
+    {  1.0f / 6.0f,  1.0f / 6.0f,  1.0f / 6.0f },
+};
+
 static const float2 kIndex3x3[3][3] =
 {
-    { { -1.0f, -1.0f }, { 0.0f, -1.0f }, { 1.0f, -1.0f } },
-    { { -1.0f, 0.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f } },
-    { { -1.0f, 1.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f } },
+    { {-1.0f, -1.0f}, {0.0f, -1.0f}, {1.0f, -1.0f} },
+    { {-1.0f,  0.0f}, {0.0f,  0.0f}, {1.0f,  0.0f} },
+    { {-1.0f,  1.0f}, {0.0f,  1.0f}, {1.0f,  1.0f} }
 };
 
-static const float kPrewittHorizontalKernel[3][3] =
+float Luminance(float3 color)
 {
-    { -1.0f / 6.0f, 0.0f, 1.0f / 6.0f },
-    { -1.0f / 6.0f, 0.0f, 1.0f / 6.0f },
-    { -1.0f / 6.0f, 0.0f, 1.0f / 6.0f },
-};
-
-static const float kPrewittVerticalKernel[3][3] =
-{
-    { -1.0f / 6.0f, -1.0f / 6.0f, -1.0f / 6.0f },
-    { 0.0f, 0.0f, 0.0f },
-    { 1.0f / 6.0f, 1.0f / 6.0f, 1.0f / 6.0f },
-};
-
-float Luminance(float3 v)
-{
-    return dot(v, float3(0.2125f, 0.7154f, 0.0721f));
-};
+    return dot(color, float3(0.2125f, 0.7154f, 0.0721f));
+}
 
 PixelShaderOutput main(VertexShaderOutput input)
 {
@@ -44,29 +44,29 @@ PixelShaderOutput main(VertexShaderOutput input)
     
     float2 difference = float2(0.0f, 0.0f);
 
-    for (int x = 0; x < 3; ++x)
-    {
-        for (int y = 0; y < 3; ++y)
-        {
-            float2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
-            float3 fetchColor = gTexture.Sample(gSamplerLinear, texcoord).rgb;
-            float luminance = Luminance(fetchColor);
-            difference.x = luminance * kPrewittHorizontalKernel[x][y];
-            difference.y = luminance * kPrewittVerticalKernel[x][y];
+    // 畳み込み計算
+    for (int x = 0; x < 3; ++x) {
+        for (int y = 0; y < 3; ++y) {
+            float2 offset = kIndex3x3[x][y] * uvStepSize;
+            float3 sampleColor = gTexture.Sample(gSampler, input.texcoord + offset).rgb;
+            float lum = Luminance(sampleColor);
+            difference.x += lum * kPrewittHorizontalKernel[x][y];
+            difference.y += lum * kPrewittVerticalKernel[x][y];
         }
     }
+
     float weight = length(difference);
-    weight = saturate(weight * 6.0f);
-
-    output.color.rgb = (1.0f - weight) * gTexture.Sample(gSamplerLinear, input.texcoord).rgb;
-    output.color.a = 1.0f;
-
+    weight = saturate(weight * 6.0f); // 強調
     
+    float3 original = gTexture.Sample(gSampler, input.texcoord).rgb;
+    output.color.rgb = (1.0f - weight) * original;
+    output.color.a = 1.0f;
     
     if (input.texcoord.x < 0.0f || input.texcoord.x > 1.0f ||
         input.texcoord.y < 0.0f || input.texcoord.y > 1.0f)
     {
         discard;
     }
+    
     return output;
 }

@@ -1,13 +1,11 @@
 #pragma once
 
 #include "IScene.h"
-#include "Input.h"
-#include "Model.h"
 #include "Sprite.h"
 #include "Object3d.h"
 #include "WorldTransform.h"
 #include <sstream>
-#include "../engine/Audio/Audio.h"
+#include "Audio/Audio.h"
 #include "Rail/Rail.h"
 #include "Object/Enemy.h"
 #include "Rail/RailEditor.h"
@@ -52,9 +50,6 @@ private:
 #ifdef _DEBUG
 	bool isEffect_ = false;
 #endif
-
-	WorldTransform worldTransform_;
-	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Skydome> skydome_;
 	std::list<std::unique_ptr<Rail>> rails_;
 

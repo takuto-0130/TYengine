@@ -23,16 +23,11 @@ void GameScene::Init()
 {
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
-	worldTransform_.Initialize();
 	ModelManager::GetInstance()->LoadModel("Resources", "skydome.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "cube.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "unitSphere.obj");
 	
 	Audio::GetInstance()->LoadWave("fanfare");
-
-	obj_ = std::make_unique<Object3d>();
-	obj_->Initialize();
-	obj_->SetModel("cube.obj");
 
 	enemyEditor_ = std::make_unique<EnemyEditor>(&enemyGroups_);
 
@@ -97,15 +92,6 @@ void GameScene::Update()
 	for (auto& enemy : activeEnemies_) {
 		enemy->Update();
 	}
-
-	/*for (auto it = enemies_.begin(); it != enemies_.end(); ) {
-		if (it->empty()) {
-			it = enemies_.erase(it);
-		}
-		else {
-			++it;
-		}
-	}*/
 
 	for (auto& trigger : triggerObjects_)
 	{
@@ -257,13 +243,6 @@ void GameScene::RailCameraMove()
 	{
 		isRailCameraMove_ = false;
 	}
-
-#ifdef _DEBUG
-	ImGui::Begin("RailCamera");
-	ImGui::Text("eye%.03f", cameraEyeT);
-	ImGui::Text("forward%.03f", cameraForwardT);
-	ImGui::End();
-#endif
 }
 
 void GameScene::RailCameraDebug()
@@ -283,6 +262,8 @@ void GameScene::RailCameraDebug()
 	{
 		RailCameraMove();
 	}
+	ImGui::Text("eye%.03f", cameraEyeT);
+	ImGui::Text("forward%.03f", cameraForwardT);
 	ImGui::End();
 #endif
 }

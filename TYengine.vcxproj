@@ -109,8 +109,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="application\Rail\Rail.cpp" />
     <ClCompile Include="application\Skydome\Skydome.cpp" />
-    <ClCompile Include="application\Object\Enemy.cpp" />
-    <ClCompile Include="application\Object\EnemyEditor.cpp" />
+    <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyEditor.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="engine\Loader\BlenderLevelLoader.cpp" />
     <ClCompile Include="engine\Effect\CylinderParticle.cpp" />
     <ClCompile Include="engine\OffScreen\CopyPass.cpp" />
@@ -158,14 +159,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Rail\RailEditor.cpp" />
     <ClCompile Include="engine\OffScreen\RenderTexture.cpp" />
     <ClCompile Include="engine\Utility\ObjectBasis\LevelObject.cpp" />
+    <ClCompile Include="application\Stage\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
     <ClInclude Include="engine\Utility\ObjectBasis\BaseObject.h" />
     <ClInclude Include="application\Rail\Rail.h" />
     <ClInclude Include="application\Skydome\Skydome.h" />
-    <ClInclude Include="application\Object\Enemy.h" />
-    <ClInclude Include="application\Object\EnemyEditor.h" />
+    <ClInclude Include="application\Object\Enemy\Enemy.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyEditor.h" />
     <ClInclude Include="engine\Loader\BlenderLevelLoader.h" />
     <ClInclude Include="engine\Effect\CylinderParticle.h" />
     <ClInclude Include="engine\OffScreen\CopyPass.h" />
@@ -216,6 +219,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Rail\RailEditor.h" />
     <ClInclude Include="engine\OffScreen\RenderTexture.h" />
     <ClInclude Include="engine\Utility\ObjectBasis\LevelObject.h" />
+    <ClInclude Include="application\Stage\Stage.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

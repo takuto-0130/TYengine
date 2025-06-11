@@ -1,17 +1,15 @@
 #pragma once
 
 #include "IScene.h"
-#include "Input.h"
-#include "Model.h"
 #include "Sprite.h"
 #include "Object3d.h"
 #include "WorldTransform.h"
 #include <sstream>
-#include "../engine/Audio/Audio.h"
+#include "Audio/Audio.h"
 #include "Rail/Rail.h"
-#include "Object/Enemy.h"
+#include "Object/Enemy/Enemy.h"
 #include "Rail/RailEditor.h"
-#include "Object/EnemyEditor.h"
+#include "Object/Enemy/EnemyEditor.h"
 #include "Skydome/Skydome.h"
 #include "ParticleManager.h"
 #include "./Score/score.h"
@@ -63,7 +61,6 @@ private:
 #ifdef _DEBUG
 	bool isEffect_ = false;
 #endif
-
 	std::unique_ptr<Skydome> skydome_;
 	std::list<std::unique_ptr<Rail>> rails_;
 

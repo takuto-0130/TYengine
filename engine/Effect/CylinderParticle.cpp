@@ -34,7 +34,7 @@ void CylinderParticle::CreateResources() {
     vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
     std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
 
-    std::string texturePath = "Resources/gradationLine.png";
+    std::string texturePath = "Resources/Texture/gradationLine.png";
     TextureManager::GetInstance()->LoadTexture(texturePath);
     textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(texturePath);
 

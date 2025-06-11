@@ -74,3 +74,27 @@ Vector2 operator-(const Vector2& a, const Vector2& b) {
 	result.y = a.y - b.y;
 	return result;
 }
+
+Vector2 operator+(const Vector2& a, const Vector2& b)
+{
+	Vector2 result;
+	result.x = a.x + b.x;
+	result.y = a.y + b.y;
+	return result;
+}
+
+Vector2 operator*(const Vector2& v, const float& s)
+{
+	Vector2 result;
+	result.x = v.x * s;
+	result.y = v.y * s;
+	return result;
+}
+
+Vector2 operator/(const Vector2& v, const float& s)
+{
+	Vector2 result;
+	result.x = v.x / s;
+	result.y = v.y / s;
+	return result;
+}

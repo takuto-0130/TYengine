@@ -111,7 +111,7 @@ private:
 
 	float comboTimer_ = 0;
 
-	float kComboTime_ = 5.0f;
+	float kComboTime_ = 3.0f;
 
 
 	IParticleRenderer::Emitter emitter;
@@ -129,4 +129,13 @@ private:
 	std::array<std::unique_ptr<Sprite>, 2> lasers_;
 
 	bool showEditorEnemies = false;
+
+	std::unique_ptr<Sprite> comboText_;
+	Vector2 offsetPos_ = { 1245, 60 };
+
+	std::unique_ptr<Sprite> one_;
+	Vector2 offsetNum_ = { 1060,25 };
+
+	std::random_device seedGene_;
+	float shakeTime_ = 0.4f;
 };

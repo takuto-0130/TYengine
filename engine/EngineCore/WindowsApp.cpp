@@ -45,7 +45,7 @@ void WindowsApp::Initialize()
 
 	hwnd = CreateWindow(
 		wc.lpszClassName,
-		L"GE3",
+		L"TYEngine",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,

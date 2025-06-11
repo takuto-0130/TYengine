@@ -187,12 +187,12 @@ private: // メンバ変数
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_{};
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> backBuffers_;
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_;
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2] = {};
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_ = {};
 
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
 	uint32_t fenceValue_ = 0;
-	HANDLE fenceEvent_;
+	HANDLE fenceEvent_ = {};
 
 	Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils_;
 	Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler_;

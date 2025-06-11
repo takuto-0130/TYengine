@@ -23,7 +23,6 @@ void GameScene::Init()
 {
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
-
 	ModelManager::GetInstance()->LoadModel("Resources", "skydome.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "cube.obj");
 	ModelManager::GetInstance()->LoadModel("Resources", "unitSphere.obj");
@@ -123,15 +122,6 @@ void GameScene::Update()
 		enemy->Update();
 	}
 
-	/*for (auto it = enemies_.begin(); it != enemies_.end(); ) {
-		if (it->empty()) {
-			it = enemies_.erase(it);
-		}
-		else {
-			++it;
-		}
-	}*/
-
 	for (auto& trigger : triggerObjects_)
 	{
 		trigger->world.TransferMatrix();
@@ -223,7 +213,7 @@ void GameScene::Draw()
 				{ 426.7f * float(1 + i) + 20.0f, 720 });
 		}
 	}
-	//reticle_->Draw();
+	reticle_->Draw();
 	one_->Draw();
 	comboText_->Draw();
 	scoreDraw_->Draw();
@@ -343,13 +333,6 @@ void GameScene::RailCameraMove()
 	{
 		isRailCameraMove_ = false;
 	}
-
-#ifdef _DEBUG
-	ImGui::Begin("RailCamera");
-	ImGui::Text("eye%.03f", cameraEyeT);
-	ImGui::Text("forward%.03f", cameraForwardT);
-	ImGui::End();
-#endif
 }
 
 void GameScene::RailCameraDebug()
@@ -369,6 +352,8 @@ void GameScene::RailCameraDebug()
 	{
 		RailCameraMove();
 	}
+	ImGui::Text("eye%.03f", cameraEyeT);
+	ImGui::Text("forward%.03f", cameraForwardT);
 	ImGui::End();
 #endif
 }

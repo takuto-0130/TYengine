@@ -49,12 +49,12 @@ void GameCore::Initialize()
 
 	int index = particleManager->Add(std::move(plane));
 	int indexRing = particleManager->Add(std::move(ring));
-	// particleManager->Add(std::move(cylinder));
+	particleManager->Add(std::move(cylinder));
 
 	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
 	IParticleRenderer::Emitter emitter;
 	emitter.transform.scale = { 0.05f,1.0f,1.0f };
-	emitter.transform.rotate = { 0,0.0f,0 };
+	emitter.transform.rotate = { 0,0,0 };
 	emitter.transform.translate = { 0,0,0 };
 	emitter.count = 5;
 	emitter.frequency = 1.5f;
@@ -62,11 +62,15 @@ void GameCore::Initialize()
 
 	IParticleRenderer::Emitter emitterRing;
 	emitterRing.transform.scale = { 0.5f,0.5f,0.5f };
-	emitterRing.transform.rotate = { 0,0.0f,0 };
+	emitterRing.transform.rotate = { 0,0,0 };
 	emitterRing.transform.translate = { 0,0,0 };
 	emitterRing.count = 4;
 	emitterRing.frequency = 1.5f;
 	particleManager->SetEmitter(indexRing, emitterRing);
+
+
+
+	//particleManager->SetEmitter(indexRing, emitterRing);
 
 
 	renderTexture = std::make_unique<RenderTexture>();

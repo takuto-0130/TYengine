@@ -1,5 +1,7 @@
 #pragma once
 #include "BaseObject.h"
+#include "IParticleRenderer.h"
+
 class Enemy :
     public BaseObject
 {
@@ -25,7 +27,21 @@ public:
 		worldTransform_.TransferMatrix();
 	}
 
+	void Pop();
+
 private:
 	bool isDead_ = false;
+
+	IParticleRenderer::Emitter emitter;
+
+	float popTimer_ = 0;
+	const float kPopTime_ = 1.0f;
+
+	const float deltaTime_ = 1.0f / 60.0f;
+
+	Vector3 defaultScale_ = { 0.3f, 0.3f, 0.3f };
+
+	const Vector3 ZeroScale = {};
 };
 
+float easeOutBounce(float x);

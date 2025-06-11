@@ -18,3 +18,6 @@ Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
 
 
 Vector2 operator-(const Vector2& a, const Vector2& b);
+Vector2 operator+(const Vector2& a, const Vector2& b);
+Vector2 operator*(const Vector2& v, const float& s);
+Vector2 operator/(const Vector2& v, const float& s);

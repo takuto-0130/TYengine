@@ -90,6 +90,20 @@ void GameScene::Init()
 		lasers_[i]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 	}
 
+	TextureManager::GetInstance()->LoadTexture("Resources/ComboText.png");
+	comboText_ = std::make_unique<Sprite>();
+	comboText_->Initialize("Resources/ComboText.png");
+	comboText_->SetAnchorPoint({ 0.5f,0.5f });
+	comboText_->SetPosition(offsetPos_);
+
+	TextureManager::GetInstance()->LoadTexture("Resources/number.png");
+	one_ = std::make_unique<Sprite>();
+	one_->Initialize("Resources/number.png");
+	one_->SetTextureSize({ 64,64 });
+	one_->SetTextureLeftTop({ 128,0 });
+	one_->SetPosition(offsetNum_);
+	one_->SetSize({ 64,64 });
+
 }
 
 void GameScene::Update()
@@ -125,9 +139,15 @@ void GameScene::Update()
 	if (comboTimer_ > 0)
 	{
 		comboTimer_ -= 1.0f / 60.0f;
+		if (comboTimer_ < 0)
+		{
+			comboTimer_ = 0;
+		}
 	}
 
 	scoreDraw_->Update();
+	comboText_->Update();
+	one_->Update();
 
 	Vector2 mouse = input_->GetMousePosition();
 #ifdef _DEBUG
@@ -137,11 +157,32 @@ void GameScene::Update()
 	ImGui::Checkbox("Show Editor Enemies", &showEditorEnemies);
 	ImGui::End();
 #endif // _DEBUG
+
+
 	for (size_t i = 0; i < 2; ++i) {
 		lasers_[i]->Update();
 	}
 	reticle_->SetPosition(mouse);
 	reticle_->Update();
+	float t = comboTimer_ / kComboTime_;
+	t = 1.0f - powf(1.0f - t, 4.0f);
+	comboText_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
+	one_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
+
+	t = (comboTimer_ - (kComboTime_ - shakeTime_)) / (kComboTime_ - (kComboTime_ - shakeTime_));
+	if (t > 0)
+	{
+		std::mt19937 random(seedGene_());
+		std::uniform_real_distribution<float> dist(-15.0f, 15.0f);
+		Vector2 pos = { dist(random),dist(random) };
+		comboText_->SetPosition(offsetPos_ + pos * t);
+		one_->SetPosition(offsetNum_ + pos * t);
+	}
+	else
+	{
+		comboText_->SetPosition(offsetPos_);
+		one_->SetPosition(offsetNum_);
+	}
 	
 #ifdef _DEBUG
 	UpdateEditorEnemies();
@@ -161,7 +202,9 @@ void GameScene::Draw()
 	}
 
 	if (showEditorEnemies) {
+#ifdef _DEBUG
 		DrawEditorEnemies();
+#endif // _DEBUG
 	}
 	else
 	{
@@ -181,6 +224,8 @@ void GameScene::Draw()
 		}
 	}
 	//reticle_->Draw();
+	one_->Draw();
+	comboText_->Draw();
 	scoreDraw_->Draw();
 }
 
@@ -346,6 +391,7 @@ void GameScene::TriggerNextEnemyGroup()
 	if (!enemyGroups_.empty()) {
 		std::list<std::unique_ptr<Enemy>>& nextGroup = enemyGroups_.front();
 		for (auto& enemy : nextGroup) {
+			enemy->Pop();
 			activeEnemies_.push_back(std::move(enemy));
 		}
 		enemyGroups_.pop_front();
@@ -367,6 +413,7 @@ void GameScene::Collision()
 			if (comboTimer_ <= 0) comboCount_ = 0;
 
 			comboCount_++;
+			one_->SetTextureLeftTop({ 64.0f * float(comboCount_),0 });
 			score_ += kBasicScore_ * comboCount_;
 			scoreDraw_->SetScore(score_);
 			comboTimer_ = kComboTime_;

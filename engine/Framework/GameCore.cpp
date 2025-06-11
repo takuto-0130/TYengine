@@ -40,7 +40,6 @@ void GameCore::Initialize()
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 	sceneManager_->ChangeScene("TITLE");
 
-	//ParticleClass::GetInstance()->Initialize(directXBasis, srvManager.get(), camera.get());
 	particleManager = ParticleManager::GetInstance();
 
 	auto plane = std::make_unique<PlaneParticle>();

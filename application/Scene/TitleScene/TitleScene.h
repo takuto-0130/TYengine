@@ -2,6 +2,8 @@
 #include "IScene.h"
 #include "LevelObject.h"
 #include "BlenderLevelLoader.h"
+
+class Sprite;
 class TitleScene : public IScene {
 public:
 	void Init() override;
@@ -14,4 +16,6 @@ private:
 private:
 	std::vector<std::unique_ptr<LevelObject>> objects_;
 	std::unique_ptr<BlenderLevelLoader> loader_;
+
+	std::unique_ptr<Sprite> spaceSpr_;
 };

@@ -23,9 +23,6 @@ void GameScene::Init()
 {
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
-	ModelManager::GetInstance()->LoadModel("Resources", "skydome.obj");
-	ModelManager::GetInstance()->LoadModel("Resources", "cube.obj");
-	ModelManager::GetInstance()->LoadModel("Resources", "unitSphere.obj");
 	
 	Audio::GetInstance()->LoadWave("fanfare");
 
@@ -77,27 +74,27 @@ void GameScene::Init()
 	scoreDraw_ = std::make_unique<score>();
 	scoreDraw_->Initialze();
 
-	TextureManager::GetInstance()->LoadTexture("Resources/reticle.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	reticle_ = std::make_unique<Sprite>();
-	reticle_->Initialize("Resources/reticle.png");
+	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 
-	TextureManager::GetInstance()->LoadTexture("Resources/white2x2.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 	for (size_t i = 0; i < 2; ++i) {
 		lasers_[i] = std::make_unique<Sprite>();
-		lasers_[i]->Initialize("Resources/white2x2.png");
+		lasers_[i]->Initialize("Resources/Texture/white2x2.png");
 		lasers_[i]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 	}
 
-	TextureManager::GetInstance()->LoadTexture("Resources/ComboText.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ComboText.png");
 	comboText_ = std::make_unique<Sprite>();
-	comboText_->Initialize("Resources/ComboText.png");
+	comboText_->Initialize("Resources/Texture/ComboText.png");
 	comboText_->SetAnchorPoint({ 0.5f,0.5f });
 	comboText_->SetPosition(offsetPos_);
 
-	TextureManager::GetInstance()->LoadTexture("Resources/number.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
 	one_ = std::make_unique<Sprite>();
-	one_->Initialize("Resources/number.png");
+	one_->Initialize("Resources/Texture/number.png");
 	one_->SetTextureSize({ 64,64 });
 	one_->SetTextureLeftTop({ 128,0 });
 	one_->SetPosition(offsetNum_);

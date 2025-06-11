@@ -6,6 +6,7 @@
 #include "struct.h"
 #include "ModelManager.h"
 #include "WorldTransform.h"
+#include <filesystem>
 
 
 void Model::Initialize(ModelLoader* modelManager, const std::string& directoryPath, const std::string& fileName)
@@ -17,9 +18,10 @@ void Model::Initialize(ModelLoader* modelManager, const std::string& directoryPa
 	CreateVertexResource();
 
 	// テクスチャファイルの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+	std::filesystem::path texturePath = modelData_.material.textureFilePath;
+	TextureManager::GetInstance()->LoadTexture(texturePath.string());
 	// 番号を取得
-	modelData_.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData_.material.textureFilePath);
+	modelData_.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(texturePath.string());
 }
 
 void Model::Draw(WorldTransform& transform, Camera* camera)

@@ -34,7 +34,6 @@ void BlenderLevelLoader::DataToObject(LevelData* data, std::vector<std::unique_p
     for (auto& objectData : data->objects)
     {
         std::string modelName = objectData.fileName + ".obj";
-        ModelManager::GetInstance()->LoadModel("Resources", modelName);
         std::unique_ptr<LevelObject> object = std::make_unique<LevelObject>();
         object->SetModelName(modelName);
         object->Init();

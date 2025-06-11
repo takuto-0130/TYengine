@@ -53,6 +53,8 @@ private: // メンバ変数
 	Material* materialData_ = nullptr;
 	CameraForGPU* cameraData_ = nullptr;
 
+	const std::string defaultModelsPath_ = "Resources/Models/";
+
 
 	// コピー禁止
 	Object3d(const Object3d&) = delete;

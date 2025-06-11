@@ -92,7 +92,7 @@ private:
 			world.Initialize();
 			world.translation_ = pos;
 			object.Initialize();
-			object.SetModel("cube.obj");
+			object.SetModel("unitSphere.obj");
 		}
 
 		TriggerObject(const TriggerObject&) = delete;

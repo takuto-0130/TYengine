@@ -1,4 +1,5 @@
 #include "SpriteBasis.h"
+#include "TextureManager.h"
 
 using namespace Logger;
 
@@ -26,6 +27,10 @@ void SpriteBasis::BasisDrawSetting()
 	directXBasis_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	directXBasis_->GetCommandList()->SetPipelineState(graphicsPipelineState_.Get());
 	directXBasis_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	ID3D12DescriptorHeap* heaps[] = {
+		TextureManager::GetInstance()->GetSrvManager()->GetHeap()
+	};
+	directXBasis_->GetCommandList()->SetDescriptorHeaps(_countof(heaps), heaps);
 }
 
 void SpriteBasis::CreateRootSignature()

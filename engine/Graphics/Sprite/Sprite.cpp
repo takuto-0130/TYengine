@@ -42,7 +42,6 @@ void Sprite::Draw()
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
-	//// 描画 (インスタンスについては今後)
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 

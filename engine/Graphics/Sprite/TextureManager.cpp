@@ -56,6 +56,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
         textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 
     textureDatas_[filePath] = textureData;
+    OutputDebugStringA(("Already loaded: " + filePath + "\n").c_str());
 }
 
 uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath) {

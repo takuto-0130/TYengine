@@ -3,7 +3,7 @@
 #include "LevelObject.h"
 #include "BlenderLevelLoader.h"
 
-class Sprite;
+#include "Sprite.h"
 class TitleScene : public IScene {
 public:
 	void Init() override;

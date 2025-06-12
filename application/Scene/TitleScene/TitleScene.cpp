@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "Object3dBasis.h"
 #include "SpriteBasis.h"
-#include "Sprite.h"
+//#include "Sprite.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
@@ -14,9 +14,10 @@ void TitleScene::Init()
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 	loader_ = std::make_unique<BlenderLevelLoader>("Resources/JSON/");
 	
-	/*TextureManager::GetInstance()->LoadTexture("Resources/Texture/TitleSpace.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/TitleSpace.png");
 	spaceSpr_ = std::make_unique<Sprite>();
-	spaceSpr_->Initialize("Resources/Texture/TitleSpace.png");*/
+	spaceSpr_->Initialize("Resources/Texture/TitleSpace.png");
+	spaceSpr_->SetPosition({ 0,0 });
 }
 
 void TitleScene::Update() {
@@ -32,7 +33,7 @@ void TitleScene::Update() {
 	ImGui::Text("Space to GameScene");
 	ImGui::End();
 #endif // _DEBUG
-	//spaceSpr_->Update();
+	spaceSpr_->Update();
 	for (auto&& obj : objects_)
 	{
 		obj->Update();
@@ -47,8 +48,8 @@ void TitleScene::Draw()
 		obj->Draw();
 	}
 
-	//SpriteBasis::GetInstance()->BasisDrawSetting();
-	//spaceSpr_->Draw();
+	SpriteBasis::GetInstance()->BasisDrawSetting();
+	spaceSpr_->Draw();
 }
 
 void TitleScene::LoadLevel()

@@ -2,7 +2,7 @@
 
 int ParticleManager::Add(std::unique_ptr<IParticleRenderer> particle) {
     particles_.emplace_back(std::move(particle));
-    return particles_.size() - (size_t)1;
+    return static_cast<int>(particles_.size()) - int(1);
 }
 
 void ParticleManager::InitializeAll(DirectXBasis* dx, SrvManager* srv, Camera* cam) {

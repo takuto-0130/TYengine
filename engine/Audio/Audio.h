@@ -218,7 +218,7 @@ private: // 構造体
 
 public:
 	// 初期化
-	void Initialize(const std::string& directoryPath = "Resources/");
+	void Initialize(const std::string& directoryPath = "Resources/Sound/");
 
 	/**
 	 * @brief 音源の停止

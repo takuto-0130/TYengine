@@ -46,12 +46,6 @@ void IParticleRenderer::Update() {
             it = particles_.erase(it);
             continue;
         }
-#ifdef _DEBUG
-        ImGui::Begin("parti");
-        ImGui::DragFloat3("tra", &it->transform.translate.x);
-        ImGui::End();
-#endif // _DEBUG
-
 
         if (numInstance_ < kMaxInstance) {
             Matrix4x4 world = MakeAffineMatrix(it->transform.scale, it->transform.rotate, it->transform.translate);

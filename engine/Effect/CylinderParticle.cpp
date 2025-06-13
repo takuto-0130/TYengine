@@ -34,7 +34,7 @@ void CylinderParticle::CreateResources() {
     vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
     std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
 
-    std::string texturePath = "Resources/gradationLine.png";
+    std::string texturePath = "Resources/Texture/gradationLine.png";
     TextureManager::GetInstance()->LoadTexture(texturePath);
     textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(texturePath);
 
@@ -53,4 +53,23 @@ void CylinderParticle::CreateResources() {
     cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
 
     vertexCount_ = static_cast<uint32_t>(vertices.size());
+}
+
+IParticleRenderer::ParticleP CylinderParticle::MakeNewParticle(std::mt19937& random, const Emitter& emitter)
+{
+    ParticleP parti;
+    std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+    parti.transform.scale = emitter.transform.scale;
+    parti.transform.rotate = emitter.transform.rotate;
+    parti.transform.translate = emitter.transform.translate;
+    parti.velocity = { 0.f,0.f,0.f };
+
+    std::uniform_real_distribution<float> colorDist(0.0f, 1.0f);
+    parti.color = { colorDist(random), colorDist(random), colorDist(random), 1.0f };
+
+    std::uniform_real_distribution<float> timeDist(0.9f, 0.9f);
+    parti.lifeTime = timeDist(random);
+    parti.currentTime = 0.0f;
+
+    return parti;
 }

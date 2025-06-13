@@ -39,7 +39,7 @@ void RingParticle::CreateResources() {
     vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
     std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
 
-    std::string texturePath = "Resources/gradationLine.png";
+    std::string texturePath = "Resources/Texture/gradationLine.png";
     TextureManager::GetInstance()->LoadTexture(texturePath);
     textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(texturePath);
 
@@ -84,8 +84,57 @@ std::list<IParticleRenderer::ParticleP> RingParticle::Emit(std::mt19937& random)
     std::list<ParticleP> result;
     for (uint32_t i = 0; i < emitter_.count; ++i) {
         Emitter emitter = emitter_;
-        emitter.transform.scale = emitter.transform.scale * ((2.0f + float(i)) / 2.0f);
+        emitter.transform.scale = emitter.transform.scale * ((2.0f + float(i) * 2.0f) / 4.0f);
         result.push_back(MakeNewParticle(random, emitter));
     }
     return result;
+}
+
+void RingParticle::Update() {
+    std::mt19937 random(seedGene_());
+
+    Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
+    Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, camera_->GetWorldMatrix());
+    billboardMatrix.m[3][0] = 0.0f;
+    billboardMatrix.m[3][1] = 0.0f;
+    billboardMatrix.m[3][2] = 0.0f;
+
+    numInstance_ = 0;
+
+    emitter_.frequencyTime += kDeltaTime;
+    if (!useTrigger_ && emitter_.frequencyTime >= emitter_.frequency) {
+        particles_.splice(particles_.end(), Emit(random));
+        emitter_.frequencyTime -= emitter_.frequency;
+    }
+
+    for (auto it = particles_.begin(); it != particles_.end();) {
+        it->currentTime += kDeltaTime;
+        it->transform.translate += it->velocity * kDeltaTime;
+        float t = it->currentTime / it->lifeTime;
+        t = powf(t, 3.0f);
+        Vector3 scale = Vector3{ 1.0f,1.0f,1.0f };
+        scale = scale * t;
+
+        if (it->currentTime >= it->lifeTime) {
+            it = particles_.erase(it);
+            continue;
+        }
+
+        if (numInstance_ < kMaxInstance) {
+            Matrix4x4 world = MakeAffineMatrix(it->transform.scale + scale, it->transform.rotate, it->transform.translate);
+            if (useBillboard_) {
+                world = MakeScaleMatrix(it->transform.scale + scale)
+                    * billboardMatrix
+                    * MakeRotateZMatrix(it->transform.rotate.z)
+                    * MakeTranslateMatrix(it->transform.translate);
+            }
+            Matrix4x4 WVP = world * camera_->GetViewProjectionMatrix();
+            instancingData_[numInstance_].WVP = WVP;
+            instancingData_[numInstance_].World = world;
+            instancingData_[numInstance_].color = it->color;
+            instancingData_[numInstance_].color.w *= (1.0f - (it->currentTime / it->lifeTime));
+            ++numInstance_;
+        }
+        ++it;
+    }
 }

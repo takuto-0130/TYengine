@@ -54,4 +54,26 @@ void Object3d::SetModel(const std::string& filePath)
 {
 	// モデルを検索してセットする
 	model_ = ModelManager::GetInstance()->FindModel(filePath);
+
+	// 該当モデルがロードされていなければロードしてセット
+	if(model_ == nullptr)
+	{
+		// 拡張子を取り除く処理
+		std::string fileName = filePath;
+		std::string basePath;
+		if (fileName.size() > 4) {
+			// .obj または .gltf の場合に削除
+			if (fileName.substr(fileName.size() - 4) == ".obj") {
+				basePath = fileName.substr(0, fileName.size() - 4);
+			}
+			else if (fileName.size() > 5 && fileName.substr(fileName.size() - 5) == ".gltf") {
+				basePath = fileName.substr(0, fileName.size() - 5);
+			}
+		}
+
+		// ロードしてセット
+		ModelManager::GetInstance()->LoadModel(defaultModelsPath_ + basePath, fileName);
+		model_ = ModelManager::GetInstance()->FindModel(filePath);
+	}
+
 }

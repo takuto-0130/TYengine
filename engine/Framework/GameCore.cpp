@@ -6,11 +6,6 @@
 #include "RingParticle.h"
 #include "CylinderParticle.h"
 
-//#include "SimpleUpdater.h"
-//#include "BillboardRenderer.h"
-//#include "ConeEmitter.h"
-//#include "AlphaFadeUpdater .h"
-
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG

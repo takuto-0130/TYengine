@@ -14,6 +14,49 @@
 #include "imgui.h"
 #endif
 
+GameScene::GameScene()
+{
+	SetEnterFunction(GameSceneState::LOAD, [this]() { InitLoad(); });
+	SetUpdateFunction(GameSceneState::LOAD, [this]() { UpdateLoad(); });
+	SetExitFunction(GameSceneState::LOAD, [this]() { ExitLoad(); });
+
+	SetEnterFunction(GameSceneState::FADE_IN, [this]() { InitFadeIn(); });
+	SetUpdateFunction(GameSceneState::FADE_IN, [this]() { UpdateFadeIn(); });
+	SetExitFunction(GameSceneState::FADE_IN, [this]() { ExitFadeIn(); });
+
+	SetEnterFunction(GameSceneState::READY, [this]() { InitReady(); });
+	SetUpdateFunction(GameSceneState::READY, [this]() { UpdateReady(); });
+	SetExitFunction(GameSceneState::READY, [this]() { ExitReady(); });
+
+	SetEnterFunction(GameSceneState::PLAY, [this]() { InitPlay(); });
+	SetUpdateFunction(GameSceneState::PLAY, [this]() { UpdatePlay(); });
+	SetExitFunction(GameSceneState::PLAY, [this]() { ExitPlay(); });
+
+	SetEnterFunction(GameSceneState::PAUSE, [this]() { InitPause(); });
+	SetUpdateFunction(GameSceneState::PAUSE, [this]() { UpdatePause(); });
+	SetExitFunction(GameSceneState::PAUSE, [this]() { ExitPause(); });
+
+	SetEnterFunction(GameSceneState::DEAD, [this]() { InitDead(); });
+	SetUpdateFunction(GameSceneState::DEAD, [this]() { UpdateDead(); });
+	SetExitFunction(GameSceneState::DEAD, [this]() { ExitDead(); });
+
+	SetEnterFunction(GameSceneState::RESULT, [this]() { InitResult(); });
+	SetUpdateFunction(GameSceneState::RESULT, [this]() { UpdateResult(); });
+	SetExitFunction(GameSceneState::RESULT, [this]() { ExitResult(); });
+
+	SetEnterFunction(GameSceneState::RETRY, [this]() { InitRetry(); });
+	SetUpdateFunction(GameSceneState::RETRY, [this]() { UpdateRetry(); });
+	SetExitFunction(GameSceneState::RETRY, [this]() { ExitRetry(); });
+
+	SetEnterFunction(GameSceneState::FADE_OUT, [this]() { InitFadeOut(); });
+	SetUpdateFunction(GameSceneState::FADE_OUT, [this]() { UpdateFadeOut(); });
+	SetExitFunction(GameSceneState::FADE_OUT, [this]() { ExitFadeOut(); });
+
+	SetEnterFunction(GameSceneState::DEBUG_EDIT, [this]() { InitDebugEdit(); });
+	SetUpdateFunction(GameSceneState::DEBUG_EDIT, [this]() { UpdateDebugEdit(); });
+	SetExitFunction(GameSceneState::DEBUG_EDIT, [this]() { ExitDebugEdit(); });
+}
+
 GameScene::~GameScene()
 {
 	Audio::GetInstance()->StopStreaming();
@@ -43,6 +86,7 @@ void GameScene::Init()
 		if (i < segments.size() && segments[i].triggerEvent)
 		{
 			triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
+			triggerObjects_.back()->world.TransferMatrix();
 		}
 	}
 
@@ -100,82 +144,31 @@ void GameScene::Init()
 	one_->SetPosition(offsetNum_);
 	one_->SetSize({ 64,64 });
 
+	ChangeState(GameSceneState::PLAY);
 }
 
 void GameScene::Update()
 {
 	RailCameraDebug();
-	RailCustom();
 	skydome_->Update();
 
-	if (input_->PushKey(DIK_SPACE)) Collision();
+	UpdateState(1.0f / 60.0f);
 
-	activeEnemies_.remove_if([](const std::unique_ptr<Enemy>& e) 
-		{
-		return e->IsDead();
-		});
-
-	for (auto& enemy : activeEnemies_) {
-		enemy->Update();
-	}
-
-	for (auto& trigger : triggerObjects_)
-	{
-		trigger->world.TransferMatrix();
-	}
-	if (comboTimer_ > 0)
-	{
-		comboTimer_ -= 1.0f / 60.0f;
-		if (comboTimer_ < 0)
-		{
-			comboTimer_ = 0;
-		}
-	}
-
-	scoreDraw_->Update();
-	comboText_->Update();
-	one_->Update();
-
-	Vector2 mouse = input_->GetMousePosition();
 #ifdef _DEBUG
-	ImGui::Begin("a");
-	ImGui::DragFloat2("b", &mouse.x, 0.1f);
-	ImGui::InputInt("score", &score_);
-	ImGui::Checkbox("Show Editor Enemies", &showEditorEnemies);
-	ImGui::End();
-#endif // _DEBUG
-
-
-	for (size_t i = 0; i < 2; ++i) {
-		lasers_[i]->Update();
-	}
-	reticle_->SetPosition(mouse);
-	reticle_->Update();
-	float t = comboTimer_ / kComboTime_;
-	t = 1.0f - powf(1.0f - t, 4.0f);
-	comboText_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
-	one_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
-
-	t = (comboTimer_ - (kComboTime_ - shakeTime_)) / (kComboTime_ - (kComboTime_ - shakeTime_));
-	if (t > 0)
+	ImGui::Begin("Editor");
+	if(otherEditorSwitch_)
 	{
-		std::mt19937 random(seedGene_());
-		std::uniform_real_distribution<float> dist(-15.0f, 15.0f);
-		Vector2 pos = { dist(random),dist(random) };
-		comboText_->SetPosition(offsetPos_ + pos * t);
-		one_->SetPosition(offsetNum_ + pos * t);
+		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
+		if (!otherEditorSwitch_) ChangeState(GameSceneState::PLAY);
 	}
 	else
 	{
-		comboText_->SetPosition(offsetPos_);
-		one_->SetPosition(offsetNum_);
+		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
+		if (otherEditorSwitch_) ChangeState(GameSceneState::DEBUG_EDIT);
 	}
-	
-#ifdef _DEBUG
-	UpdateEditorEnemies();
-#else
-	RailCameraMove();
+	ImGui::End();
 #endif // _DEBUG
+	
 }
 
 void GameScene::Draw()
@@ -188,7 +181,7 @@ void GameScene::Draw()
 		rail->Draw();
 	}
 
-	if (showEditorEnemies) {
+	if (otherEditorSwitch_) {
 #ifdef _DEBUG
 		DrawEditorEnemies();
 #endif // _DEBUG
@@ -216,8 +209,65 @@ void GameScene::Draw()
 	scoreDraw_->Draw();
 }
 
-void GameScene::CheckAllCollisions()
+void GameScene::PlayUIUpdate()
 {
+	scoreDraw_->Update();
+	comboText_->Update();
+	one_->Update();
+	reticle_->Update();
+	for (size_t i = 0; i < 2; ++i) {
+		lasers_[i]->Update();
+	}
+}
+
+void GameScene::AttackUpdate()
+{
+	if (input_->PushKey(DIK_SPACE)) Collision();
+
+	if (comboTimer_ > 0)
+	{
+		comboTimer_ -= 1.0f / 60.0f;
+		if (comboTimer_ < 0)
+		{
+			comboTimer_ = 0;
+		}
+	}
+
+	Vector2 mouse = input_->GetMousePosition();
+	reticle_->SetPosition(mouse);
+
+
+	float t = comboTimer_ / kComboTime_;
+	t = 1.0f - powf(1.0f - t, 4.0f);
+	comboText_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
+	one_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
+
+	t = (comboTimer_ - (kComboTime_ - shakeTime_)) / (kComboTime_ - (kComboTime_ - shakeTime_));
+	if (t > 0)
+	{
+		std::mt19937 random(seedGene_());
+		std::uniform_real_distribution<float> dist(-15.0f, 15.0f);
+		Vector2 pos = { dist(random),dist(random) };
+		comboText_->SetPosition(offsetPos_ + pos * t);
+		one_->SetPosition(offsetNum_ + pos * t);
+	}
+	else
+	{
+		comboText_->SetPosition(offsetPos_);
+		one_->SetPosition(offsetNum_);
+	}
+}
+
+void GameScene::EnemyUpdate()
+{
+	activeEnemies_.remove_if([](const std::unique_ptr<Enemy>& e)
+		{
+			return e->IsDead();
+		});
+
+	for (auto& enemy : activeEnemies_) {
+		enemy->Update();
+	}
 }
 
 void GameScene::PopRail(Vector3 position, Vector3 rota)
@@ -229,7 +279,7 @@ void GameScene::PopRail(Vector3 position, Vector3 rota)
 	rails_.push_back(std::move(rail));
 }
 
-void GameScene::RailCustom()
+void GameScene::StageEdit()
 {
 #ifdef _DEBUG
 	RailEditor::Instance()->DrawEditorUI();
@@ -245,6 +295,7 @@ void GameScene::RailCustom()
 			if (i < segments.size() && segments[i].triggerEvent)
 			{
 				triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
+				triggerObjects_.back()->world.TransferMatrix();
 			}
 		}
 
@@ -453,3 +504,123 @@ void GameScene::UpdateEditorEnemies()
 	}
 }
 #endif
+
+void GameScene::InitLoad()
+{
+}
+void GameScene::UpdateLoad()
+{
+}
+void GameScene::ExitLoad()
+{
+}
+
+
+void GameScene::InitFadeIn()
+{
+}
+void GameScene::UpdateFadeIn()
+{
+}
+void GameScene::ExitFadeIn()
+{
+}
+
+
+void GameScene::InitReady()
+{
+}
+void GameScene::UpdateReady()
+{
+}
+void GameScene::ExitReady()
+{
+}
+
+
+void GameScene::InitPlay()
+{
+}
+void GameScene::UpdatePlay()
+{
+#ifndef _DEBUG
+	RailCameraMove();
+#endif // !_DEBUG
+
+	EnemyUpdate();
+
+	AttackUpdate();
+
+	PlayUIUpdate();
+}
+void GameScene::ExitPlay()
+{
+}
+
+
+void GameScene::InitPause()
+{
+}
+void GameScene::UpdatePause()
+{
+}
+void GameScene::ExitPause()
+{
+}
+
+
+void GameScene::InitDead()
+{
+}
+void GameScene::UpdateDead()
+{
+}
+void GameScene::ExitDead()
+{
+}
+
+
+void GameScene::InitResult()
+{
+}
+void GameScene::UpdateResult()
+{
+}
+void GameScene::ExitResult()
+{
+}
+
+
+void GameScene::InitRetry()
+{
+}
+void GameScene::UpdateRetry()
+{
+}
+void GameScene::ExitRetry()
+{
+}
+
+
+void GameScene::InitFadeOut()
+{
+}
+void GameScene::UpdateFadeOut()
+{
+}
+void GameScene::ExitFadeOut()
+{
+}
+
+
+void GameScene::InitDebugEdit()
+{
+}
+void GameScene::UpdateDebugEdit()
+{
+	StageEdit();
+	UpdateEditorEnemies();
+}
+void GameScene::ExitDebugEdit()
+{
+}

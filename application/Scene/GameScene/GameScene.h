@@ -6,13 +6,15 @@
 #include "WorldTransform.h"
 #include <sstream>
 #include "Audio/Audio.h"
+#include "./Score/score.h"
+#include "StateMachine.h"
+
 #include "Rail/Rail.h"
 #include "Object/Enemy/Enemy.h"
 #include "Rail/RailEditor.h"
 #include "Object/Enemy/EnemyEditor.h"
 #include "Skydome/Skydome.h"
 #include "ParticleManager.h"
-#include "./Score/score.h"
 
 
 #include <memory>
@@ -20,21 +22,39 @@
 #include <list>
 #include <unordered_set>
 
+enum class GameSceneState {
+	LOAD,		// データのロード（ロードに時間がかかる場合に使用、使わなければのちに削除）
+	FADE_IN,	// シーン開始時のフェードイン
+	READY,		// ゲーム開始直前の演出（不要なら消す）
+	PLAY,		// 通常のゲーム進行
+	PAUSE,		// 一時停止状態（メニューなど）
+	DEAD,		// プレイヤーが死んだ時
+	RESULT,		// リザルト（ゲーム終了後のスコア表示など）
+	RETRY,		// リトライ待機中
+	FADE_OUT,	// シーン遷移時のフェードアウト
+	DEBUG_EDIT,	// エディタ専用
+};
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene : public IScene
+class GameScene : public IScene, public StateMachine<GameSceneState>
 {
 public:
+	GameScene();
 	~GameScene() override;
 	void Init() override;
 	void Update() override;
 	void Draw() override;
-	void CheckAllCollisions();
 
 private:
+	void PlayUIUpdate();
+
+	void AttackUpdate();
+	void EnemyUpdate();
+
 	void PopRail(Vector3 position, Vector3 rota);
-	void RailCustom();
+	void StageEdit();
 	void RailLineReDraw();
 	void RailReDraw();
 	void RailCameraMove();
@@ -54,13 +74,80 @@ private:
 #endif // _DEBUG
 
 
-private:
-	float pitch_ = 1.0f;
-	Vector3 cameraOffset_;
+private: // シーン内のState関数
+	// 列挙名を文字列化（ImGui表示用）
+	std::string GetStateName(State state) const override {
+		switch (state) {
+		case State::LOAD: return "LOAD";
+		case State::FADE_IN: return "FADE_IN";
+		case State::READY: return "READY";
+		case State::PLAY: return "PLAY";
+		case State::PAUSE: return "PAUSE";
+		case State::DEAD: return "DEAD";
+		case State::RESULT: return "RESULT";
+		case State::RETRY: return "RETRY";
+		case State::FADE_OUT: return "FADE_OUT";
+		case State::DEBUG_EDIT: return "DEBUG_EDIT";
+		default: return "Unknown";
+		}
+	}
 
-#ifdef _DEBUG
-	bool isEffect_ = false;
-#endif
+	// ロード
+	void InitLoad();
+	void UpdateLoad();
+	void ExitLoad();
+
+	// フェードイン
+	void InitFadeIn();
+	void UpdateFadeIn();
+	void ExitFadeIn();
+
+	// ゲーム開始直前の演出
+	void InitReady();
+	void UpdateReady();
+	void ExitReady();
+
+	// 通常のゲーム進行
+	void InitPlay();
+	void UpdatePlay();
+	void ExitPlay();
+
+	// 一時停止状態（メニューなど）
+	void InitPause();
+	void UpdatePause();
+	void ExitPause();
+
+	// プレイヤーが死んだ時
+	void InitDead();
+	void UpdateDead();
+	void ExitDead();
+
+	// リザルト
+	void InitResult();
+	void UpdateResult();
+	void ExitResult();
+
+	// リトライ待機中
+	void InitRetry();
+	void UpdateRetry();
+	void ExitRetry();
+
+	// フェードアウト
+	void InitFadeOut();
+	void UpdateFadeOut();
+	void ExitFadeOut();
+
+	// エディタ専用
+	void InitDebugEdit();
+	void UpdateDebugEdit();
+	void ExitDebugEdit();
+
+
+private: // メンバ変数
+
+	float pitch_ = 1.0f;
+	Vector3 cameraOffset_ = {};
+
 	std::unique_ptr<Skydome> skydome_;
 	std::list<std::unique_ptr<Rail>> rails_;
 
@@ -125,7 +212,7 @@ private:
 
 	std::array<std::unique_ptr<Sprite>, 2> lasers_;
 
-	bool showEditorEnemies = false;
+	bool otherEditorSwitch_ = false;
 
 	std::unique_ptr<Sprite> comboText_;
 	Vector2 offsetPos_ = { 1245, 60 };

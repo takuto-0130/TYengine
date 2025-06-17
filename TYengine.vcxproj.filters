@@ -345,6 +345,7 @@
     <ClInclude Include="engine\Utility\Transform\WorldTransform.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\StateMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

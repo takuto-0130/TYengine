@@ -17,7 +17,8 @@ void TitleScene::Init()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/TitleSpace.png");
 	spaceSpr_ = std::make_unique<Sprite>();
 	spaceSpr_->Initialize("Resources/Texture/TitleSpace.png");
-	spaceSpr_->SetPosition({ 0,0 });
+	spaceSpr_->SetAnchorPoint({ 0.5f,0.5f });
+	spaceSpr_->SetPosition({ 640,360 });
 }
 
 void TitleScene::Update() {

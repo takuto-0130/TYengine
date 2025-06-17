@@ -200,6 +200,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Utility\Math\mathFunc.h" />
     <ClInclude Include="engine\Utility\Math\Matrix4x4Func.h" />
     <ClInclude Include="engine\Utility\Math\operatorOverload.h" />
+    <ClInclude Include="engine\Utility\Utils\StateMachine.h" />
     <ClInclude Include="engine\Utility\Utils\StringUtility.h" />
     <ClInclude Include="engine\Utility\Math\struct.h" />
     <ClInclude Include="engine\Utility\Transform\WorldTransform.h" />

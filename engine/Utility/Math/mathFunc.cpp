@@ -1,8 +1,8 @@
 #include "mathFunc.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <operatorOverload.h>
 #include <algorithm>
+#include <cassert>
 
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) { 
 	Vector3 result{
@@ -120,4 +120,103 @@ Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
 
 Vector3 Cross(const Vector3& v1, const Vector3& v2) { 
 	return Vector3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
+}
+
+
+
+
+
+Vector3 operator+(const Vector3& a, const Vector3& b) {
+	Vector3 result;
+	result.x = a.x + b.x;
+	result.y = a.y + b.y;
+	result.z = a.z + b.z;
+	return result;
+}
+
+
+Vector3 operator-(const Vector3& a, const Vector3& b) {
+	Vector3 result;
+	result.x = a.x - b.x;
+	result.y = a.y - b.y;
+	result.z = a.z - b.z;
+	return result;
+}
+
+Vector3 operator-(const Vector3& a) {
+	Vector3 result;
+	result.x = -a.x;
+	result.y = -a.y;
+	result.z = -a.z;
+	return result;
+}
+
+
+Vector3 operator*(const Vector3& a, const Vector3& b) {
+	Vector3 result;
+	result.x = a.x * b.x;
+	result.y = a.y * b.y;
+	result.z = a.z * b.z;
+	return result;
+}
+Vector3 operator*(const Vector3& v, const float& s) {
+	Vector3 result;
+	result.x = v.x * s;
+	result.y = v.y * s;
+	result.z = v.z * s;
+	return result;
+}
+Vector3 operator*(const float& s, const Vector3& v) {
+	Vector3 result;
+	result.x = v.x * s;
+	result.y = v.y * s;
+	result.z = v.z * s;
+	return result;
+}
+
+
+Vector3 operator/(const Vector3& a, const Vector3& b) {
+	Vector3 result;
+	result.x = a.x / b.x;
+	result.y = a.y / b.y;
+	result.z = a.z / b.z;
+	return result;
+}
+Vector3 operator/(const Vector3& v, const float& s) {
+	Vector3 result;
+	result.x = v.x / s;
+	result.y = v.y / s;
+	result.z = v.z / s;
+	return result;
+}
+
+Vector2 operator-(const Vector2& a, const Vector2& b) {
+	Vector2 result;
+	result.x = a.x - b.x;
+	result.y = a.y - b.y;
+	return result;
+}
+
+Vector2 operator+(const Vector2& a, const Vector2& b)
+{
+	Vector2 result;
+	result.x = a.x + b.x;
+	result.y = a.y + b.y;
+	return result;
+}
+
+Vector2 operator*(const Vector2& v, const float& s)
+{
+	Vector2 result;
+	result.x = v.x * s;
+	result.y = v.y * s;
+	return result;
+}
+
+Vector2 operator/(const Vector2& v, const float& s)
+{
+	Vector2 result;
+	result.x = v.x / s;
+	result.y = v.y / s;
+	return result;
 }

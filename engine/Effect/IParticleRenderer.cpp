@@ -1,5 +1,4 @@
 #include "IParticleRenderer.h"
-#include "operatorOverload.h"
 #include <numbers>
 #ifdef _DEBUG
 #include <imgui.h>

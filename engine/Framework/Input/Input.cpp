@@ -106,7 +106,8 @@ const Vector2& Input::GetMousePosition() const {
            
         }
     }
-    return { static_cast<float>(point.x),static_cast<float>(point.y) };
+    Vector2 result = { static_cast<float>(point.x),static_cast<float>(point.y) };
+    return result;
 }
 
 bool Input::GetJoystickState(int32_t stickNo, DIJOYSTATE2& out) const {

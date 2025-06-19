@@ -1,60 +1,43 @@
 #include "GameScene.h"
 #include "TextureManager.h"
+#include "SceneManager.h"
 #include <cassert>
 #include "mathFunc.h"
-#include "operatorOverload.h"
 #include "ModelManager.h"
 #include "SpriteBasis.h"
 #include "Object3dBasis.h"
 #include <fstream>
 #include <istream>
 #include "../engine/Audio/Audio.h"
+#include "../Transition/Fade/FadeTransition.h"
+#include "../Transition/TransitionManager.h"
+#include "Pause/Pause.h"
+#include "Result/Result.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
 #endif
 
+const std::vector<StateMachine<GameScene, GameSceneState>::StateFunctionSet>& GameScene::GetStateTable()
+{
+	static const std::vector<StateFunctionSet> stateTable = {
+	{ GameSceneState::LOAD,		   &GameScene::InitLoad,		&GameScene::UpdateLoad,		  &GameScene::ExitLoad },
+	{ GameSceneState::FADE_IN,	   &GameScene::InitFadeIn,		&GameScene::UpdateFadeIn,	  &GameScene::ExitFadeIn },
+	{ GameSceneState::READY,	   &GameScene::InitReady,		&GameScene::UpdateReady,	  &GameScene::ExitReady },
+	{ GameSceneState::PLAY,		   &GameScene::InitPlay,		&GameScene::UpdatePlay,		  &GameScene::ExitPlay },
+	{ GameSceneState::PAUSE,	   &GameScene::InitPause,		&GameScene::UpdatePause,	  &GameScene::ExitPause },
+	{ GameSceneState::DEAD,		   &GameScene::InitDead,		&GameScene::UpdateDead,		  &GameScene::ExitDead },
+	{ GameSceneState::RESULT,	   &GameScene::InitResult,		&GameScene::UpdateResult,	  &GameScene::ExitResult },
+	{ GameSceneState::RETRY,	   &GameScene::InitRetry,		&GameScene::UpdateRetry,	  &GameScene::ExitRetry },
+	{ GameSceneState::FADE_OUT,	   &GameScene::InitFadeOut,		&GameScene::UpdateFadeOut,	  &GameScene::ExitFadeOut },
+	{ GameSceneState::DEBUG_EDIT,  &GameScene::InitDebugEdit,	&GameScene::UpdateDebugEdit,  &GameScene::ExitDebugEdit },
+	};
+	return stateTable;
+}
+
 GameScene::GameScene()
 {
-	SetEnterFunction(GameSceneState::LOAD, [this]() { InitLoad(); });
-	SetUpdateFunction(GameSceneState::LOAD, [this]() { UpdateLoad(); });
-	SetExitFunction(GameSceneState::LOAD, [this]() { ExitLoad(); });
-
-	SetEnterFunction(GameSceneState::FADE_IN, [this]() { InitFadeIn(); });
-	SetUpdateFunction(GameSceneState::FADE_IN, [this]() { UpdateFadeIn(); });
-	SetExitFunction(GameSceneState::FADE_IN, [this]() { ExitFadeIn(); });
-
-	SetEnterFunction(GameSceneState::READY, [this]() { InitReady(); });
-	SetUpdateFunction(GameSceneState::READY, [this]() { UpdateReady(); });
-	SetExitFunction(GameSceneState::READY, [this]() { ExitReady(); });
-
-	SetEnterFunction(GameSceneState::PLAY, [this]() { InitPlay(); });
-	SetUpdateFunction(GameSceneState::PLAY, [this]() { UpdatePlay(); });
-	SetExitFunction(GameSceneState::PLAY, [this]() { ExitPlay(); });
-
-	SetEnterFunction(GameSceneState::PAUSE, [this]() { InitPause(); });
-	SetUpdateFunction(GameSceneState::PAUSE, [this]() { UpdatePause(); });
-	SetExitFunction(GameSceneState::PAUSE, [this]() { ExitPause(); });
-
-	SetEnterFunction(GameSceneState::DEAD, [this]() { InitDead(); });
-	SetUpdateFunction(GameSceneState::DEAD, [this]() { UpdateDead(); });
-	SetExitFunction(GameSceneState::DEAD, [this]() { ExitDead(); });
-
-	SetEnterFunction(GameSceneState::RESULT, [this]() { InitResult(); });
-	SetUpdateFunction(GameSceneState::RESULT, [this]() { UpdateResult(); });
-	SetExitFunction(GameSceneState::RESULT, [this]() { ExitResult(); });
-
-	SetEnterFunction(GameSceneState::RETRY, [this]() { InitRetry(); });
-	SetUpdateFunction(GameSceneState::RETRY, [this]() { UpdateRetry(); });
-	SetExitFunction(GameSceneState::RETRY, [this]() { ExitRetry(); });
-
-	SetEnterFunction(GameSceneState::FADE_OUT, [this]() { InitFadeOut(); });
-	SetUpdateFunction(GameSceneState::FADE_OUT, [this]() { UpdateFadeOut(); });
-	SetExitFunction(GameSceneState::FADE_OUT, [this]() { ExitFadeOut(); });
-
-	SetEnterFunction(GameSceneState::DEBUG_EDIT, [this]() { InitDebugEdit(); });
-	SetUpdateFunction(GameSceneState::DEBUG_EDIT, [this]() { UpdateDebugEdit(); });
-	SetExitFunction(GameSceneState::DEBUG_EDIT, [this]() { ExitDebugEdit(); });
+	RegisterFromDefaultTable(this);
 }
 
 GameScene::~GameScene()
@@ -64,6 +47,7 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
+
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 	
@@ -144,7 +128,13 @@ void GameScene::Init()
 	one_->SetPosition(offsetNum_);
 	one_->SetSize({ 64,64 });
 
-	ChangeState(GameSceneState::PLAY);
+	pauseMenu_ = std::make_unique<Pause>();
+	pauseMenu_->Initialze();
+
+	resultMenu_ = std::make_unique<Result>();
+	resultMenu_->Initialze();
+
+	ChangeState(GameSceneState::FADE_IN);
 }
 
 void GameScene::Update()
@@ -195,18 +185,34 @@ void GameScene::Draw()
 
 	SpriteBasis::GetInstance()->BasisDrawSetting();
 
-	Vector2 mouse = input_->GetMousePosition();
-	if (input_->PushKey(DIK_SPACE)) {
-		for (size_t i = 0; i < 2; ++i) {
-			lasers_[i]->DrawRect(mouse, mouse,
-				{ 426.7f * float(1 + i) - 20.0f, 720 },
-				{ 426.7f * float(1 + i) + 20.0f, 720 });
+	// フェードアウト中は描画しない
+	if(GetCurrentState() != GameSceneState::FADE_OUT)
+	{
+		Vector2 mouse = input_->GetMousePosition();
+		if (input_->PushKey(DIK_SPACE) && GetCurrentState() == GameSceneState::PLAY)
+		{
+			for (size_t i = 0; i < 2; ++i)
+			{
+				lasers_[i]->DrawRect(mouse, mouse,
+					{ 426.7f * float(1 + i) - 20.0f, 720 },
+					{ 426.7f * float(1 + i) + 20.0f, 720 });
+			}
+		}
+		reticle_->Draw();
+		one_->Draw();
+		comboText_->Draw();
+
+		if (GetCurrentState() == GameSceneState::RESULT)
+		{
+			resultMenu_->Draw();
+		}
+		scoreDraw_->Draw();
+
+		if (GetCurrentState() == GameSceneState::PAUSE)
+		{
+			pauseMenu_->Draw();
 		}
 	}
-	reticle_->Draw();
-	one_->Draw();
-	comboText_->Draw();
-	scoreDraw_->Draw();
 }
 
 void GameScene::PlayUIUpdate()
@@ -380,6 +386,9 @@ void GameScene::RailCameraMove()
 	else
 	{
 		isRailCameraMove_ = false;
+#ifndef _DEBUG
+		ChangeState(GameSceneState::RESULT);
+#endif // !_DEBUG
 	}
 }
 
@@ -518,9 +527,15 @@ void GameScene::ExitLoad()
 
 void GameScene::InitFadeIn()
 {
+	// 1フレームだけカメラを動かす
+	RailCameraMove();
 }
 void GameScene::UpdateFadeIn()
 {
+	if(!TransitionManager::GetInstance()->IsBusy())
+	{
+		ChangeState(GameSceneState::PLAY);
+	}
 }
 void GameScene::ExitFadeIn()
 {
@@ -552,6 +567,8 @@ void GameScene::UpdatePlay()
 	AttackUpdate();
 
 	PlayUIUpdate();
+
+	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
 }
 void GameScene::ExitPlay()
 {
@@ -563,6 +580,8 @@ void GameScene::InitPause()
 }
 void GameScene::UpdatePause()
 {
+	pauseMenu_->Update();
+	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PLAY);
 }
 void GameScene::ExitPause()
 {
@@ -582,9 +601,13 @@ void GameScene::ExitDead()
 
 void GameScene::InitResult()
 {
+	scoreDraw_->SetResult();
+	scoreDraw_->Update();
 }
 void GameScene::UpdateResult()
 {
+	resultMenu_->Update();
+	if (input_->TriggerKey(DIK_SPACE)) ChangeState(GameSceneState::FADE_OUT);
 }
 void GameScene::ExitResult()
 {
@@ -604,6 +627,12 @@ void GameScene::ExitRetry()
 
 void GameScene::InitFadeOut()
 {
+	auto transition = std::make_unique<FadeTransition>(FadeTransition::Type::FADE_OUT, 1.0f);
+	transition->SetOnFinishCallback([this]() {
+		sceneManager_->ChangeScene("TITLE");
+		TransitionManager::GetInstance()->Enqueue(std::make_unique<FadeTransition>(FadeTransition::Type::FADE_IN, 1.0f));
+		});
+	TransitionManager::GetInstance()->Start(std::move(transition));
 }
 void GameScene::UpdateFadeOut()
 {
@@ -618,8 +647,11 @@ void GameScene::InitDebugEdit()
 }
 void GameScene::UpdateDebugEdit()
 {
+#ifdef _DEBUG
 	StageEdit();
 	UpdateEditorEnemies();
+#endif // _DEBUG
+
 }
 void GameScene::ExitDebugEdit()
 {

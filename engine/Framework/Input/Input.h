@@ -140,11 +140,11 @@ private: // メンバ変数
 	Microsoft::WRL::ComPtr<IDirectInputDevice8> devKeyboard_;
 	Microsoft::WRL::ComPtr<IDirectInputDevice8> devMouse_;
 	std::vector<Joystick> devJoysticks_;
-	std::array<BYTE, 256> key_;
-	std::array<BYTE, 256> keyPre_;
+	std::array<BYTE, 256> key_{};
+	std::array<BYTE, 256> keyPre_{};
 	DIMOUSESTATE2 mouse_;
 	DIMOUSESTATE2 mousePre_;
 	HWND hwnd_;
 	HWND cliantHwnd_;
-	Vector2 mousePosition_;
+	Vector2 mousePosition_{};
 };

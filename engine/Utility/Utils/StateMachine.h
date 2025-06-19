@@ -6,11 +6,37 @@
 #include <string>
 #include <imgui.h>
 
+// クラスの型 'C' に 'StateFunctionSet' が定義されていて、
+// 'C::GetStateTable()' が返す型が 'std::vector<C::StateFunctionSet>' であることを要求するコンセプト
+template<typename C>
+concept HasStateTable = requires {
+    { C::GetStateTable() } -> std::same_as<const std::vector<typename C::StateFunctionSet>&>;
+};
+
 // 汎用ステートマシンクラス（テンプレート）
-template<typename StateEnum>
+// 'Class' = 継承先クラス  
+// 'StateEnum' = 継承先ごと固有のステートのenumClass
+template<typename Class, typename StateEnum>
 class StateMachine {
 public:
     using State = StateEnum;
+    using StateFunc = void (Class::*)();
+
+    // 関数テーブル用
+    // { state, enter, update, exit }
+    struct StateFunctionSet {
+        State state;
+        StateFunc enter, update, exit;
+    };
+
+    template<HasStateTable C>
+    void RegisterFromDefaultTable(C* instance) {
+        for (const auto& entry : C::GetStateTable()) {
+            SetEnterFunction(entry.state, [instance, f = entry.enter]() { (instance->*f)(); });
+            SetUpdateFunction(entry.state, [instance, f = entry.update]() { (instance->*f)(); });
+            SetExitFunction(entry.state, [instance, f = entry.exit]() { (instance->*f)(); });
+        }
+    }
 
     // ステート変更リクエストの呼び出し
     void ChangeState(State next) {
@@ -86,6 +112,7 @@ private:
 // 更新処理の中で UpdateState(float deltaTime) を呼び出し、ステートを切り替えたいときに適宜ChangeState(State next)を呼び出す
 // 以下宣言の例
 /*
+.h
 enum class State
 {
     ONE,
@@ -98,18 +125,11 @@ class Class : public StateMachine<State>
 public:
     Class()
     {
-        SetEnterFunction(State::ONE, [this]() { InitOne(); });
-        SetUpdateFunction(State::ONE, [this]() { UpdateOne(); });
-        SetExitFunction(State::ONE, [this]() { ExitOne(); });
-
-        SetEnterFunction(State::TWO, [this]() { InitOne(); });
-        SetUpdateFunction(State::TWO, [this]() { UpdateOne(); });
-        SetExitFunction(State::TWO, [this]() { ExitOne(); });
-
-        SetEnterFunction(State::THREE, [this]() { InitOne(); });
-        SetUpdateFunction(State::THREE, [this]() { UpdateOne(); });
-        SetExitFunction(State::THREE, [this]() { ExitOne(); });
+        RegisterFromDefaultTable(this);
     }
+
+    static const std::vector<StateFunctionSet>& GetStateTable();
+
 private:
 	std::string GetStateName(State state) const override {
 		switch (state) {
@@ -133,4 +153,15 @@ private:
     void UpdateThree() {}
     void ExitThree() {}
 };
+
+.cpp
+const std::vector<StateMachine<Class, State>::StateFunctionSet>& Class::GetStateTable()
+{
+    static const std::vector<StateFunctionSet> stateTable = {
+    { State::ONE,   &Class::InitOne,	&Class::UpdateOne,	 &Class::ExitOne },
+    { State::TWO,   &Class::InitTwo,	&Class::UpdateTwo,	 &Class::ExitTwo },
+    { State::THREE, &Class::InitThree,	&Class::UpdateThree, &Class::ExitThree },
+    };
+    return stateTable;
+}
 */

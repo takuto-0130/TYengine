@@ -37,9 +37,6 @@
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Utility\Utils\GlobalVariables.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -64,13 +61,13 @@
     <ClCompile Include="engine\Debugger\ImGuiManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Utility\Utils\Input.cpp">
+    <ClCompile Include="engine\Framework\Input\Input.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="engine\Effect\IParticleRenderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Utility\ObjectBasis\LevelObject.cpp">
+    <ClCompile Include="engine\Utility\SceneObjects\LevelObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="engine\EngineCore\Logger.cpp">
@@ -98,9 +95,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="engine\Graphics\Model\Object3dBasis.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Math\operatorOverload.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="engine\Effect\ParticleManager.cpp">
@@ -163,9 +157,13 @@
     <ClCompile Include="engine\EngineCore\WindowsApp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Utility\Transform\WorldTransform.cpp">
+    <ClCompile Include="engine\Utility\Math\WorldTransform.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="application\Scene\Transition\Fade\FadeTransition.cpp" />
+    <ClCompile Include="application\Scene\Transition\TransitionManager.cpp" />
+    <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp" />
+    <ClCompile Include="application\Scene\GameScene\Result\Result.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -174,7 +172,7 @@
     <ClInclude Include="engine\Audio\Audio.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\ObjectBasis\BaseObject.h">
+    <ClInclude Include="engine\Utility\SceneObjects\BaseObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\Utility\Loader\BlenderLevelLoader.h">
@@ -210,9 +208,6 @@
     <ClInclude Include="application\Scene\GameScene\GameScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\Utils\GlobalVariables.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -240,7 +235,7 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\Utils\Input.h">
+    <ClInclude Include="engine\Framework\Input\Input.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\Effect\IParticleRenderer.h">
@@ -249,7 +244,7 @@
     <ClInclude Include="engine\Framework\SceneBase\IScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\ObjectBasis\LevelObject.h">
+    <ClInclude Include="engine\Utility\SceneObjects\LevelObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\EngineCore\Logger.h">
@@ -274,9 +269,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\Graphics\Model\Object3dBasis.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Math\operatorOverload.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\Effect\ParticleManager.h">
@@ -342,10 +334,16 @@
     <ClInclude Include="engine\EngineCore\WindowsApp.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\Transform\WorldTransform.h">
+    <ClInclude Include="engine\Utility\Math\WorldTransform.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="engine\Utility\Utils\StateMachine.h" />
+    <ClInclude Include="application\Scene\Transition\ITransition.h" />
+    <ClInclude Include="application\Scene\Transition\StateMachineTransition.h" />
+    <ClInclude Include="application\Scene\Transition\Fade\FadeTransition.h" />
+    <ClInclude Include="application\Scene\Transition\TransitionManager.h" />
+    <ClInclude Include="application\Scene\GameScene\Pause\Pause.h" />
+    <ClInclude Include="application\Scene\GameScene\Result\Result.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

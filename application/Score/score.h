@@ -21,6 +21,9 @@ public:
 		currentScore_ = score;
 	}
 
+	// 仮対応
+	void SetResult();
+
 private:
 	void ScoreDisplay();
 

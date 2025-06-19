@@ -69,6 +69,16 @@ void score::Draw()
 	four_->Draw();
 }
 
+void score::SetResult()
+{
+	float X = 700.0f;
+	float Y = 360.0f;
+	one_->SetPosition({ X,Y });
+	two_->SetPosition({ 45.0f + X,Y });
+	three_->SetPosition({ 90.0f + X,Y });
+	four_->SetPosition({ 135.0f + X,Y });
+}
+
 void score::ScoreDisplay()
 {
 	float t = scoreViewTimer_ / kScoreViewTime_;

@@ -22,6 +22,9 @@
 #include <list>
 #include <unordered_set>
 
+class Pause;
+class Result;
+
 enum class GameSceneState {
 	LOAD,		// データのロード（ロードに時間がかかる場合に使用、使わなければのちに削除）
 	FADE_IN,	// シーン開始時のフェードイン
@@ -38,8 +41,11 @@ enum class GameSceneState {
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene : public IScene, public StateMachine<GameSceneState>
+class GameScene : public IScene, public StateMachine<GameScene, GameSceneState>
 {
+public: // 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
+
 public:
 	GameScene();
 	~GameScene() override;
@@ -74,7 +80,7 @@ private:
 #endif // _DEBUG
 
 
-private: // シーン内のState関数
+private: // シーン内のState関連関数
 	// 列挙名を文字列化（ImGui表示用）
 	std::string GetStateName(State state) const override {
 		switch (state) {
@@ -220,6 +226,11 @@ private: // メンバ変数
 	std::unique_ptr<Sprite> one_;
 	Vector2 offsetNum_ = { 1060,25 };
 
+	std::unique_ptr<Pause> pauseMenu_;
+
+	std::unique_ptr<Result> resultMenu_;
+
 	std::random_device seedGene_;
 	float shakeTime_ = 0.4f;
+
 };

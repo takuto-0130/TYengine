@@ -1,7 +1,6 @@
 #pragma once
-
-class Enemy;
-class EnemyEditor;
+#include "Enemy.h"
+#include "EnemyEditor.h"
 
 class EnemyManager
 {

@@ -8,11 +8,10 @@
 #include "StateMachine.h"
 
 #include "Rail/Rail.h"
-#include "Object/Enemy/Enemy.h"
 #include "Rail/RailEditor.h"
-#include "Object/Enemy/EnemyEditor.h"
 #include "Skydome/Skydome.h"
 #include "ParticleManager.h"
+#include "../../Object/Enemy/EnemyManager.h"
 
 
 #include <memory>
@@ -56,7 +55,6 @@ private:
 	void PlayUIUpdate();
 
 	void AttackUpdate();
-	void EnemyUpdate();
 
 	void PopRail(Vector3 position, Vector3 rota);
 	void StageEdit();
@@ -67,16 +65,7 @@ private:
 	void SetSegment();
 	void ResetRailCamera();
 
-	void TriggerNextEnemyGroup();
-
 	void Collision();
-
-	std::list<std::list<std::unique_ptr<Enemy>>> DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src);
-
-#ifdef _DEBUG
-	void DrawEditorEnemies();
-	void UpdateEditorEnemies();
-#endif // _DEBUG
 
 
 private: // シーン内のState関連関数
@@ -156,10 +145,7 @@ private: // メンバ変数
 	std::unique_ptr<Skydome> skydome_;
 	std::list<std::unique_ptr<Rail>> rails_;
 
-	std::list<std::list<std::unique_ptr<Enemy>>> enemyGroupsEditor_; // 編集用
-	std::list<std::list<std::unique_ptr<Enemy>>> enemyGroups_; // 全グループ（未出現）
-	std::list<std::unique_ptr<Enemy>> activeEnemies_;          // 今出現中の敵
-	std::unique_ptr<EnemyEditor> enemyEditor_;				   // 敵のエディタ
+	std::unique_ptr<EnemyManager> enemyManager_;
 
 	std::vector<bool> triggeredFlags_;
 	std::vector<Vector3> controlPoints_;

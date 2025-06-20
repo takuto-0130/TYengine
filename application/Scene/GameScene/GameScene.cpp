@@ -9,6 +9,7 @@
 #include "../Transition/TransitionManager.h"
 #include "Pause/Pause.h"
 #include "Result/Result.h"
+#include "../../Object/Enemy/Enemy.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -49,8 +50,8 @@ void GameScene::Init()
 	
 	Audio::GetInstance()->LoadWave("fanfare");
 
-	enemyEditor_ = std::make_unique<EnemyEditor>(&enemyGroupsEditor_);
-	enemyGroups_ = DeepCopyEnemyGroups(enemyGroupsEditor_);
+	enemyManager_ = std::make_unique<EnemyManager>();
+	enemyManager_->Init();
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
@@ -135,7 +136,6 @@ void GameScene::Init()
 
 void GameScene::Update()
 {
-	RailCameraDebug();
 	skydome_->Update();
 
 	UpdateState(1.0f / 60.0f);
@@ -169,14 +169,12 @@ void GameScene::Draw()
 
 	if (otherEditorSwitch_) {
 #ifdef _DEBUG
-		//DrawEditorEnemies();
+		enemyManager_->DrawEditorEnemies();
 #endif // _DEBUG
 	}
 	else
 	{
-		/*for (auto& enemy : activeEnemies_) {
-			enemy->Draw();
-		}*/
+		enemyManager_->Draw();
 	}
 
 	SpriteBasis::GetInstance()->BasisDrawSetting();
@@ -260,18 +258,6 @@ void GameScene::AttackUpdate()
 	}
 }
 
-void GameScene::EnemyUpdate()
-{
-	/*activeEnemies_.remove_if([](const std::unique_ptr<Enemy>& e)
-		{
-			return e->IsDead();
-		});
-
-	for (auto& enemy : activeEnemies_) {
-		enemy->Update();
-	}*/
-}
-
 void GameScene::PopRail(Vector3 position, Vector3 rota)
 {
 	auto rail = std::make_unique<Rail>();
@@ -307,7 +293,7 @@ void GameScene::StageEdit()
 		RailReDraw();
 		RailEditor::Instance()->ResetPreviewFlag();
 	}
-	//enemyEditor_->DrawEditorUI();
+	enemyManager_->DrawEditorUI();
 #endif
 }
 
@@ -373,7 +359,7 @@ void GameScene::RailCameraMove()
 		{
 			if (alreadyTriggeredIndices_.find(currentIndex) == alreadyTriggeredIndices_.end())
 			{
-				//TriggerNextEnemyGroup();
+				enemyManager_->TriggerNextEnemyGroup();
 				//Audio::GetInstance()->PlayWave("fanfare");
 				alreadyTriggeredIndices_.insert(currentIndex);
 			}
@@ -424,22 +410,10 @@ void GameScene::ResetRailCamera()
 	cameraForwardT = 30.0f / denom;
 }
 
-void GameScene::TriggerNextEnemyGroup()
-{
-	if (!enemyGroups_.empty()) {
-		std::list<std::unique_ptr<Enemy>>& nextGroup = enemyGroups_.front();
-		for (auto& enemy : nextGroup) {
-			enemy->Pop();
-			activeEnemies_.push_back(std::move(enemy));
-		}
-		enemyGroups_.pop_front();
-	}
-}
-
 void GameScene::Collision()
 {
 	int i = 0;
-	for (auto& enemy : activeEnemies_) {
+	for (auto& enemy : enemyManager_->GetActiveEnemies()) {
 		Vector3 pos = enemy->GetWorldPosition();
 		Matrix4x4 matView = MakeViewportMatrix(0, 0, WindowsApp::kClientWidth, WindowsApp::kClientHieght, 0, 1);
 		Matrix4x4 matVPV = camera_->GetViewMatrix() * camera_->GetProjectionMatrix() * matView;
@@ -468,47 +442,6 @@ void GameScene::Collision()
 		i++;
 	}
 }
-
-std::list<std::list<std::unique_ptr<Enemy>>> GameScene::DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src) {
-	std::list<std::list<std::unique_ptr<Enemy>>> copy;
-
-	for (const auto& group : src) {
-		std::list<std::unique_ptr<Enemy>> newGroup;
-		for (const auto& enemy : group) {
-			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
-			newEnemy->Init();
-			newEnemy->SetAndApplyPos(enemy->GetWorldPosition());
-			newGroup.push_back(std::move(newEnemy));
-		}
-		copy.push_back(std::move(newGroup));
-	}
-
-	return copy;
-}
-
-#ifdef _DEBUG
-void GameScene::DrawEditorEnemies()
-{
-	for (const auto& group : enemyGroupsEditor_)
-	{
-		for (const auto& enemy : group)
-		{
-			enemy->Draw();
-		}
-	}
-}
-
-void GameScene::UpdateEditorEnemies()
-{
-	for (const auto& group : enemyGroupsEditor_)
-	{
-		for (const auto& enemy : group) 
-		{
-			enemy->Update(); // worldTransform.TransferMatrix()
-		}
-	}
-}
-#endif
 
 void GameScene::InitLoad()
 {
@@ -554,11 +487,13 @@ void GameScene::InitPlay()
 }
 void GameScene::UpdatePlay()
 {
-#ifndef _DEBUG
+#ifdef _DEBUG
+	RailCameraDebug();
+#else
 	RailCameraMove();
 #endif // !_DEBUG
 
-	//EnemyUpdate();
+	enemyManager_->Update();
 
 	AttackUpdate();
 
@@ -643,11 +578,9 @@ void GameScene::InitDebugEdit()
 }
 void GameScene::UpdateDebugEdit()
 {
-#ifdef _DEBUG
+	RailCameraDebug();
 	StageEdit();
-	//UpdateEditorEnemies();
-#endif // _DEBUG
-
+	enemyManager_->UpdateEditorEnemies();
 }
 void GameScene::ExitDebugEdit()
 {

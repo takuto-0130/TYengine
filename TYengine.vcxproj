@@ -165,6 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Scene\GameScene\Result\Result.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
     <ClInclude Include="application\Scene\Transition\ITransition.h" />

@@ -58,7 +58,6 @@ private:
 
 	void PopRail(Vector3 position, Vector3 rota);
 	void StageEdit();
-	void RailLineReDraw();
 	void RailReDraw();
 	void RailCameraMove();
 	void RailCameraDebug();
@@ -69,6 +68,7 @@ private:
 
 
 private: // シーン内のState関連関数
+#pragma region // State関連関数
 	// 列挙名を文字列化（ImGui表示用）
 	std::string GetStateName(State state) const override {
 		switch (state) {
@@ -135,7 +135,7 @@ private: // シーン内のState関連関数
 	void InitDebugEdit();
 	void UpdateDebugEdit();
 	void ExitDebugEdit();
-
+#pragma endregion
 
 private: // メンバ変数
 
@@ -143,10 +143,10 @@ private: // メンバ変数
 	Vector3 cameraOffset_ = {};
 
 	std::unique_ptr<Skydome> skydome_;
-	std::list<std::unique_ptr<Rail>> rails_;
 
 	std::unique_ptr<EnemyManager> enemyManager_;
 
+	std::list<std::unique_ptr<Rail>> rails_;
 	std::vector<bool> triggeredFlags_;
 	std::vector<Vector3> controlPoints_;
 	std::vector<Vector3> pointsDrawing_;
@@ -159,7 +159,6 @@ private: // メンバ変数
 	bool isRailCameraMove_ = false;
 
 	std::unordered_set<size_t> alreadyTriggeredIndices_;
-
 	struct TriggerObject
 	{
 		WorldTransform world;
@@ -169,6 +168,7 @@ private: // メンバ変数
 		{
 			world.Initialize();
 			world.translation_ = pos;
+			world.scale_ = { 0.5f, 0.5f, 0.5f };
 			object.Initialize();
 			object.SetModel("unitSphere.obj");
 		}
@@ -179,43 +179,34 @@ private: // メンバ変数
 		TriggerObject(TriggerObject&&) noexcept = default;
 		TriggerObject& operator=(TriggerObject&&) noexcept = default;
 	};
-
 	std::vector<std::unique_ptr<TriggerObject>> triggerObjects_;
 
+
 	int comboCount_ = 0;
-
 	float comboTimer_ = 0;
-
 	float kComboTime_ = 3.0f;
+	std::unique_ptr<Sprite> comboNumTex_;
+	Vector2 offsetComboNum_ = { 1060,25 };
+	std::unique_ptr<Sprite> comboText_;
+	Vector2 offsetComboTextPos_ = { 1245, 60 };
 
 
 	IParticleRenderer::Emitter emitter;
-
-
 	IParticleRenderer::Emitter emitterRing;
+
+
+	std::unique_ptr<Sprite> reticle_;
+	std::array<std::unique_ptr<Sprite>, 2> lasers_;
 
 
 	std::unique_ptr<score> scoreDraw_;
 	int32_t score_ = 0;
 	const int32_t kBasicScore_ = 200;
-
-	std::unique_ptr<Sprite> reticle_;
-
-	std::array<std::unique_ptr<Sprite>, 2> lasers_;
+	std::unique_ptr<Pause> pauseMenu_;
+	std::unique_ptr<Result> resultMenu_;
 
 	bool otherEditorSwitch_ = false;
 
-	std::unique_ptr<Sprite> comboText_;
-	Vector2 offsetPos_ = { 1245, 60 };
-
-	std::unique_ptr<Sprite> one_;
-	Vector2 offsetNum_ = { 1060,25 };
-
-	std::unique_ptr<Pause> pauseMenu_;
-
-	std::unique_ptr<Result> resultMenu_;
-
 	std::random_device seedGene_;
 	float shakeTime_ = 0.4f;
-
 };

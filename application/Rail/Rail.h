@@ -1,32 +1,16 @@
 #pragma once
-#include "Input.h"
-#include "Sprite.h"
-#include "Object3d.h"
-#include "WorldTransform.h"
-#include <assert.h>
-class Rail {
+#include "BaseObject.h"
+class Rail : public BaseObject {
 public:
 
 	~Rail();
 
-	void Initialize(Vector3 position);
+	void Init();
 
-	void Update();
+	void Update() override;
 
-	void Draw();
+	void Draw() override;
 
-	Vector3 GetWorldPosition() const;
-	
-	bool IsDead() const { return isDead_; }
-
-	void SetRotate(const Vector3& rota) { worldTransform_.rotation_ = rota; }
-
-	void UpdateTransform() { worldTransform_.TransferMatrix(); }
-
-private:
-
-	WorldTransform worldTransform_;
-	std::unique_ptr<Object3d> rail_;
-	Vector3 velocity_{};
-	bool isDead_ = false;
+	void SetRotate(const Vector3& rotation) { worldTransform_.rotation_ = rotation; }
+	void SetTranslation(const Vector3& translation) { worldTransform_.translation_ = translation; }
 };

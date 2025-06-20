@@ -108,6 +108,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="application\Rail\Rail.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeOut.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneLoad.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePause.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePlay.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneReady.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp" />
     <ClCompile Include="application\Score\score.cpp" />
     <ClCompile Include="application\Skydome\Skydome.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />

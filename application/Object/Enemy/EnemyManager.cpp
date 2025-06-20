@@ -2,6 +2,9 @@
 #include "Enemy.h"
 #include "EnemyEditor.h"
 
+//----------------------------------
+// 通常シーン
+//----------------------------------
 void EnemyManager::Init()
 {
 	enemyEditor_ = std::make_unique<EnemyEditor>(&enemyGroupsEditor_);

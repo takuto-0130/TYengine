@@ -107,7 +107,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
-    <ClCompile Include="application\Rail\Rail.cpp" />
+    <ClCompile Include="application\Object\Rail\Rail.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp" />
@@ -165,7 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\Effect\ParticleManager.cpp" />
     <ClCompile Include="engine\Effect\PlaneParticle.cpp" />
     <ClCompile Include="engine\Effect\RingParticle.cpp" />
-    <ClCompile Include="application\Rail\RailEditor.cpp" />
+    <ClCompile Include="application\Object\Rail\RailEditor.cpp" />
     <ClCompile Include="engine\OffScreen\RenderTexture.cpp" />
     <ClCompile Include="engine\Utility\SceneObjects\LevelObject.cpp" />
     <ClCompile Include="application\Stage\Stage.cpp" />
@@ -173,6 +173,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Scene\Transition\TransitionManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp" />
     <ClCompile Include="application\Scene\GameScene\Result\Result.cpp" />
+    <ClCompile Include="application\Object\Rail\RailManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
@@ -181,7 +182,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Scene\Transition\ITransition.h" />
     <ClInclude Include="application\Scene\Transition\StateMachineTransition.h" />
     <ClInclude Include="engine\Utility\SceneObjects\BaseObject.h" />
-    <ClInclude Include="application\Rail\Rail.h" />
+    <ClInclude Include="application\Object\Rail\Rail.h" />
     <ClInclude Include="application\Score\score.h" />
     <ClInclude Include="application\Skydome\Skydome.h" />
     <ClInclude Include="application\Object\Enemy\Enemy.h" />
@@ -232,7 +233,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Effect\ParticleManager.h" />
     <ClInclude Include="engine\Effect\PlaneParticle.h" />
     <ClInclude Include="engine\Effect\RingParticle.h" />
-    <ClInclude Include="application\Rail\RailEditor.h" />
+    <ClInclude Include="application\Object\Rail\RailEditor.h" />
     <ClInclude Include="engine\OffScreen\RenderTexture.h" />
     <ClInclude Include="engine\Utility\SceneObjects\LevelObject.h" />
     <ClInclude Include="application\Stage\Stage.h" />
@@ -240,6 +241,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Scene\Transition\TransitionManager.h" />
     <ClInclude Include="application\Scene\GameScene\Pause\Pause.h" />
     <ClInclude Include="application\Scene\GameScene\Result\Result.h" />
+    <ClInclude Include="application\Object\Rail\RailManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -160,10 +160,18 @@
     <ClCompile Include="engine\Utility\Math\WorldTransform.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\Transition\Fade\FadeTransition.cpp" />
-    <ClCompile Include="application\Scene\Transition\TransitionManager.cpp" />
-    <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp" />
-    <ClCompile Include="application\Scene\GameScene\Result\Result.cpp" />
+    <ClCompile Include="application\Scene\Transition\Fade\FadeTransition.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\Result\Result.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\Transition\TransitionManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -337,13 +345,30 @@
     <ClInclude Include="engine\Utility\Math\WorldTransform.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\Utils\StateMachine.h" />
-    <ClInclude Include="application\Scene\Transition\ITransition.h" />
-    <ClInclude Include="application\Scene\Transition\StateMachineTransition.h" />
-    <ClInclude Include="application\Scene\Transition\Fade\FadeTransition.h" />
-    <ClInclude Include="application\Scene\Transition\TransitionManager.h" />
-    <ClInclude Include="application\Scene\GameScene\Pause\Pause.h" />
-    <ClInclude Include="application\Scene\GameScene\Result\Result.h" />
+    <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Transition\Fade\FadeTransition.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Transition\ITransition.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\GameScene\Pause\Pause.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\GameScene\Result\Result.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\StateMachine.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Transition\StateMachineTransition.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Transition\TransitionManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -61,7 +61,7 @@ private: // メンバ関数
 	void AdjustTextureSize();
 
 private: // メンバ関数
-	SpriteBasis* spriteBasis_;
+	SpriteBasis* spriteBasis_ = nullptr;
 
 	// 頂点データ
 	struct VertexData {
@@ -94,11 +94,11 @@ private: // メンバ関数
 	Material* materialData_ = nullptr;
 	TransfomationMatrix* transformationMatrixData_ = nullptr;
 	// バッファリソースの使い道を補足するバッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};
 
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_ = {};
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_ = {};
 
 	// テクスチャ番号
 	uint32_t textureIndex = 0;

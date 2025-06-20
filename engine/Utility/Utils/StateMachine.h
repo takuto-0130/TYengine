@@ -23,7 +23,7 @@ public:
     using StateFunc = void (Class::*)();
 
     // 関数テーブル用
-    // { state, enter, update, exit }
+    // 要素：{ StateEnum, EnterFunc, UpdateFunc, ExitFunc }
     struct StateFunctionSet {
         State state;
         StateFunc enter, update, exit;

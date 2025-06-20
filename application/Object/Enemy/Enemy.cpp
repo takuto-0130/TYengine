@@ -30,6 +30,11 @@ void Enemy::Update()
 	}
 
 
+	UpdateTransform();
+}
+
+void Enemy::UpdateTransform()
+{
 	worldTransform_.TransferMatrix();
 }
 

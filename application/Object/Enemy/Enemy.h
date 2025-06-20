@@ -14,6 +14,8 @@ public:
 
 	void Update() override;
 
+	void UpdateTransform();
+
 	void Draw() override;
 
 	void SetAndApplyPos(Vector3 pos) { 

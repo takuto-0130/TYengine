@@ -9,7 +9,8 @@
 // クラスの型 'C' に 'StateFunctionSet' が定義されていて、
 // 'C::GetStateTable()' が返す型が 'std::vector<C::StateFunctionSet>' であることを要求するコンセプト
 template<typename C>
-concept HasStateTable = requires {
+concept HasStateTable = requires
+{
     { C::GetStateTable() } -> std::same_as<const std::vector<typename C::StateFunctionSet>&>;
 };
 
@@ -17,21 +18,25 @@ concept HasStateTable = requires {
 // 'Class' = 継承先クラス  
 // 'StateEnum' = 継承先ごと固有のステートのenumClass
 template<typename Class, typename StateEnum>
-class StateMachine {
+class StateMachine
+{
 public:
     using State = StateEnum;
     using StateFunc = void (Class::*)();
 
     // 関数テーブル用
     // 要素：{ StateEnum, EnterFunc, UpdateFunc, ExitFunc }
-    struct StateFunctionSet {
+    struct StateFunctionSet 
+    {
         State state;
         StateFunc enter, update, exit;
     };
 
     template<HasStateTable C>
-    void RegisterFromDefaultTable(C* instance) {
-        for (const auto& entry : C::GetStateTable()) {
+    void RegisterFromDefaultTable(C* instance) 
+    {
+        for (const auto& entry : C::GetStateTable()) 
+        {
             SetEnterFunction(entry.state, [instance, f = entry.enter]() { (instance->*f)(); });
             SetUpdateFunction(entry.state, [instance, f = entry.update]() { (instance->*f)(); });
             SetExitFunction(entry.state, [instance, f = entry.exit]() { (instance->*f)(); });
@@ -39,36 +44,44 @@ public:
     }
 
     // ステート変更リクエストの呼び出し
-    void ChangeState(State next) {
-        if (stateRequest_ != next) {
+    void ChangeState(State next) 
+    {
+        if (stateRequest_ != next) 
+        {
             stateRequest_ = next;
         }
     }
 
     // ステートのアップデート
-    void UpdateState(float deltaTime) {
-        if (stateRequest_) {
-            if (exitTable_.contains(currState_)) {
+    void UpdateState(float deltaTime) 
+    {
+        if (stateRequest_) 
+        {
+            if (exitTable_.contains(currState_)) 
+            {
                 exitTable_[currState_]();
             }
             prevState_ = currState_;
             currState_ = *stateRequest_;
             stateRequest_ = std::nullopt;
             stateTimer_ = 0.0f;
-            if (enterTable_.contains(currState_)) {
+            if (enterTable_.contains(currState_)) 
+            {
                 enterTable_[currState_]();
             }
         }
 
         stateTimer_ += deltaTime;
 
-        if (updateTable_.contains(currState_)) {
+        if (updateTable_.contains(currState_)) 
+        {
             updateTable_[currState_]();
         }
     }
 
     // デバッグ用のImGui表示
-    void DebugImGui(const char* labelPrefix = "State") const {
+    void DebugImGui(const char* labelPrefix = "State") const 
+    {
         ImGui::Text("%s: %s", labelPrefix, GetStateName(currState_).c_str());
         ImGui::Text("Elapsed: %.2f sec", stateTimer_);
     }
@@ -81,17 +94,11 @@ public:
     float GetStateElapsedTime() const { return stateTimer_; }
 
 protected:
-    void SetEnterFunction(State state, std::function<void()> func) {
-        enterTable_[state] = func;
-    }
+    void SetEnterFunction(State state, std::function<void()> func) { enterTable_[state] = func; }
 
-    void SetUpdateFunction(State state, std::function<void()> func) {
-        updateTable_[state] = func;
-    }
+    void SetUpdateFunction(State state, std::function<void()> func) { updateTable_[state] = func; }
 
-    void SetExitFunction(State state, std::function<void()> func) {
-        exitTable_[state] = func;
-    }
+    void SetExitFunction(State state, std::function<void()> func) { exitTable_[state] = func; }
 
     // オーバーライドで列挙名を文字列化（ImGui表示用）
     virtual std::string GetStateName(State state) const = 0;

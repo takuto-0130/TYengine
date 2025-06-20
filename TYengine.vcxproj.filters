@@ -172,6 +172,16 @@
     <ClCompile Include="application\Scene\Transition\TransitionManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneLoad.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneReady.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePlay.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePause.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeOut.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">

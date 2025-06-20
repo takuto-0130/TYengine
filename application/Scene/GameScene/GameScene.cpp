@@ -5,8 +5,6 @@
 #include "SpriteBasis.h"
 #include "Object3dBasis.h"
 #include "Audio/Audio.h"
-#include "../Transition/Fade/FadeTransition.h"
-#include "../Transition/TransitionManager.h"
 #include "Pause/Pause.h"
 #include "Result/Result.h"
 #include "../../Object/Enemy/Enemy.h"
@@ -73,7 +71,6 @@ void GameScene::Init()
 
 	segmentCount = oneSegmentCount * controlPoints_.size();
 	SetSegment();
-	RailLineReDraw();
 	RailReDraw();
 	ResetRailCamera();
 
@@ -115,15 +112,15 @@ void GameScene::Init()
 	comboText_ = std::make_unique<Sprite>();
 	comboText_->Initialize("Resources/Texture/ComboText.png");
 	comboText_->SetAnchorPoint({ 0.5f,0.5f });
-	comboText_->SetPosition(offsetPos_);
+	comboText_->SetPosition(offsetComboTextPos_);
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
-	one_ = std::make_unique<Sprite>();
-	one_->Initialize("Resources/Texture/number.png");
-	one_->SetTextureSize({ 64,64 });
-	one_->SetTextureLeftTop({ 128,0 });
-	one_->SetPosition(offsetNum_);
-	one_->SetSize({ 64,64 });
+	comboNumTex_ = std::make_unique<Sprite>();
+	comboNumTex_->Initialize("Resources/Texture/number.png");
+	comboNumTex_->SetTextureSize({ 64,64 });
+	comboNumTex_->SetTextureLeftTop({ 128,0 });
+	comboNumTex_->SetPosition(offsetComboNum_);
+	comboNumTex_->SetSize({ 64,64 });
 
 	pauseMenu_ = std::make_unique<Pause>();
 	pauseMenu_->Initialze();
@@ -141,7 +138,7 @@ void GameScene::Update()
 	UpdateState(1.0f / 60.0f);
 
 #ifdef _DEBUG
-	ImGui::Begin("Editor");
+	ImGui::Begin("Play : Editor Switch");
 	if(otherEditorSwitch_)
 	{
 		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
@@ -193,7 +190,7 @@ void GameScene::Draw()
 			}
 		}
 		reticle_->Draw();
-		one_->Draw();
+		comboNumTex_->Draw();
 		comboText_->Draw();
 
 		if (GetCurrentState() == GameSceneState::RESULT)
@@ -213,7 +210,7 @@ void GameScene::PlayUIUpdate()
 {
 	scoreDraw_->Update();
 	comboText_->Update();
-	one_->Update();
+	comboNumTex_->Update();
 	reticle_->Update();
 	for (size_t i = 0; i < 2; ++i) {
 		lasers_[i]->Update();
@@ -240,7 +237,7 @@ void GameScene::AttackUpdate()
 	float t = comboTimer_ / kComboTime_;
 	t = 1.0f - powf(1.0f - t, 4.0f);
 	comboText_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
-	one_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
+	comboNumTex_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
 
 	t = (comboTimer_ - (kComboTime_ - shakeTime_)) / (kComboTime_ - (kComboTime_ - shakeTime_));
 	if (t > 0)
@@ -248,13 +245,13 @@ void GameScene::AttackUpdate()
 		std::mt19937 random(seedGene_());
 		std::uniform_real_distribution<float> dist(-15.0f, 15.0f);
 		Vector2 pos = { dist(random),dist(random) };
-		comboText_->SetPosition(offsetPos_ + pos * t);
-		one_->SetPosition(offsetNum_ + pos * t);
+		comboText_->SetPosition(offsetComboTextPos_ + pos * t);
+		comboNumTex_->SetPosition(offsetComboNum_ + pos * t);
 	}
 	else
 	{
-		comboText_->SetPosition(offsetPos_);
-		one_->SetPosition(offsetNum_);
+		comboText_->SetPosition(offsetComboTextPos_);
+		comboNumTex_->SetPosition(offsetComboNum_);
 	}
 }
 
@@ -289,7 +286,6 @@ void GameScene::StageEdit()
 
 		segmentCount = oneSegmentCount * controlPoints_.size();
 		SetSegment();
-		RailLineReDraw();
 		RailReDraw();
 		RailEditor::Instance()->ResetPreviewFlag();
 	}
@@ -297,7 +293,7 @@ void GameScene::StageEdit()
 #endif
 }
 
-void GameScene::RailLineReDraw()
+void GameScene::RailReDraw()
 {
 	pointsDrawing_.clear();
 	for (size_t i = 0; i < segmentCount + 1; ++i)
@@ -306,15 +302,6 @@ void GameScene::RailLineReDraw()
 		Vector3 pos = CatmullRomPosition(controlPoints_, t);
 		pointsDrawing_.push_back(pos);
 	}
-	rails_.clear();
-	for (auto& pos : controlPoints_)
-	{
-		PopRail(pos, { 0, 0, 0 });
-	}
-}
-
-void GameScene::RailReDraw()
-{
 	rails_.clear();
 	size_t i = 0;
 	for (Vector3& v : pointsDrawing_)
@@ -425,7 +412,7 @@ void GameScene::Collision()
 			if (comboTimer_ <= 0) comboCount_ = 0;
 
 			comboCount_++;
-			one_->SetTextureLeftTop({ 64.0f * float(comboCount_),0 });
+			comboNumTex_->SetTextureLeftTop({ 64.0f * float(comboCount_),0 });
 			score_ += kBasicScore_ * comboCount_;
 			scoreDraw_->SetScore(score_);
 			comboTimer_ = kComboTime_;
@@ -441,147 +428,4 @@ void GameScene::Collision()
 		}
 		i++;
 	}
-}
-
-void GameScene::InitLoad()
-{
-}
-void GameScene::UpdateLoad()
-{
-}
-void GameScene::ExitLoad()
-{
-}
-
-
-void GameScene::InitFadeIn()
-{
-	// 1フレームだけカメラを動かす
-	RailCameraMove();
-}
-void GameScene::UpdateFadeIn()
-{
-	if(!TransitionManager::GetInstance()->IsBusy())
-	{
-		ChangeState(GameSceneState::PLAY);
-	}
-}
-void GameScene::ExitFadeIn()
-{
-}
-
-
-void GameScene::InitReady()
-{
-}
-void GameScene::UpdateReady()
-{
-}
-void GameScene::ExitReady()
-{
-}
-
-
-void GameScene::InitPlay()
-{
-}
-void GameScene::UpdatePlay()
-{
-#ifdef _DEBUG
-	RailCameraDebug();
-#else
-	RailCameraMove();
-#endif // !_DEBUG
-
-	enemyManager_->Update();
-
-	AttackUpdate();
-
-	PlayUIUpdate();
-
-	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
-}
-void GameScene::ExitPlay()
-{
-}
-
-
-void GameScene::InitPause()
-{
-}
-void GameScene::UpdatePause()
-{
-	pauseMenu_->Update();
-	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PLAY);
-}
-void GameScene::ExitPause()
-{
-}
-
-
-void GameScene::InitDead()
-{
-}
-void GameScene::UpdateDead()
-{
-}
-void GameScene::ExitDead()
-{
-}
-
-
-void GameScene::InitResult()
-{
-	scoreDraw_->SetResult();
-	scoreDraw_->Update();
-}
-void GameScene::UpdateResult()
-{
-	resultMenu_->Update();
-	if (input_->TriggerKey(DIK_SPACE)) ChangeState(GameSceneState::FADE_OUT);
-}
-void GameScene::ExitResult()
-{
-}
-
-
-void GameScene::InitRetry()
-{
-}
-void GameScene::UpdateRetry()
-{
-}
-void GameScene::ExitRetry()
-{
-}
-
-
-void GameScene::InitFadeOut()
-{
-	auto transition = std::make_unique<FadeTransition>(FadeTransition::Type::FADE_OUT, 1.0f);
-	transition->SetOnFinishCallback([this]() {
-		sceneManager_->ChangeScene("TITLE");
-		TransitionManager::GetInstance()->Enqueue(std::make_unique<FadeTransition>(FadeTransition::Type::FADE_IN, 1.0f));
-		});
-	TransitionManager::GetInstance()->Start(std::move(transition));
-}
-void GameScene::UpdateFadeOut()
-{
-}
-void GameScene::ExitFadeOut()
-{
-}
-
-
-void GameScene::InitDebugEdit()
-{
-}
-void GameScene::UpdateDebugEdit()
-{
-	RailCameraDebug();
-	StageEdit();
-	enemyManager_->UpdateEditorEnemies();
-}
-void GameScene::ExitDebugEdit()
-{
 }

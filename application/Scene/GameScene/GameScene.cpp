@@ -258,9 +258,10 @@ void GameScene::AttackUpdate()
 void GameScene::PopRail(Vector3 position, Vector3 rota)
 {
 	auto rail = std::make_unique<Rail>();
-	rail->Initialize(position);
+	rail->Init();
+	rail->SetTranslation(position);
 	rail->SetRotate(rota);
-	rail->UpdateTransform();
+	rail->Update();
 	rails_.push_back(std::move(rail));
 }
 

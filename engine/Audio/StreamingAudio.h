@@ -44,7 +44,7 @@ private:
 	// 再生用コールバック
 	class StreamingVoiceCallback : public IXAudio2VoiceCallback {
 	public:
-		void STDMETHODCALLTYPE OnBufferEnd(void* pBufferContext) override {
+		void STDMETHODCALLTYPE OnBufferEnd([[maybe_unused]]void* pBufferContext) override {
 			std::lock_guard<std::mutex> lock(mutex);
 			bufferAvailable = true;
 			cv.notify_one();

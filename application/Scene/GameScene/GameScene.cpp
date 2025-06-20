@@ -3,12 +3,9 @@
 #include "SceneManager.h"
 #include <cassert>
 #include "mathFunc.h"
-#include "ModelManager.h"
 #include "SpriteBasis.h"
 #include "Object3dBasis.h"
-#include <fstream>
-#include <istream>
-#include "../engine/Audio/Audio.h"
+#include "Audio/Audio.h"
 #include "../Transition/Fade/FadeTransition.h"
 #include "../Transition/TransitionManager.h"
 #include "Pause/Pause.h"
@@ -459,7 +456,7 @@ void GameScene::Collision()
 			score_ += kBasicScore_ * comboCount_;
 			scoreDraw_->SetScore(score_);
 			comboTimer_ = kComboTime_;
-			enemy->IsCollision();
+			enemy->OnCollision();
 			emitter.transform.translate = enemy->GetWorldPosition();
 			emitter.count = comboCount_ + 2;
 			emitterRing.transform.translate = emitter.transform.translate;
@@ -481,7 +478,7 @@ std::list<std::list<std::unique_ptr<Enemy>>> GameScene::DeepCopyEnemyGroups(cons
 		for (const auto& enemy : group) {
 			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
 			newEnemy->Init();
-			newEnemy->SetPos(enemy->GetWorldPosition());
+			newEnemy->SetAndApplyPos(enemy->GetWorldPosition());
 			newGroup.push_back(std::move(newEnemy));
 		}
 		copy.push_back(std::move(newGroup));

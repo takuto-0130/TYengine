@@ -4,8 +4,6 @@
 #include "Sprite.h"
 #include "Object3d.h"
 #include "WorldTransform.h"
-#include <sstream>
-#include "Audio/Audio.h"
 #include "./Score/score.h"
 #include "StateMachine.h"
 
@@ -24,6 +22,7 @@
 
 class Pause;
 class Result;
+class Audio;
 
 enum class GameSceneState {
 	LOAD,		// データのロード（ロードに時間がかかる場合に使用、使わなければのちに削除）

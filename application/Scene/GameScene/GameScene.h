@@ -7,8 +7,8 @@
 #include "./Score/score.h"
 #include "StateMachine.h"
 
-#include "Rail/Rail.h"
-#include "Rail/RailEditor.h"
+#include "../../Object/Rail/Rail.h"
+#include "../../Object/Rail/RailEditor.h"
 #include "Skydome/Skydome.h"
 #include "ParticleManager.h"
 #include "../../Object/Enemy/EnemyManager.h"
@@ -146,7 +146,7 @@ private: // メンバ変数
 
 	std::unique_ptr<EnemyManager> enemyManager_;
 
-	std::list<std::unique_ptr<Rail>> rails_;
+	/*std::list<std::unique_ptr<Rail>> rails_;
 	std::vector<bool> triggeredFlags_;
 	std::vector<Vector3> controlPoints_;
 	std::vector<Vector3> pointsDrawing_;
@@ -179,7 +179,7 @@ private: // メンバ変数
 		TriggerObject(TriggerObject&&) noexcept = default;
 		TriggerObject& operator=(TriggerObject&&) noexcept = default;
 	};
-	std::vector<std::unique_ptr<TriggerObject>> triggerObjects_;
+	std::vector<std::unique_ptr<TriggerObject>> triggerObjects_;*/
 
 
 	int comboCount_ = 0;

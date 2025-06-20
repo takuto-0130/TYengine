@@ -1,7 +1,6 @@
 #include "GameScene.h"
 #include "TextureManager.h"
 #include "SceneManager.h"
-#include <cassert>
 #include "mathFunc.h"
 #include "SpriteBasis.h"
 #include "Object3dBasis.h"
@@ -170,14 +169,14 @@ void GameScene::Draw()
 
 	if (otherEditorSwitch_) {
 #ifdef _DEBUG
-		DrawEditorEnemies();
+		//DrawEditorEnemies();
 #endif // _DEBUG
 	}
 	else
 	{
-		for (auto& enemy : activeEnemies_) {
+		/*for (auto& enemy : activeEnemies_) {
 			enemy->Draw();
-		}
+		}*/
 	}
 
 	SpriteBasis::GetInstance()->BasisDrawSetting();
@@ -263,14 +262,14 @@ void GameScene::AttackUpdate()
 
 void GameScene::EnemyUpdate()
 {
-	activeEnemies_.remove_if([](const std::unique_ptr<Enemy>& e)
+	/*activeEnemies_.remove_if([](const std::unique_ptr<Enemy>& e)
 		{
 			return e->IsDead();
 		});
 
 	for (auto& enemy : activeEnemies_) {
 		enemy->Update();
-	}
+	}*/
 }
 
 void GameScene::PopRail(Vector3 position, Vector3 rota)
@@ -308,7 +307,7 @@ void GameScene::StageEdit()
 		RailReDraw();
 		RailEditor::Instance()->ResetPreviewFlag();
 	}
-	enemyEditor_->DrawEditorUI();
+	//enemyEditor_->DrawEditorUI();
 #endif
 }
 
@@ -374,7 +373,7 @@ void GameScene::RailCameraMove()
 		{
 			if (alreadyTriggeredIndices_.find(currentIndex) == alreadyTriggeredIndices_.end())
 			{
-				TriggerNextEnemyGroup();
+				//TriggerNextEnemyGroup();
 				//Audio::GetInstance()->PlayWave("fanfare");
 				alreadyTriggeredIndices_.insert(currentIndex);
 			}
@@ -559,7 +558,7 @@ void GameScene::UpdatePlay()
 	RailCameraMove();
 #endif // !_DEBUG
 
-	EnemyUpdate();
+	//EnemyUpdate();
 
 	AttackUpdate();
 
@@ -646,7 +645,7 @@ void GameScene::UpdateDebugEdit()
 {
 #ifdef _DEBUG
 	StageEdit();
-	UpdateEditorEnemies();
+	//UpdateEditorEnemies();
 #endif // _DEBUG
 
 }

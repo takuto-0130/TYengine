@@ -183,6 +183,7 @@
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeOut.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp" />
     <ClCompile Include="application\Object\Rail\RailManager.cpp" />
+    <ClCompile Include="application\Scene\GameScene\PlayUI\PlayUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -381,6 +382,7 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Rail\RailManager.h" />
+    <ClInclude Include="application\Scene\GameScene\PlayUI\PlayUI.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

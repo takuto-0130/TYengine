@@ -21,6 +21,7 @@ class Pause;
 class Result;
 class Audio;
 class RailManager;
+class PlayUI;
 
 enum class GameSceneState {
 	LOAD,		// データのロード（ロードに時間がかかる場合に使用、使わなければのちに削除）
@@ -136,27 +137,20 @@ private: // メンバ変数
 	Vector3 cameraOffset_ = {};
 
 	std::unique_ptr<Skydome> skydome_;
-
 	std::unique_ptr<EnemyManager> enemyManager_;
-
 	std::unique_ptr<RailManager> railManager_;
+	std::unique_ptr<PlayUI> playUI_;
 
 
 	int comboCount_ = 0;
 	float comboTimer_ = 0;
 	float kComboTime_ = 3.0f;
-	std::unique_ptr<Sprite> comboNumTex_;
-	Vector2 offsetComboNum_ = { 1060,25 };
-	std::unique_ptr<Sprite> comboText_;
-	Vector2 offsetComboTextPos_ = { 1245, 60 };
+	float shakeTime_ = 0.4f;
 
 
 	IParticleRenderer::Emitter emitter;
 	IParticleRenderer::Emitter emitterRing;
 
-
-	std::unique_ptr<Sprite> reticle_;
-	std::array<std::unique_ptr<Sprite>, 2> lasers_;
 
 
 	std::unique_ptr<score> scoreDraw_;
@@ -166,7 +160,4 @@ private: // メンバ変数
 	std::unique_ptr<Result> resultMenu_;
 
 	bool otherEditorSwitch_ = false;
-
-	std::random_device seedGene_;
-	float shakeTime_ = 0.4f;
 };

@@ -6,7 +6,6 @@ void GameScene::InitPlay()
 }
 void GameScene::UpdatePlay()
 {
-
 	enemyManager_->Update();
 
 	railManager_->Update();

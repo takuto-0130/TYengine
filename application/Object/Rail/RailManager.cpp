@@ -1,5 +1,4 @@
 #include "RailManager.h"
-#include "Rail.h"
 #include "RailEditor.h"
 #include "Camera.h"
 #include <imgui.h>
@@ -35,6 +34,11 @@ void RailManager::Init()
 
 void RailManager::Update()
 {
+#ifdef _DEBUG
+	RailCameraDebug();
+#else
+	RailCameraMove();
+#endif // _DEBUG
 
 }
 
@@ -44,6 +48,12 @@ void RailManager::Draw()
 	{
 		rail->Draw();
 	}
+}
+
+void RailManager::UpdateEdit()
+{
+	RailCameraDebug();
+	StageEdit();
 }
 
 

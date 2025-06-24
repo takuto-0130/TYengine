@@ -1,11 +1,12 @@
 #include "../GameScene.h"
 #include "../../Transition/Fade/FadeTransition.h"
 #include "../../Transition/TransitionManager.h"
+#include "../../../Object/Rail/RailManager.h"
 
 void GameScene::InitFadeIn()
 {
 	// 1フレームだけカメラを動かす
-	RailCameraMove();
+	railManager_->RailCameraMove();
 }
 void GameScene::UpdateFadeIn()
 {

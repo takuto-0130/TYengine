@@ -8,6 +8,7 @@
 #include "Pause/Pause.h"
 #include "Result/Result.h"
 #include "../../Object/Enemy/Enemy.h"
+#include "../../Object/Rail/RailManager.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -50,6 +51,10 @@ void GameScene::Init()
 
 	enemyManager_ = std::make_unique<EnemyManager>();
 	enemyManager_->Init();
+
+	railManager_ = std::make_unique<RailManager>();
+	railManager_->SetCamera(camera_);
+	railManager_->Init();
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
@@ -114,6 +119,10 @@ void GameScene::Update()
 
 	UpdateState(1.0f / 60.0f);
 
+	if (false) {
+		enemyManager_->TriggerNextEnemyGroup();
+	}
+
 #ifdef _DEBUG
 	ImGui::Begin("Play : Editor Switch");
 	if(otherEditorSwitch_)
@@ -136,7 +145,7 @@ void GameScene::Draw()
 	Object3dBasis::GetInstance()->BasisDrawSetting();
 	skydome_->Draw();
 
-	
+	railManager_->Draw();
 
 	if (otherEditorSwitch_) {
 #ifdef _DEBUG
@@ -232,6 +241,7 @@ void GameScene::AttackUpdate()
 void GameScene::StageEdit()
 {
 #ifdef _DEBUG
+	railManager_->StageEdit();
 	enemyManager_->DrawEditorUI();
 #endif
 }

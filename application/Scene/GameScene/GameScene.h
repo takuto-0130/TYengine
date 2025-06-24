@@ -7,8 +7,6 @@
 #include "./Score/score.h"
 #include "StateMachine.h"
 
-#include "../../Object/Rail/Rail.h"
-#include "../../Object/Rail/RailEditor.h"
 #include "Skydome/Skydome.h"
 #include "ParticleManager.h"
 #include "../../Object/Enemy/EnemyManager.h"
@@ -22,6 +20,7 @@
 class Pause;
 class Result;
 class Audio;
+class RailManager;
 
 enum class GameSceneState {
 	LOAD,		// データのロード（ロードに時間がかかる場合に使用、使わなければのちに削除）
@@ -56,13 +55,7 @@ private:
 
 	void AttackUpdate();
 
-	void PopRail(Vector3 position, Vector3 rota);
 	void StageEdit();
-	void RailReDraw();
-	void RailCameraMove();
-	void RailCameraDebug();
-	void SetSegment();
-	void ResetRailCamera();
 
 	void Collision();
 
@@ -146,40 +139,7 @@ private: // メンバ変数
 
 	std::unique_ptr<EnemyManager> enemyManager_;
 
-	/*std::list<std::unique_ptr<Rail>> rails_;
-	std::vector<bool> triggeredFlags_;
-	std::vector<Vector3> controlPoints_;
-	std::vector<Vector3> pointsDrawing_;
-	size_t oneSegmentCount = 20;
-	size_t segmentCount = oneSegmentCount;
-	const float kDivisionSpan = 200.0f;
-	float cameraSegmentCount = 1.0f / 600.0f;
-	float cameraEyeT = 0;
-	float cameraForwardT = 30.0f / 600.0f;
-	bool isRailCameraMove_ = false;
-
-	std::unordered_set<size_t> alreadyTriggeredIndices_;
-	struct TriggerObject
-	{
-		WorldTransform world;
-		Object3d object;
-
-		explicit TriggerObject(const Vector3& pos)
-		{
-			world.Initialize();
-			world.translation_ = pos;
-			world.scale_ = { 0.5f, 0.5f, 0.5f };
-			object.Initialize();
-			object.SetModel("unitSphere.obj");
-		}
-
-		TriggerObject(const TriggerObject&) = delete;
-		TriggerObject& operator=(const TriggerObject&) = delete;
-
-		TriggerObject(TriggerObject&&) noexcept = default;
-		TriggerObject& operator=(TriggerObject&&) noexcept = default;
-	};
-	std::vector<std::unique_ptr<TriggerObject>> triggerObjects_;*/
+	std::unique_ptr<RailManager> railManager_;
 
 
 	int comboCount_ = 0;

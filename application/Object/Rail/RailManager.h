@@ -1,13 +1,13 @@
 #pragma once
 #include "Object3d.h"
 #include "WorldTransform.h"
+#include "Rail.h"
 
 #include <memory>
 #include <vector>
 #include <list>
 #include <unordered_set>
 
-class Rail;
 class RailEditor;
 class Camera;
 
@@ -20,18 +20,21 @@ public:
 
 	void Draw();
 
+	void UpdateEdit();
+
+	void StageEdit();
+
+	void RailCameraMove();
+
 public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
+
+	bool RailTrigger();
 
 private:
 	void PopRail(Vector3 position, Vector3 rota);
 
-	void StageEdit();
-
 	void RailReDraw();
-
-	void RailCameraMove();
-	bool RailTrigger();
 
 	void RailCameraDebug();
 

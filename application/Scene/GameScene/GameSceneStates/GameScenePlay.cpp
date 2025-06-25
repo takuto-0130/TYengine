@@ -10,6 +10,8 @@ void GameScene::UpdatePlay()
 
 	railManager_->Update();
 
+	if(railManager_->IsEndRail()) ChangeState(GameSceneState::RESULT);
+
 	if (railManager_->RailTrigger()) enemyManager_->TriggerNextEnemyGroup();
 
 	AttackUpdate();

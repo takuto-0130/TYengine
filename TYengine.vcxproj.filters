@@ -172,18 +172,40 @@
     <ClCompile Include="application\Scene\Transition\TransitionManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneLoad.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneReady.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePlay.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePause.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeOut.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp" />
     <ClCompile Include="application\Object\Rail\RailManager.cpp" />
-    <ClCompile Include="application\Scene\GameScene\PlayUI\PlayUI.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeOut.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneLoad.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePause.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePlay.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneReady.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\PlayUI\PlayUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -381,8 +403,12 @@
     <ClInclude Include="application\Scene\Transition\TransitionManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Rail\RailManager.h" />
-    <ClInclude Include="application\Scene\GameScene\PlayUI\PlayUI.h" />
+    <ClInclude Include="application\Scene\GameScene\PlayUI\PlayUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Rail\RailManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -71,11 +71,12 @@ void GameScene::Init()
 	emitterRing.count = 1;
 	emitterRing.frequency = 1.5f;
 
-	playUI_ = std::make_unique<PlayUI>();
-	playUI_->Init();
-
-	scoreDraw_ = std::make_unique<score>();
+	scoreDraw_ = std::make_unique<Score>();
 	scoreDraw_->Initialze();
+
+	playUI_ = std::make_unique<PlayUI>();
+	playUI_->SetScoreDraw(scoreDraw_.get());
+	playUI_->Init();
 
 	pauseMenu_ = std::make_unique<Pause>();
 	pauseMenu_->Initialze();
@@ -135,11 +136,16 @@ void GameScene::Draw()
 	// フェードアウト中は描画しない
 	if (GetCurrentState() != GameSceneState::FADE_OUT)
 	{
-		playUI_->Draw();
+		if (GetCurrentState() != GameSceneState::RESULT)
+		{
+			playUI_->Draw();
+		}
 
-		if (GetCurrentState() == GameSceneState::RESULT) resultMenu_->Draw();
-
-		scoreDraw_->Draw();
+		if (GetCurrentState() == GameSceneState::RESULT)
+		{
+			resultMenu_->Draw();
+			scoreDraw_->Draw();
+		}
 
 		if (GetCurrentState() == GameSceneState::PAUSE) pauseMenu_->Draw();
 	}

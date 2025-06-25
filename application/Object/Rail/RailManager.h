@@ -31,6 +31,8 @@ public:
 
 	bool RailTrigger();
 
+	bool IsEndRail() { return cameraForwardT >= 1.0f ? true : false; }
+
 private:
 	void PopRail(Vector3 position, Vector3 rota);
 

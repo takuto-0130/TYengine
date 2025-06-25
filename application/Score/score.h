@@ -1,7 +1,7 @@
 #pragma once
 #include "Sprite.h"
 #include <memory>
-class score
+class Score
 {
 public:
 	void Initialze();

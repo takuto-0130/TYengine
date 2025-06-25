@@ -153,7 +153,7 @@ private: // メンバ変数
 
 
 
-	std::unique_ptr<score> scoreDraw_;
+	std::unique_ptr<Score> scoreDraw_;
 	int32_t score_ = 0;
 	const int32_t kBasicScore_ = 200;
 	std::unique_ptr<Pause> pauseMenu_;

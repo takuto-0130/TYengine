@@ -5,6 +5,7 @@
 #include <random>
 
 class Input;
+class Score;
 class PlayUI
 {
 public:
@@ -18,9 +19,11 @@ public:
 	void SetComboTimer(float timer) { comboTimer_ = timer; }
 	void SetComboTime(float time) { kComboTime_ = time; }
 	void SetComboNum(int comboNum) { comboNumTex_->SetTextureLeftTop({ 64.0f * float(comboNum),0 }); }
+	void SetScoreDraw(Score* scoreDraw) { scoreDraw_ = scoreDraw; }
 
 private:
 	Input* input_ = nullptr;
+	Score* scoreDraw_ = nullptr;
 
 	std::unique_ptr<Sprite> comboNumTex_;
 	Vector2 offsetComboNum_ = { 1060,25 };

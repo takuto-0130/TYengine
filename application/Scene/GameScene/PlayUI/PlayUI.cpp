@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "mathFunc.h"
 #include "TextureManager.h"
+#include "../../../Score/score.h"
 
 void PlayUI::Init()
 {
@@ -59,6 +60,7 @@ void PlayUI::Draw()
 	reticle_->Draw();
 	comboNumTex_->Draw();
 	comboText_->Draw();
+	scoreDraw_->Draw();
 }
 
 void PlayUI::ComboTexUpdate()

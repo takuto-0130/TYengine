@@ -2,7 +2,14 @@
 #include "Collider.h"
 #include <vector>
 #include <unordered_set>
-#include <algorithm>
+
+using ColliderPair = std::pair<uint32_t, uint32_t>;
+
+struct ColliderPairHash {
+    std::size_t operator()(const ColliderPair& pair) const {
+        return std::hash<uint32_t>()(pair.first) ^ std::hash<uint32_t>()(pair.second);
+    }
+};
 
 class ColliderManager {
 public:

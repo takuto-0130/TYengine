@@ -123,24 +123,28 @@ void RailManager::RailCameraMove()
 {
 	if (cameraForwardT <= 1.0f)
 	{
-		cameraEyeT += cameraSegmentCount;
 		cameraForwardT += cameraSegmentCount;
-		Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
-		eye.y += 0.5f;
-		camera_->SetTranslate(eye);
-
-		Vector3 forward = CatmullRomPosition(controlPoints_, cameraForwardT);
-		forward.y += 0.5f;
-		forward = forward - eye;
 
 		if (cameraForwardT <= 1.0f)
 		{
+			cameraEyeT += cameraSegmentCount;
+			Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
+			Vector3 forward = CatmullRomPosition(controlPoints_, cameraForwardT);
+			forward = forward - eye;
+
 			Vector3 rot{};
 			rot.y = std::atan2(forward.x, forward.z);
 			float len = Length({ forward.x, 0, forward.z });
 			rot.x = std::atan2(-forward.y, len);
 			camera_->SetRotate(rot);
+
+			Matrix4x4 rotMat = MakeRotateXYZMatrix(rot);
+			Vector3 upOffset = TransformNormal(offsetCameraPos_, rotMat);
+			eye += upOffset;
+
+			camera_->SetTranslate(eye);
 		}
+
 	}
 	else
 	{

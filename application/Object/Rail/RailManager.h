@@ -47,6 +47,8 @@ private:
 private:
 	Camera* camera_ = nullptr;
 
+	Vector3 offsetCameraPos_ = { 0.0f,0.5f,0.0f };
+
 	std::list<std::unique_ptr<Rail>> rails_;
 	std::vector<bool> triggeredFlags_;
 	std::vector<Vector3> controlPoints_;

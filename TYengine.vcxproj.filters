@@ -206,6 +206,8 @@
     <ClCompile Include="application\Scene\GameScene\PlayUI\PlayUI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="engine\Utility\Collider\Sphere\SphereCollider.cpp" />
+    <ClCompile Include="engine\Utility\Collider\ColliderManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -409,6 +411,10 @@
     <ClInclude Include="application\Object\Rail\RailManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Utility\Collider\Collider.h" />
+    <ClInclude Include="engine\Utility\Collider\Sphere\SphereCollider.h" />
+    <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
+    <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

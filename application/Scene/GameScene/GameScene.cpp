@@ -133,8 +133,8 @@ void GameScene::Draw()
 
 	SpriteBasis::GetInstance()->BasisDrawSetting();
 
-	// フェードアウト中は描画しない
-	if (GetCurrentState() != GameSceneState::FADE_OUT)
+	// フェード中は描画しない
+	if (GetCurrentState() != GameSceneState::FADE_OUT && GetCurrentState() != GameSceneState::FADE_IN)
 	{
 		if (GetCurrentState() != GameSceneState::RESULT)
 		{

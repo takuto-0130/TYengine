@@ -1,6 +1,7 @@
 #include "GameCore.h"
 #include "Audio/Audio.h"
 #include "SceneFactory.h"
+#include "ColliderManager.h"
 
 #include "PlaneParticle.h"
 #include "RingParticle.h"
@@ -62,9 +63,9 @@ void GameCore::Initialize()
 	emitterRing.frequency = 1.5f;
 	particleManager->SetEmitter(indexRing, emitterRing);
 
-
-
 	//particleManager->SetEmitter(indexRing, emitterRing);
+
+	ColliderManager::GetInstance();
 
 
 	renderTexture = std::make_unique<RenderTexture>();
@@ -89,12 +90,10 @@ void GameCore::Update()
 	else { //ゲーム処理
 		imgui->Begin();
 		TYFrameWork::Update();
-		//ParticleClass::GetInstance()->Update();
 		particleManager->UpdateAll();
 		camera->Update();
 		copyPass->Update();
-		/// ↓更新処理ここから
-
+		ColliderManager::GetInstance()->Update();
 		imgui->End();
 	}
 }

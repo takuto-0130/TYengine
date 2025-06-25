@@ -45,7 +45,7 @@ private:
 	void ResetRailCamera();
 
 private:
-	Camera* camera_;
+	Camera* camera_ = nullptr;
 
 	std::list<std::unique_ptr<Rail>> rails_;
 	std::vector<bool> triggeredFlags_;

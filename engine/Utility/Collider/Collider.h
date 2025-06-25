@@ -1,5 +1,4 @@
 #pragma once
-
 #include <functional>
 #include <utility>
 #include <cstdint>
@@ -17,16 +16,6 @@ struct CollisionInfo {
     Vector3 contactPoint;
     Vector3 direction;
     float distance;
-};
-
-class Collider;
-
-using ColliderPair = std::pair<uint32_t, uint32_t>;
-
-struct ColliderPairHash {
-    std::size_t operator()(const ColliderPair& pair) const {
-        return std::hash<uint32_t>()(pair.first) ^ std::hash<uint32_t>()(pair.second);
-    }
 };
 
 class Collider {

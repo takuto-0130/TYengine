@@ -29,12 +29,12 @@ void TitleScene::Init()
 }
 
 void TitleScene::Update() {
+	Transition();
+#ifdef _DEBUG
 	if (input_->TriggerKey(DIK_RETURN))
 	{
 		LoadLevel();
 	}
-	Transition();
-#ifdef _DEBUG
 	ImGui::Begin("TITLE");
 	ImGui::Text("Space to GameScene");
 	ImGui::End();

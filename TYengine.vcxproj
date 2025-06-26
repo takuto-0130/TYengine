@@ -177,6 +177,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Object\Rail\RailManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\PlayUI\PlayUI.cpp" />
     <ClCompile Include="engine\Utility\Collider\Sphere\SphereCollider.cpp" />
+    <ClCompile Include="application\Object\Player\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
@@ -250,6 +251,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Object\Rail\RailManager.h" />
     <ClInclude Include="application\Scene\GameScene\PlayUI\PlayUI.h" />
     <ClInclude Include="engine\Utility\Collider\Sphere\SphereCollider.h" />
+    <ClInclude Include="application\Object\Player\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -208,6 +208,7 @@
     </ClCompile>
     <ClCompile Include="engine\Utility\Collider\Sphere\SphereCollider.cpp" />
     <ClCompile Include="engine\Utility\Collider\ColliderManager.cpp" />
+    <ClCompile Include="application\Object\Player\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -415,6 +416,7 @@
     <ClInclude Include="engine\Utility\Collider\Sphere\SphereCollider.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
     <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h" />
+    <ClInclude Include="application\Object\Player\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

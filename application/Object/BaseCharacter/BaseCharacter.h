@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseObject.h"
+#include "../ColliderTypeID/ColliderTypeID.h"
 
 
 class BaseCharacter : public BaseObject

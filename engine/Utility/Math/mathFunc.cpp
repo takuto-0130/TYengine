@@ -25,6 +25,13 @@ Vector3 Normalize(const Vector3& v) {
 	return result;
 }
 
+Vector2 Normalize(const Vector2& v)
+{
+	float len = Length(v);
+	Vector2 result{ v.x / len, v.y / len };
+	return result;
+}
+
 float Dot(const Vector3& v1, const Vector3& v2) { 
 	return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 }

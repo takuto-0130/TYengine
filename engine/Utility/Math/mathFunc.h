@@ -10,6 +10,8 @@ float Length(const Vector2& v);
 
 Vector3 Normalize(const Vector3& v);
 
+Vector2 Normalize(const Vector2& v);
+
 float Dot(const Vector3& v1, const Vector3& v2);
 
 Vector3 Subtruct(const Vector3& v1, const Vector3& v2);

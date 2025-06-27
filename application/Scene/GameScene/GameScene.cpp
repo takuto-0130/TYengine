@@ -6,6 +6,7 @@
 #include "Pause/Pause.h"
 #include "Result/Result.h"
 #include "../../Object/Enemy/Enemy.h"
+#include "../../Object/Player/Player.h"
 #include "../../Object/Rail/RailManager.h"
 #include "./PlayUI/PlayUI.h"
 
@@ -58,6 +59,10 @@ void GameScene::Init()
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
 
+	player_ = std::make_unique<Player>();
+	player_->SetCamera(camera_);
+	player_->Init();
+
 
 	emitter.transform.scale = { 0.05f,1.0f,1.0f };
 	emitter.transform.rotate = { 0,0,0 };
@@ -92,6 +97,7 @@ void GameScene::Update()
 	skydome_->Update();
 
 	UpdateState(1.0f / 60.0f);
+	player_->Update();
 
 	if (false) {
 		enemyManager_->TriggerNextEnemyGroup();
@@ -130,6 +136,7 @@ void GameScene::Draw()
 	{
 		enemyManager_->Draw();
 	}
+	player_->Draw();
 
 	SpriteBasis::GetInstance()->BasisDrawSetting();
 

@@ -1,4 +1,5 @@
 #include "ColliderManager.h"
+#include "Sphere/SphereCollider.h"
 
 void ColliderManager::Update()
 {
@@ -13,7 +14,7 @@ void ColliderManager::Update()
 			{
 
 			}
-			else if (a.CheckCollision(b)) {
+			else if (CheckCollisionDispatcher(&a, &b)) {
 				ColliderPair pair = MakeSortedPair(a.GetID(), b.GetID());
 				currentCollisions.insert(pair);
 
@@ -57,4 +58,44 @@ void ColliderManager::Update()
     }
 
     previousCollisions_ = std::move(currentCollisions);
+}
+
+
+
+
+bool ColliderManager::CheckCollision(const SphereCollider& a, const SphereCollider& b) {
+    float distSq = Length(a.GetCenter() - b.GetCenter());
+    float rSum = a.GetRadius() + b.GetRadius();
+    return distSq <= rSum;
+}
+
+//bool CheckCollision(const SphereCollider& a, const AABBCollider& b) {
+//    // AABBとSphereの衝突処理
+//}
+
+bool ColliderManager::CheckCollisionDispatcher(Collider* a, Collider* b)
+{
+    auto shapeA = a->GetShapeType();
+    auto shapeB = b->GetShapeType();
+
+    // 小さい順に並べて組み合わせの重複を避ける　例:(SPHERE→AABB　AABB→SPHERE 両方用意しなくていいように)
+    if (shapeA > shapeB) {
+        std::swap(a, b);
+        std::swap(shapeA, shapeB);
+    }
+
+    if (shapeA == ColliderShape::SPHERE && shapeB == ColliderShape::SPHERE) {
+        return CheckCollision(
+            *static_cast<const SphereCollider*>(a),
+            *static_cast<const SphereCollider*>(b));
+    }
+
+    /*if (shapeA == ColliderShape::SPHERE && shapeB == ColliderShape::AABB) {
+        return CheckCollision(
+            *static_cast<const SphereCollider*>(a),
+            *static_cast<const AABBCollider*>(b));
+    }*/
+
+
+    return false;
 }

@@ -22,6 +22,7 @@ class Result;
 class Audio;
 class RailManager;
 class PlayUI;
+class Player;
 
 enum class GameSceneState {
 	LOAD,		// データのロード（ロードに時間がかかる場合に使用、使わなければのちに削除）
@@ -140,6 +141,7 @@ private: // メンバ変数
 	std::unique_ptr<EnemyManager> enemyManager_;
 	std::unique_ptr<RailManager> railManager_;
 	std::unique_ptr<PlayUI> playUI_;
+	std::unique_ptr<Player> player_;
 
 
 	int comboCount_ = 0;

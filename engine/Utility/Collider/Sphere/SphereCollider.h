@@ -3,25 +3,20 @@
 class SphereCollider :
     public Collider
 {
-    SphereCollider(const Vector3& center, float radius, uint32_t typeID)
-        : Collider(typeID), center_(center), radius_(radius) {
+public:
+    SphereCollider(uint32_t typeID, const Vector3& center, float radius)
+        : Collider(typeID, center), radius_(radius) {
     }
+
+    ColliderShape GetShapeType() const override { return ColliderShape::SPHERE; }
 
     Vector3 GetCenter() const override { return center_; }
 
+    float GetRadius() const { return radius_; }
+
     void Update(const Vector3& pos) override { center_ = pos; }
 
-    bool CheckCollision(const Collider& other) const override {
-        return other.CheckCollisionWith(*this);
-    }
-
-    bool CheckCollisionWith(const SphereCollider& other) const override {
-        float distSq = Length(center_ - other.center_);
-        return distSq <= (radius_ + other.radius_);
-    }
-
 private:
-    Vector3 center_;
     float radius_;
 };
 

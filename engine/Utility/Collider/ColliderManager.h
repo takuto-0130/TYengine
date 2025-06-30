@@ -11,6 +11,7 @@ struct ColliderPairHash {
     }
 };
 
+class SphereCollider;
 class ColliderManager {
 public:
     static ColliderManager* GetInstance()
@@ -26,13 +27,15 @@ public:
     }
 
     void RemoveCollider(Collider* collider) {
-        colliders_.erase(
-            std::remove(colliders_.begin(), colliders_.end(), collider),
-            colliders_.end()
-        );
+        auto it = std::remove(colliders_.begin(), colliders_.end(), collider);
+        if (it != colliders_.end()) {
+            colliders_.erase(it, colliders_.end());
+        }
     }
 
     void Update();
+
+public:
 
 private:
     ColliderManager() = default;
@@ -63,4 +66,8 @@ private:
             Length(dir)
         };
     }
+
+    bool CheckCollision(const SphereCollider& a, const SphereCollider& b);
+
+    bool CheckCollisionDispatcher(Collider* a, Collider* b);
 };

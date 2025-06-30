@@ -184,7 +184,7 @@ void GameScene::AttackUpdate()
 void GameScene::StageEdit()
 {
 #ifdef _DEBUG
-	railManager_->StageEdit();
+	railManager_->UpdateEdit();
 	enemyManager_->DrawEditorUI();
 #endif
 }

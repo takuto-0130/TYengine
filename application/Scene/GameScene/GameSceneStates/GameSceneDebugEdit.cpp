@@ -8,7 +8,6 @@ void GameScene::UpdateDebugEdit()
 {
 	StageEdit();
 	enemyManager_->UpdateEditorEnemies();
-	railManager_->UpdateEdit();
 }
 void GameScene::ExitDebugEdit()
 {

@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include "operatorOverload.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG

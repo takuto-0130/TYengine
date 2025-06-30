@@ -1,6 +1,5 @@
 #include "RingParticle.h"
 #include <numbers>
-#include "operatorOverload.h"
 
 void RingParticle::CreateResources() {
     const uint32_t kDivide = 32;

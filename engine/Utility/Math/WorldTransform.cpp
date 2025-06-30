@@ -2,7 +2,6 @@
 #include "Matrix4x4Func.h"
 #include "DirectXBasis.h"
 #include "Object3dBasis.h"
-#include "operatorOverload.h"
 
 void WorldTransform::Initialize()
 {

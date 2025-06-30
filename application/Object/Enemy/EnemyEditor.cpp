@@ -23,7 +23,7 @@ void EnemyEditor::AddEnemyToGroup(int groupIdx, const Vector3& pos) {
     std::advance(groupIt, groupIdx);
     std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
     enemy->Init();
-    enemy->SetPos(pos);
+    enemy->SetAndApplyPos(pos);
     groupIt->push_back(std::move(enemy));
 }
 
@@ -67,7 +67,7 @@ void EnemyEditor::Load(const std::string& filename) {
             };
             std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
             enemy->Init();
-            enemy->SetPos(pos);
+            enemy->SetAndApplyPos(pos);
             group.push_back(std::move(enemy));
         }
         enemies_->push_back(std::move(group));
@@ -95,7 +95,7 @@ void EnemyEditor::DrawEditorUI() {
                 Vector3 pos = enemy->GetWorldPosition();
                 ImGui::PushID(("Group" + std::to_string(groupIdx) + "_Enemy" + std::to_string(enemyIdx)).c_str());
                 if (ImGui::DragFloat3("Position", &pos.x, 0.1f)) {
-                    enemy->SetPos(pos);
+                    enemy->SetAndApplyPos(pos);
                 }
                 if (ImGui::Button("Delete Enemy")) {
                     RemoveEnemyFromGroup(groupIdx, enemyIdx);

@@ -1,18 +1,40 @@
 #include "GameScene.h"
-#include "TextureManager.h"
-#include <cassert>
 #include "mathFunc.h"
-#include "operatorOverload.h"
-#include "ModelManager.h"
 #include "SpriteBasis.h"
 #include "Object3dBasis.h"
-#include <fstream>
-#include <istream>
-#include "../engine/Audio/Audio.h"
+#include "Audio/Audio.h"
+#include "Pause/Pause.h"
+#include "Result/Result.h"
+#include "../../Object/Enemy/Enemy.h"
+#include "../../Object/Player/Player.h"
+#include "../../Object/Rail/RailManager.h"
+#include "./PlayUI/PlayUI.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
 #endif
+
+const std::vector<StateMachine<GameScene, GameSceneState>::StateFunctionSet>& GameScene::GetStateTable()
+{
+	static const std::vector<StateFunctionSet> stateTable = {
+	{ GameSceneState::LOAD,		   &GameScene::InitLoad,		&GameScene::UpdateLoad,		  &GameScene::ExitLoad },
+	{ GameSceneState::FADE_IN,	   &GameScene::InitFadeIn,		&GameScene::UpdateFadeIn,	  &GameScene::ExitFadeIn },
+	{ GameSceneState::READY,	   &GameScene::InitReady,		&GameScene::UpdateReady,	  &GameScene::ExitReady },
+	{ GameSceneState::PLAY,		   &GameScene::InitPlay,		&GameScene::UpdatePlay,		  &GameScene::ExitPlay },
+	{ GameSceneState::PAUSE,	   &GameScene::InitPause,		&GameScene::UpdatePause,	  &GameScene::ExitPause },
+	{ GameSceneState::DEAD,		   &GameScene::InitDead,		&GameScene::UpdateDead,		  &GameScene::ExitDead },
+	{ GameSceneState::RESULT,	   &GameScene::InitResult,		&GameScene::UpdateResult,	  &GameScene::ExitResult },
+	{ GameSceneState::RETRY,	   &GameScene::InitRetry,		&GameScene::UpdateRetry,	  &GameScene::ExitRetry },
+	{ GameSceneState::FADE_OUT,	   &GameScene::InitFadeOut,		&GameScene::UpdateFadeOut,	  &GameScene::ExitFadeOut },
+	{ GameSceneState::DEBUG_EDIT,  &GameScene::InitDebugEdit,	&GameScene::UpdateDebugEdit,  &GameScene::ExitDebugEdit },
+	};
+	return stateTable;
+}
+
+GameScene::GameScene()
+{
+	RegisterFromDefaultTable(this);
+}
 
 GameScene::~GameScene()
 {
@@ -21,36 +43,25 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
+
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 	
 	Audio::GetInstance()->LoadWave("fanfare");
 
-	enemyEditor_ = std::make_unique<EnemyEditor>(&enemyGroupsEditor_);
-	enemyGroups_ = DeepCopyEnemyGroups(enemyGroupsEditor_);
+	enemyManager_ = std::make_unique<EnemyManager>();
+	enemyManager_->Init();
+
+	railManager_ = std::make_unique<RailManager>();
+	railManager_->SetCamera(camera_);
+	railManager_->Init();
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
 
-	RailEditor::Instance()->Load("Resources/JSON/RailEditor.json");
-	controlPoints_ = RailEditor::Instance()->GetControlPoints();
-	triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
-	triggerObjects_.clear();
-
-	const auto& segments = RailEditor::Instance()->GetSegments();
-	for (size_t i = 0; i < controlPoints_.size(); ++i)
-	{
-		if (i < segments.size() && segments[i].triggerEvent)
-		{
-			triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-		}
-	}
-
-	segmentCount = oneSegmentCount * controlPoints_.size();
-	SetSegment();
-	RailLineReDraw();
-	RailReDraw();
-	ResetRailCamera();
+	player_ = std::make_unique<Player>();
+	player_->SetCamera(camera_);
+	player_->Init();
 
 
 	emitter.transform.scale = { 0.05f,1.0f,1.0f };
@@ -59,70 +70,104 @@ void GameScene::Init()
 	emitter.count = 5;
 	emitter.frequency = 1.5f;
 
-
 	emitterRing.transform.scale = { 0.5f,0.5f,0.5f };
 	emitterRing.transform.rotate = { 0,0,0 };
 	emitterRing.transform.translate = { 0,0,0 };
 	emitterRing.count = 1;
 	emitterRing.frequency = 1.5f;
-#ifdef _DEBUG
-	isRailCameraMove_ = false;
-#else
-	isRailCameraMove_ = true;
-#endif // _DEBUG
 
-	scoreDraw_ = std::make_unique<score>();
+	scoreDraw_ = std::make_unique<Score>();
 	scoreDraw_->Initialze();
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
-	reticle_ = std::make_unique<Sprite>();
-	reticle_->Initialize("Resources/Texture/reticle.png");
-	reticle_->SetAnchorPoint({ 0.5f,0.5f });
+	playUI_ = std::make_unique<PlayUI>();
+	playUI_->SetScoreDraw(scoreDraw_.get());
+	playUI_->Init();
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
-	for (size_t i = 0; i < 2; ++i) {
-		lasers_[i] = std::make_unique<Sprite>();
-		lasers_[i]->Initialize("Resources/Texture/white2x2.png");
-		lasers_[i]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
-	}
+	pauseMenu_ = std::make_unique<Pause>();
+	pauseMenu_->Initialze();
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ComboText.png");
-	comboText_ = std::make_unique<Sprite>();
-	comboText_->Initialize("Resources/Texture/ComboText.png");
-	comboText_->SetAnchorPoint({ 0.5f,0.5f });
-	comboText_->SetPosition(offsetPos_);
+	resultMenu_ = std::make_unique<Result>();
+	resultMenu_->Initialze();
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
-	one_ = std::make_unique<Sprite>();
-	one_->Initialize("Resources/Texture/number.png");
-	one_->SetTextureSize({ 64,64 });
-	one_->SetTextureLeftTop({ 128,0 });
-	one_->SetPosition(offsetNum_);
-	one_->SetSize({ 64,64 });
-
+	ChangeState(GameSceneState::FADE_IN);
 }
 
 void GameScene::Update()
 {
-	RailCameraDebug();
-	RailCustom();
 	skydome_->Update();
 
+	UpdateState(1.0f / 60.0f);
+	player_->Update();
+
+	if (false) {
+		enemyManager_->TriggerNextEnemyGroup();
+	}
+
+#ifdef _DEBUG
+	ImGui::Begin("Play : Editor Switch");
+	if(otherEditorSwitch_)
+	{
+		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
+		if (!otherEditorSwitch_) ChangeState(GameSceneState::PLAY);
+	}
+	else
+	{
+		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
+		if (otherEditorSwitch_) ChangeState(GameSceneState::DEBUG_EDIT);
+	}
+	ImGui::End();
+#endif // _DEBUG
+	
+}
+
+void GameScene::Draw()
+{
+	Object3dBasis::GetInstance()->BasisDrawSetting();
+	skydome_->Draw();
+
+	railManager_->Draw();
+
+	if (otherEditorSwitch_) {
+#ifdef _DEBUG
+		enemyManager_->DrawEditorEnemies();
+#endif // _DEBUG
+	}
+	else
+	{
+		enemyManager_->Draw();
+	}
+	player_->Draw();
+
+	SpriteBasis::GetInstance()->BasisDrawSetting();
+
+	// フェード中は描画しない
+	if (GetCurrentState() != GameSceneState::FADE_OUT && GetCurrentState() != GameSceneState::FADE_IN)
+	{
+		if (GetCurrentState() != GameSceneState::RESULT)
+		{
+			playUI_->Draw();
+		}
+
+		if (GetCurrentState() == GameSceneState::RESULT)
+		{
+			resultMenu_->Draw();
+			scoreDraw_->Draw();
+		}
+
+		if (GetCurrentState() == GameSceneState::PAUSE) pauseMenu_->Draw();
+	}
+}
+
+void GameScene::PlayUIUpdate()
+{
+	scoreDraw_->Update();
+	playUI_->Update();
+}
+
+void GameScene::AttackUpdate()
+{
 	if (input_->PushKey(DIK_SPACE)) Collision();
 
-	activeEnemies_.remove_if([](const std::unique_ptr<Enemy>& e) 
-		{
-		return e->IsDead();
-		});
-
-	for (auto& enemy : activeEnemies_) {
-		enemy->Update();
-	}
-
-	for (auto& trigger : triggerObjects_)
-	{
-		trigger->world.TransferMatrix();
-	}
 	if (comboTimer_ > 0)
 	{
 		comboTimer_ -= 1.0f / 60.0f;
@@ -131,259 +176,23 @@ void GameScene::Update()
 			comboTimer_ = 0;
 		}
 	}
-
-	scoreDraw_->Update();
-	comboText_->Update();
-	one_->Update();
-
-	Vector2 mouse = input_->GetMousePosition();
-#ifdef _DEBUG
-	ImGui::Begin("a");
-	ImGui::DragFloat2("b", &mouse.x, 0.1f);
-	ImGui::InputInt("score", &score_);
-	ImGui::Checkbox("Show Editor Enemies", &showEditorEnemies);
-	ImGui::End();
-#endif // _DEBUG
-
-
-	for (size_t i = 0; i < 2; ++i) {
-		lasers_[i]->Update();
-	}
-	reticle_->SetPosition(mouse);
-	reticle_->Update();
-	float t = comboTimer_ / kComboTime_;
-	t = 1.0f - powf(1.0f - t, 4.0f);
-	comboText_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
-	one_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
-
-	t = (comboTimer_ - (kComboTime_ - shakeTime_)) / (kComboTime_ - (kComboTime_ - shakeTime_));
-	if (t > 0)
-	{
-		std::mt19937 random(seedGene_());
-		std::uniform_real_distribution<float> dist(-15.0f, 15.0f);
-		Vector2 pos = { dist(random),dist(random) };
-		comboText_->SetPosition(offsetPos_ + pos * t);
-		one_->SetPosition(offsetNum_ + pos * t);
-	}
-	else
-	{
-		comboText_->SetPosition(offsetPos_);
-		one_->SetPosition(offsetNum_);
-	}
-	
-#ifdef _DEBUG
-	UpdateEditorEnemies();
-#else
-	RailCameraMove();
-#endif // _DEBUG
+	playUI_->SetComboTime(kComboTime_);
+	playUI_->SetComboTimer(comboTimer_);
+	playUI_->ComboTexUpdate();
 }
 
-void GameScene::Draw()
-{
-	Object3dBasis::GetInstance()->BasisDrawSetting();
-	skydome_->Draw();
-
-	for (const auto& rail : rails_)
-	{
-		rail->Draw();
-	}
-
-	if (showEditorEnemies) {
-#ifdef _DEBUG
-		DrawEditorEnemies();
-#endif // _DEBUG
-	}
-	else
-	{
-		for (auto& enemy : activeEnemies_) {
-			enemy->Draw();
-		}
-	}
-
-	SpriteBasis::GetInstance()->BasisDrawSetting();
-
-	Vector2 mouse = input_->GetMousePosition();
-	if (input_->PushKey(DIK_SPACE)) {
-		for (size_t i = 0; i < 2; ++i) {
-			lasers_[i]->DrawRect(mouse, mouse,
-				{ 426.7f * float(1 + i) - 20.0f, 720 },
-				{ 426.7f * float(1 + i) + 20.0f, 720 });
-		}
-	}
-	reticle_->Draw();
-	one_->Draw();
-	comboText_->Draw();
-	scoreDraw_->Draw();
-}
-
-void GameScene::CheckAllCollisions()
-{
-}
-
-void GameScene::PopRail(Vector3 position, Vector3 rota)
-{
-	auto rail = std::make_unique<Rail>();
-	rail->Initialize(position);
-	rail->SetRotate(rota);
-	rail->UpdateTransform();
-	rails_.push_back(std::move(rail));
-}
-
-void GameScene::RailCustom()
+void GameScene::StageEdit()
 {
 #ifdef _DEBUG
-	RailEditor::Instance()->DrawEditorUI();
-	if (RailEditor::Instance()->NeedsPreviewUpdate())
-	{
-		controlPoints_ = RailEditor::Instance()->GetControlPoints();
-		triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
-		triggerObjects_.clear();
-
-		const auto& segments = RailEditor::Instance()->GetSegments();
-		for (size_t i = 0; i < controlPoints_.size(); ++i)
-		{
-			if (i < segments.size() && segments[i].triggerEvent)
-			{
-				triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-			}
-		}
-
-		segmentCount = oneSegmentCount * controlPoints_.size();
-		SetSegment();
-		RailLineReDraw();
-		RailReDraw();
-		RailEditor::Instance()->ResetPreviewFlag();
-	}
-	enemyEditor_->DrawEditorUI();
+	railManager_->StageEdit();
+	enemyManager_->DrawEditorUI();
 #endif
-}
-
-void GameScene::RailLineReDraw()
-{
-	pointsDrawing_.clear();
-	for (size_t i = 0; i < segmentCount + 1; ++i)
-	{
-		float t = 1.0f / segmentCount * i;
-		Vector3 pos = CatmullRomPosition(controlPoints_, t);
-		pointsDrawing_.push_back(pos);
-	}
-	rails_.clear();
-	for (auto& pos : controlPoints_)
-	{
-		PopRail(pos, { 0, 0, 0 });
-	}
-}
-
-void GameScene::RailReDraw()
-{
-	rails_.clear();
-	size_t i = 0;
-	for (Vector3& v : pointsDrawing_)
-	{
-		if (pointsDrawing_[i] == pointsDrawing_.back()) break;
-		++i;
-		Vector3 forward = pointsDrawing_[i] - v;
-		Vector3 rotate{};
-		rotate.y = std::atan2(forward.x, forward.z);
-		float len = Length({ forward.x, 0, forward.z });
-		rotate.x = std::atan2(-forward.y, len);
-		PopRail(v, rotate);
-	}
-}
-
-void GameScene::RailCameraMove()
-{
-	if (cameraForwardT <= 1.0f)
-	{
-		cameraEyeT += cameraSegmentCount;
-		cameraForwardT += cameraSegmentCount;
-		Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
-		eye.y += 0.5f;
-		camera_->SetTranslate(eye);
-
-		Vector3 forward = CatmullRomPosition(controlPoints_, cameraForwardT);
-		forward.y += 0.5f;
-		forward = forward - eye;
-
-		if (cameraForwardT <= 1.0f)
-		{
-			Vector3 rot{};
-			rot.y = std::atan2(forward.x, forward.z);
-			float len = Length({ forward.x, 0, forward.z });
-			rot.x = std::atan2(-forward.y, len);
-			camera_->SetRotate(rot);
-		}
-
-		size_t currentIndex = static_cast<size_t>(cameraEyeT * controlPoints_.size());
-		const auto& segments = RailEditor::Instance()->GetSegments();
-		if (currentIndex < segments.size() && segments[currentIndex].triggerEvent)
-		{
-			if (alreadyTriggeredIndices_.find(currentIndex) == alreadyTriggeredIndices_.end())
-			{
-				TriggerNextEnemyGroup();
-				//Audio::GetInstance()->PlayWave("fanfare");
-				alreadyTriggeredIndices_.insert(currentIndex);
-			}
-		}
-	}
-	else
-	{
-		isRailCameraMove_ = false;
-	}
-}
-
-void GameScene::RailCameraDebug()
-{
-#ifdef _DEBUG
-	ImGui::Begin("RailCamera");
-	if (ImGui::Button("Start/Stop"))
-	{
-		isRailCameraMove_ = !isRailCameraMove_;
-	}
-	if (ImGui::Button("ResetCamera"))
-	{
-		ResetRailCamera();
-		RailCameraMove();
-	}
-	if (isRailCameraMove_)
-	{
-		RailCameraMove();
-	}
-	ImGui::Text("eye%.03f", cameraEyeT);
-	ImGui::Text("forward%.03f", cameraForwardT);
-	ImGui::End();
-#endif
-}
-
-void GameScene::SetSegment()
-{
-	float denom = kDivisionSpan * controlPoints_.size();
-	cameraSegmentCount = 1.0f / denom;
-}
-
-void GameScene::ResetRailCamera()
-{
-	float denom = kDivisionSpan * controlPoints_.size();
-	cameraEyeT = 0;
-	cameraForwardT = 30.0f / denom;
-}
-
-void GameScene::TriggerNextEnemyGroup()
-{
-	if (!enemyGroups_.empty()) {
-		std::list<std::unique_ptr<Enemy>>& nextGroup = enemyGroups_.front();
-		for (auto& enemy : nextGroup) {
-			enemy->Pop();
-			activeEnemies_.push_back(std::move(enemy));
-		}
-		enemyGroups_.pop_front();
-	}
 }
 
 void GameScene::Collision()
 {
 	int i = 0;
-	for (auto& enemy : activeEnemies_) {
+	for (auto& enemy : enemyManager_->GetActiveEnemies()) {
 		Vector3 pos = enemy->GetWorldPosition();
 		Matrix4x4 matView = MakeViewportMatrix(0, 0, WindowsApp::kClientWidth, WindowsApp::kClientHieght, 0, 1);
 		Matrix4x4 matVPV = camera_->GetViewMatrix() * camera_->GetProjectionMatrix() * matView;
@@ -395,11 +204,11 @@ void GameScene::Collision()
 			if (comboTimer_ <= 0) comboCount_ = 0;
 
 			comboCount_++;
-			one_->SetTextureLeftTop({ 64.0f * float(comboCount_),0 });
+			playUI_->SetComboNum(comboCount_);
 			score_ += kBasicScore_ * comboCount_;
 			scoreDraw_->SetScore(score_);
 			comboTimer_ = kComboTime_;
-			enemy->IsCollision();
+			enemy->OnCollision();
 			emitter.transform.translate = enemy->GetWorldPosition();
 			emitter.count = comboCount_ + 2;
 			emitterRing.transform.translate = emitter.transform.translate;
@@ -412,44 +221,3 @@ void GameScene::Collision()
 		i++;
 	}
 }
-
-std::list<std::list<std::unique_ptr<Enemy>>> GameScene::DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src) {
-	std::list<std::list<std::unique_ptr<Enemy>>> copy;
-
-	for (const auto& group : src) {
-		std::list<std::unique_ptr<Enemy>> newGroup;
-		for (const auto& enemy : group) {
-			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
-			newEnemy->Init();
-			newEnemy->SetPos(enemy->GetWorldPosition());
-			newGroup.push_back(std::move(newEnemy));
-		}
-		copy.push_back(std::move(newGroup));
-	}
-
-	return copy;
-}
-
-#ifdef _DEBUG
-void GameScene::DrawEditorEnemies()
-{
-	for (const auto& group : enemyGroupsEditor_)
-	{
-		for (const auto& enemy : group)
-		{
-			enemy->Draw();
-		}
-	}
-}
-
-void GameScene::UpdateEditorEnemies()
-{
-	for (const auto& group : enemyGroupsEditor_)
-	{
-		for (const auto& enemy : group) 
-		{
-			enemy->Update(); // worldTransform.TransferMatrix()
-		}
-	}
-}
-#endif

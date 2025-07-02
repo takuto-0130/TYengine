@@ -14,19 +14,23 @@
 #include "imgui.h"
 #endif
 
+#define GAME_SCENE_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(GameScene, stateEnum, funcName)
+
 const std::vector<StateMachine<GameScene, GameSceneState>::StateFunctionSet>& GameScene::GetStateTable()
 {
+	using enum GameSceneState;
 	static const std::vector<StateFunctionSet> stateTable = {
-	{ GameSceneState::LOAD,		   &GameScene::InitLoad,		&GameScene::UpdateLoad,		  &GameScene::ExitLoad },
-	{ GameSceneState::FADE_IN,	   &GameScene::InitFadeIn,		&GameScene::UpdateFadeIn,	  &GameScene::ExitFadeIn },
-	{ GameSceneState::READY,	   &GameScene::InitReady,		&GameScene::UpdateReady,	  &GameScene::ExitReady },
-	{ GameSceneState::PLAY,		   &GameScene::InitPlay,		&GameScene::UpdatePlay,		  &GameScene::ExitPlay },
-	{ GameSceneState::PAUSE,	   &GameScene::InitPause,		&GameScene::UpdatePause,	  &GameScene::ExitPause },
-	{ GameSceneState::DEAD,		   &GameScene::InitDead,		&GameScene::UpdateDead,		  &GameScene::ExitDead },
-	{ GameSceneState::RESULT,	   &GameScene::InitResult,		&GameScene::UpdateResult,	  &GameScene::ExitResult },
-	{ GameSceneState::RETRY,	   &GameScene::InitRetry,		&GameScene::UpdateRetry,	  &GameScene::ExitRetry },
-	{ GameSceneState::FADE_OUT,	   &GameScene::InitFadeOut,		&GameScene::UpdateFadeOut,	  &GameScene::ExitFadeOut },
-	{ GameSceneState::DEBUG_EDIT,  &GameScene::InitDebugEdit,	&GameScene::UpdateDebugEdit,  &GameScene::ExitDebugEdit },
+		GAME_SCENE_ENTRY(LOAD, Load),
+		GAME_SCENE_ENTRY(FADE_IN, FadeIn),
+		GAME_SCENE_ENTRY(READY, Ready),
+		GAME_SCENE_ENTRY(PLAY, Play),
+		GAME_SCENE_ENTRY(PAUSE, Pause),
+		GAME_SCENE_ENTRY(DEAD, Dead),
+		GAME_SCENE_ENTRY(RESULT, Result),
+		GAME_SCENE_ENTRY(RETRY, Retry),
+		GAME_SCENE_ENTRY(FADE_OUT, FadeOut),
+		GAME_SCENE_ENTRY(DEBUG_EDIT, DebugEdit),
 	};
 	return stateTable;
 }
@@ -83,10 +87,10 @@ void GameScene::Init()
 	playUI_->SetScoreDraw(scoreDraw_.get());
 	playUI_->Init();
 
-	pauseMenu_ = std::make_unique<Pause>();
+	pauseMenu_ = std::make_unique<PauseClass>();
 	pauseMenu_->Initialze();
 
-	resultMenu_ = std::make_unique<Result>();
+	resultMenu_ = std::make_unique<ResultClass>();
 	resultMenu_->Initialze();
 
 	ChangeState(GameSceneState::FADE_IN);

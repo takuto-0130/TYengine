@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 class Sprite;
-class Pause
+class PauseClass
 {
 public:
 	void Initialze();

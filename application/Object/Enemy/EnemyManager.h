@@ -1,6 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include "EnemyEditor.h"
+#include "json.hpp"
 
 class EnemyManager
 {
@@ -19,6 +20,8 @@ public:
 
 public:
 	std::list<std::unique_ptr<Enemy>>& GetActiveEnemies() { return activeEnemies_; }
+
+	EnemyEditor* GetEditor() const { return enemyEditor_.get(); }
 private:
 	std::list<std::list<std::unique_ptr<Enemy>>> DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src);
 

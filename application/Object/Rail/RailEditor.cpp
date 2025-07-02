@@ -1,6 +1,5 @@
 #include "RailEditor.h"
 #include <fstream>
-#include <json.hpp>
 
 using json = nlohmann::json;
 
@@ -130,4 +129,35 @@ bool RailEditor::NeedsPreviewUpdate() const {
 
 void RailEditor::ResetPreviewFlag() {
     needsPreviewUpdate_ = false;
+}
+
+nlohmann::json RailEditor::ToJson() const {
+    nlohmann::json j;
+    for (size_t i = 0; i < controlPoints_.size(); ++i) {
+        const auto& p = controlPoints_[i];
+        json pointJson = {
+            {"x", p.x},
+            {"y", p.y},
+            {"z", p.z}
+        };
+        if (i < railSegments_.size()) {
+            pointJson["segmentSpeed"] = railSegments_[i].speed;
+            pointJson["triggerEvent"] = railSegments_[i].triggerEvent;
+        }
+        j["controlPoints"].push_back(pointJson);
+    }
+    return j;
+}
+
+void RailEditor::FromJson(const nlohmann::json& j) {
+    controlPoints_.clear();
+    railSegments_.clear();
+    for (const auto& pointJson : j["controlPoints"]) {
+        Vector3 p = { pointJson["x"], pointJson["y"], pointJson["z"] };
+        controlPoints_.push_back(p);
+        RailSegment seg;
+        seg.speed = pointJson.value("segmentSpeed", 1.0f);
+        seg.triggerEvent = pointJson.value("triggerEvent", false);
+        railSegments_.push_back(seg);
+    }
 }

@@ -124,3 +124,35 @@ void EnemyEditor::DrawEditorUI() {
 #endif
 }
 
+
+nlohmann::json EnemyEditor::ToJson() const {
+    nlohmann::json j;
+    for (const auto& group : *enemies_) {
+        json groupJson = json::array();
+        for (const auto& enemy : group) {
+            Vector3 pos = enemy->GetWorldPosition();
+            groupJson.push_back({ {"x", pos.x}, {"y", pos.y}, {"z", pos.z} });
+        }
+        j["groups"].push_back(groupJson);
+    }
+    return j;
+}
+
+void EnemyEditor::FromJson(const nlohmann::json& j) {
+    enemies_->clear();
+    for (const auto& groupJson : j["groups"]) {
+        std::list<std::unique_ptr<Enemy>> group;
+        for (const auto& enemyJson : groupJson) {
+            Vector3 pos{
+                enemyJson["x"].get<float>(),
+                enemyJson["y"].get<float>(),
+                enemyJson["z"].get<float>()
+            };
+            std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
+            enemy->Init();
+            enemy->SetAndApplyPos(pos);
+            group.push_back(std::move(enemy));
+        }
+        enemies_->push_back(std::move(group));
+    }
+}

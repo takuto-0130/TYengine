@@ -26,6 +26,10 @@ public:
 
 	void EditUpdate();
 
+	nlohmann::json ToJson() const;
+
+	void FromJson(const nlohmann::json& j);
+
 private:
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<EnemyManager> enemyManager_;

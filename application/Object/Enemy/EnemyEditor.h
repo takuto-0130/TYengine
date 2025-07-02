@@ -23,6 +23,9 @@ public:
     void Save(const std::string& filename);
     void Load(const std::string& filename);
 
+    nlohmann::json ToJson() const;
+    void FromJson(const nlohmann::json& j);
+
 private:
     std::list<std::list<std::unique_ptr<Enemy>>>* enemies_ = nullptr;
     int selectedGroup_ = 0;

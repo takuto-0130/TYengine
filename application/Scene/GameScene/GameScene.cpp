@@ -8,7 +8,7 @@
 #include "../../Object/Enemy/Enemy.h"
 #include "../../Object/Player/Player.h"
 #include "../../Object/Rail/RailManager.h"
-#include "./PlayUI/PlayUI.h"
+#include "PlayUI/PlayUI.h"
 
 #ifdef _DEBUG
 #include "imgui.h"

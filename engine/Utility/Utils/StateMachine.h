@@ -25,11 +25,11 @@ public:
     using StateFunc = void (Class::*)();
 
     // 関数テーブル用
-    // 要素：{ StateEnum, EnterFunc, UpdateFunc, ExitFunc }
+    // 要素：{ StateEnum, InitFunc, UpdateFunc, ExitFunc }
     struct StateFunctionSet 
     {
         State state;
-        StateFunc enter, update, exit;
+        StateFunc init, update, exit;
     };
 
     template<HasStateTable C>
@@ -37,7 +37,7 @@ public:
     {
         for (const auto& entry : C::GetStateTable()) 
         {
-            SetEnterFunction(entry.state, [instance, f = entry.enter]() { (instance->*f)(); });
+            SetInitFunction(entry.state, [instance, f = entry.init]() { (instance->*f)(); });
             SetUpdateFunction(entry.state, [instance, f = entry.update]() { (instance->*f)(); });
             SetExitFunction(entry.state, [instance, f = entry.exit]() { (instance->*f)(); });
         }
@@ -65,9 +65,9 @@ public:
             currState_ = *stateRequest_;
             stateRequest_ = std::nullopt;
             stateTimer_ = 0.0f;
-            if (enterTable_.contains(currState_)) 
+            if (initTable_.contains(currState_)) 
             {
-                enterTable_[currState_]();
+                initTable_[currState_]();
             }
         }
 
@@ -94,14 +94,15 @@ public:
     float GetStateElapsedTime() const { return stateTimer_; }
 
 protected:
-    void SetEnterFunction(State state, std::function<void()> func) { enterTable_[state] = func; }
+    // オーバーライドで列挙名を文字列化（ImGui表示用）
+    virtual std::string GetStateName(State state) const = 0;
+
+private:
+    void SetInitFunction(State state, std::function<void()> func) { initTable_[state] = func; }
 
     void SetUpdateFunction(State state, std::function<void()> func) { updateTable_[state] = func; }
 
     void SetExitFunction(State state, std::function<void()> func) { exitTable_[state] = func; }
-
-    // オーバーライドで列挙名を文字列化（ImGui表示用）
-    virtual std::string GetStateName(State state) const = 0;
 
 private:
     State currState_{};
@@ -109,10 +110,14 @@ private:
     std::optional<State> stateRequest_;
     float stateTimer_ = 0.0f;
 
-    std::unordered_map<State, std::function<void()>> enterTable_;
+    std::unordered_map<State, std::function<void()>> initTable_;
     std::unordered_map<State, std::function<void()>> updateTable_;
     std::unordered_map<State, std::function<void()>> exitTable_;
 };
+
+// StateMachine.h
+#define STATE_ENTRY_FOR(cls, stateEnum, funcName) \
+    { stateEnum, &cls::Init##funcName, &cls::Update##funcName, &cls::Exit##funcName }
 
 
 // 使い方
@@ -162,12 +167,16 @@ private:
 };
 
 .cpp
+#define CLASS_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(Class, stateEnum, funcName)
+
 const std::vector<StateMachine<Class, State>::StateFunctionSet>& Class::GetStateTable()
 {
+    using enum State;
     static const std::vector<StateFunctionSet> stateTable = {
-    { State::ONE,   &Class::InitOne,	&Class::UpdateOne,	 &Class::ExitOne },
-    { State::TWO,   &Class::InitTwo,	&Class::UpdateTwo,	 &Class::ExitTwo },
-    { State::THREE, &Class::InitThree,	&Class::UpdateThree, &Class::ExitThree },
+        CLASS_ENTRY(ONE, One),
+        CLASS_ENTRY(TWO, Two),
+        CLASS_ENTRY(THREE, Three),
     };
     return stateTable;
 }

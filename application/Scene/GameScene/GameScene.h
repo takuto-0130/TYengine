@@ -17,8 +17,8 @@
 #include <list>
 #include <unordered_set>
 
-class Pause;
-class Result;
+class PauseClass;
+class ResultClass;
 class Audio;
 class RailManager;
 class PlayUI;
@@ -158,8 +158,8 @@ private: // メンバ変数
 	std::unique_ptr<Score> scoreDraw_;
 	int32_t score_ = 0;
 	const int32_t kBasicScore_ = 200;
-	std::unique_ptr<Pause> pauseMenu_;
-	std::unique_ptr<Result> resultMenu_;
+	std::unique_ptr<PauseClass> pauseMenu_;
+	std::unique_ptr<ResultClass> resultMenu_;
 
 	bool otherEditorSwitch_ = false;
 };

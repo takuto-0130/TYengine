@@ -1,5 +1,4 @@
 #include "EnemyEditor.h"
-#include <json.hpp>
 
 using json = nlohmann::json;
 
@@ -35,20 +34,6 @@ void EnemyEditor::RemoveEnemyFromGroup(int groupIdx, int enemyIdx) {
     groupIt->erase(enemyIt);
 }
 
-void EnemyEditor::Save(const std::string& filename) {
-    json j;
-    for (const auto& group : *enemies_) {
-        json groupJson = json::array();
-        for (const auto& enemy : group) {
-            Vector3 pos = enemy->GetWorldPosition();
-            groupJson.push_back({ {"x", pos.x}, {"y", pos.y}, {"z", pos.z} });
-        }
-        j["groups"].push_back(groupJson);
-    }
-    std::ofstream file(filename);
-    file << j.dump(4);
-}
-
 void EnemyEditor::Load(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) return;
@@ -77,14 +62,6 @@ void EnemyEditor::Load(const std::string& filename) {
 void EnemyEditor::DrawEditorUI() {
 #ifdef _DEBUG
     ImGui::Begin("Enemy Editor");
-
-    if (ImGui::Button("Save")) {
-        Save("Resources/JSON/EnemyEditor.json");
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Load")) {
-        Load("Resources/JSON/EnemyEditor.json");
-    }
 
     int groupIdx = 0;
     for (auto groupIt = enemies_->begin(); groupIt != enemies_->end(); ++groupIt, ++groupIdx) {
@@ -125,8 +102,8 @@ void EnemyEditor::DrawEditorUI() {
 }
 
 
-nlohmann::json EnemyEditor::ToJson() const {
-    nlohmann::json j;
+json EnemyEditor::ToJson() const {
+    json j;
     for (const auto& group : *enemies_) {
         json groupJson = json::array();
         for (const auto& enemy : group) {
@@ -138,7 +115,7 @@ nlohmann::json EnemyEditor::ToJson() const {
     return j;
 }
 
-void EnemyEditor::FromJson(const nlohmann::json& j) {
+void EnemyEditor::FromJson(const json& j) {
     enemies_->clear();
     for (const auto& groupJson : j["groups"]) {
         std::list<std::unique_ptr<Enemy>> group;

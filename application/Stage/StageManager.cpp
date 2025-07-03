@@ -7,6 +7,9 @@ using json = nlohmann::json;
 void StageManager::Init() {
     stages_.clear();
     AddStage(); // 初期ステージを1つ追加
+    LoadStageFromFile("Resources/JSON/stage_data.json");
+    GetCurrentStage()->Init();
+    Update(); // 1フレーム更新
 }
 
 void StageManager::Update() {
@@ -30,6 +33,7 @@ void StageManager::EditUpdate() {
 
 void StageManager::AddStage() {
     auto stage = std::make_unique<Stage>();
+    stage->SetCamera(camera_);
     stage->Init();
     stages_.push_back(std::move(stage));
     currentStageIndex_ = stages_.size() - 1;
@@ -47,7 +51,7 @@ void StageManager::RemoveStage(size_t index) {
 
 void StageManager::DuplicateStage(size_t index) {
     if (index < stages_.size()) {
-        auto clone = std::make_unique<Stage>(*stages_[index]); // コピーコンストラクタ必要
+        auto clone = GetCurrentStage()->Clone();
         stages_.insert(stages_.begin() + index + 1, std::move(clone));
         currentStageIndex_ = index + 1;
     }
@@ -76,15 +80,16 @@ void StageManager::LoadStageFromFile(const std::string& path) {
     std::ifstream ifs(path);
     if (!ifs.is_open()) return;
 
-    json j;
+    nlohmann::json j;
     ifs >> j;
 
-    auto stage = std::make_unique<Stage>();
-    stage->Init(); // 初期化前提構造（プレイヤー・敵などの構造構築）
-    stage->FromJson(j);
+    // 上書き対象ステージを取得
+    if (stages_.empty()) {
+        AddStage(); // 空の場合は追加
+    }
 
-    stages_.push_back(std::move(stage));
-    currentStageIndex_ = stages_.size() - 1;
+    Stage* stage = GetCurrentStage();
+    stage->FromJson(j);
 }
 
 void StageManager::DrawEditorUI() {

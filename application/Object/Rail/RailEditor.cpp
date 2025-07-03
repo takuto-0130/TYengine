@@ -10,25 +10,6 @@ RailEditor* RailEditor::Instance() {
 
 RailEditor::RailEditor() = default;
 
-void RailEditor::Save(const std::string& filename) {
-    json j;
-    for (size_t i = 0; i < controlPoints_.size(); ++i) {
-        const auto& p = controlPoints_[i];
-        json pointJson = {
-            {"x", p.x},
-            {"y", p.y},
-            {"z", p.z}
-        };
-        if (i < railSegments_.size()) {
-            pointJson["segmentSpeed"] = railSegments_[i].speed;
-            pointJson["triggerEvent"] = railSegments_[i].triggerEvent;
-        }
-        j["controlPoints"].push_back(pointJson);
-    }
-    std::ofstream file(filename);
-    file << j.dump(4);
-}
-
 void RailEditor::Load(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) return;
@@ -60,13 +41,6 @@ void RailEditor::DrawEditorUI() {
 #ifdef _DEBUG
     ImGui::Begin("Rail Editor");
 
-    if (ImGui::Button("Save")) {
-        Save("Resources/JSON/RailEditor.json");
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Load")) {
-        Load("Resources/JSON/RailEditor.json");
-    }
     ImGui::SameLine();
     if (ImGui::Button("Preview")) {
         needsPreviewUpdate_ = true;

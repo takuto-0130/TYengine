@@ -5,8 +5,6 @@
 
 void GameScene::InitFadeIn()
 {
-	// 1フレームだけカメラを動かす
-	railManager_->RailCameraMove();
 }
 void GameScene::UpdateFadeIn()
 {

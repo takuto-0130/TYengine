@@ -112,8 +112,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Object\Player\PlayerState\PlayerIdle.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerRoot.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerTakeDamage.cpp" />
+    <ClCompile Include="application\Scene\GameScene\emitterInit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="application\Object\Rail\Rail.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneCollision.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp" />

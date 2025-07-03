@@ -17,7 +17,6 @@ class RailEditor {
 public:
     static RailEditor* Instance();
 
-    void Save(const std::string& filename);
     void Load(const std::string& filename);
     void DrawEditorUI();
 

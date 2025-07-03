@@ -217,6 +217,8 @@
     <ClCompile Include="application\Object\Player\PlayerState\PlayerDead.cpp" />
     <ClCompile Include="application\Object\Player\PlayerCollider.cpp" />
     <ClCompile Include="application\Stage\StageManager.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneCollision.cpp" />
+    <ClCompile Include="application\Scene\GameScene\emitterInit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">

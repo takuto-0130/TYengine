@@ -7,7 +7,7 @@
 #ifdef _DEBUG
 #include "imgui.h"
 #endif
-
+class Camera;
 class StageManager
 {
 public:
@@ -15,6 +15,12 @@ public:
     void Update();
     void Draw();
     void EditUpdate();
+
+    void SetCamera(Camera* camera) { camera_ = camera; }
+
+    std::list<std::unique_ptr<Enemy>>& GetActiveEnemies() { return GetCurrentStage()->GetActiveEnemies(); }
+
+    bool EndRail() { return GetCurrentStage()->EndRail(); }
 
 private:
     void AddStage();
@@ -29,6 +35,7 @@ private:
     void DrawEditorUI(); // ImGui編集UI
 
 private:
+    Camera* camera_ = nullptr;
     std::vector<std::unique_ptr<Stage>> stages_;
     size_t currentStageIndex_ = 0;
 };

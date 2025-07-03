@@ -2,6 +2,7 @@
 #include <list>
 #include <memory>
 #include <string>
+#include <json.hpp>
 #include "Enemy.h"
 #include "struct.h"
 
@@ -20,7 +21,6 @@ public:
     void AddEnemyToGroup(int groupIdx, const Vector3& pos);
     void RemoveEnemyFromGroup(int groupIdx, int enemyIdx);
 
-    void Save(const std::string& filename);
     void Load(const std::string& filename);
 
     nlohmann::json ToJson() const;

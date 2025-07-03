@@ -10,6 +10,7 @@
 #include "Skydome/Skydome.h"
 #include "ParticleManager.h"
 #include "../../Object/Enemy/EnemyManager.h"
+#include "../../Stage/StageManager.h"
 
 
 #include <memory>
@@ -53,14 +54,18 @@ public:
 	void Draw() override;
 
 private:
+	// GameScenePlay
 	void PlayUIUpdate();
-
 	void AttackUpdate();
 
-	void StageEdit();
-
+	// GameSceneCollision
 	void Collision();
 
+	// EmitterInit
+	void EmitterInit();
+
+	// GameSceneDebugEdit
+	void SwitchEdit();
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
@@ -137,12 +142,9 @@ private: // メンバ変数
 	float pitch_ = 1.0f;
 	Vector3 cameraOffset_ = {};
 
-	std::unique_ptr<Skydome> skydome_;
-	std::unique_ptr<EnemyManager> enemyManager_;
-	std::unique_ptr<RailManager> railManager_;
 	std::unique_ptr<PlayUI> playUI_;
-	std::unique_ptr<Player> player_;
 
+	std::unique_ptr<StageManager> stageManager_;
 
 	int comboCount_ = 0;
 	float comboTimer_ = 0;

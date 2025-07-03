@@ -1,18 +1,15 @@
 #include "../GameScene.h"
 #include "../../../Object/Rail/RailManager.h"
+#include "../PlayUI/PlayUI.h"
 
 void GameScene::InitPlay()
 {
 }
 void GameScene::UpdatePlay()
 {
-	enemyManager_->Update();
+	stageManager_->Update();
 
-	railManager_->Update();
-
-	if(railManager_->IsEndRail()) ChangeState(GameSceneState::RESULT);
-
-	if (railManager_->RailTrigger()) enemyManager_->TriggerNextEnemyGroup();
+	if (stageManager_->EndRail()) ChangeState(GameSceneState::RESULT);
 
 	AttackUpdate();
 
@@ -22,4 +19,27 @@ void GameScene::UpdatePlay()
 }
 void GameScene::ExitPlay()
 {
+}
+
+void GameScene::PlayUIUpdate()
+{
+	scoreDraw_->Update();
+	playUI_->Update();
+}
+
+void GameScene::AttackUpdate()
+{
+	if (input_->PushKey(DIK_SPACE)) Collision();
+
+	if (comboTimer_ > 0)
+	{
+		comboTimer_ -= 1.0f / 60.0f;
+		if (comboTimer_ < 0)
+		{
+			comboTimer_ = 0;
+		}
+	}
+	playUI_->SetComboTime(kComboTime_);
+	playUI_->SetComboTimer(comboTimer_);
+	playUI_->ComboTexUpdate();
 }

@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "struct.h"
+#include <json.hpp>
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -16,7 +17,6 @@ class RailEditor {
 public:
     static RailEditor* Instance();
 
-    void Save(const std::string& filename);
     void Load(const std::string& filename);
     void DrawEditorUI();
 
@@ -24,6 +24,9 @@ public:
     const std::vector<RailSegment>& GetSegments() const;
     bool NeedsPreviewUpdate() const;
     void ResetPreviewFlag();
+
+    nlohmann::json ToJson() const;
+    void FromJson(const nlohmann::json& j);
 
 private:
     RailEditor();

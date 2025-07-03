@@ -8,6 +8,8 @@
 #include "DirectXBasis.h"
 #include "SrvManager.h"
 
+static constexpr size_t FrameCount = 3;
+
 class TextureManager {
 public:
     static TextureManager* GetInstance();
@@ -23,6 +25,8 @@ public:
 
     const DirectX::TexMetadata& GetMetaData(const std::string& filePath);
 
+    void NextFrame();
+
 private:
     struct TextureData {
         DirectX::TexMetadata metadata;
@@ -35,5 +39,10 @@ private:
     DirectXBasis* dxBasis_ = nullptr;
     SrvManager* srvManager_ = nullptr;
     std::unordered_map<std::string, TextureData> textureDatas_;
+
+    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> temporaryBuffers_;
+
+    size_t currentFrameIndex_ = 0;
+    std::array<std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>, FrameCount> frameUploadBuffers_;
 };
 

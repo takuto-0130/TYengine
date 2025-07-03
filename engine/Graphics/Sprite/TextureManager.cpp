@@ -37,7 +37,12 @@ void TextureManager::LoadTexture(const std::string& filePath) {
     TextureData textureData;
     textureData.metadata = mipImages.GetMetadata();
     textureData.resource = dxBasis_->CreateTextureResource(textureData.metadata);
-    dxBasis_->UploadTextureData(textureData.resource, mipImages);
+
+    // 中間リソースを取得して保持（重要）
+    Microsoft::WRL::ComPtr<ID3D12Resource> uploadBuffer =
+        dxBasis_->UploadTextureData(textureData.resource, mipImages);
+    // 現在のフレームスロットに保持
+    frameUploadBuffers_[currentFrameIndex_].emplace_back(std::move(uploadBuffer));
 
     textureData.srvIndex = index;
     textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(index);
@@ -75,4 +80,11 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& f
 const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& filePath) {
     assert(textureDatas_.contains(filePath));
     return textureDatas_.at(filePath).metadata;
+}
+
+void TextureManager::NextFrame()
+{
+    currentFrameIndex_ = (currentFrameIndex_ + 1) % FrameCount;
+    // 古いフレームのバッファを開放
+    frameUploadBuffers_[currentFrameIndex_].clear();
 }

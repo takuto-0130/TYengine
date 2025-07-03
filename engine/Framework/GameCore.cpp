@@ -106,6 +106,9 @@ void GameCore::Update()
 
 void GameCore::Draw()
 {
+	// フレームの切り替えタイミングでリングバッファを進める
+	TextureManager::GetInstance()->NextFrame();
+
 	// ---------- オフスクリーン描画 ----------
 	renderTexture->BeginRender();
 

@@ -13,6 +13,7 @@
 #include "Skydome/Skydome.h"
 #include "ParticleManager.h"
 #include "./Score/score.h"
+#include "ObjectCubemap.h"
 
 
 #include <memory>
@@ -135,4 +136,6 @@ private:
 
 	std::random_device seedGene_;
 	float shakeTime_ = 0.4f;
+
+	std::unique_ptr<ObjectCubemap> skybox_;
 };

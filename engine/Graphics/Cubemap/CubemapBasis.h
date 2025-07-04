@@ -24,6 +24,8 @@ public:
     ID3D12PipelineState* GetPipelineState() const { return graphicsPipelineState_.Get(); }
 
 	void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
+	Camera* GetDefaultCamera() const { return defaultCamera_; }
+
 	DirectXBasis* GetDirectXBasis() const { return directXBasis_; }
 
 private: // メンバ関数

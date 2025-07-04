@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "Object3dBasis.h"
 #include "SpriteBasis.h"
+#include "CubemapBasis.h"
 //#include "Sprite.h"
 #ifdef _DEBUG
 #include "imgui.h"
@@ -18,6 +19,10 @@ void TitleScene::Init()
 	spaceSpr_ = std::make_unique<Sprite>();
 	spaceSpr_->Initialize("Resources/Texture/TitleSpace.png");
 	spaceSpr_->SetPosition({ 0,0 });
+
+
+	skybox_ = std::make_unique<ObjectCubemap>();
+	skybox_->Initialize("Resources/Texture/rostock_laage_airport_4k.dds");
 }
 
 void TitleScene::Update() {
@@ -38,10 +43,14 @@ void TitleScene::Update() {
 	{
 		obj->Update();
 	}
+	skybox_->Update();
 }
 
 void TitleScene::Draw() 
 {
+	CubemapBasis::GetInstance()->DrawBegin();
+	skybox_->Draw();
+
 	Object3dBasis::GetInstance()->BasisDrawSetting();
 	for (auto& obj : objects_)
 	{

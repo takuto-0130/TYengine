@@ -1,10 +1,39 @@
 #include "ObjectCubemap.h"
+#include "mathFunc.h"
+#include "operatorOverload.h"
 
-void ObjectCubemap::Initialize(std::string& textureFilePath)
+void ObjectCubemap::Initialize(const std::string& textureFilePath)
 {
     CreateCameraResource();
+    CreateVertexData();
+    CreateMaterialResource();
+    CreateTransformationMatrixResource();
+
     textureFilePath_ = textureFilePath;
     TextureManager::GetInstance()->LoadTexture(textureFilePath);
+}
+
+void ObjectCubemap::Update()
+{
+    if (camera_) {
+        Matrix4x4 view = camera_->GetViewMatrix();
+        // カメラの位置成分（平行移動）を取り除く
+        view.m[3][0] = 0.0f;
+        view.m[3][1] = 0.0f;
+        view.m[3][2] = 0.0f;
+        Matrix4x4 vp = view * camera_->GetProjectionMatrix();
+        transformationMatrixData_->WVP = transformationMatrixData_->World * vp;
+    }
+    else
+    {
+        Matrix4x4 view = CubemapBasis::GetInstance()->GetDefaultCamera()->GetViewMatrix();
+        // カメラの位置成分（平行移動）を取り除く
+        view.m[3][0] = 0.0f;
+        view.m[3][1] = 0.0f;
+        view.m[3][2] = 0.0f;
+        Matrix4x4 vp = view * CubemapBasis::GetInstance()->GetDefaultCamera()->GetProjectionMatrix();
+        transformationMatrixData_->WVP = transformationMatrixData_->World * vp;
+    }
 }
 
 void ObjectCubemap::Draw()
@@ -13,8 +42,16 @@ void ObjectCubemap::Draw()
     if (camera_) {
         cameraData_->worldPosition = camera_->GetTranslate();
     }
+    else
+    {
+        cameraData_->worldPosition = CubemapBasis::GetInstance()->GetDefaultCamera()->GetTranslate();
+    }
 
     auto* commandList = CubemapBasis::GetInstance()->GetDirectXBasis()->GetCommandList();
+    ID3D12DescriptorHeap* heaps[] = {
+    TextureManager::GetInstance()->GetSrvManager()->GetHeap()
+    };
+    commandList->SetDescriptorHeaps(_countof(heaps), heaps);
 
     // Camera用CBVを設定（slot番号はルートシグネチャと合わせる）
     commandList->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
@@ -28,7 +65,7 @@ void ObjectCubemap::Draw()
     commandList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
 }
 
-void ObjectCubemap::CreateVertex()
+void ObjectCubemap::CreateVertexData()
 {
     // リソースの作成
     vertexResource_ = CubemapBasis::GetInstance()->GetDirectXBasis()->CreateBufferResource(sizeof(CubeVertex) * 8);
@@ -86,7 +123,6 @@ void ObjectCubemap::CreateVertex()
 
 void ObjectCubemap::CreateCameraResource()
 {
-    auto* device = CubemapBasis::GetInstance()->GetDirectXBasis()->GetDevice();
     cameraResource_ = CubemapBasis::GetInstance()->GetDirectXBasis()->CreateBufferResource(sizeof(CameraForGPU));
     cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
     cameraData_->worldPosition = { 0.0f, 0.0f, 0.0f };

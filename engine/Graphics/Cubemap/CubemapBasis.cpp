@@ -1,57 +1,39 @@
-#include "Object3dBasis.h"
+#include "CubemapBasis.h"
+#include "Logger.h"
 
 using namespace Logger;
 
-std::unique_ptr<Object3dBasis> Object3dBasis::instance = nullptr;
-std::once_flag Object3dBasis::initInstanceFlag;
-
-Object3dBasis* Object3dBasis::GetInstance()
-{
-	std::call_once(initInstanceFlag, []() {
-		instance = std::make_unique<Object3dBasis>();
-		});
-	return instance.get();
-}
-
-void Object3dBasis::Initialize(DirectXBasis* directXBasis)
+void CubemapBasis::Initialize(DirectXBasis* directXBasis)
 {
 	directXBasis_ = directXBasis;
 
 	CreateRootSignature();
 	CreateGraphicsPipeline();
 
-	directionalLightResource = directXBasis->CreateBufferResource(sizeof(DirectionalLight));
-
-	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
-
-	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData->intensity = 1.0f;
-
 }
 
-void Object3dBasis::BasisDrawSetting()
+void CubemapBasis::DrawBegin()
 {
 	directXBasis_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	directXBasis_->GetCommandList()->SetPipelineState(graphicsPipelineState_.Get());
 	directXBasis_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	directXBasis_->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
 }
 
-void Object3dBasis::CreateRootSignature()
+void CubemapBasis::CreateRootSignature()
 {
 	//RootSignatureを生成する
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-	//RootParameter作成。複数設定できるので配列。今回は結果1つだけなので長さ1の配列。
-	D3D12_ROOT_PARAMETER rootParameters[5] = {};
+	//RootParameter作成。複数設定できるので配列。
+	D3D12_ROOT_PARAMETER rootParameters[4] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameters[0].Descriptor.ShaderRegister = 0; //b0の0と一致　b11と紐づけたいなら11となる
+
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameters[1].Descriptor.ShaderRegister = 0;
+	rootParameters[1].Descriptor.ShaderRegister = 1;
 
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 	descriptorRange[0].BaseShaderRegister = 0;
@@ -66,12 +48,7 @@ void Object3dBasis::CreateRootSignature()
 
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[3].Descriptor.ShaderRegister = 1;
-
-	// 平行光源
-	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;						// DescriptorTableで使う
-	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;						// PixelShaderで使う
-	rootParameters[4].Descriptor.ShaderRegister = 2;
+	rootParameters[3].Descriptor.ShaderRegister = 2;
 
 	descriptionRootSignature.pParameters = rootParameters;
 	descriptionRootSignature.NumParameters = _countof(rootParameters);
@@ -92,8 +69,6 @@ void Object3dBasis::CreateRootSignature()
 	HRESULT hr = S_FALSE;
 
 	//シリアライズしてバイナリにする
-	//Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
-	//Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
 	hr = D3D12SerializeRootSignature(&descriptionRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
@@ -106,22 +81,14 @@ void Object3dBasis::CreateRootSignature()
 	assert(SUCCEEDED(hr));
 }
 
-void Object3dBasis::CreateGraphicsPipeline()
+void CubemapBasis::CreateGraphicsPipeline()
 {
 	//InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[1] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-	inputElementDescs[1].SemanticName = "TEXCOORD";
-	inputElementDescs[1].SemanticIndex = 0;
-	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-	inputElementDescs[2].SemanticName = "NORMAL";
-	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
@@ -139,16 +106,16 @@ void Object3dBasis::CreateGraphicsPipeline()
 
 	//RasterizerState
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK; // 裏面を表示しない
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_FRONT;
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 
 	//shaderCompile
-	vertexShaderBlob_ = directXBasis_->CompileShader(L"Resources/Shaders/Object3D.VS.hlsl",
+	vertexShaderBlob_ = directXBasis_->CompileShader(L"Resources/Shaders/Skybox.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 
-	pixelShaderBlob_ = directXBasis_->CompileShader(L"Resources/Shaders/Object3D.PS.hlsl",
+	pixelShaderBlob_ = directXBasis_->CompileShader(L"Resources/Shaders/Skybox.PS.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 
@@ -156,8 +123,8 @@ void Object3dBasis::CreateGraphicsPipeline()
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	//Depthの機能を有効化する
 	depthStencilDesc.DepthEnable = true;
-	//書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	//書き込みしない
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	//比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
@@ -190,4 +157,3 @@ void Object3dBasis::CreateGraphicsPipeline()
 		IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(hr));
 }
-

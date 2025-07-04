@@ -166,6 +166,8 @@
     <ClCompile Include="engine\Utility\Transform\WorldTransform.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="engine\Graphics\Cubemap\CubemapBasis.cpp" />
+    <ClCompile Include="engine\Graphics\Cubemap\ObjectCubemap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -345,6 +347,8 @@
     <ClInclude Include="engine\Utility\Transform\WorldTransform.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Graphics\Cubemap\CubemapBasis.h" />
+    <ClInclude Include="engine\Graphics\Cubemap\ObjectCubemap.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

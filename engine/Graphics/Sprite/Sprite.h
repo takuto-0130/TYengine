@@ -97,9 +97,6 @@ private: // メンバ関数
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
-
 	// テクスチャ番号
 	uint32_t textureIndex = 0;
 	std::string textureFilePath_;

@@ -13,10 +13,10 @@ public:
     ObjectCubemap() = default;
     ~ObjectCubemap() = default;
 
-    void Initialize(std::string& textureFilePath);
+    void Initialize(const std::string& textureFilePath);
+    void Update();
     void Draw();
 
-    void CreateVertex();
     void SetCamera(Camera* camera) { camera_ = camera; }
 
 private:

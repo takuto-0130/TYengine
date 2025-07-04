@@ -15,7 +15,8 @@ void ObjectCubemap::Initialize(const std::string& textureFilePath)
 
 void ObjectCubemap::Update()
 {
-    if (camera_) {
+    if (camera_) 
+    {
         Matrix4x4 view = camera_->GetViewMatrix();
         // カメラの位置成分（平行移動）を取り除く
         view.m[3][0] = 0.0f;
@@ -39,7 +40,8 @@ void ObjectCubemap::Update()
 void ObjectCubemap::Draw()
 {
     // カメラデータ更新
-    if (camera_) {
+    if (camera_) 
+    {
         cameraData_->worldPosition = camera_->GetTranslate();
     }
     else
@@ -48,19 +50,13 @@ void ObjectCubemap::Draw()
     }
 
     auto* commandList = CubemapBasis::GetInstance()->GetDirectXBasis()->GetCommandList();
-    ID3D12DescriptorHeap* heaps[] = {
-    TextureManager::GetInstance()->GetSrvManager()->GetHeap()
-    };
-    commandList->SetDescriptorHeaps(_countof(heaps), heaps);
 
     // Camera用CBVを設定（slot番号はルートシグネチャと合わせる）
     commandList->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
-
     commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
     commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
     commandList->IASetIndexBuffer(&indexBufferView_);
     commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-    
     commandList->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
     commandList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
 }

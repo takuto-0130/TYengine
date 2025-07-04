@@ -1,4 +1,5 @@
 #include "CubemapBasis.h"
+#include "TextureManager.h"
 #include "Logger.h"
 
 using namespace Logger;
@@ -17,6 +18,11 @@ void CubemapBasis::DrawBegin()
 	directXBasis_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	directXBasis_->GetCommandList()->SetPipelineState(graphicsPipelineState_.Get());
 	directXBasis_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	ID3D12DescriptorHeap* heaps[] = 
+	{
+	TextureManager::GetInstance()->GetSrvManager()->GetHeap()
+	};
+	directXBasis_->GetCommandList()->SetDescriptorHeaps(_countof(heaps), heaps);
 }
 
 void CubemapBasis::CreateRootSignature()

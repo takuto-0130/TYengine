@@ -21,6 +21,7 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
+	
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 	

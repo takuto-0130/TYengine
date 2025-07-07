@@ -27,6 +27,14 @@ public:
 
     void NextFrame();
 
+
+    D3D12_GPU_DESCRIPTOR_HANDLE GetDummyCubemapHandleGPU() const {
+        return srvManager_->GetGPUDescriptorHandle(dummyCubemapIndex_);
+    }
+
+private:
+    void CreateDummyCubemap();
+
 private:
     struct TextureData {
         DirectX::TexMetadata metadata;
@@ -44,5 +52,9 @@ private:
 
     size_t currentFrameIndex_ = 0;
     std::array<std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>, FrameCount> frameUploadBuffers_;
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> dummyCubemap_;
+    uint32_t dummyCubemapIndex_ = 0;
+    Microsoft::WRL::ComPtr<ID3D12Resource> dummyCubemapUploadBuffer_;
 };
 

@@ -22,6 +22,9 @@ public: // メンバ関数
 	// デフォルトカメラ
 	void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
 	Camera* GetDefaultCamera() const { return defaultCamera_; }
+
+	void SetSkyboxFilePath(const std::string& textureFilePath) { skyboxTextureFilePath_ = textureFilePath; }
+	const std::string& GetSkyboxFilePath() { return skyboxTextureFilePath_; }
 private: // メンバ関数
 	// ルートシグネチャの作成
 	void CreateRootSignature();
@@ -48,6 +51,8 @@ private: // メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
 
 	DirectionalLight* directionalLightData = nullptr;
+
+	std::string skyboxTextureFilePath_ = "";
 
 private:
 	static std::unique_ptr<Object3dBasis> instance;

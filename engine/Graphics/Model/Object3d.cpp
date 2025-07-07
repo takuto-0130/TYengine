@@ -37,6 +37,7 @@ void Object3d::CreateMaterialResource()
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = 1;
 	materialData_->uvTransform = MakeIdentity4x4();
+	materialData_->environmentCoefficient = 1.0f;
 	materialData_->shininess = 10.0f;
 }
 

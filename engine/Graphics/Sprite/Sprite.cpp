@@ -30,7 +30,6 @@ void Sprite::Update()
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
 	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsApp::kClientWidth), float(WindowsApp::kClientHieght), 0.0f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
-	transformationMatrixData_->World = worldViewProjectionMatrix;
 	transformationMatrixData_->WVP = worldViewProjectionMatrix;
 }
 
@@ -74,7 +73,6 @@ void Sprite::DrawRect(const Vector2& lt, const Vector2& rt, const Vector2& lb, c
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
 	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsApp::kClientWidth), float(WindowsApp::kClientHieght), 0.0f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
-	transformationMatrixData_->World = worldViewProjectionMatrix;
 	transformationMatrixData_->WVP = worldViewProjectionMatrix;
 
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
@@ -107,7 +105,6 @@ void Sprite::CreateMaterialResource()
 	materialResource_ = spriteBasis_->GetDirectXBasis()->CreateBufferResource(sizeof(Material));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->enableLighting = false;
 	materialData_->uvTransform = MakeIdentity4x4();
 }
 
@@ -117,8 +114,6 @@ void Sprite::CreateTransformationMatrixResource()
 	transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
 	// 単位行列を書き込んでおく
 	transformationMatrixData_->WVP = MakeIdentity4x4();
-	transformationMatrixData_->World = MakeIdentity4x4();
-	transformationMatrixData_->WorldInverseTranspose = MakeIdentity4x4();
 }
 
 void Sprite::SetSpriteData()
@@ -150,19 +145,15 @@ void Sprite::SetSpriteData()
 	// 左下
 	vertexData_[0].position = { left, bottom, 0.0f, 1.0f };
 	vertexData_[0].texCoord = { tex_left, tex_bottom };
-	vertexData_[0].normal = { 0.0f, 0.0f, -1.0f };
 	// 左上
 	vertexData_[1].position = { left, top, 0.0f, 1.0f };
 	vertexData_[1].texCoord = { tex_left, tex_top };
-	vertexData_[1].normal = { 0.0f, 0.0f, -1.0f };
 	// 右下
 	vertexData_[2].position = { right, bottom, 0.0f, 1.0f };
 	vertexData_[2].texCoord = { tex_right, tex_bottom };
-	vertexData_[2].normal = { 0.0f, 0.0f, -1.0f };
 	// 右上
 	vertexData_[3].position = { right, top, 0.0f, 1.0f };
 	vertexData_[3].texCoord = { tex_right, tex_top };
-	vertexData_[3].normal = { 0.0f, 0.0f, -1.0f };
 
 	// 書き込むためのアドレスを取得
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));

@@ -112,8 +112,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Object\Player\PlayerState\PlayerIdle.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerRoot.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerTakeDamage.cpp" />
+    <ClCompile Include="application\Scene\GameScene\emitterInit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="application\Object\Rail\Rail.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneCollision.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp" />
@@ -185,6 +187,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\Utility\Collider\Sphere\SphereCollider.cpp" />
     <ClCompile Include="application\Object\Player\Player.cpp" />
     <ClCompile Include="application\Object\Player\PlayerCollider.cpp" />
+    <ClCompile Include="application\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
@@ -260,6 +263,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Utility\Collider\Sphere\SphereCollider.h" />
     <ClInclude Include="application\Object\Player\Player.h" />
     <ClInclude Include="application\Object\Player\PlayerCollider.h" />
+    <ClInclude Include="application\Stage\StageManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

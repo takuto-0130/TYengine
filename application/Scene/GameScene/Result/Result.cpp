@@ -2,7 +2,7 @@
 #include "Sprite.h"
 #include "TextureManager.h"
 
-void Result::Initialze()
+void ResultClass::Initialze()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/blackScreen.png");
 	back_ = std::make_unique<Sprite>();
@@ -28,7 +28,7 @@ void Result::Initialze()
 	spaceSpr_->SetPosition({ 1200,700 });
 }
 
-void Result::Update()
+void ResultClass::Update()
 {
 	back_->Update();
 	text_->Update();
@@ -36,7 +36,7 @@ void Result::Update()
 	spaceSpr_->Update();
 }
 
-void Result::Draw()
+void ResultClass::Draw()
 {
 	back_->Draw();
 	text_->Draw();

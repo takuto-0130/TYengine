@@ -6,6 +6,7 @@
 #include "ModelManager.h"
 #include "WorldTransform.h"
 #include <filesystem>
+#include "Object3dBasis.h"
 
 
 void Model::Initialize(ModelLoader* modelManager, const std::string& directoryPath, const std::string& fileName)
@@ -45,6 +46,16 @@ void Model::Draw(WorldTransform& transform, Camera* camera)
 	modelLoader_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transform.GetConstBuffer()->GetGPUVirtualAddress());
 	modelLoader_->GetDirectXBasis()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	modelLoader_->GetSrvManager()->SetGraphicsRootDescriptorTable(modelLoader_->GetDirectXBasis()->GetCommandList(), 2, modelData_.material.textureIndex);
+	if(Object3dBasis::GetInstance()->GetSkyboxFilePath().size() > 4)
+	{
+		modelLoader_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootDescriptorTable(
+			5, TextureManager::GetInstance()->GetSrvHandleGPU(Object3dBasis::GetInstance()->GetSkyboxFilePath()));
+	}
+	else
+	{
+		modelLoader_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootDescriptorTable(
+			5, TextureManager::GetInstance()->GetDummyCubemapHandleGPU());
+	}
 	
 	modelLoader_->GetDirectXBasis()->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
 }

@@ -11,6 +11,7 @@ TextureManager* TextureManager::GetInstance() {
 void TextureManager::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager) {
     dxBasis_ = dxBasis;
     srvManager_ = srvManager;
+    CreateDummyCubemap();
 }
 
 void TextureManager::LoadTexture(const std::string& filePath) {
@@ -110,4 +111,63 @@ void TextureManager::NextFrame()
     currentFrameIndex_ = (currentFrameIndex_ + 1) % FrameCount;
     // 古いフレームのバッファを開放
     frameUploadBuffers_[currentFrameIndex_].clear();
+}
+
+void TextureManager::CreateDummyCubemap() {
+    ID3D12Device* device = DirectXBasis::GetInstance()->GetDevice();
+    ID3D12GraphicsCommandList* commandList = DirectXBasis::GetInstance()->GetCommandList();
+
+    dummyCubemapIndex_ = srvManager_->Allocate();
+
+    // 黒ピクセル (0,0,0,0)
+    uint32_t pixel = 0x00000000;
+    D3D12_SUBRESOURCE_DATA subresources[6]{};
+    for (int i = 0; i < 6; ++i) {
+        subresources[i].pData = &pixel;
+        subresources[i].RowPitch = sizeof(pixel);
+        subresources[i].SlicePitch = sizeof(pixel);
+    }
+
+    // リソース記述
+    D3D12_RESOURCE_DESC texDesc = {};
+    texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    texDesc.Width = 1;
+    texDesc.Height = 1;
+    texDesc.DepthOrArraySize = 6;
+    texDesc.MipLevels = 1;
+    texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    texDesc.SampleDesc.Count = 1;
+    texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+    texDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+    CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
+    HRESULT hr = device->CreateCommittedResource(
+        &heapProps,
+        D3D12_HEAP_FLAG_NONE,
+        &texDesc,
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        nullptr,
+        IID_PPV_ARGS(&dummyCubemap_));
+    assert(SUCCEEDED(hr));
+
+    UINT64 uploadSize = GetRequiredIntermediateSize(dummyCubemap_.Get(), 0, 6);
+    CD3DX12_HEAP_PROPERTIES uploadHeapProps(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC uploadDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
+    device->CreateCommittedResource(
+        &uploadHeapProps,
+        D3D12_HEAP_FLAG_NONE,
+        &uploadDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&dummyCubemapUploadBuffer_));
+
+    UpdateSubresources(commandList, dummyCubemap_.Get(), dummyCubemapUploadBuffer_.Get(), 0, 0, 6, subresources);
+
+    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        dummyCubemap_.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    commandList->ResourceBarrier(1, &barrier);
+
+    srvManager_->CreateSRVforTextureCube(dummyCubemapIndex_, dummyCubemap_.Get(), DXGI_FORMAT_R8G8B8A8_UNORM, 1);
 }

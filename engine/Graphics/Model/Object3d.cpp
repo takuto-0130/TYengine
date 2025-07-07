@@ -33,11 +33,10 @@ void Object3d::CreateMaterialResource()
 	materialResource_ = objectManager_->GetDirectXBasis()->CreateBufferResource(sizeof(Material));
 	// 書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	// 白を入れる
-	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白を入れる
 	materialData_->enableLighting = 1;
 	materialData_->uvTransform = MakeIdentity4x4();
-	materialData_->environmentCoefficient = 1.0f;
+	materialData_->environmentCoefficient = 0.0f; // 映りこみなし
 	materialData_->shininess = 10.0f;
 }
 

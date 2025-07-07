@@ -3,7 +3,7 @@
 #include "TextureManager.h"
 #include "mathFunc.h"
 
-void score::Initialze()
+void Score::Initialze()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
@@ -42,7 +42,7 @@ void score::Initialze()
 	back_->SetColor({ 100.f / 256.f,160.f / 256.f,7.f / 256.f,1.0f });
 }
 
-void score::Update()
+void Score::Update()
 {
 	ScoreDisplay();
 	one_->Update();
@@ -60,7 +60,7 @@ void score::Update()
 	}
 }
 
-void score::Draw()
+void Score::Draw()
 {
 	//back_->Draw();
 	one_->Draw();
@@ -69,7 +69,17 @@ void score::Draw()
 	four_->Draw();
 }
 
-void score::ScoreDisplay()
+void Score::SetResult()
+{
+	float X = 700.0f;
+	float Y = 360.0f;
+	one_->SetPosition({ X,Y });
+	two_->SetPosition({ 45.0f + X,Y });
+	three_->SetPosition({ 90.0f + X,Y });
+	four_->SetPosition({ 135.0f + X,Y });
+}
+
+void Score::ScoreDisplay()
 {
 	float t = scoreViewTimer_ / kScoreViewTime_;
 	viewScore_ = int(Lerp(float(prevScore_), float(currentScore_), t));

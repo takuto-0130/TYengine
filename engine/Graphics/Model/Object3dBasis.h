@@ -52,7 +52,7 @@ private: // メンバ変数
 
 	DirectionalLight* directionalLightData = nullptr;
 
-	std::string skyboxTextureFilePath_;
+	std::string skyboxTextureFilePath_ = "";
 
 private:
 	static std::unique_ptr<Object3dBasis> instance;

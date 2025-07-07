@@ -18,7 +18,11 @@ public:
 
 
     struct Emitter {
-        Transform transform;
+        Transform transform{
+            {1.0f, 1.0f, 1.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f}
+        };
         uint32_t count = 5;
         float frequency = 0.5f;
         float frequencyTime = 0.0f;

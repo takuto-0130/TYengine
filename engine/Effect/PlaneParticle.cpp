@@ -1,6 +1,5 @@
 #include "PlaneParticle.h"
 #include <numbers>
-#include "operatorOverload.h"
 
 void PlaneParticle::CreateResources() {
     std::vector<VertexData> vertices = {

@@ -10,11 +10,11 @@ public:
 		return &instance;
 	}
 
-	SceneManager() = default;
 	~SceneManager();
 private:
-	SceneManager(SceneManager&) = default;
-	SceneManager& operator=(SceneManager&) = default;
+	SceneManager() = default;
+	SceneManager(SceneManager&) = delete;
+	SceneManager& operator=(SceneManager&) = delete;
 public:
 
 	// 次シーン予約

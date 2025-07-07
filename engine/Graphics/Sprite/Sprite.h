@@ -61,7 +61,7 @@ private: // メンバ関数
 	void AdjustTextureSize();
 
 private: // メンバ関数
-	SpriteBasis* spriteBasis_;
+	SpriteBasis* spriteBasis_ = nullptr;
 
 	// 頂点データ
 	struct VertexData {

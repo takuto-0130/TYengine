@@ -121,34 +121,37 @@ void RailManager::RailReDraw()
 
 void RailManager::RailCameraMove()
 {
-	if (cameraForwardT <= 1.0f)
+	if(rails_.size() > 0)
 	{
-		cameraForwardT += cameraSegmentCount;
-
 		if (cameraForwardT <= 1.0f)
 		{
-			cameraEyeT += cameraSegmentCount;
-			Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
-			Vector3 forward = CatmullRomPosition(controlPoints_, cameraForwardT);
-			forward = forward - eye;
+			cameraForwardT += cameraSegmentCount;
 
-			Vector3 rot{};
-			rot.y = std::atan2(forward.x, forward.z);
-			float len = Length({ forward.x, 0, forward.z });
-			rot.x = std::atan2(-forward.y, len);
-			camera_->SetRotate(rot);
+			if (cameraForwardT <= 1.0f)
+			{
+				cameraEyeT += cameraSegmentCount;
+				Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
+				Vector3 forward = CatmullRomPosition(controlPoints_, cameraForwardT);
+				forward = forward - eye;
 
-			Matrix4x4 rotMat = MakeRotateXYZMatrix(rot);
-			Vector3 upOffset = TransformNormal(offsetCameraPos_, rotMat);
-			eye += upOffset;
+				Vector3 rot{};
+				rot.y = std::atan2(forward.x, forward.z);
+				float len = Length({ forward.x, 0, forward.z });
+				rot.x = std::atan2(-forward.y, len);
+				camera_->SetRotate(rot);
 
-			camera_->SetTranslate(eye);
+				Matrix4x4 rotMat = MakeRotateXYZMatrix(rot);
+				Vector3 upOffset = TransformNormal(offsetCameraPos_, rotMat);
+				eye += upOffset;
+
+				camera_->SetTranslate(eye);
+			}
+
 		}
-
-	}
-	else
-	{
-		isRailCameraMove_ = false;
+		else
+		{
+			isRailCameraMove_ = false;
+		}
 	}
 }
 

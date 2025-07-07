@@ -6,10 +6,26 @@ void GameScene::InitDebugEdit()
 }
 void GameScene::UpdateDebugEdit()
 {
-	StageEdit();
-	enemyManager_->UpdateEditorEnemies();
-	railManager_->UpdateEdit();
+	stageManager_->EditUpdate();
 }
 void GameScene::ExitDebugEdit()
 {
+}
+
+void GameScene::SwitchEdit()
+{
+#ifdef _DEBUG
+	ImGui::Begin("Play : Editor Switch");
+	if (otherEditorSwitch_)
+	{
+		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
+		if (!otherEditorSwitch_) ChangeState(GameSceneState::PLAY);
+	}
+	else
+	{
+		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
+		if (otherEditorSwitch_) ChangeState(GameSceneState::DEBUG_EDIT);
+	}
+	ImGui::End();
+#endif // _DEBUG
 }

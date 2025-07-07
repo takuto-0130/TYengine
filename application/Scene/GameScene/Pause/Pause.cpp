@@ -2,7 +2,7 @@
 #include "Sprite.h"
 #include "TextureManager.h"
 
-void Pause::Initialze()
+void PauseClass::Initialze()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/blackScreen.png");
 	back_ = std::make_unique<Sprite>();
@@ -16,13 +16,13 @@ void Pause::Initialze()
 	text_->Initialize("Resources/Texture/PauseText.png");
 }
 
-void Pause::Update()
+void PauseClass::Update()
 {
 	back_->Update();
 	text_->Update();
 }
 
-void Pause::Draw()
+void PauseClass::Draw()
 {
 	back_->Draw();
 	text_->Draw();

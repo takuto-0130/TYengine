@@ -1,6 +1,5 @@
 #include "RailEditor.h"
 #include <fstream>
-#include <json.hpp>
 
 using json = nlohmann::json;
 
@@ -10,25 +9,6 @@ RailEditor* RailEditor::Instance() {
 }
 
 RailEditor::RailEditor() = default;
-
-void RailEditor::Save(const std::string& filename) {
-    json j;
-    for (size_t i = 0; i < controlPoints_.size(); ++i) {
-        const auto& p = controlPoints_[i];
-        json pointJson = {
-            {"x", p.x},
-            {"y", p.y},
-            {"z", p.z}
-        };
-        if (i < railSegments_.size()) {
-            pointJson["segmentSpeed"] = railSegments_[i].speed;
-            pointJson["triggerEvent"] = railSegments_[i].triggerEvent;
-        }
-        j["controlPoints"].push_back(pointJson);
-    }
-    std::ofstream file(filename);
-    file << j.dump(4);
-}
 
 void RailEditor::Load(const std::string& filename) {
     std::ifstream file(filename);
@@ -61,13 +41,6 @@ void RailEditor::DrawEditorUI() {
 #ifdef _DEBUG
     ImGui::Begin("Rail Editor");
 
-    if (ImGui::Button("Save")) {
-        Save("Resources/JSON/RailEditor.json");
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Load")) {
-        Load("Resources/JSON/RailEditor.json");
-    }
     ImGui::SameLine();
     if (ImGui::Button("Preview")) {
         needsPreviewUpdate_ = true;
@@ -130,4 +103,35 @@ bool RailEditor::NeedsPreviewUpdate() const {
 
 void RailEditor::ResetPreviewFlag() {
     needsPreviewUpdate_ = false;
+}
+
+nlohmann::json RailEditor::ToJson() const {
+    nlohmann::json j;
+    for (size_t i = 0; i < controlPoints_.size(); ++i) {
+        const auto& p = controlPoints_[i];
+        json pointJson = {
+            {"x", p.x},
+            {"y", p.y},
+            {"z", p.z}
+        };
+        if (i < railSegments_.size()) {
+            pointJson["segmentSpeed"] = railSegments_[i].speed;
+            pointJson["triggerEvent"] = railSegments_[i].triggerEvent;
+        }
+        j["controlPoints"].push_back(pointJson);
+    }
+    return j;
+}
+
+void RailEditor::FromJson(const nlohmann::json& j) {
+    controlPoints_.clear();
+    railSegments_.clear();
+    for (const auto& pointJson : j["controlPoints"]) {
+        Vector3 p = { pointJson["x"], pointJson["y"], pointJson["z"] };
+        controlPoints_.push_back(p);
+        RailSegment seg;
+        seg.speed = pointJson.value("segmentSpeed", 1.0f);
+        seg.triggerEvent = pointJson.value("triggerEvent", false);
+        railSegments_.push_back(seg);
+    }
 }

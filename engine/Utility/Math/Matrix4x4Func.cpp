@@ -1,7 +1,7 @@
 #include "Matrix4x4Func.h"
 
 Matrix4x4 Add(const Matrix4x4& matrix1, const Matrix4x4& matrix2) {
-	Matrix4x4 result;
+	Matrix4x4 result{};
 	for (int row = 0; row < 4; row++) {
 		for (int column = 0; column < 4; column++) {
 			result.m[row][column] = matrix1.m[row][column] + matrix2.m[row][column];
@@ -11,7 +11,7 @@ Matrix4x4 Add(const Matrix4x4& matrix1, const Matrix4x4& matrix2) {
 }
 
 Matrix4x4 Subtract(const Matrix4x4& matrix1, const Matrix4x4& matrix2) {
-	Matrix4x4 result;
+	Matrix4x4 result{};
 	for (int row = 0; row < 4; row++) {
 		for (int column = 0; column < 4; column++) {
 			result.m[row][column] = matrix1.m[row][column] - matrix2.m[row][column];
@@ -118,7 +118,7 @@ Matrix4x4 Inverse(const Matrix4x4& m) {
 }
 
 Matrix4x4 Transpose(const Matrix4x4& matrix) {
-	Matrix4x4 result;
+	Matrix4x4 result{};
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			result.m[i][j] = matrix.m[j][i];
@@ -305,4 +305,9 @@ Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraView)
 
 	// 転置（ビュー行列の逆回転になる）
 	return Transpose(result);
+}
+
+
+Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2) {
+	return Multiply(m1, m2);
 }

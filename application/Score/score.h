@@ -1,7 +1,7 @@
 #pragma once
 #include "Sprite.h"
 #include <memory>
-class score
+class Score
 {
 public:
 	void Initialze();
@@ -21,6 +21,9 @@ public:
 		currentScore_ = score;
 	}
 
+	// 仮対応
+	void SetResult();
+
 private:
 	void ScoreDisplay();
 
@@ -30,10 +33,10 @@ private:
 	std::unique_ptr<Sprite> three_;
 	std::unique_ptr<Sprite> four_;
 	std::unique_ptr<Sprite> back_;
-	int32_t prevScore_;
-	int32_t currentScore_;
-	int32_t viewScore_;
-	ScoreDisp scoreDisp_;
+	int32_t prevScore_ = 0;
+	int32_t currentScore_ = 0;
+	int32_t viewScore_ = 0;
+	ScoreDisp scoreDisp_ = {};
 
 	float scoreViewTimer_ = 0;
 	float kScoreViewTime_ = 1.0f;

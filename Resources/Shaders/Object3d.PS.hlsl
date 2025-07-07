@@ -5,6 +5,7 @@ struct Material
     float4 color;
     int enableLighting;
     float4x4 uvTransforam;
+    float environmentCoefficient;
 };
 ConstantBuffer<Material> gMaterial : register(b0);
 
@@ -24,6 +25,8 @@ ConstantBuffer<DirectionalLight> gDirectionalLight : register(b2);
 
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
+
+TextureCube<float4> gEnvironmentTexture : register(t1);
 
 struct PixelShaderOutput
 {
@@ -52,5 +55,14 @@ PixelShaderOutput main(VertexShaderOutput input)
     {
         output.color = gMaterial.color * textureColor;
     }
+    
+    if (gMaterial.environmentCoefficient > 0)
+    {
+        float3 camToPos = normalize(input.worldPosition - gCamera.worldPosition);
+        float3 refVector = reflect(camToPos, normalize(input.normal));
+        float4 environmentColor = gEnvironmentTexture.Sample(gSampler, refVector);
+        output.color.rgb += environmentColor.rgb;
+    }
+    
     return output;
 }

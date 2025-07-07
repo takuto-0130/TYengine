@@ -32,6 +32,7 @@ private: // 構造体
 		bool enableLighting;
 		float padding[3];
 		Matrix4x4 uvTransform;
+		float environmentCoefficient;
 		float shininess;
 	};
 

@@ -14,8 +14,8 @@ void Stage::Init()
     railManager_->SetCamera(camera_);
     railManager_->Init();
 
-    skydome_ = std::make_unique<Skydome>();
-    skydome_->Initialize();
+    //skydome_ = std::make_unique<Skydome>();
+    //skydome_->Initialize();
 
     // 1フレームだけカメラを動かす
     railManager_->RailCameraMove();
@@ -32,12 +32,12 @@ void Stage::Update()
 
     player_->Update();
 
-    skydome_->Update();
+    //skydome_->Update();
 }
 
 void Stage::Draw()
 {
-    skydome_->Draw();
+    //skydome_->Draw();
 
     railManager_->Draw();
 
@@ -62,7 +62,7 @@ void Stage::EditUpdate()
     enemyManager_->UpdateEditorEnemies();
 
     player_->Update();
-    skydome_->Update();
+    //skydome_->Update();
 }
 
 nlohmann::json Stage::ToJson() const {

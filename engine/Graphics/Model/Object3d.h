@@ -32,6 +32,7 @@ private: // 構造体
 		bool enableLighting;
 		float padding[3];
 		Matrix4x4 uvTransform;
+		float environmentCoefficient;
 		float shininess;
 	};
 
@@ -75,6 +76,9 @@ public:
 	// Lighting
 	const bool& GetIsLighting() const { return materialData_->enableLighting; }
 	void SetIsLighting(const bool isLighting) { materialData_->enableLighting = isLighting; }
+
+	// 環境マップの映り込み
+	void SetEnvironmentCoefficient(float environmentCoefficient) { materialData_->environmentCoefficient = environmentCoefficient; }
 };
 
 static_assert(!std::is_copy_assignable_v<Object3d>);

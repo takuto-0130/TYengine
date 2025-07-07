@@ -54,7 +54,7 @@ private:
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<EnemyManager> enemyManager_;
 	std::unique_ptr<RailManager> railManager_;
-	std::unique_ptr<Skydome> skydome_;
+	//std::unique_ptr<Skydome> skydome_;
 
 	bool isEdit_ = false;
 };

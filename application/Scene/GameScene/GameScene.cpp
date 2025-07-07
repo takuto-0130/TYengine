@@ -9,6 +9,9 @@
 #include "../../Object/Player/Player.h"
 #include "../../Object/Rail/RailManager.h"
 #include "PlayUI/PlayUI.h"
+#include <fstream>
+#include <istream>
+#include "CubemapBasis.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -49,6 +52,11 @@ void GameScene::Init()
 {
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
+
+
+	skybox_ = std::make_unique<ObjectCubemap>();
+	skybox_->Initialize("Resources/Texture/rostock_laage_airport_4k.dds");
+
 	
 	Audio::GetInstance()->LoadWave("fanfare");
 
@@ -79,10 +87,15 @@ void GameScene::Update()
 	UpdateState(1.0f / 60.0f);
 	
 	SwitchEdit();
+
+	skybox_->Update();
 }
 
 void GameScene::Draw()
 {
+	CubemapBasis::GetInstance()->DrawBegin();
+	skybox_->Draw();
+
 	Object3dBasis::GetInstance()->BasisDrawSetting();
 
 	stageManager_->Draw();

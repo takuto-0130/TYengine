@@ -11,6 +11,7 @@
 #include "ParticleManager.h"
 #include "../../Object/Enemy/EnemyManager.h"
 #include "../../Stage/StageManager.h"
+#include "ObjectCubemap.h"
 
 
 #include <memory>
@@ -162,6 +163,8 @@ private: // メンバ変数
 	const int32_t kBasicScore_ = 200;
 	std::unique_ptr<PauseClass> pauseMenu_;
 	std::unique_ptr<ResultClass> resultMenu_;
+
+	std::unique_ptr<ObjectCubemap> skybox_;
 
 	bool otherEditorSwitch_ = false;
 };

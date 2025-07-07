@@ -2,6 +2,7 @@
 #include "Audio/Audio.h"
 #include "SceneFactory.h"
 #include "ColliderManager.h"
+#include "CubemapBasis.h"
 
 #include "PlaneParticle.h"
 #include "RingParticle.h"
@@ -73,6 +74,10 @@ void GameCore::Initialize()
 
 	copyPass = std::make_unique<CopyPass>();
 	copyPass->Initialize(directXBasis, srvManager.get(), L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
+
+
+	CubemapBasis::GetInstance()->Initialize(directXBasis);
+	CubemapBasis::GetInstance()->SetDefaultCamera(camera.get());
 }
 
 void GameCore::Finalize()
@@ -100,6 +105,9 @@ void GameCore::Update()
 
 void GameCore::Draw()
 {
+	// フレームの切り替えタイミングでリングバッファを進める
+	TextureManager::GetInstance()->NextFrame();
+
 	// ---------- オフスクリーン描画 ----------
 	renderTexture->BeginRender();
 

@@ -67,20 +67,15 @@ private: // メンバ関数
 	struct VertexData {
 		Vector4 position;
 		Vector2 texCoord;
-		Vector3 normal;
 	};
 	// マテリアルデータ
 	struct Material {
 		Vector4 color;
-		int32_t enableLighting;
-		std::array<float, 3> padding;
 		Matrix4x4 uvTransform;
 	};
 	// 座標変換行列データ
 	struct TransfomationMatrix {
 		Matrix4x4 WVP;
-		Matrix4x4 World;
-		Matrix4x4 WorldInverseTranspose;
 	};
 
 	// バッファリソース
@@ -89,16 +84,13 @@ private: // メンバ関数
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;
 	// バッファリソース内のデータを指すポインタ
-	VertexData* vertexData_ = nullptr;
 	uint32_t* indexData_ = nullptr;
+	VertexData* vertexData_ = nullptr;
 	Material* materialData_ = nullptr;
 	TransfomationMatrix* transformationMatrixData_ = nullptr;
 	// バッファリソースの使い道を補足するバッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};
-
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_ = {};
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_ = {};
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 
 	// テクスチャ番号
 	uint32_t textureIndex = 0;

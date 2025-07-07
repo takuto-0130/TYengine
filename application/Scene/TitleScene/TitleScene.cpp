@@ -4,6 +4,7 @@
 #include "SpriteBasis.h"
 #include "../Transition/Fade/FadeTransition.h"
 #include "../Transition/TransitionManager.h"
+#include "CubemapBasis.h"
 //#include "Sprite.h"
 #ifdef _DEBUG
 #include "imgui.h"
@@ -26,6 +27,10 @@ void TitleScene::Init()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/TitleText.png");
 	text_ = std::make_unique<Sprite>();
 	text_->Initialize("Resources/Texture/TitleText.png");
+
+
+	skybox_ = std::make_unique<ObjectCubemap>();
+	skybox_->Initialize("Resources/Texture/rostock_laage_airport_4k.dds");
 }
 
 void TitleScene::Update() {
@@ -45,10 +50,14 @@ void TitleScene::Update() {
 	{
 		obj->Update();
 	}
+	skybox_->Update();
 }
 
 void TitleScene::Draw() 
 {
+	CubemapBasis::GetInstance()->DrawBegin();
+	skybox_->Draw();
+
 	Object3dBasis::GetInstance()->BasisDrawSetting();
 	for (auto& obj : objects_)
 	{

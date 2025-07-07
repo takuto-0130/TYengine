@@ -30,21 +30,17 @@ void Enemy::Update()
 	}
 
 
+	UpdateTransform();
+}
+
+void Enemy::UpdateTransform()
+{
 	worldTransform_.TransferMatrix();
 }
 
 void Enemy::Draw()
 {
 	obj_->Draw(worldTransform_);
-}
-
-Vector3 Enemy::GetWorldPosition() const
-{
-	Vector3 worldPos;
-	worldPos.x = worldTransform_.matWorld_.m[3][0];
-	worldPos.y = worldTransform_.matWorld_.m[3][1];
-	worldPos.z = worldTransform_.matWorld_.m[3][2];
-	return worldPos;
 }
 
 void Enemy::Pop()

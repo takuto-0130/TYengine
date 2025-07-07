@@ -1,6 +1,5 @@
 #include "ObjectCubemap.h"
 #include "mathFunc.h"
-#include "operatorOverload.h"
 
 void ObjectCubemap::Initialize(const std::string& textureFilePath)
 {

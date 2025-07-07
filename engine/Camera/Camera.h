@@ -50,4 +50,20 @@ public: // メンバ関数
 	const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
 	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return worldViewProjectionMatrix_; }
+
+	Vector3 GetPosition() const { return transform_.translate; }
+	Vector3 GetForward() const {
+		// Z軸の向き（正面） = viewMatrix_ の 3列目
+		return Normalize({ viewMatrix_.m[0][2], viewMatrix_.m[1][2], viewMatrix_.m[2][2] });
+	}
+
+	Vector3 GetRight() const {
+		// X軸の向き（右） = viewMatrix_ の 1列目
+		return Normalize({ viewMatrix_.m[0][0], viewMatrix_.m[1][0], viewMatrix_.m[2][0] });
+	}
+
+	Vector3 GetUp() const {
+		// Y軸の向き（上） = viewMatrix_ の 2列目
+		return Normalize({ viewMatrix_.m[0][1], viewMatrix_.m[1][1], viewMatrix_.m[2][1] });
+	}
 };

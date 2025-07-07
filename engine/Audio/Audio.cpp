@@ -80,7 +80,7 @@ void Audio::StreamAudio(const char* filename) {
 
 	// ストリーミング用のバッファを複数作成
 	constexpr int BUFFER_COUNT = 3; // バッファ数
-	size_t BUFFER_SIZE = header.sampleRate * waveFormat.nBlockAlign; // バッファサイズ
+	BUFFER_SIZE = header.sampleRate * waveFormat.nBlockAlign; // バッファサイズ
 	audioBuffers.resize(BUFFER_COUNT, std::vector<BYTE>(BUFFER_SIZE));
 	XAUDIO2_BUFFER xAudioBuffers[BUFFER_COUNT] = {};
 	StreamingVoiceCallback callback;

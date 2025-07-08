@@ -23,6 +23,9 @@ public:
 	// ローカル座標をセット
 	virtual void SetTranslation(Vector3 pos) { worldTransform_.translation_ = pos; }
 
+	// 飛んでいく向き
+	virtual void SetShotDirection(Vector3 direction) { direction_ = direction; }
+
 	// 死んだかどうか
 	virtual bool IsDead() const { return isDead_; }
 

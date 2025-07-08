@@ -27,7 +27,7 @@ private:
 	void Move();
 
 private:
-    std::unique_ptr<PBulletCollider<PlayerBulletNormal>> collider_;
+    std::unique_ptr<PBulletCollider> collider_;
 
 	float deltaTime_ = 1.0f / 60.0f;
 

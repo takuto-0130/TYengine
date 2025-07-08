@@ -1,5 +1,6 @@
 #pragma once
 #include "../BaseCharacter/BaseCharacter.h"
+#include "EnemyCollider.h"
 #include "IParticleRenderer.h"
 
 class IParticleRenderer;
@@ -26,6 +27,8 @@ public:
 	void Pop();
 
 private:
+	std::unique_ptr<EnemyCollider> collider_;
+
 	bool isDead_ = false;
 
 	IParticleRenderer::Emitter emitter;

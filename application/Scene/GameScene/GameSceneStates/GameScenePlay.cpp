@@ -1,6 +1,7 @@
 #include "../GameScene.h"
 #include "../../../Object/Rail/RailManager.h"
 #include "../PlayUI/PlayUI.h"
+#include "../../../Score/score.h"
 
 void GameScene::InitPlay()
 {

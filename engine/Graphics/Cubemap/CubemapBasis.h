@@ -37,7 +37,7 @@ private: // メンバ関数
 
 
 private: // メンバ変数
-	DirectXBasis* directXBasis_;
+	DirectXBasis* directXBasis_ = nullptr;
 	Camera* defaultCamera_ = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;

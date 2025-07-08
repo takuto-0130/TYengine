@@ -2,6 +2,7 @@
 #include "../Pause/Pause.h"
 #include "../Result/Result.h"
 #include "../PlayUI/PlayUI.h"
+#include "../../../Score/score.h"
 
 void GameScene::UIInit()
 {

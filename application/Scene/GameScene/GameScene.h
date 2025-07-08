@@ -1,29 +1,20 @@
 #pragma once
-
 #include "IScene.h"
-#include "Sprite.h"
-#include "Object3d.h"
-#include "WorldTransform.h"
-#include "./Score/score.h"
 #include "StateMachine.h"
 
-#include "Skydome/Skydome.h"
 #include "ParticleManager.h"
-#include "../../Object/Enemy/EnemyManager.h"
 #include "../../Stage/StageManager.h"
 #include "ObjectCubemap.h"
 
-
 #include <memory>
 #include <vector>
-#include <list>
-#include <unordered_set>
 
 class PauseClass;
 class ResultClass;
+class PlayUI;
+class Score;
 class Audio;
 class RailManager;
-class PlayUI;
 class Player;
 
 enum class GameSceneState {
@@ -71,6 +62,36 @@ private:
 
 	// GameSceneDebugEdit
 	void SwitchEdit();
+
+private: // メンバ変数
+
+	float pitch_ = 1.0f;
+	Vector3 cameraOffset_ = {};
+
+	std::unique_ptr<PlayUI> playUI_;
+
+	std::unique_ptr<StageManager> stageManager_;
+
+	int comboCount_ = 0;
+	float comboTimer_ = 0;
+	float kComboTime_ = 3.0f;
+	float shakeTime_ = 0.4f;
+
+
+	IParticleRenderer::Emitter emitter;
+	IParticleRenderer::Emitter emitterRing;
+
+
+
+	std::unique_ptr<Score> scoreDraw_;
+	int32_t score_ = 0;
+	const int32_t kBasicScore_ = 200;
+	std::unique_ptr<PauseClass> pauseMenu_;
+	std::unique_ptr<ResultClass> resultMenu_;
+
+	std::unique_ptr<ObjectCubemap> skybox_;
+
+	bool otherEditorSwitch_ = false;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
@@ -141,34 +162,4 @@ private: // シーン内のState関連関数
 	void UpdateDebugEdit();
 	void ExitDebugEdit();
 #pragma endregion
-
-private: // メンバ変数
-
-	float pitch_ = 1.0f;
-	Vector3 cameraOffset_ = {};
-
-	std::unique_ptr<PlayUI> playUI_;
-
-	std::unique_ptr<StageManager> stageManager_;
-
-	int comboCount_ = 0;
-	float comboTimer_ = 0;
-	float kComboTime_ = 3.0f;
-	float shakeTime_ = 0.4f;
-
-
-	IParticleRenderer::Emitter emitter;
-	IParticleRenderer::Emitter emitterRing;
-
-
-
-	std::unique_ptr<Score> scoreDraw_;
-	int32_t score_ = 0;
-	const int32_t kBasicScore_ = 200;
-	std::unique_ptr<PauseClass> pauseMenu_;
-	std::unique_ptr<ResultClass> resultMenu_;
-
-	std::unique_ptr<ObjectCubemap> skybox_;
-
-	bool otherEditorSwitch_ = false;
 };

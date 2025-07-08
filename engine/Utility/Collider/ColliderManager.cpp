@@ -75,6 +75,9 @@ bool ColliderManager::CheckCollision(const SphereCollider& a, const SphereCollid
 
 bool ColliderManager::CheckCollisionDispatcher(Collider* a, Collider* b)
 {
+    if (!a || !b) {
+        return false;
+    }
     auto shapeA = a->GetShapeType();
     auto shapeB = b->GetShapeType();
 

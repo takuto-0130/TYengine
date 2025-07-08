@@ -29,6 +29,7 @@ void Player::Init()
 	obj_->SetModel("cube.obj");
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { scale_, scale_, scale_ };
+	worldTransform_.TransferMatrix();
 
 	collider_ = std::make_unique<PlayerCollider>(
 		static_cast<uint32_t>(ColliderTypeID::PLAYER), 

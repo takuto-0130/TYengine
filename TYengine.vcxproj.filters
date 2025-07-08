@@ -253,6 +253,10 @@
     <ClCompile Include="engine\Utility\Math\WorldTransform.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\PBulletCollider.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletLiner.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletAfterCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -486,6 +490,9 @@
     <ClInclude Include="engine\Utility\Math\WorldTransform.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

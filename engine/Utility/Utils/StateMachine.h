@@ -17,6 +17,7 @@ concept HasStateTable = requires
 // 汎用ステートマシンクラス（テンプレート）
 // 'Class' = 継承先クラス  
 // 'StateEnum' = 継承先ごと固有のステートのenumClass
+// 使い方はStateMachine.hに
 template<typename Class, typename StateEnum>
 class StateMachine
 {

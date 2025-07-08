@@ -128,6 +128,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneReady.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
     <ClCompile Include="application\Score\score.cpp" />
     <ClCompile Include="application\Skydome\Skydome.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
@@ -193,7 +194,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Stage\StageManager.cpp" />
     <ClCompile Include="engine\Graphics\Cubemap\ObjectCubemap.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\PBulletCollider.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\PlayerBulletManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
@@ -276,6 +277,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Graphics\Cubemap\ObjectCubemap.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

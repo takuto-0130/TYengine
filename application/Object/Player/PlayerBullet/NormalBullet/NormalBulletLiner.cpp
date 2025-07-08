@@ -6,6 +6,8 @@ void PlayerBulletNormal::InitLiner()
 
 void PlayerBulletNormal::UpdateLiner()
 {
+	if (GetStateElapsedTime() < lifeTime_) isDead_ = true;
+
 	Move();
 
 	worldTransform_.TransferMatrix();

@@ -3,6 +3,10 @@
 #include "Object3dBasis.h"
 #include "Audio/Audio.h"
 #include "CubemapBasis.h"
+#include "Result/Result.h"
+#include "Pause/Pause.h"
+#include "PlayUI/PlayUI.h"
+#include "Score/score.h"
 
 #ifdef _DEBUG
 #include "imgui.h"

@@ -258,6 +258,7 @@
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletAfterCollision.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\PlayerBulletManager.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -495,6 +496,7 @@
     <ClInclude Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletManager.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

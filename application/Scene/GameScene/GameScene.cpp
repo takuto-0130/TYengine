@@ -45,20 +45,16 @@ void GameScene::Init()
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 
 	Object3dBasis::GetInstance()->SetSkyboxFilePath("Resources/Texture/rostock_laage_airport_4k.dds");
-
 	skybox_ = std::make_unique<ObjectCubemap>();
 	skybox_->Initialize("Resources/Texture/rostock_laage_airport_4k.dds");
 
 	Audio::GetInstance()->LoadWave("fanfare");
 
-	stageManager_ = std::make_unique<StageManager>();
-	stageManager_->SetCamera(camera_);
+	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
 
 	EmitterInit();
-
 	UIInit();
-
 	ChangeState(GameSceneState::FADE_IN);
 }
 

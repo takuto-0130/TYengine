@@ -1,13 +1,13 @@
 #pragma once
 #include "Sphere/SphereCollider.h"
+#include "../../BaseBullet/BaseBullet.h"
+#include "../../ColliderTypeID/ColliderTypeID.h"
 
-// プレイヤーの弾判定クラス（テンプレート）
-// 'BulletClass' = 弾の継承クラス
-template<typename BulletClass>
+// プレイヤーの弾判定クラス
 class PBulletCollider : public SphereCollider
 {
 public:
-    PBulletCollider(uint32_t typeID, const Vector3& center, float radius, BulletClass* bullet)
+    PBulletCollider(uint32_t typeID, const Vector3& center, float radius, BaseBullet* bullet)
         : SphereCollider(typeID, center, radius), bullet_(bullet) 
     {
     }
@@ -15,6 +15,10 @@ public:
     // 衝突イベントコールバック（必要に応じて 'bullet_' に処理を委譲）
     void OnCollisionEnter(Collider& other, const CollisionInfo& info) override 
     {
+        if (other.GetTypeID() == static_cast<uint32_t>(ColliderTypeID::ENEMY))
+        {
+            bullet_->OnCollision();
+        }
     }
 
     void OnCollisionStay(Collider& other, const CollisionInfo& info) override 
@@ -26,5 +30,5 @@ public:
     }
 
 private:
-    BulletClass* bullet_ = nullptr;
+    BaseBullet* bullet_ = nullptr;
 };

@@ -1,19 +1,23 @@
 #include "Skydome.h"
 #include "assert.h"
 
-void Skydome::Initialize() {
-	skydome = std::make_unique<Object3d>();
-	skydome->Initialize();
-	skydome->SetModel("skydome.obj");
+
+void Skydome::Init()
+{
+	obj_ = std::make_unique<Object3d>();
+	obj_->Initialize();
+	obj_->SetModel("skydome.obj");
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { 500.0f, 500.0f, 500.0f };
-	skydome->SetIsLighting(false);
+	obj_->SetIsLighting(false);
 }
 
-void Skydome::Update() {
+void Skydome::Update() 
+{
 	worldTransform_.TransferMatrix();
 }
 
-void Skydome::Draw() {
-	skydome->Draw(worldTransform_);
+void Skydome::Draw() 
+{
+	obj_->Draw(worldTransform_);
 }

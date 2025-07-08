@@ -254,9 +254,10 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\PBulletCollider.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletLiner.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletAfterCollision.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\PlayerBulletManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -493,6 +494,7 @@
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

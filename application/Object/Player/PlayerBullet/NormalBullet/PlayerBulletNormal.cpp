@@ -34,7 +34,7 @@ void PlayerBulletNormal::Init()
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { scale_, scale_, scale_ };
 
-	collider_ = std::make_unique<PBulletCollider>(
+	collider_ = std::make_unique<PBulletCollider<PlayerBulletNormal>>(
 		static_cast<uint32_t>(ColliderTypeID::PLAYER),
 		GetWorldPosition(),
 		scale_,
@@ -46,9 +46,11 @@ void PlayerBulletNormal::Init()
 
 void PlayerBulletNormal::Update()
 {
+	UpdateState(deltaTime_);
 }
 
 void PlayerBulletNormal::Draw()
 {
+	obj_->Draw(worldTransform_);
 }
 

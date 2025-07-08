@@ -55,6 +55,10 @@ public:
 	void Draw() override;
 
 private:
+	// GameSceneUI
+	void UIInit();
+	void UIDraw();
+
 	// GameScenePlay
 	void PlayUIUpdate();
 	void AttackUpdate();

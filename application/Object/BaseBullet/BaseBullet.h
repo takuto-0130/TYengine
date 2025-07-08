@@ -44,5 +44,8 @@ protected:
 
 	// 移動方向
 	Vector3 direction_ = { 0,0,1 };
+
+	// 弾の寿命
+	float lifeTime_ = 5.0f;
 };
 

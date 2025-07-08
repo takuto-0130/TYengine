@@ -36,6 +36,7 @@ public:
     virtual ~Collider() = default;
 
     ID GetID() const { return id_; }
+    void SetTypeID(uint32_t typeID) { typeID_ = typeID; }
     uint32_t GetTypeID() const { return typeID_; }
     virtual ColliderShape GetShapeType() const = 0;
 

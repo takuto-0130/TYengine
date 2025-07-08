@@ -106,6 +106,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletAfterCollision.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletLiner.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBoost.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerDead.cpp" />
@@ -190,6 +192,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Object\Player\PlayerCollider.cpp" />
     <ClCompile Include="application\Stage\StageManager.cpp" />
     <ClCompile Include="engine\Graphics\Cubemap\ObjectCubemap.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\PBulletCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
@@ -198,6 +202,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
     <ClInclude Include="application\Scene\Transition\ITransition.h" />
     <ClInclude Include="application\Scene\Transition\StateMachineTransition.h" />
+    <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
     <ClInclude Include="engine\Utility\Collider\Collider.h" />
     <ClInclude Include="engine\Utility\SceneObjects\BaseObject.h" />
@@ -269,6 +274,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Object\Player\PlayerCollider.h" />
     <ClInclude Include="application\Stage\StageManager.h" />
     <ClInclude Include="engine\Graphics\Cubemap\ObjectCubemap.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

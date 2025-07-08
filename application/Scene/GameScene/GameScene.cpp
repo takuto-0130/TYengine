@@ -1,16 +1,10 @@
 #include "GameScene.h"
-#include "mathFunc.h"
 #include "SpriteBasis.h"
 #include "Object3dBasis.h"
 #include "Audio/Audio.h"
 #include "Pause/Pause.h"
 #include "Result/Result.h"
-#include "../../Object/Enemy/Enemy.h"
-#include "../../Object/Player/Player.h"
-#include "../../Object/Rail/RailManager.h"
 #include "PlayUI/PlayUI.h"
-#include <fstream>
-#include <istream>
 #include "CubemapBasis.h"
 
 #ifdef _DEBUG
@@ -106,16 +100,9 @@ void GameScene::Draw()
 	// フェード中は描画しない
 	if (GetCurrentState() != GameSceneState::FADE_OUT && GetCurrentState() != GameSceneState::FADE_IN)
 	{
-		if (GetCurrentState() != GameSceneState::RESULT)
-		{
-			playUI_->Draw();
-		}
+		if (GetCurrentState() != GameSceneState::RESULT) playUI_->Draw();
 
-		if (GetCurrentState() == GameSceneState::RESULT)
-		{
-			resultMenu_->Draw();
-			scoreDraw_->Draw();
-		}
+		if (GetCurrentState() == GameSceneState::RESULT) resultMenu_->Draw(), scoreDraw_->Draw();
 
 		if (GetCurrentState() == GameSceneState::PAUSE) pauseMenu_->Draw();
 	}

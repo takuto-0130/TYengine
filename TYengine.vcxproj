@@ -137,6 +137,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
     <ClCompile Include="engine\Utility\Collider\ColliderManager.cpp" />
     <ClCompile Include="engine\Graphics\Cubemap\CubemapBasis.cpp" />
+    <ClCompile Include="engine\Utility\Collider\CollisionFunc.cpp" />
     <ClCompile Include="engine\Utility\Loader\BlenderLevelLoader.cpp" />
     <ClCompile Include="engine\Effect\CylinderParticle.cpp" />
     <ClCompile Include="engine\OffScreen\CopyPass.cpp" />
@@ -208,6 +209,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
     <ClInclude Include="engine\Utility\Collider\Collider.h" />
+    <ClInclude Include="engine\Utility\Collider\CollisionFunc.h" />
     <ClInclude Include="engine\Utility\SceneObjects\BaseObject.h" />
     <ClInclude Include="application\Object\Rail\Rail.h" />
     <ClInclude Include="engine\Graphics\Cubemap\CubemapBasis.h" />

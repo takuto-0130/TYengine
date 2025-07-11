@@ -64,35 +64,42 @@ struct Transform {
 	Vector3 translate;
 };
 
-struct VertexData {
-	Vector4 position;
-	Vector2 texCoord;
+struct Sphere {
+	Vector3 center;
+	float radius;
+};
+
+struct Line {
+	Vector3 origine;
+	Vector3 diff;
+};
+
+struct Ray {
+	Vector3 origine;
+	Vector3 diff;
+};
+
+struct Segment {
+	Vector3 origine;
+	Vector3 diff;
+};
+
+struct Plane {
 	Vector3 normal;
+	float distance;
 };
 
-struct Material {
-	Vector4 color;
-	int32_t enableLighting;
-	float padding[3];
-	Matrix4x4 uvTransform;
+struct Triangle {
+	Vector3 vertixces[3];
 };
 
-//struct TransfomationMatrix {
-//	Matrix4x4 WVP;
-//	Matrix4x4 World;
-//};
-
-struct DirectionalLight {
-	Vector4 color;
-	Vector3 direction;
-	float intensity;
+struct AABB {
+	Vector3 min;
+	Vector3 max;
 };
 
-struct MaterialData {
-	std::string textureFilePath;
-};
-
-struct ModelData {
-	std::vector<VertexData> vertices;
-	MaterialData material;
+struct OBB {
+	Vector3 center;
+	Vector3 oriientations[3];
+	Vector3 size;
 };

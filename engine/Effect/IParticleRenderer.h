@@ -51,6 +51,12 @@ protected:
         Vector3 worldPosition;
     };
 
+    struct VertexData {
+        Vector4 position;
+        Vector2 texCoord;
+        Vector3 normal;
+    };
+
     virtual void CreateResources() = 0;
 
     void CreateRootSignature();

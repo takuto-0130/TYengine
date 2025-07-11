@@ -2,6 +2,8 @@
 #include "../BaseCharacter/BaseCharacter.h"
 #include "PlayerCollider.h"
 #include "StateMachine.h"
+#include "PlayerBullet/PlayerBulletType.h"
+#include "PlayerBullet/PlayerBulletManager.h"
 
 
 enum class PlayerState
@@ -32,11 +34,14 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 private:
+	void Attack();
 	void Move();
 	void ClampOffset();
 
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
 	void RotationOffset();
+
+	void ReticleCollision();
 
 private:
 	Input* input_ = nullptr;
@@ -55,6 +60,12 @@ private:
 	float yRange = 0.74f; // 縦移動の最大高さ
 
 	float deltaTime_ = 1.0f / 60.0f;
+
+
+	// 弾関連
+	std::unique_ptr<PlayerBulletManager> bulletManager_;
+	PlayerBulletType currentBulletType_ = PlayerBulletType::NORMAL;
+
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
@@ -81,22 +92,22 @@ private: // シーン内のState関連関数
 	void UpdateRoot();
 	void ExitRoot();
 
-	// 通常行動
+	// 加速
 	void InitBoost();
 	void UpdateBoost();
 	void ExitBoost();
 
-	// 通常行動
+	// 回避
 	void InitBarrelRoll();
 	void UpdateBarrelRoll();
 	void ExitBarrelRoll();
 
-	// 通常行動
+	// 被弾
 	void InitTakeDamage();
 	void UpdateTakeDamage();
 	void ExitTakeDamage();
 
-	// 通常行動
+	// 死亡
 	void InitDead();
 	void UpdateDead();
 	void ExitDead();

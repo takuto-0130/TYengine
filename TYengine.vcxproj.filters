@@ -497,6 +497,7 @@
     <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletManager.h" />
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -39,6 +39,9 @@ void Player::Init()
 	);
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 	ChangeState(PlayerState::ROOT);
+
+	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
+	bulletManager_->Init();
 	
 }
 
@@ -48,6 +51,9 @@ void Player::Update()
 	RotationOffset();
 	worldTransform_.TransferMatrix();
 	collider_->Update(GetWorldPosition());
+
+	Attack();
+	bulletManager_->Update();
 
 #ifdef _DEBUG
 	ImGui::Begin("Player");
@@ -61,6 +67,22 @@ void Player::Update()
 void Player::Draw()
 {
 	obj_->Draw(worldTransform_);
+	bulletManager_->Draw();
+}
+
+void Player::Attack()
+{
+	if (input_->TriggerKey(DIK_SPACE))
+	{
+		currentBulletType_ = PlayerBulletType::NORMAL;
+		Vector3 forward = {
+			worldTransform_.matWorld_.m[2][0], // X
+			worldTransform_.matWorld_.m[2][1], // Y
+			worldTransform_.matWorld_.m[2][2]  // Z
+		};
+		forward = Normalize(forward);
+		bulletManager_->Fire(currentBulletType_, GetWorldPosition(), forward);
+	}
 }
 
 void Player::Move()
@@ -119,4 +141,25 @@ void Player::RotationOffset()
 	worldTransform_.rotation_ = { pitch, yaw, roll }; // ← 自由に調整可能
 	worldTransform_.TransferMatrix();
 
+}
+
+void Player::ReticleCollision()
+{
+	Vector2 relative = input_->GetMousePositionRelative(); // 0〜1
+	Vector2 ndc = {
+		relative.x * 2.0f - 1.0f,
+		-(relative.y * 2.0f - 1.0f)
+	};
+
+	Matrix4x4 invViewProj = Inverse(camera_->GetViewProjectionMatrix());
+
+	Vector3 ndcFar = { ndc.x, ndc.y, 1.0f };
+	Vector3 worldFar = TransformM(ndcFar, invViewProj);
+
+	Vector3 rayOrigin = camera_->GetPosition();
+	Vector3 rayDir = Normalize(Vector3{
+		worldFar.x - rayOrigin.x,
+		worldFar.y - rayOrigin.y,
+		worldFar.z - rayOrigin.z
+		});
 }

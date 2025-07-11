@@ -94,8 +94,14 @@ public: // メンバ関数
 	/// ホイールスクロール量
 	int32_t GetWheel() const;
 
-	/// マウスのウィンドウ座標
+	/// 画面上のピクセル位置（基準解像度にスケーリング済み）を返す
 	const Vector2& GetMousePosition() const;
+
+	/// ウィンドウ内での相対座標（0.0～1.0）を返す
+	Vector2 GetMousePositionRelative() const;
+
+	/// ウィンドウのクライアントサイズ
+	Vector2 GetClientSize() const;
 
 	/// <summary>
 	/// 現在のジョイスティック状態

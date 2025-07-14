@@ -4,17 +4,19 @@
 #include <cmath>
 #include <algorithm>
 
-bool IsCollision(const Sphere& sphere, const Plane& plane) 
+bool IsCollision(const Sphere& sphereA, const Sphere& sphereB)
 {
-	float distance = sqrtf((Dot(plane.normal, sphere.center) - plane.distance) * (Dot(plane.normal, sphere.center) - plane.distance));
-	if (distance <= sphere.radius) 
-	{
-		return true;
-	}
-	return false;
+	float distance = Length(sphereA.center - sphereB.center);
+	return distance <= sphereA.radius + sphereB.radius;
 }
 
-bool IsCollision(const Ray& ray, const Sphere& sphere) 
+bool IsCollision(const Sphere& sphere, const Plane& plane)
+{
+	float distance = sqrtf((Dot(plane.normal, sphere.center) - plane.distance) * (Dot(plane.normal, sphere.center) - plane.distance));
+	return distance <= sphere.radius;
+}
+
+bool IsCollision(const Sphere& sphere, const Ray& ray)
 {
 	Vector3 m = ray.origine - sphere.center;
 	float b = Dot(m, ray.diff);
@@ -37,11 +39,7 @@ bool IsCollision(const Ray& ray, const Sphere& sphere)
 bool IsCollision(const Line& line, const Plane& plane) 
 {
 	float dot = Dot(line.diff, plane.normal);
-	if (dot == 0) 
-	{
-		return false;
-	}
-	return true;
+	return dot != 0;
 }
 
 bool IsCollision(const Segment& segment, const Plane& plane)
@@ -112,11 +110,7 @@ bool IsCollision(const AABB& a, const Sphere& sphere)
 {
 	Vector3 closestPoint = { std::clamp(sphere.center.x,a.min.x,a.max.x), std::clamp(sphere.center.y,a.min.y,a.max.y), std::clamp(sphere.center.z,a.min.z,a.max.z) };
 	float distance = Length(closestPoint - sphere.center);
-	if (distance <= sphere.radius) 
-	{
-		return true;
-	}
-	return false;
+	return distance <= sphere.radius;
 }
 
 bool IsCollision(const AABB& a, const Line& line)
@@ -156,11 +150,8 @@ bool IsCollision(const AABB& a, const Line& line)
 
 	float tMax = std::min(std::min(tFarX, tFarY), tFarZ);
 
-	if (tMin <= tMax) 
-	{
-		return true;
-	}
-	return false;
+	
+	return tMin <= tMax;
 }
 
 
@@ -317,13 +308,8 @@ bool isHST(const Vector3& normal, const  Vector3* vertixces1, const  Vector3* ve
 	float L2 = maxT2 - minT2;
 	float sumSpan = L1 + L2;
 	float longSpan = (std::max)(maxT1, maxT2) - (std::min)(minT1, minT2);
-	if (sumSpan < longSpan) 
-	{
-		return true;
-	}
 
-
-	return false;
+	return sumSpan < longSpan;
 }
 
 bool IsCollision(const OBB& obb1, const OBB& obb2)

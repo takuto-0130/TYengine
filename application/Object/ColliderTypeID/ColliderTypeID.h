@@ -6,5 +6,5 @@ enum class ColliderTypeID {
     P_BULLET,
     ENEMY,
     E_BULLET,
-    TRIGGER
+    RETICLE,
 };

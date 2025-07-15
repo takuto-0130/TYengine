@@ -7,8 +7,9 @@ using json = nlohmann::json;
 void StageManager::Init() {
     stages_.clear();
     AddStage(); // 初期ステージを1つ追加
-    LoadStageFromFile("Resources/JSON/stage_data.json");
     GetCurrentStage()->Init();
+    LoadStageFromFile("Resources/JSON/stage_data.json");
+    GetCurrentStage()->Reset();
     Update(); // 1フレーム更新
 }
 

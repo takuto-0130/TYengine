@@ -14,11 +14,16 @@ void Stage::Init()
     railManager_->SetCamera(camera_);
     railManager_->Init();
 
-    //skydome_ = std::make_unique<Skydome>();
-    //skydome_->Initialize();
+    Reset();
 
     // 1フレームだけカメラを動かす
     railManager_->RailCameraMove();
+}
+
+void Stage::Reset()
+{
+    enemyManager_->Reset();
+    railManager_->Reset();
 }
 
 void Stage::Update()
@@ -74,5 +79,7 @@ nlohmann::json Stage::ToJson() const {
 
 void Stage::FromJson(const nlohmann::json& j) {
     enemyManager_->GetEditor()->FromJson(j["enemy"]);
+    enemyManager_->Reset();
     RailEditor::Instance()->FromJson(j["rail"]);
+    railManager_->Reset();
 }

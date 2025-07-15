@@ -8,6 +8,12 @@
 void EnemyManager::Init()
 {
 	enemyEditor_ = std::make_unique<EnemyEditor>(&enemyGroupsEditor_);
+	Reset();
+}
+
+void EnemyManager::Reset()
+{
+	enemyGroups_.clear();
 	enemyGroups_ = DeepCopyEnemyGroups(enemyGroupsEditor_);
 }
 

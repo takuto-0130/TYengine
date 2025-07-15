@@ -13,13 +13,6 @@ void PlayUI::Init()
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
-	for (size_t i = 0; i < 2; ++i) {
-		lasers_[i] = std::make_unique<Sprite>();
-		lasers_[i]->Initialize("Resources/Texture/white2x2.png");
-		lasers_[i]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
-	}
-
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ComboText.png");
 	comboText_ = std::make_unique<Sprite>();
 	comboText_->Initialize("Resources/Texture/ComboText.png");
@@ -40,23 +33,11 @@ void PlayUI::Update()
 	comboText_->Update();
 	comboNumTex_->Update();
 	reticle_->Update();
-	for (size_t i = 0; i < 2; ++i) {
-		lasers_[i]->Update();
-	}
 }
 
 void PlayUI::Draw()
 {
 	Vector2 mouse = input_->GetMousePosition();
-	if (input_->PushKey(DIK_SPACE))
-	{
-		for (size_t i = 0; i < 2; ++i)
-		{
-			lasers_[i]->DrawRect(mouse, mouse,
-				{ 426.7f * float(1 + i) - 20.0f, 720 },
-				{ 426.7f * float(1 + i) + 20.0f, 720 });
-		}
-	}
 	reticle_->Draw();
 	comboNumTex_->Draw();
 	comboText_->Draw();

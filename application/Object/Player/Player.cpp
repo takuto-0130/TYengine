@@ -2,15 +2,19 @@
 #include "ColliderManager.h"
 #include "Input.h"
 
+#define PLAYER_STATE_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(Player, stateEnum, funcName)
+
 const std::vector<StateMachine<Player, PlayerState>::StateFunctionSet>& Player::GetStateTable()
 {
+	using enum PlayerState;
 	static const std::vector<StateFunctionSet> stateTable = {
-	{ PlayerState::IDLE,		 &Player::InitIdle,		   &Player::UpdateIdle,		   &Player::ExitIdle },
-	{ PlayerState::ROOT,		 &Player::InitRoot,		   &Player::UpdateRoot,		   &Player::ExitRoot },
-	{ PlayerState::BOOST,		 &Player::InitBoost,	   &Player::UpdateBoost,	   &Player::ExitBoost },
-	{ PlayerState::BARREL_ROLL,	 &Player::InitBarrelRoll,  &Player::UpdateBarrelRoll,  &Player::ExitBarrelRoll },
-	{ PlayerState::TAKE_DAMAGE,	 &Player::InitTakeDamage,  &Player::UpdateTakeDamage,  &Player::ExitTakeDamage },
-	{ PlayerState::DEAD,		 &Player::InitDead,		   &Player::UpdateDead,		   &Player::ExitDead },
+		PLAYER_STATE_ENTRY(IDLE, Idle),
+		PLAYER_STATE_ENTRY(ROOT, Root),
+		PLAYER_STATE_ENTRY(BOOST, Boost),
+		PLAYER_STATE_ENTRY(BARREL_ROLL, BarrelRoll),
+		PLAYER_STATE_ENTRY(TAKE_DAMAGE, TakeDamage),
+		PLAYER_STATE_ENTRY(DEAD, Dead),
 	};
 	return stateTable;
 }

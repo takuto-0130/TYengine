@@ -36,7 +36,7 @@ void PlayerBulletNormal::Init()
 	worldTransform_.TransferMatrix();
 
 	collider_ = std::make_unique<PBulletCollider>(
-		static_cast<uint32_t>(ColliderTypeID::PLAYER),
+		static_cast<uint32_t>(ColliderTypeID::P_BULLET),
 		GetWorldPosition(),
 		scale_,
 		this

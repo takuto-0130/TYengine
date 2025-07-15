@@ -17,7 +17,7 @@ private:
 	void ScreenToWorld();
 
 public:
-	void SetFrameDistance(float distance) { frameDistance_ >= distance ? frameDistance_ = distance : frameDistance_; }
+	void SetFrameDistance(float distance) { frameDistance_ == 0.0f || frameDistance_ >= distance ? frameDistance_ = distance : frameDistance_; }
 	float GetTargetDistance() const { return targetDistance_; }
 	Ray GetRay() const { return collider_->GetRay(); }
 

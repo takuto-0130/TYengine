@@ -1,4 +1,5 @@
 #include "mathFunc.h"
+#include "Matrix4x4Func.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <algorithm>
@@ -127,6 +128,24 @@ Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
 
 Vector3 Cross(const Vector3& v1, const Vector3& v2) { 
 	return Vector3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
+}
+
+void OBBRotation(const Vector3& rotate, OBB& obb) {
+	Matrix4x4 OBBrotateMatrix;
+
+	OBBrotateMatrix =
+		Multiply(MakeRotateXMatrix(rotate.x), Multiply(MakeRotateYMatrix(rotate.y), MakeRotateZMatrix(rotate.z)));
+	obb.oriientations[0].x = OBBrotateMatrix.m[0][0];
+	obb.oriientations[0].y = OBBrotateMatrix.m[0][1];
+	obb.oriientations[0].z = OBBrotateMatrix.m[0][2];
+
+	obb.oriientations[1].x = OBBrotateMatrix.m[1][0];
+	obb.oriientations[1].y = OBBrotateMatrix.m[1][1];
+	obb.oriientations[1].z = OBBrotateMatrix.m[1][2];
+
+	obb.oriientations[2].x = OBBrotateMatrix.m[2][0];
+	obb.oriientations[2].y = OBBrotateMatrix.m[2][1];
+	obb.oriientations[2].z = OBBrotateMatrix.m[2][2];
 }
 
 

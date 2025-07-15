@@ -125,8 +125,8 @@ void ObjectCubemap::CreateCameraResource()
 
 void ObjectCubemap::CreateMaterialResource()
 {
-    // マテリアル用のリソースを作る。今回はMaterial1つ分のサイズを用意する
-    materialResource_ = CubemapBasis::GetInstance()->GetDirectXBasis()->CreateBufferResource(sizeof(Material));
+    // マテリアル用のリソースを作る。今回はCubeMaterial1つ分のサイズを用意する
+    materialResource_ = CubemapBasis::GetInstance()->GetDirectXBasis()->CreateBufferResource(sizeof(CubeMaterial));
     // 書き込むためのアドレスを取得
     materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
     // 白を入れる

@@ -43,6 +43,8 @@ void PlayerBulletNormal::Init()
 	);
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 	ChangeState(NormalBulletState::LINER);
+
+	defaultSpeed_ = 12.0f;
 }
 
 void PlayerBulletNormal::Update()

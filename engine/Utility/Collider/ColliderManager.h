@@ -56,18 +56,32 @@ private:
         return nullptr;
     }
 
+    /// <summary>
+    /// 判定情報（衝突点の値や、中心座標がなかった場合の値は仮）
+    /// </summary>
     CollisionInfo GenerateInfo(const Collider& a, const Collider& b) {
-        Vector3 dir = a.GetCenter() - b.GetCenter();
-        return CollisionInfo{
-            a.GetID(),
-            b.GetID(),
-            (a.GetCenter() + b.GetCenter()) * 0.5f,
-            Normalize(dir),
-            Length(dir)
-        };
+        if(a.GetCenter() && b.GetCenter())
+        {
+            Vector3 dir = a.GetCenter().value() - b.GetCenter().value();
+            return CollisionInfo{
+                a.GetID(),
+                b.GetID(),
+                (a.GetCenter().value() + b.GetCenter().value()) * 0.5f,
+                Normalize(dir),
+                Length(dir)
+            };
+        }
+        else
+		{
+			return CollisionInfo{
+				a.GetID(),
+				b.GetID(),
+				0,
+				0,
+				0
+			};
+		}
     }
-
-    bool CheckCollision(const SphereCollider& a, const SphereCollider& b);
 
     bool CheckCollisionDispatcher(Collider* a, Collider* b);
 };

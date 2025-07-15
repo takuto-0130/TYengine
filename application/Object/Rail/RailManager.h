@@ -26,6 +26,8 @@ public:
 
 	void RailCameraMove();
 
+	void Reset();
+
 public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 

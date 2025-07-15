@@ -9,6 +9,13 @@
 class Object3dBasis;
 class WorldTransform;
 
+enum class Lighting
+{
+	NONE,
+	HALF_LAMBERT,
+	LAMBERT,
+};
+
 class Object3d
 {
 public: // メンバ関数

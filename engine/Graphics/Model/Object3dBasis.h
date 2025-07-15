@@ -33,6 +33,13 @@ private: // メンバ関数
 	void CreateGraphicsPipeline();
 
 private: // メンバ変数
+	struct DirectionalLight {
+		Vector4 color;
+		Vector3 direction;
+		float intensity;
+	};
+
+
 	DirectXBasis* directXBasis_;
 	Camera* defaultCamera_ = nullptr;
 

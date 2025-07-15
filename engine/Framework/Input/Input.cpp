@@ -2,6 +2,9 @@
 #include <stdexcept>
 #include <assert.h>
 
+constexpr float kBaseWidth = 1280.0f;
+constexpr float kBaseHeight = 720.0f;
+
 Input* Input::instance = nullptr;
 std::once_flag Input::initInstanceFlag;
 
@@ -103,11 +106,49 @@ const Vector2& Input::GetMousePosition() const {
     if (GetCursorPos(&point)) {
         if (cliantHwnd_) {
             ScreenToClient(cliantHwnd_, &point);
-           
         }
     }
-    Vector2 result = { static_cast<float>(point.x),static_cast<float>(point.y) };
+
+    RECT rect{};
+    GetClientRect(cliantHwnd_, &rect);
+    float width = static_cast<float>(rect.right - rect.left);
+    float height = static_cast<float>(rect.bottom - rect.top);
+
+    Vector2 result = {};
+    result.x = (point.x / width) * kBaseWidth;
+    result.y = (point.y / height) * kBaseHeight;
+
     return result;
+}
+
+Vector2 Input::GetMousePositionRelative() const
+{
+    POINT point;
+    if (GetCursorPos(&point)) {
+        if (cliantHwnd_) {
+            ScreenToClient(cliantHwnd_, &point);
+        }
+    }
+
+    RECT rect{};
+    GetClientRect(cliantHwnd_, &rect);
+    float width = static_cast<float>(rect.right - rect.left);
+    float height = static_cast<float>(rect.bottom - rect.top);
+
+    // 0～1 の相対座標を返す
+    return {
+        point.x / width,
+        point.y / height
+    };
+}
+
+Vector2 Input::GetClientSize() const
+{
+    RECT rect{};
+    GetClientRect(cliantHwnd_, &rect);
+    float width = static_cast<float>(rect.right - rect.left);
+    float height = static_cast<float>(rect.bottom - rect.top);
+    return { width, height };
 }
 
 bool Input::GetJoystickState(int32_t stickNo, DIJOYSTATE2& out) const {

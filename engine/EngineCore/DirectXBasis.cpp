@@ -237,8 +237,6 @@ void DirectXBasis::DrawBegin()
 
 void DirectXBasis::DrawEnd()
 {
-	HRESULT hr = S_FALSE;
-
 	//書き込むバックバッファのインデックス
 	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
 
@@ -450,15 +448,11 @@ void DirectXBasis::CreateDepthBuffer()
 
 void DirectXBasis::CreateVariousDescriptorHeap()
 {
-	HRESULT hr = S_FALSE;
-
 	//DescriptorSizeの取得
-	//descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	descriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descriptorSizeDSV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-	//srvDescripterHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount_, true);
 	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }
 

@@ -20,6 +20,8 @@ class Stage
 public:
 	void Init();
 
+	void Reset();
+
 	void Update();
 
 	void Draw();

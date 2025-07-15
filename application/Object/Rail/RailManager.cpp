@@ -6,6 +6,19 @@
 void RailManager::Init()
 {
 	RailEditor::Instance()->Load("Resources/JSON/RailEditor.json");
+	
+	Reset();
+	ResetRailCamera();
+
+#ifdef _DEBUG
+	isRailCameraMove_ = false;
+#else
+	isRailCameraMove_ = true;
+#endif // _DEBUG
+}
+
+void RailManager::Reset()
+{
 	controlPoints_ = RailEditor::Instance()->GetControlPoints();
 	triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
 	triggerObjects_.clear();
@@ -23,13 +36,6 @@ void RailManager::Init()
 	segmentCount = oneSegmentCount * controlPoints_.size();
 	SetSegment();
 	RailReDraw();
-	ResetRailCamera();
-
-#ifdef _DEBUG
-	isRailCameraMove_ = false;
-#else
-	isRailCameraMove_ = true;
-#endif // _DEBUG
 }
 
 void RailManager::Update()

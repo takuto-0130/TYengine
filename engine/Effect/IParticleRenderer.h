@@ -51,6 +51,18 @@ protected:
         Vector3 worldPosition;
     };
 
+    struct VertexData {
+        Vector4 position;
+        Vector2 texCoord;
+        Vector3 normal;
+    };
+    struct Material {
+        Vector4 color;
+        int32_t enableLighting;
+        float padding[3];
+        Matrix4x4 uvTransform;
+    };
+
     virtual void CreateResources() = 0;
 
     void CreateRootSignature();

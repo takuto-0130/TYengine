@@ -1,24 +1,18 @@
 #pragma once
-#include "Object3d.h"
-#include "WorldTransform.h"
-#include "TextureManager.h"
+#include "BaseObject.h"
 
-class Skydome {
+class Skydome
+	: public BaseObject
+{
 public:
 
 	/// 初期化
-	void Initialize();
+	void Init() override;
 
 	/// 更新
-	void Update();
+	void Update()override;
 
 	/// 描画
-	void Draw();
-
-private:
-
-	WorldTransform worldTransform_;
-	std::unique_ptr<Object3d> skydome;
-
+	void Draw()override;
 };
 

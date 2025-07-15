@@ -1,5 +1,6 @@
 #include "../GameScene.h"
 #include "../Result/Result.h"
+#include "../../../Score/score.h"
 
 void GameScene::InitResult()
 {

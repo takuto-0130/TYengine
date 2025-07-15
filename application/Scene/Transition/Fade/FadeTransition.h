@@ -26,17 +26,17 @@ public:
 
 private:
 	// IDLE
-	virtual void EnterIdle();
+	virtual void InitIdle();
 	virtual void UpdateIdle();
 	virtual void ExitIdle();
 
 	// ENTERING
-	virtual void EnterEntering();
+	virtual void InitEntering();
 	virtual void UpdateEntering();
 	virtual void ExitEntering();
 
 	// EXITING
-	virtual void EnterExiting();
+	virtual void InitExiting();
 	virtual void UpdateExiting();
 	virtual void ExitExiting();
 

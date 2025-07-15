@@ -1,22 +1,26 @@
 #pragma once
-#include "../Collider.h"
+#include "Collider.h"
+#include "struct.h"
 class SphereCollider :
     public Collider
 {
 public:
     SphereCollider(uint32_t typeID, const Vector3& center, float radius)
-        : Collider(typeID, center), radius_(radius) {
+        : Collider(typeID), sphere_(Sphere{ center,radius })
+    {
     }
 
     ColliderShape GetShapeType() const override { return ColliderShape::SPHERE; }
 
-    Vector3 GetCenter() const override { return center_; }
+    std::optional<Vector3> GetCenter() const override { return sphere_.center; }
 
-    float GetRadius() const { return radius_; }
+    float GetRadius() const { return sphere_.radius; }
 
-    void Update(const Vector3& pos) override { center_ = pos; }
+    Sphere GetSphere() const { return sphere_; }
+
+    void Update(const Vector3& pos) override { sphere_.center = pos; }
 
 private:
-    float radius_;
+    Sphere sphere_;
 };
 

@@ -36,6 +36,8 @@ Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t);
 
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
+void OBBRotation(const Vector3& rotate, OBB& obb);
+
 
 
 Vector3 operator+(const Vector3& a, const Vector3& b);

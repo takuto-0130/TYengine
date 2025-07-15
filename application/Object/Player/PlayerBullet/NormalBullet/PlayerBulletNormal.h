@@ -25,6 +25,7 @@ public:
 
 private:
 	void Move();
+	void RotationDirection();
 
 private:
     std::unique_ptr<PBulletCollider> collider_;
@@ -46,11 +47,13 @@ private: // シーン内のState関連関数
 	}
 
 	// 直線移動
+	// NormalBulletLiner.cpp
 	void InitLiner();
 	void UpdateLiner();
 	void ExitLiner();
 
 	// 衝突後処理
+	// NormalBulletAfterCollision.cpp
 	void InitAfterCollision();
 	void UpdateAfterCollision();
 	void ExitAfterCollision();

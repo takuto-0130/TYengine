@@ -11,6 +11,7 @@ class Camera;
 class StageManager
 {
 public:
+    StageManager(Camera* camera) : camera_(camera) {};
     void Init();
     void Update();
     void Draw();

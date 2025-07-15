@@ -1,5 +1,7 @@
 #include "ColliderManager.h"
+#include "CollisionFunc.h"
 #include "Sphere/SphereCollider.h"
+#include "Ray/RayCollider.h"
 
 void ColliderManager::Update()
 {
@@ -62,39 +64,31 @@ void ColliderManager::Update()
 
 
 
-
-bool ColliderManager::CheckCollision(const SphereCollider& a, const SphereCollider& b) {
-    float distSq = Length(a.GetCenter() - b.GetCenter());
-    float rSum = a.GetRadius() + b.GetRadius();
-    return distSq <= rSum;
-}
-
-//bool CheckCollision(const SphereCollider& a, const AABBCollider& b) {
-//    // AABBとSphereの衝突処理
-//}
-
 bool ColliderManager::CheckCollisionDispatcher(Collider* a, Collider* b)
 {
+    if (!a || !b) {
+        return false;
+    }
     auto shapeA = a->GetShapeType();
     auto shapeB = b->GetShapeType();
 
-    // 小さい順に並べて組み合わせの重複を避ける　例:(SPHERE→AABB　AABB→SPHERE 両方用意しなくていいように)
+    // enumの小さい順に並べて組み合わせの重複を避ける　例:(SPHERE→AABB　AABB→SPHERE 両方用意しなくていいように)
     if (shapeA > shapeB) {
         std::swap(a, b);
         std::swap(shapeA, shapeB);
     }
 
     if (shapeA == ColliderShape::SPHERE && shapeB == ColliderShape::SPHERE) {
-        return CheckCollision(
-            *static_cast<const SphereCollider*>(a),
-            *static_cast<const SphereCollider*>(b));
+        return IsCollision(
+            static_cast<const SphereCollider*>(a)->GetSphere(),
+            static_cast<const SphereCollider*>(b)->GetSphere());
     }
 
-    /*if (shapeA == ColliderShape::SPHERE && shapeB == ColliderShape::AABB) {
-        return CheckCollision(
-            *static_cast<const SphereCollider*>(a),
-            *static_cast<const AABBCollider*>(b));
-    }*/
+    if (shapeA == ColliderShape::SPHERE && shapeB == ColliderShape::RAY) {
+        return IsCollision(
+            static_cast<const SphereCollider*>(a)->GetSphere(),
+            static_cast<const RayCollider*>(b)->GetRay());
+    }
 
 
     return false;

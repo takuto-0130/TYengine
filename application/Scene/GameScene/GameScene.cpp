@@ -1,17 +1,12 @@
 #include "GameScene.h"
-#include "mathFunc.h"
 #include "SpriteBasis.h"
 #include "Object3dBasis.h"
 #include "Audio/Audio.h"
-#include "Pause/Pause.h"
-#include "Result/Result.h"
-#include "../../Object/Enemy/Enemy.h"
-#include "../../Object/Player/Player.h"
-#include "../../Object/Rail/RailManager.h"
-#include "PlayUI/PlayUI.h"
-#include <fstream>
-#include <istream>
 #include "CubemapBasis.h"
+#include "Result/Result.h"
+#include "Pause/Pause.h"
+#include "PlayUI/PlayUI.h"
+#include "Score/score.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -54,32 +49,16 @@ void GameScene::Init()
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 
 	Object3dBasis::GetInstance()->SetSkyboxFilePath("Resources/Texture/rostock_laage_airport_4k.dds");
-
 	skybox_ = std::make_unique<ObjectCubemap>();
 	skybox_->Initialize("Resources/Texture/rostock_laage_airport_4k.dds");
 
-	
 	Audio::GetInstance()->LoadWave("fanfare");
 
-	stageManager_ = std::make_unique<StageManager>();
-	stageManager_->SetCamera(camera_);
+	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
 
 	EmitterInit();
-
-	scoreDraw_ = std::make_unique<Score>();
-	scoreDraw_->Initialze();
-
-	playUI_ = std::make_unique<PlayUI>();
-	playUI_->SetScoreDraw(scoreDraw_.get());
-	playUI_->Init();
-
-	pauseMenu_ = std::make_unique<PauseClass>();
-	pauseMenu_->Initialze();
-
-	resultMenu_ = std::make_unique<ResultClass>();
-	resultMenu_->Initialze();
-
+	UIInit();
 	ChangeState(GameSceneState::FADE_IN);
 }
 
@@ -98,25 +77,8 @@ void GameScene::Draw()
 	skybox_->Draw();
 
 	Object3dBasis::GetInstance()->BasisDrawSetting();
-
 	stageManager_->Draw();
 
 	SpriteBasis::GetInstance()->BasisDrawSetting();
-
-	// フェード中は描画しない
-	if (GetCurrentState() != GameSceneState::FADE_OUT && GetCurrentState() != GameSceneState::FADE_IN)
-	{
-		if (GetCurrentState() != GameSceneState::RESULT)
-		{
-			playUI_->Draw();
-		}
-
-		if (GetCurrentState() == GameSceneState::RESULT)
-		{
-			resultMenu_->Draw();
-			scoreDraw_->Draw();
-		}
-
-		if (GetCurrentState() == GameSceneState::PAUSE) pauseMenu_->Draw();
-	}
+	UIDraw();
 }

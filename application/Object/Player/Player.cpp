@@ -29,6 +29,7 @@ void Player::Init()
 	obj_->SetModel("cube.obj");
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { scale_, scale_, scale_ };
+	worldTransform_.TransferMatrix();
 
 	collider_ = std::make_unique<PlayerCollider>(
 		static_cast<uint32_t>(ColliderTypeID::PLAYER), 
@@ -38,7 +39,12 @@ void Player::Init()
 	);
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 	ChangeState(PlayerState::ROOT);
+
+	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
+	bulletManager_->Init();
 	
+	reticle_ = std::make_unique<Reticle>(camera_);
+	reticle_->Init();
 }
 
 void Player::Update()
@@ -48,10 +54,28 @@ void Player::Update()
 	worldTransform_.TransferMatrix();
 	collider_->Update(GetWorldPosition());
 
+	Attack();
+	bulletManager_->Update();
+
+	reticle_->Update();
+
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 	Vector3 pos = GetWorldPosition();
 	ImGui::DragFloat3("pos", &pos.x);
+
+
+	Vector3 dir = reticle_->GetRay().diff;
+	ImGui::DragFloat3("diff", &dir.x);
+
+	Vector3 ori = reticle_->GetRay().origin;
+	ImGui::DragFloat3("origin", &ori.x);
+
+	float dis = reticle_->GetTargetDistance();
+	ImGui::DragFloat("dis", &dis);
+
+	Vector3 target = reticle_->GetTarget();
+	ImGui::DragFloat3("target", &target.x);
 	ImGui::End();
 #endif // _DEBUG
 
@@ -60,6 +84,17 @@ void Player::Update()
 void Player::Draw()
 {
 	obj_->Draw(worldTransform_);
+	bulletManager_->Draw();
+}
+
+void Player::Attack()
+{
+	if (input_->TriggerKey(DIK_SPACE))
+	{
+		currentBulletType_ = PlayerBulletType::NORMAL;
+		Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
+		bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+	}
 }
 
 void Player::Move()
@@ -102,20 +137,21 @@ Vector3 Player::ConvertScreenOffsetToWorld(const Vector2& offset)
 
 void Player::RotationOffset()
 {
+	// カメラ前方
 	Vector3 camForward = Normalize(camera_->GetForward());
 
-	// Z軸向き（前方）からY軸回転（Yaw）を計算（XZ平面で）
+	// Yaw（Y軸回転）
 	float yaw = std::atan2(camForward.x, camForward.z);
 
-	// 上下回転（Pitch）も反映したいならY除いたベクトル長からPitchを算出
+	// Pitch（上下回転）
 	float lenXZ = std::sqrt(camForward.x * camForward.x + camForward.z * camForward.z);
 	float pitch = std::atan2(-camForward.y, lenXZ);
 
-	// Roll（横傾き）は普通は 0 でOK（必要な場合だけ）
+	// Roll（横傾き）
 	float roll = 0.0f;
 
-	// プレイヤーに回転を適用（Y軸回転のみ、またはX,Y）
-	worldTransform_.rotation_ = { pitch, yaw, roll }; // ← 自由に調整可能
+	// プレイヤーに回転を適用
+	worldTransform_.rotation_ = { pitch, yaw, roll };
 	worldTransform_.TransferMatrix();
 
 }

@@ -1,8 +1,10 @@
 #include "Enemy.h"
+#include "ColliderManager.h"
 #include "ParticleManager.h"
 
 Enemy::~Enemy()
 {
+	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
 
 void Enemy::Init()
@@ -13,6 +15,15 @@ void Enemy::Init()
 	obj_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = defaultScale_;
+	worldTransform_.TransferMatrix();
+
+	collider_ = std::make_unique<EnemyCollider>(
+		static_cast<uint32_t>(ColliderTypeID::ENEMY),
+		GetWorldPosition(),
+		defaultScale_.x,
+		this
+	);
+	ColliderManager::GetInstance()->AddCollider(collider_.get());
 }
 
 void Enemy::Update()
@@ -31,6 +42,8 @@ void Enemy::Update()
 
 
 	UpdateTransform();
+
+	collider_->Update(GetWorldPosition());
 }
 
 void Enemy::UpdateTransform()

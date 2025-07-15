@@ -10,7 +10,7 @@ const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSe
 	static const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSet> stateTable = {
 		{ TransitionStage::IDLE,     &FadeTransition::EnterIdle,     &FadeTransition::UpdateIdle,     &FadeTransition::ExitIdle },
 		{ TransitionStage::ENTERING, &FadeTransition::EnterEntering, &FadeTransition::UpdateEntering, &FadeTransition::ExitEntering },
-		{ TransitionStage::EXITING,  &FadeTransition::EnterExiting,  &FadeTransition::UpdateExiting,  &FadeTransition::ExitExiting }, // ✅ ここ！
+		{ TransitionStage::EXITING,  &FadeTransition::EnterExiting,  &FadeTransition::UpdateExiting,  &FadeTransition::ExitExiting },
 	};
 	return stateTable;
 }

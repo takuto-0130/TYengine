@@ -72,8 +72,8 @@ private:
     CubeTransfomationMatrix* transformationMatrixData_ = nullptr;
 
 
-    D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
-    D3D12_INDEX_BUFFER_VIEW indexBufferView_;
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};
+    D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};
 
 
     // テクスチャ番号

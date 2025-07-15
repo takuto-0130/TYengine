@@ -31,7 +31,6 @@ private:
 	Vector2 offsetComboTextPos_ = { 1245, 60 };
 
 	std::unique_ptr<Sprite> reticle_;
-	std::array<std::unique_ptr<Sprite>, 2> lasers_;
 
 
 	float comboTimer_ = 0;

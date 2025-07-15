@@ -3,21 +3,25 @@
 using json = nlohmann::json;
 
 EnemyEditor::EnemyEditor(std::list<std::list<std::unique_ptr<Enemy>>>* enemies)
-    : enemies_(enemies) {
+    : enemies_(enemies) 
+{
     Load("Resources/JSON/EnemyEditor.json");
 }
 
-void EnemyEditor::AddGroup() {
+void EnemyEditor::AddGroup() 
+{
     enemies_->emplace_back();
 }
 
-void EnemyEditor::RemoveGroup(int index) {
+void EnemyEditor::RemoveGroup(int index) 
+{
     auto it = enemies_->begin();
     std::advance(it, index);
     enemies_->erase(it);
 }
 
-void EnemyEditor::AddEnemyToGroup(int groupIdx, const Vector3& pos) {
+void EnemyEditor::AddEnemyToGroup(int groupIdx, const Vector3& pos) 
+{
     auto groupIt = enemies_->begin();
     std::advance(groupIt, groupIdx);
     std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
@@ -26,7 +30,8 @@ void EnemyEditor::AddEnemyToGroup(int groupIdx, const Vector3& pos) {
     groupIt->push_back(std::move(enemy));
 }
 
-void EnemyEditor::RemoveEnemyFromGroup(int groupIdx, int enemyIdx) {
+void EnemyEditor::RemoveEnemyFromGroup(int groupIdx, int enemyIdx) 
+{
     auto groupIt = enemies_->begin();
     std::advance(groupIt, groupIdx);
     auto enemyIt = groupIt->begin();
@@ -34,7 +39,8 @@ void EnemyEditor::RemoveEnemyFromGroup(int groupIdx, int enemyIdx) {
     groupIt->erase(enemyIt);
 }
 
-void EnemyEditor::Load(const std::string& filename) {
+void EnemyEditor::Load(const std::string& filename) 
+{
     std::ifstream file(filename);
     if (!file.is_open()) return;
 
@@ -42,10 +48,13 @@ void EnemyEditor::Load(const std::string& filename) {
     file >> j;
     enemies_->clear();
 
-    for (const auto& groupJson : j["groups"]) {
+    for (const auto& groupJson : j["groups"]) 
+    {
         std::list<std::unique_ptr<Enemy>> group;
-        for (const auto& enemyJson : groupJson) {
-            Vector3 pos{
+        for (const auto& enemyJson : groupJson)
+        {
+            Vector3 pos
+            {
                 enemyJson["x"].get<float>(),
                 enemyJson["y"].get<float>(),
                 enemyJson["z"].get<float>()
@@ -59,22 +68,28 @@ void EnemyEditor::Load(const std::string& filename) {
     }
 }
 
-void EnemyEditor::DrawEditorUI() {
+void EnemyEditor::DrawEditorUI() 
+{
 #ifdef _DEBUG
     ImGui::Begin("Enemy Editor");
 
     int groupIdx = 0;
-    for (auto groupIt = enemies_->begin(); groupIt != enemies_->end(); ++groupIt, ++groupIdx) {
+    for (auto groupIt = enemies_->begin(); groupIt != enemies_->end(); ++groupIt, ++groupIdx) 
+    {
         std::string label = "Group " + std::to_string(groupIdx);
-        if (ImGui::CollapsingHeader(label.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::CollapsingHeader(label.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+        {
             int enemyIdx = 0;
-            for (auto& enemy : *groupIt) {
+            for (auto& enemy : *groupIt) 
+            {
                 Vector3 pos = enemy->GetWorldPosition();
                 ImGui::PushID(("Group" + std::to_string(groupIdx) + "_Enemy" + std::to_string(enemyIdx)).c_str());
-                if (ImGui::DragFloat3("Position", &pos.x, 0.1f)) {
+                if (ImGui::DragFloat3("Position", &pos.x, 0.1f)) 
+                {
                     enemy->SetAndApplyPos(pos);
                 }
-                if (ImGui::Button("Delete Enemy")) {
+                if (ImGui::Button("Delete Enemy"))
+                {
                     RemoveEnemyFromGroup(groupIdx, enemyIdx);
                     ImGui::PopID();
                     break;
@@ -82,18 +97,21 @@ void EnemyEditor::DrawEditorUI() {
                 ImGui::PopID();
                 ++enemyIdx;
             }
-            if (ImGui::Button(("Add Enemy##" + std::to_string(groupIdx)).c_str())) {
+            if (ImGui::Button(("Add Enemy##" + std::to_string(groupIdx)).c_str()))
+            {
                 AddEnemyToGroup(groupIdx, { 0, 0, 0 });
             }
             ImGui::SameLine();
-            if (ImGui::Button(("Delete Group##" + std::to_string(groupIdx)).c_str())) {
+            if (ImGui::Button(("Delete Group##" + std::to_string(groupIdx)).c_str()))
+            {
                 RemoveGroup(groupIdx);
                 break;
             }
         }
     }
 
-    if (ImGui::Button("Add Group")) {
+    if (ImGui::Button("Add Group"))
+    {
         AddGroup();
     }
 
@@ -102,11 +120,14 @@ void EnemyEditor::DrawEditorUI() {
 }
 
 
-json EnemyEditor::ToJson() const {
+json EnemyEditor::ToJson() const 
+{
     json j;
-    for (const auto& group : *enemies_) {
+    for (const auto& group : *enemies_)
+    {
         json groupJson = json::array();
-        for (const auto& enemy : group) {
+        for (const auto& enemy : group) 
+        {
             Vector3 pos = enemy->GetWorldPosition();
             groupJson.push_back({ {"x", pos.x}, {"y", pos.y}, {"z", pos.z} });
         }
@@ -115,12 +136,16 @@ json EnemyEditor::ToJson() const {
     return j;
 }
 
-void EnemyEditor::FromJson(const json& j) {
+void EnemyEditor::FromJson(const json& j) 
+{
     enemies_->clear();
-    for (const auto& groupJson : j["groups"]) {
+    for (const auto& groupJson : j["groups"])
+    {
         std::list<std::unique_ptr<Enemy>> group;
-        for (const auto& enemyJson : groupJson) {
-            Vector3 pos{
+        for (const auto& enemyJson : groupJson)
+        {
+            Vector3 pos
+            {
                 enemyJson["x"].get<float>(),
                 enemyJson["y"].get<float>(),
                 enemyJson["z"].get<float>()

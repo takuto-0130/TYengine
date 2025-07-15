@@ -12,13 +12,13 @@ public:
 
     ColliderShape GetShapeType() const override { return ColliderShape::RAY; }
 
-    std::optional<Vector3> GetCenter() const override { return ray_.origine; }
+    std::optional<Vector3> GetCenter() const override { return ray_.origin; }
 
     Vector3 GetDiff() const { return ray_.diff; }
 
     Ray GetRay() const { return ray_; }
 
-    void Update(const Vector3& pos) override { ray_.origine = pos; }
+    void Update(const Vector3& pos) override { ray_.origin = pos; }
 
     void SetDirection(const Vector3& dir) { ray_.diff = dir; }
 

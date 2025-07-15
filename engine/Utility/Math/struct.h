@@ -70,17 +70,17 @@ struct Sphere {
 };
 
 struct Line {
-	Vector3 origine;
+	Vector3 origin;
 	Vector3 diff;
 };
 
 struct Ray {
-	Vector3 origine;
+	Vector3 origin;
 	Vector3 diff;
 };
 
 struct Segment {
-	Vector3 origine;
+	Vector3 origin;
 	Vector3 diff;
 };
 

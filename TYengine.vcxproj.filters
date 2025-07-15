@@ -501,6 +501,7 @@
     <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletManager.h" />
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="engine\Utility\Collider\CollisionFunc.h" />
     <ClInclude Include="engine\Utility\Collider\Ray\RayCollider.h" />
     <ClInclude Include="application\Object\Player\Reticle\Reticle.h" />

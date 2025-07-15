@@ -18,7 +18,7 @@ bool IsCollision(const Sphere& sphere, const Plane& plane)
 
 bool IsCollision(const Sphere& sphere, const Ray& ray)
 {
-	Vector3 m = ray.origine - sphere.center;
+	Vector3 m = ray.origin - sphere.center;
 	float b = Dot(m, ray.diff);
 	float c = Dot(m, m) - sphere.radius * sphere.radius;
 
@@ -49,7 +49,7 @@ bool IsCollision(const Segment& segment, const Plane& plane)
 	{
 		return false;
 	}
-	float t = (plane.distance - Dot(segment.origine, plane.normal)) / dot;
+	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
 	if (t < 0 || t > 1) 
 	{
 		return false;
@@ -75,8 +75,8 @@ bool IsCollision(const Segment& segment, const Triangle& triangle)
 		return false;
 	}
 	float dot = Dot(segment.diff, plane.normal);
-	float t = (plane.distance - Dot(segment.origine, plane.normal)) / dot;
-	Vector3 point = ((segment.diff) * t) + segment.origine;
+	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
+	Vector3 point = ((segment.diff) * t) + segment.origin;
 
 	Vector3 v1p = point - triangle.vertixces[1];
 	Vector3 v2p = point - triangle.vertixces[2];
@@ -120,27 +120,27 @@ bool IsCollision(const AABB& a, const Line& line)
 		return false;
 	}
 	//X軸
-	float tMinX = (a.min.x - line.origine.x) / line.diff.x;
+	float tMinX = (a.min.x - line.origin.x) / line.diff.x;
 
-	float tMaxX = (a.max.x - line.origine.x) / line.diff.x;
+	float tMaxX = (a.max.x - line.origin.x) / line.diff.x;
 
 	float tNearX = std::min(tMinX, tMaxX);
 	float tFarX = std::max(tMinX, tMaxX);
 
 
 	//Y軸
-	float tMinY = (a.min.y - line.origine.y) / line.diff.y;
+	float tMinY = (a.min.y - line.origin.y) / line.diff.y;
 
-	float tMaxY = (a.max.y - line.origine.y) / line.diff.y;
+	float tMaxY = (a.max.y - line.origin.y) / line.diff.y;
 
 	float tNearY = std::min(tMinY, tMaxY);
 	float tFarY = std::max(tMinY, tMaxY);
 
 
 	//Z軸
-	float tMinZ = (a.min.z - line.origine.z) / line.diff.z;
+	float tMinZ = (a.min.z - line.origin.z) / line.diff.z;
 
-	float tMaxZ = (a.max.z - line.origine.z) / line.diff.z;
+	float tMaxZ = (a.max.z - line.origin.z) / line.diff.z;
 
 	float tNearZ = std::min(tMinZ, tMaxZ);
 	float tFarZ = std::max(tMinZ, tMaxZ);
@@ -162,27 +162,27 @@ bool IsCollision(const AABB& a, const Segment& segment)
 		return false;
 	}
 	//X軸
-	float tMinX = (a.min.x - segment.origine.x) / segment.diff.x;
+	float tMinX = (a.min.x - segment.origin.x) / segment.diff.x;
 
-	float tMaxX = (a.max.x - segment.origine.x) / segment.diff.x;
+	float tMaxX = (a.max.x - segment.origin.x) / segment.diff.x;
 
 	float tNearX = std::min(tMinX, tMaxX);
 	float tFarX = std::max(tMinX, tMaxX);
 
 
 	//Y軸
-	float tMinY = (a.min.y - segment.origine.y) / segment.diff.y;
+	float tMinY = (a.min.y - segment.origin.y) / segment.diff.y;
 
-	float tMaxY = (a.max.y - segment.origine.y) / segment.diff.y;
+	float tMaxY = (a.max.y - segment.origin.y) / segment.diff.y;
 
 	float tNearY = std::min(tMinY, tMaxY);
 	float tFarY = std::max(tMinY, tMaxY);
 
 
 	//Z軸
-	float tMinZ = (a.min.z - segment.origine.z) / segment.diff.z;
+	float tMinZ = (a.min.z - segment.origin.z) / segment.diff.z;
 
-	float tMaxZ = (a.max.z - segment.origine.z) / segment.diff.z;
+	float tMaxZ = (a.max.z - segment.origin.z) / segment.diff.z;
 
 	float tNearZ = std::min(tMinZ, tMaxZ);
 	float tFarZ = std::max(tMinZ, tMaxZ);
@@ -257,11 +257,11 @@ bool IsCollision(const OBB& obb, const Segment& segment)
 	obbMat.m[3][3] = 1.0f;
 
 	Matrix4x4 obbMatInverse = Inverse(obbMat);
-	Vector3 localOrigin = TransformM(segment.origine, obbMatInverse);
-	Vector3 localEnd = TransformM(segment.origine + segment.diff, obbMatInverse);
+	Vector3 localOrigin = TransformM(segment.origin, obbMatInverse);
+	Vector3 localEnd = TransformM(segment.origin + segment.diff, obbMatInverse);
 
 	AABB aabbOBBLocal{ .min = -obb.size, .max = obb.size };
-	Segment localSegment{ .origine{localOrigin}, .diff{localEnd - localOrigin} };
+	Segment localSegment{ .origin{localOrigin}, .diff{localEnd - localOrigin} };
 	return IsCollision(aabbOBBLocal, localSegment);
 }
 

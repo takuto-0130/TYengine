@@ -283,6 +283,7 @@
     <ClCompile Include="application\Object\Player\Reticle\ReticleCollider.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="application\Stage\ComboManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -546,6 +547,7 @@
     <ClInclude Include="application\Object\Player\Reticle\ReticleCollider.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="application\Stage\ComboManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -11,6 +11,11 @@ void EnemyManager::Init()
 	Reset();
 }
 
+void EnemyManager::MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score)
+{
+	comboAndScoreHandler_ = std::make_unique<ComboAndScoreHandler>(combo, score);
+}
+
 void EnemyManager::Reset()
 {
 	enemyGroups_.clear();
@@ -87,6 +92,7 @@ std::list<std::list<std::unique_ptr<Enemy>>> EnemyManager::DeepCopyEnemyGroups(c
 		for (const auto& enemy : group) 
 		{
 			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
+			newEnemy->SetEventListener(comboAndScoreHandler_.get());
 			newEnemy->Init();
 			newEnemy->SetAndApplyPos(enemy->GetWorldPosition());
 			newGroup.push_back(std::move(newEnemy));

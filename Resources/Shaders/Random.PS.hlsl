@@ -22,7 +22,7 @@ PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
     
-    float random = rand2dTo1d(input.texcoord * threshold);
+    float random = rand2dTo1d(input.texcoord * threshold * 10.0f);
     
     output.color = float4(random, random, random, 1.0f);
     

@@ -1,6 +1,6 @@
 #include "GameScene.h"
 #include "PlayUI/PlayUI.h"
-#include "Score/score.h"
+#include "ScoreUI/ScoreUI.h"
 
 void GameScene::Collision()
 {

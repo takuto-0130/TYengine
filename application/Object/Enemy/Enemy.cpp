@@ -69,6 +69,16 @@ void Enemy::Pop()
 	ParticleManager::GetInstance()->TriggerEmit(2, true);
 }
 
+void Enemy::OnCollision()
+{
+	isDead_ = true;
+
+	if (listener_) {
+		listener_->OnEnemyDied(this);
+	}
+}
+
+
 float easeOutBounce(float x) {
 	const float n1 = 7.5625f;
 	const float d1 = 2.75f;

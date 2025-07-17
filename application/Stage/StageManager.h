@@ -17,11 +17,19 @@ public:
     void Draw();
     void EditUpdate();
 
+
+public:
     void SetCamera(Camera* camera) { camera_ = camera; }
-
     std::list<std::unique_ptr<Enemy>>& GetActiveEnemies() { return GetCurrentStage()->GetActiveEnemies(); }
-
     bool EndRail() { return GetCurrentStage()->EndRail(); }
+
+    ComboManager* GetComboManager() {
+        return GetCurrentStage() ? GetCurrentStage()->GetComboManager() : nullptr;
+    }
+
+    ScoreManager* GetScoreManager() {
+        return GetCurrentStage() ? GetCurrentStage()->GetScoreManager() : nullptr;
+    }
 
 private:
     void AddStage();

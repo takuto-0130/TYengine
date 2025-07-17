@@ -30,7 +30,7 @@ void GameScene::PlayUIUpdate()
 
 void GameScene::AttackUpdate()
 {
-	if (input_->PushKey(DIK_SPACE)) Collision();
+	/*if (input_->PushKey(DIK_SPACE)) Collision();
 
 	if (comboTimer_ > 0)
 	{
@@ -41,6 +41,6 @@ void GameScene::AttackUpdate()
 		}
 	}
 	playUI_->SetComboTime(kComboTime_);
-	playUI_->SetComboTimer(comboTimer_);
+	playUI_->SetComboTimer(comboTimer_);*/
 	playUI_->ComboTexUpdate();
 }

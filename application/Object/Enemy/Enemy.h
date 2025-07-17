@@ -26,6 +26,17 @@ public:
 
 	void Pop();
 
+	void OnCollision() override
+	{
+		isDead_ = true;
+		if (onDeath_) {
+			onDeath_(this); // コンボ加算などを外部に通知
+		}
+	}
+
+public:
+	void SetOnDeathCallback(std::function<void(Enemy*)> callback) { onDeath_ = std::move(callback); }
+
 private:
 	std::unique_ptr<EnemyCollider> collider_;
 
@@ -41,6 +52,10 @@ private:
 	Vector3 defaultScale_ = { 0.3f, 0.3f, 0.3f };
 
 	const Vector3 ZeroScale = {};
+
+
+	// 外部からセット可能
+	std::function<void(Enemy*)> onDeath_;
 };
 
 float easeOutBounce(float x);

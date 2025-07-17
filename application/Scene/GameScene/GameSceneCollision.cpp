@@ -14,14 +14,7 @@ void GameScene::Collision()
 
 		if (Length(Vector2{ pos.x, pos.y } - Vector2{ mouse.x, mouse.y }) <= 50.0f && !enemy->IsDead()) {
 
-			if (comboTimer_ <= 0) comboCount_ = 0;
 
-			comboCount_++;
-			playUI_->SetComboNum(comboCount_);
-			score_ += kBasicScore_ * comboCount_;
-			scoreDraw_->SetScore(score_);
-			comboTimer_ = kComboTime_;
-			enemy->OnCollision();
 			emitter.transform.translate = enemy->GetWorldPosition();
 			emitter.count = comboCount_ + 2;
 			emitterRing.transform.translate = emitter.transform.translate;

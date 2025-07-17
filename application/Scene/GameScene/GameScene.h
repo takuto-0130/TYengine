@@ -72,10 +72,6 @@ private: // メンバ変数
 
 	std::unique_ptr<StageManager> stageManager_;
 
-	int comboCount_ = 0;
-	float comboTimer_ = 0;
-	float kComboTime_ = 3.0f;
-	float shakeTime_ = 0.4f;
 
 
 	IParticleRenderer::Emitter emitter;

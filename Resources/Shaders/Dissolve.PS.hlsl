@@ -16,7 +16,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     PixelShaderOutput output;
     
     float mask = gMaskTexture.Sample(gSampler, input.texcoord);
-    if(mask <= 0.5f)
+    if (mask < threshold)
     {
         discard;
     }
@@ -27,6 +27,12 @@ PixelShaderOutput main(VertexShaderOutput input)
         discard;
     }
     
+    // Edge
+    float edge = 1.0f - smoothstep(threshold, threshold + 0.05f, mask);
+    
     output.color = gTexture.Sample(gSampler, input.texcoord);
+    
+    output.color.rgb += edge * float3(1.0f, 0.4f, 0.3f);
+    
     return output;
 }

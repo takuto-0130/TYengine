@@ -2,6 +2,7 @@
 #include "DirectXBasis.h"
 #include "DirectXTex/d3dx12.h"
 #include "SrvManager.h"
+#include "TextureManager.h"
 #include "imgui.h"
 #include <cassert>
 
@@ -17,14 +18,16 @@ void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::
     copyParamBuffer_->Map(0, &readRange, reinterpret_cast<void**>(&mappedParam_));
     //BlurBuffer_->Map(0, &readRange, reinterpret_cast<void**>(&blurSettings_));
 
-    CD3DX12_DESCRIPTOR_RANGE range{};
-    range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    CD3DX12_DESCRIPTOR_RANGE range[2]{};
+    range[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    range[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
 
     CD3DX12_DESCRIPTOR_RANGE samplerRange{};
     samplerRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
-    CD3DX12_ROOT_PARAMETER rootParams[3]{};
-    rootParams[0].InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_PIXEL);
+    CD3DX12_ROOT_PARAMETER rootParams[4]{};
+    rootParams[0].InitAsDescriptorTable(1, &range[0], D3D12_SHADER_VISIBILITY_PIXEL);
+    rootParams[3].InitAsDescriptorTable(1, &range[1], D3D12_SHADER_VISIBILITY_PIXEL);
     rootParams[1].InitAsDescriptorTable(1, &samplerRange, D3D12_SHADER_VISIBILITY_PIXEL);
     rootParams[2].InitAsConstantBufferView(0); // b0: CopyPassParam
     //rootParams[3].InitAsConstantBufferView(1); // b1: CopyPassParam
@@ -65,6 +68,7 @@ void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::
     /*blurSettings_->kCenter = { 0.5f, 0.5f };
     blurSettings_->kBlurWidth = 0.08f;
     blurSettings_->kNumSamples = 10;*/
+
 }
 
 void CopyPass::Update()
@@ -73,6 +77,7 @@ void CopyPass::Update()
     ImGui::Begin("render");
     ImGui::DragFloat2("offset", &mappedParam_->offset.x, 0.01f);
     ImGui::DragFloat2("scale", &mappedParam_->scale.x, 0.01f);
+    ImGui::SliderFloat("dissolve", &mappedParam_->threshold, 0.0f, 1.0f);
     ImGui::End();
 #endif // _DEBUG
 
@@ -91,9 +96,17 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
     cmdList->SetDescriptorHeaps(_countof(heaps), heaps); // 2つを一括バインド
 
     cmdList->SetGraphicsRootDescriptorTable(0, srvHandle);
+    cmdList->SetGraphicsRootDescriptorTable(3, maskSrvHandle_);
     cmdList->SetGraphicsRootDescriptorTable(1, dxBasis_->GetSamplerDescriptorHandle());
     cmdList->SetGraphicsRootConstantBufferView(2, copyParamBuffer_->GetGPUVirtualAddress());
     //cmdList->SetGraphicsRootConstantBufferView(3, BlurBuffer_->GetGPUVirtualAddress());
-
+    
     cmdList->DrawInstanced(3, 1, 0, 0);
+}
+
+void CopyPass::LoadAndSetMaskTexture(const std::string& filePath)
+{
+    TextureManager* texMgr = TextureManager::GetInstance();
+    texMgr->LoadTexture(filePath);
+    maskSrvHandle_ = texMgr->GetSrvHandleGPU(filePath);
 }

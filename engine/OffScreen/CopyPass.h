@@ -10,6 +10,8 @@ class SrvManager;
 struct CopyPassParam {
     Vector2 offset;
     Vector2 scale;
+    float threshold = 0.5f;
+    float padding[3];
 };
 
 struct BlurSettings
@@ -25,6 +27,8 @@ public:
     void Update();
     void Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE srvHandle);
 
+    void LoadAndSetMaskTexture(const std::string& filePath);
+
 private:
     DirectXBasis* dxBasis_ = nullptr;
     SrvManager* srvMgr_ = nullptr;
@@ -34,6 +38,8 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D12Resource> copyParamBuffer_;
     CopyPassParam* mappedParam_ = nullptr;
+
+    D3D12_GPU_DESCRIPTOR_HANDLE maskSrvHandle_{};
 
     //Microsoft::WRL::ComPtr<ID3D12Resource> BlurBuffer_;
     //BlurSettings* blurSettings_ = nullptr;

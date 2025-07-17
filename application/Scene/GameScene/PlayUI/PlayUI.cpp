@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "mathFunc.h"
 #include "TextureManager.h"
-#include "../../../Score/score.h"
+#include "../../../ScoreUI/ScoreUI.h"
 
 void PlayUI::Init()
 {

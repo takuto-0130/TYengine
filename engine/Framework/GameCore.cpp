@@ -38,7 +38,9 @@ void GameCore::Initialize()
 	renderTexture->Initialize(directXBasis.get(), srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1,0,0,1 });
 
 	copyPass = std::make_unique<CopyPass>();
-	copyPass->Initialize(directXBasis.get(), srvManager.get(), L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Dissolve.PS.hlsl");
+	copyPass->Initialize(directXBasis.get(), srvManager.get(), 
+		L"Resources/Shaders/CopyImage.VS.hlsl", 
+		L"Resources/Shaders/Random.PS.hlsl");
 	copyPass->LoadAndSetMaskTexture("Resources/noise0.png");
 }
 

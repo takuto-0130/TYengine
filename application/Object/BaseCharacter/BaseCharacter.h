@@ -31,7 +31,7 @@ public:
 	// 衝突時処理
 	virtual void OnCollision() { isDead_ = true; }
 
-private:
+protected:
 	// 死亡判定フラグ
 	bool isDead_ = false;
 };

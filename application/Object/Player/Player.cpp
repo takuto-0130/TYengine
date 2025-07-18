@@ -2,15 +2,19 @@
 #include "ColliderManager.h"
 #include "Input.h"
 
+#define PLAYER_STATE_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(Player, stateEnum, funcName)
+
 const std::vector<StateMachine<Player, PlayerState>::StateFunctionSet>& Player::GetStateTable()
 {
+	using enum PlayerState;
 	static const std::vector<StateFunctionSet> stateTable = {
-	{ PlayerState::IDLE,		 &Player::InitIdle,		   &Player::UpdateIdle,		   &Player::ExitIdle },
-	{ PlayerState::ROOT,		 &Player::InitRoot,		   &Player::UpdateRoot,		   &Player::ExitRoot },
-	{ PlayerState::BOOST,		 &Player::InitBoost,	   &Player::UpdateBoost,	   &Player::ExitBoost },
-	{ PlayerState::BARREL_ROLL,	 &Player::InitBarrelRoll,  &Player::UpdateBarrelRoll,  &Player::ExitBarrelRoll },
-	{ PlayerState::TAKE_DAMAGE,	 &Player::InitTakeDamage,  &Player::UpdateTakeDamage,  &Player::ExitTakeDamage },
-	{ PlayerState::DEAD,		 &Player::InitDead,		   &Player::UpdateDead,		   &Player::ExitDead },
+		PLAYER_STATE_ENTRY(IDLE, Idle),
+		PLAYER_STATE_ENTRY(ROOT, Root),
+		PLAYER_STATE_ENTRY(BOOST, Boost),
+		PLAYER_STATE_ENTRY(BARREL_ROLL, BarrelRoll),
+		PLAYER_STATE_ENTRY(TAKE_DAMAGE, TakeDamage),
+		PLAYER_STATE_ENTRY(DEAD, Dead),
 	};
 	return stateTable;
 }
@@ -45,6 +49,9 @@ void Player::Init()
 	
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
+
+	// test
+	TestReticleInit();
 }
 
 void Player::Update()
@@ -58,6 +65,9 @@ void Player::Update()
 	bulletManager_->Update();
 
 	reticle_->Update();
+
+	// test
+	TestReticleUpdate();
 
 #ifdef _DEBUG
 	ImGui::Begin("Player");
@@ -85,6 +95,9 @@ void Player::Draw()
 {
 	obj_->Draw(worldTransform_);
 	bulletManager_->Draw();
+
+	// test
+	TestReticleDraw();
 }
 
 void Player::Attack()
@@ -154,4 +167,25 @@ void Player::RotationOffset()
 	worldTransform_.rotation_ = { pitch, yaw, roll };
 	worldTransform_.TransferMatrix();
 
+}
+
+void Player::TestReticleInit()
+{
+	reticleObj_ = std::make_unique<Object3d>();
+	reticleObj_->Initialize();
+	reticleObj_->SetModel("cube.obj");
+	reticleWT_.Initialize();
+	reticleWT_.scale_ = { scale_, scale_, scale_ };
+	reticleWT_.TransferMatrix();
+}
+
+void Player::TestReticleUpdate()
+{
+	reticleWT_.translation_ = reticle_->GetTarget();
+	reticleWT_.TransferMatrix();
+}
+
+void Player::TestReticleDraw()
+{
+	reticleObj_->Draw(reticleWT_);
 }

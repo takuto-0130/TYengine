@@ -5,7 +5,7 @@
 #include <random>
 
 class Input;
-class Score;
+class ScoreUI;
 class PlayUI
 {
 public:
@@ -19,11 +19,11 @@ public:
 	void SetComboTimer(float timer) { comboTimer_ = timer; }
 	void SetComboTime(float time) { kComboTime_ = time; }
 	void SetComboNum(int comboNum) { comboNumTex_->SetTextureLeftTop({ 64.0f * float(comboNum),0 }); }
-	void SetScoreDraw(Score* scoreDraw) { scoreDraw_ = scoreDraw; }
+	void SetScoreDraw(ScoreUI* scoreDraw) { scoreDraw_ = scoreDraw; }
 
 private:
 	Input* input_ = nullptr;
-	Score* scoreDraw_ = nullptr;
+	ScoreUI* scoreDraw_ = nullptr;
 
 	std::unique_ptr<Sprite> comboNumTex_;
 	Vector2 offsetComboNum_ = { 1060,25 };
@@ -31,7 +31,6 @@ private:
 	Vector2 offsetComboTextPos_ = { 1245, 60 };
 
 	std::unique_ptr<Sprite> reticle_;
-	std::array<std::unique_ptr<Sprite>, 2> lasers_;
 
 
 	float comboTimer_ = 0;

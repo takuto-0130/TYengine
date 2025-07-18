@@ -241,9 +241,6 @@
     <ClCompile Include="application\Skydome\Skydome.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="application\Score\score.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="engine\Framework\TYFrameWork.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -253,16 +250,40 @@
     <ClCompile Include="engine\Utility\Math\WorldTransform.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletLiner.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletAfterCollision.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\PlayerBulletManager.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
-    <ClCompile Include="engine\Utility\Collider\CollisionFunc.cpp" />
-    <ClCompile Include="engine\Utility\Collider\Ray\RayCollider.cpp" />
-    <ClCompile Include="application\Object\Player\Reticle\Reticle.cpp" />
-    <ClCompile Include="application\Object\Player\Reticle\ReticleCollider.cpp" />
+    <ClCompile Include="engine\Utility\Collider\CollisionFunc.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletAfterCollision.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletLiner.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\PlayerBulletManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Collider\Ray\RayCollider.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Reticle\Reticle.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Reticle\ReticleCollider.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp" />
+    <ClCompile Include="application\Stage\ComboManager.cpp" />
+    <ClCompile Include="application\AppSystem\Score\ScoreManager.cpp" />
+    <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -439,9 +460,6 @@
     <ClInclude Include="engine\Framework\SceneBase\SceneManager.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="application\Score\score.h">
-      <Filter>Header</Filter>
-    </ClInclude>
     <ClInclude Include="application\Skydome\Skydome.h">
       <Filter>Header</Filter>
     </ClInclude>
@@ -496,16 +514,42 @@
     <ClInclude Include="engine\Utility\Math\WorldTransform.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
-    <ClInclude Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.h" />
-    <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h" />
-    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletManager.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
-    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
-    <ClInclude Include="engine\Utility\Collider\CollisionFunc.h" />
-    <ClInclude Include="engine\Utility\Collider\Ray\RayCollider.h" />
-    <ClInclude Include="application\Object\Player\Reticle\Reticle.h" />
-    <ClInclude Include="application\Object\Player\Reticle\ReticleCollider.h" />
+    <ClInclude Include="application\Object\BaseBullet\BaseBullet.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Collider\CollisionFunc.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\EnemyCollider.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletManager.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Collider\Ray\RayCollider.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Reticle\Reticle.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Reticle\ReticleCollider.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
+    <ClInclude Include="application\Stage\ComboManager.h" />
+    <ClInclude Include="application\AppSystem\Score\ScoreManager.h" />
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h" />
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\ComboAndScoreHandler.h" />
+    <ClInclude Include="application\ScoreUI\ScoreUI.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

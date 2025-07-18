@@ -2,11 +2,11 @@
 #include "../Pause/Pause.h"
 #include "../Result/Result.h"
 #include "../PlayUI/PlayUI.h"
-#include "../../../Score/score.h"
+#include "../../../ScoreUI/ScoreUI.h"
 
 void GameScene::UIInit()
 {
-	scoreDraw_ = std::make_unique<Score>();
+	scoreDraw_ = std::make_unique<ScoreUI>();
 	scoreDraw_->Initialze();
 
 	playUI_ = std::make_unique<PlayUI>();

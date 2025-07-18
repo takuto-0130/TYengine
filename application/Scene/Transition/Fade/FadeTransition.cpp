@@ -5,12 +5,16 @@
 #include "SpriteBasis.h"
 #include <algorithm>
 
+#define FADE_STATE_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(FadeTransition, stateEnum, funcName)
+
 const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSet>& FadeTransition::GetStateTable()
 {
-	static const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSet> stateTable = {
-		{ TransitionStage::IDLE,     &FadeTransition::EnterIdle,     &FadeTransition::UpdateIdle,     &FadeTransition::ExitIdle },
-		{ TransitionStage::ENTERING, &FadeTransition::EnterEntering, &FadeTransition::UpdateEntering, &FadeTransition::ExitEntering },
-		{ TransitionStage::EXITING,  &FadeTransition::EnterExiting,  &FadeTransition::UpdateExiting,  &FadeTransition::ExitExiting },
+	using enum TransitionStage;
+	static const std::vector<StateFunctionSet> stateTable = {
+		FADE_STATE_ENTRY(IDLE, Idle),
+		FADE_STATE_ENTRY(ENTERING, Entering),
+		FADE_STATE_ENTRY(EXITING, Exiting)
 	};
 	return stateTable;
 }
@@ -55,7 +59,7 @@ bool FadeTransition::IsFinished() const
 	return finished_;
 }
 
-void FadeTransition::EnterIdle()
+void FadeTransition::InitIdle()
 {
 	sprite_->SetColor(Vector4{ 1,1,1,1 });
 	sprite_->Update();
@@ -71,7 +75,7 @@ void FadeTransition::ExitIdle()
 {
 }
 
-void FadeTransition::EnterEntering()
+void FadeTransition::InitEntering()
 {
 	sprite_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
 }
@@ -91,7 +95,7 @@ void FadeTransition::ExitEntering()
 {
 }
 
-void FadeTransition::EnterExiting()
+void FadeTransition::InitExiting()
 {
 	sprite_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
 }

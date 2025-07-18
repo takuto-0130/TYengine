@@ -2,8 +2,7 @@
 #include "../BaseCharacter/BaseCharacter.h"
 #include "EnemyCollider.h"
 #include "IParticleRenderer.h"
-
-class IParticleRenderer;
+#include "../../AppSystem/EventListener/EnemyEvent/IEnemyEventListener .h"
 
 class Enemy :
     public BaseCharacter
@@ -19,17 +18,21 @@ public:
 
 	void Draw() override;
 
-	void SetAndApplyPos(Vector3 pos) { 
+	void Pop();
+
+	void OnCollision() override;
+
+public:
+	void SetEventListener(IEnemyEventListener* listener) { listener_ = listener; }
+
+	void SetAndApplyPos(Vector3 pos) 
+	{
 		worldTransform_.translation_ = pos;
 		worldTransform_.TransferMatrix();
 	}
 
-	void Pop();
-
 private:
 	std::unique_ptr<EnemyCollider> collider_;
-
-	bool isDead_ = false;
 
 	IParticleRenderer::Emitter emitter;
 
@@ -41,6 +44,9 @@ private:
 	Vector3 defaultScale_ = { 0.3f, 0.3f, 0.3f };
 
 	const Vector3 ZeroScale = {};
+
+
+	IEnemyEventListener* listener_ = nullptr;
 };
 
 float easeOutBounce(float x);

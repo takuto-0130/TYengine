@@ -6,7 +6,7 @@
 #include "Result/Result.h"
 #include "Pause/Pause.h"
 #include "PlayUI/PlayUI.h"
-#include "Score/score.h"
+#include "ScoreUI/ScoreUI.h"
 
 #ifdef _DEBUG
 #include "imgui.h"

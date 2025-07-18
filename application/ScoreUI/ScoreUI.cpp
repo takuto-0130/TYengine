@@ -1,9 +1,9 @@
-#include "score.h"
+#include "ScoreUI.h"
 #include "SpriteBasis.h"
 #include "TextureManager.h"
 #include "mathFunc.h"
 
-void Score::Initialze()
+void ScoreUI::Initialze()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
@@ -42,7 +42,7 @@ void Score::Initialze()
 	back_->SetColor({ 100.f / 256.f,160.f / 256.f,7.f / 256.f,1.0f });
 }
 
-void Score::Update()
+void ScoreUI::Update()
 {
 	ScoreDisplay();
 	one_->Update();
@@ -60,7 +60,7 @@ void Score::Update()
 	}
 }
 
-void Score::Draw()
+void ScoreUI::Draw()
 {
 	//back_->Draw();
 	one_->Draw();
@@ -69,7 +69,7 @@ void Score::Draw()
 	four_->Draw();
 }
 
-void Score::SetResult()
+void ScoreUI::SetResult()
 {
 	float X = 700.0f;
 	float Y = 360.0f;
@@ -79,7 +79,7 @@ void Score::SetResult()
 	four_->SetPosition({ 135.0f + X,Y });
 }
 
-void Score::ScoreDisplay()
+void ScoreUI::ScoreDisplay()
 {
 	float t = scoreViewTimer_ / kScoreViewTime_;
 	viewScore_ = int(Lerp(float(prevScore_), float(currentScore_), t));

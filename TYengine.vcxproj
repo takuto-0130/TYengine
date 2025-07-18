@@ -106,6 +106,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletAfterCollision.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletLiner.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp" />
@@ -129,12 +130,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
-    <ClCompile Include="application\Score\score.cpp" />
+    <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Skydome\Skydome.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyEditor.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
+    <ClCompile Include="application\Stage\ComboManager.cpp" />
     <ClCompile Include="engine\Utility\Collider\ColliderManager.cpp" />
     <ClCompile Include="engine\Graphics\Cubemap\CubemapBasis.cpp" />
     <ClCompile Include="engine\Utility\Collider\CollisionFunc.cpp" />
@@ -200,10 +202,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\Utility\Collider\Ray\RayCollider.cpp" />
     <ClCompile Include="application\Object\Player\Reticle\Reticle.cpp" />
     <ClCompile Include="application\Object\Player\Reticle\ReticleCollider.cpp" />
+    <ClCompile Include="application\AppSystem\Score\ScoreManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\ComboAndScoreHandler.h" />
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
     <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h" />
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
@@ -211,6 +217,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Scene\Transition\StateMachineTransition.h" />
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
+    <ClInclude Include="application\ScoreUI\ScoreUI.h" />
+    <ClInclude Include="application\Stage\ComboManager.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
     <ClInclude Include="engine\Utility\Collider\Collider.h" />
     <ClInclude Include="engine\Utility\Collider\CollisionFunc.h" />
@@ -218,7 +226,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Object\Rail\Rail.h" />
     <ClInclude Include="engine\Graphics\Cubemap\CubemapBasis.h" />
     <ClInclude Include="engine\Utility\ObjectBasis\BaseObject.h" />
-    <ClInclude Include="application\Score\score.h" />
     <ClInclude Include="application\Skydome\Skydome.h" />
     <ClInclude Include="application\Object\Enemy\Enemy.h" />
     <ClInclude Include="application\Object\Enemy\EnemyEditor.h" />
@@ -289,6 +296,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\Utility\Collider\Ray\RayCollider.h" />
     <ClInclude Include="application\Object\Player\Reticle\Reticle.h" />
     <ClInclude Include="application\Object\Player\Reticle\ReticleCollider.h" />
+    <ClInclude Include="application\AppSystem\Score\ScoreManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

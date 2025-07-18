@@ -7,7 +7,13 @@ void Stage::Init()
     player_->SetCamera(camera_);
     player_->Init();
 
+    comboManager_ = std::make_unique<ComboManager>();
+    comboManager_->Init();
+    scoreManager_ = std::make_unique<ScoreManager>();
+    scoreManager_->Init();
+
     enemyManager_ = std::make_unique<EnemyManager>();
+    enemyManager_->MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
     enemyManager_->Init();
 
     railManager_ = std::make_unique<RailManager>();
@@ -37,13 +43,11 @@ void Stage::Update()
 
     player_->Update();
 
-    //skydome_->Update();
+    comboManager_->Update();
 }
 
 void Stage::Draw()
 {
-    //skydome_->Draw();
-
     railManager_->Draw();
 
     if (isEdit_) {
@@ -67,7 +71,6 @@ void Stage::EditUpdate()
     enemyManager_->UpdateEditorEnemies();
 
     player_->Update();
-    //skydome_->Update();
 }
 
 nlohmann::json Stage::ToJson() const {

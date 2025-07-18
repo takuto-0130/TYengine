@@ -1,18 +1,18 @@
 #include "../GameScene.h"
 #include "../../../Object/Rail/RailManager.h"
 #include "../PlayUI/PlayUI.h"
-#include "../../../Score/score.h"
+#include "../../../ScoreUI/ScoreUI.h"
 
 void GameScene::InitPlay()
 {
 }
 void GameScene::UpdatePlay()
 {
+	ComboUIUpdate();
+
 	stageManager_->Update();
 
 	if (stageManager_->EndRail()) ChangeState(GameSceneState::RESULT);
-
-	AttackUpdate();
 
 	PlayUIUpdate();
 
@@ -28,19 +28,15 @@ void GameScene::PlayUIUpdate()
 	playUI_->Update();
 }
 
-void GameScene::AttackUpdate()
+void GameScene::ComboUIUpdate()
 {
-	if (input_->PushKey(DIK_SPACE)) Collision();
-
-	if (comboTimer_ > 0)
-	{
-		comboTimer_ -= 1.0f / 60.0f;
-		if (comboTimer_ < 0)
-		{
-			comboTimer_ = 0;
-		}
-	}
-	playUI_->SetComboTime(kComboTime_);
-	playUI_->SetComboTimer(comboTimer_);
+	ComboManager* combo = stageManager_->GetComboManager();
+	playUI_->SetComboTime(combo->GetStartComboTime());
+	playUI_->SetComboTimer(combo->GetCurrentComboTimer());
+	playUI_->SetComboNum(combo->GetComboCount());
 	playUI_->ComboTexUpdate();
+	if (combo->GetCurrentComboTimer() == combo->GetStartComboTime())
+	{
+		scoreDraw_->SetScore(stageManager_->GetScoreManager()->GetScore());
+	}
 }

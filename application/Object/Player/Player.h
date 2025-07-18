@@ -42,6 +42,12 @@ private:
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
 	void RotationOffset();
 
+
+	// test
+	void TestReticleInit();
+	void TestReticleUpdate();
+	void TestReticleDraw();
+
 private:
 	Input* input_ = nullptr;
 	Camera* camera_ = nullptr;
@@ -66,6 +72,11 @@ private:
 	PlayerBulletType currentBulletType_ = PlayerBulletType::NORMAL;
 
 	std::unique_ptr<Reticle> reticle_;
+
+
+	// test
+	std::unique_ptr<Object3d> reticleObj_;
+	WorldTransform reticleWT_;
 
 
 private: // シーン内のState関連関数

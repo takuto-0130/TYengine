@@ -38,6 +38,8 @@ private:
 	void Attack();
 	void Move();
 	void ClampOffset();
+	void StartBarrelRoll();
+	void BarrelRoll();
 
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
 	void RotationOffset();
@@ -54,13 +56,11 @@ private:
 	Vector2 screenOffset_ = {}; // カメラ基準のスクリーン内オフセット（例：[-1, 1]）
 	std::unique_ptr<PlayerCollider> collider_;
 
-	float scale_ = 0.1f;
-
-	float playerDepthFromCamera_ = 4.0f;
-
 	Vector2 defaultSpeed_ = { 1.0f,1.0f };
 	Vector2 speed_ = defaultSpeed_;
 
+	float scale_ = 0.1f;
+	float playerDepthFromCamera_ = 4.0f;
 	float xRange = 1.4f; // 横移動の最大幅（画面内の物理スケール）
 	float yRange = 0.74f; // 縦移動の最大高さ
 

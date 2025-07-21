@@ -26,13 +26,13 @@ public:
 
 	void Pop();
 
-	void OnCollision() override
-	{
-		isDead_ = true;
-		if (onDeath_) {
-			onDeath_(this); // コンボ加算などを外部に通知
-		}
-	}
+	//void OnCollision() override
+	//{
+	//	isDead_ = true;
+	//	if (onDeath_) {
+	//		onDeath_(this); // コンボ加算などを外部に通知
+	//	}
+	//}
 
 public:
 	void SetOnDeathCallback(std::function<void(Enemy*)> callback) { onDeath_ = std::move(callback); }

@@ -174,6 +174,7 @@ void Player::TestReticleInit()
 	reticleObj_ = std::make_unique<Object3d>();
 	reticleObj_->Initialize();
 	reticleObj_->SetModel("cube.obj");
+	reticleObj_->SetIsLighting(false);
 	reticleWT_.Initialize();
 	reticleWT_.scale_ = { scale_, scale_, scale_ };
 	reticleWT_.TransferMatrix();
@@ -181,6 +182,7 @@ void Player::TestReticleInit()
 
 void Player::TestReticleUpdate()
 {
+	reticleWT_.rotation_ = worldTransform_.rotation_;
 	reticleWT_.translation_ = reticle_->GetTarget();
 	reticleWT_.TransferMatrix();
 }

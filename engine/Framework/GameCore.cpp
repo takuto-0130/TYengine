@@ -3,6 +3,7 @@
 #include "SceneFactory.h"
 #include "ColliderManager.h"
 #include "CubemapBasis.h"
+#include "Timer.h"
 
 #include "PlaneParticle.h"
 #include "RingParticle.h"
@@ -15,6 +16,8 @@
 void GameCore::Initialize()
 {
 	TYFrameWork::Initialize();
+
+	Timer::GetInstance()->Start();
 
 	imgui = ImGuiManager::GetInstance();
 	imgui->Initialize(windowsApp.get(), directXBasis);
@@ -48,23 +51,11 @@ void GameCore::Initialize()
 	particleManager->Add(std::move(cylinder));
 
 	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
-	IParticleRenderer::Emitter emitter;
-	emitter.transform.scale = { 0.05f,1.0f,1.0f };
-	emitter.transform.rotate = { 0,0,0 };
-	emitter.transform.translate = { 0,0,0 };
-	emitter.count = 5;
-	emitter.frequency = 1.5f;
+	IParticleRenderer::Emitter emitter{};
 	particleManager->SetEmitter(index, emitter);
 
-	IParticleRenderer::Emitter emitterRing;
-	emitterRing.transform.scale = { 0.5f,0.5f,0.5f };
-	emitterRing.transform.rotate = { 0,0,0 };
-	emitterRing.transform.translate = { 0,0,0 };
-	emitterRing.count = 4;
-	emitterRing.frequency = 1.5f;
+	IParticleRenderer::Emitter emitterRing{};
 	particleManager->SetEmitter(indexRing, emitterRing);
-
-	//particleManager->SetEmitter(indexRing, emitterRing);
 
 	ColliderManager::GetInstance();
 
@@ -94,6 +85,7 @@ void GameCore::Update()
 	}
 	else { //ゲーム処理
 		imgui->Begin();
+		Timer::GetInstance()->Update();
 		TYFrameWork::Update();
 		particleManager->UpdateAll();
 		camera->Update();

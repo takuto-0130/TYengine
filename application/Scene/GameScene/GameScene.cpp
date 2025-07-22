@@ -7,6 +7,9 @@
 #include "Pause/Pause.h"
 #include "PlayUI/PlayUI.h"
 #include "ScoreUI/ScoreUI.h"
+#include "BulletTimeController.h"
+#include "Timer.h"
+#include "Ease.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -60,11 +63,21 @@ void GameScene::Init()
 	EmitterInit();
 	UIInit();
 	ChangeState(GameSceneState::FADE_IN);
+
+	bulletTime_ = std::make_unique<BulletTimeController>();
 }
 
 void GameScene::Update()
 {
-	UpdateState(1.0f / 60.0f);
+	if (input_->TriggerKey(DIK_3))
+	{
+		bulletTime_->Trigger(0.05f, 0.5f, 2.0f, 0.8f,
+			EaseFixed::InQuart, EaseFixed::OutQuart);
+	}
+
+	bulletTime_->Update();
+
+	UpdateState(Timer::GetInstance()->GetDeltaTime());
 	
 	SwitchEdit();
 

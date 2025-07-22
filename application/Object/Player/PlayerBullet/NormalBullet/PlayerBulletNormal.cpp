@@ -1,5 +1,6 @@
 #include "PlayerBulletNormal.h"
 #include "../../../ColliderTypeID/ColliderTypeID.h"
+#include "Timer.h"
 #include "ColliderManager.h"
 
 
@@ -49,6 +50,7 @@ void PlayerBulletNormal::Init()
 
 void PlayerBulletNormal::Update()
 {
+	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 	UpdateState(deltaTime_);
 	collider_->Update(GetWorldPosition());
 }

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "ColliderManager.h"
 #include "Input.h"
+#include "Timer.h"
 
 #define PLAYER_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Player, stateEnum, funcName)
@@ -56,7 +57,9 @@ void Player::Init()
 
 void Player::Update()
 {
-	UpdateState(1.0f / 60.0f);
+	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+
+	UpdateState(deltaTime_);
 	RotationOffset();
 	worldTransform_.TransferMatrix();
 	collider_->Update(GetWorldPosition());
@@ -69,26 +72,7 @@ void Player::Update()
 	// test
 	TestReticleUpdate();
 
-#ifdef _DEBUG
-	ImGui::Begin("Player");
-	Vector3 pos = GetWorldPosition();
-	ImGui::DragFloat3("pos", &pos.x);
-
-
-	Vector3 dir = reticle_->GetRay().diff;
-	ImGui::DragFloat3("diff", &dir.x);
-
-	Vector3 ori = reticle_->GetRay().origin;
-	ImGui::DragFloat3("origin", &ori.x);
-
-	float dis = reticle_->GetTargetDistance();
-	ImGui::DragFloat("dis", &dis);
-
-	Vector3 target = reticle_->GetTarget();
-	ImGui::DragFloat3("target", &target.x);
-	ImGui::End();
-#endif // _DEBUG
-
+	DebugGUI();
 }
 
 void Player::Draw()
@@ -167,6 +151,29 @@ void Player::RotationOffset()
 	worldTransform_.rotation_ = { pitch, yaw, roll };
 	worldTransform_.TransferMatrix();
 
+}
+
+void Player::DebugGUI()
+{
+#ifdef _DEBUG
+	ImGui::Begin("Player");
+	Vector3 pos = GetWorldPosition();
+	ImGui::DragFloat3("pos", &pos.x);
+
+
+	Vector3 dir = reticle_->GetRay().diff;
+	ImGui::DragFloat3("diff", &dir.x);
+
+	Vector3 ori = reticle_->GetRay().origin;
+	ImGui::DragFloat3("origin", &ori.x);
+
+	float dis = reticle_->GetTargetDistance();
+	ImGui::DragFloat("dis", &dis);
+
+	Vector3 target = reticle_->GetTarget();
+	ImGui::DragFloat3("target", &target.x);
+	ImGui::End();
+#endif // _DEBUG
 }
 
 void Player::TestReticleInit()

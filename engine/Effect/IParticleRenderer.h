@@ -72,7 +72,7 @@ protected:
     virtual std::list<ParticleP> Emit(std::mt19937& random);
 
 protected:
-    const float kDeltaTime = 1.0f / 60.0f;
+    float kDeltaTime = 1.0f / 60.0f;
     
     static const uint32_t kMaxInstance = 100;
 

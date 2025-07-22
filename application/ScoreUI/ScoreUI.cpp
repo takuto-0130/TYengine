@@ -2,6 +2,7 @@
 #include "SpriteBasis.h"
 #include "TextureManager.h"
 #include "mathFunc.h"
+#include "Timer.h"
 
 void ScoreUI::Initialze()
 {
@@ -44,6 +45,7 @@ void ScoreUI::Initialze()
 
 void ScoreUI::Update()
 {
+	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 	ScoreDisplay();
 	one_->Update();
 	two_->Update();

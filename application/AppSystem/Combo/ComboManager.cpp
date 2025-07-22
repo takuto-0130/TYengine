@@ -1,4 +1,5 @@
 #include "ComboManager.h"
+#include "Timer.h"
 
 void ComboManager::Init()
 {
@@ -12,7 +13,7 @@ void ComboManager::Update()
 {
 	if (comboTimer_ > 0)
 	{
-		comboTimer_ -= 1.0f / 60.0f;
+		comboTimer_ -= Timer::GetInstance()->GetDeltaTime();
 
 		if (comboTimer_ <= 0) 
 		{

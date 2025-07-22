@@ -178,21 +178,29 @@ void Player::DebugGUI()
 
 void Player::TestReticleInit()
 {
+#ifdef _DEBUG
 	reticleObj_ = std::make_unique<Object3d>();
 	reticleObj_->Initialize();
 	reticleObj_->SetModel("cube.obj");
+	reticleObj_->SetIsLighting(false);
 	reticleWT_.Initialize();
 	reticleWT_.scale_ = { scale_, scale_, scale_ };
 	reticleWT_.TransferMatrix();
+#endif // _DEBUG
 }
 
 void Player::TestReticleUpdate()
 {
+#ifdef _DEBUG
+	reticleWT_.rotation_ = worldTransform_.rotation_;
 	reticleWT_.translation_ = reticle_->GetTarget();
 	reticleWT_.TransferMatrix();
+#endif // _DEBUG
 }
 
 void Player::TestReticleDraw()
 {
+#ifdef _DEBUG
 	reticleObj_->Draw(reticleWT_);
+#endif // _DEBUG
 }

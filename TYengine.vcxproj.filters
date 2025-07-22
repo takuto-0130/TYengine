@@ -298,6 +298,7 @@
     <ClCompile Include="engine\Utility\Math\Ease.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="engine\Utility\Math\Quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -582,6 +583,7 @@
     <ClInclude Include="engine\Utility\Utils\Time\Timer.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Utility\Math\Quaternion.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -30,14 +30,18 @@ void WorldTransform::CreateConstBuffer()
 void WorldTransform::TransferMatrix()
 {
     // スケール、回転、平行移動を合成して行列を計算する
-    matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
+    if (useQuaternion_) {
+        matWorld_ = MakeAffineMatrix(scale_, rotationQ_, translation_);
+    }
+    else {
+        matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
+    }
 
     // ワールド行列を定数バッファに転送
     if (constMap != nullptr) {
         // 親が存在する場合、親のワールド行列を掛け合わせる
         if (parent_) {
-            Matrix4x4 parentMatrix = parent_->matWorld_;
-            matWorld_ = matWorld_ * parentMatrix; // 親の行列と自身の行列を合成
+            matWorld_ = matWorld_ * parent_->matWorld_; // 親の行列と自身の行列を合成
         }
 
         constMap->World = matWorld_; // 定数バッファに行列をコピー

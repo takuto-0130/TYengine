@@ -58,3 +58,5 @@ Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraView);
 
 
 Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
+
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotationQ, const Vector3& translation);

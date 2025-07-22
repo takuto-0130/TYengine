@@ -61,6 +61,11 @@ float Lerp(const float& a, const float& b, float t) {
 	return a + t * (b - a);
 }
 
+Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t)
+{
+	return v1 + t * (v2 - v1);
+}
+
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) { 
 	return v1 + t * (v2 - v1);
 }
@@ -231,6 +236,13 @@ Vector2 operator+(const Vector2& a, const Vector2& b)
 	return result;
 }
 
+
+Vector2 operator*(const Vector2& a, const Vector2& b) {
+	Vector2 result;
+	result.x = a.x * b.x;
+	result.y = a.y * b.y;
+	return result;
+}
 Vector2 operator*(const Vector2& v, const float& s)
 {
 	Vector2 result;
@@ -238,7 +250,21 @@ Vector2 operator*(const Vector2& v, const float& s)
 	result.y = v.y * s;
 	return result;
 }
+Vector2 operator*(const float& s, const Vector2& v)
+{
+	Vector2 result;
+	result.x = v.x * s;
+	result.y = v.y * s;
+	return result;
+}
 
+
+Vector2 operator/(const Vector2& a, const Vector2& b) {
+	Vector2 result;
+	result.x = a.x / b.x;
+	result.y = a.y / b.y;
+	return result;
+}
 Vector2 operator/(const Vector2& v, const float& s)
 {
 	Vector2 result;

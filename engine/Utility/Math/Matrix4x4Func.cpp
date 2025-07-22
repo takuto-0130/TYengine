@@ -1,4 +1,5 @@
 #include "Matrix4x4Func.h"
+#include "Quaternion.h"
 
 Matrix4x4 Add(const Matrix4x4& matrix1, const Matrix4x4& matrix2) {
 	Matrix4x4 result{};
@@ -310,4 +311,12 @@ Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraView)
 
 Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2) {
 	return Multiply(m1, m2);
+}
+
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotationQ, const Vector3& translation) {
+	Matrix4x4 rot = MakeRotateMatrix(rotationQ);
+	Matrix4x4 scaleMat = MakeScaleMatrix(scale);
+	Matrix4x4 transMat = MakeTranslateMatrix(translation);
+
+	return Multiply(Multiply(scaleMat, rot), transMat);
 }

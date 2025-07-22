@@ -44,6 +44,7 @@ private:
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
 	void RotationOffset();
 
+	void DebugGUI();
 
 	// test
 	void TestReticleInit();

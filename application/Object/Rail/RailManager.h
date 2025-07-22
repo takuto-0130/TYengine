@@ -55,13 +55,17 @@ private:
 	std::vector<bool> triggeredFlags_;
 	std::vector<Vector3> controlPoints_;
 	std::vector<Vector3> pointsDrawing_;
+
 	size_t oneSegmentCount = 20;
 	size_t segmentCount = oneSegmentCount;
+
 	const float kDivisionSpan = 200.0f;
-	float cameraSegmentCount = 1.0f / 600.0f;
+	float cameraSegmentCount = 0;
 	float cameraEyeT = 0;
-	float cameraForwardT = 30.0f / 600.0f;
+	float cameraForwardT = 0;
 	bool isRailCameraMove_ = false;
+
+	float deltaTime_ = 1.0f / 60.0f;
 
 	std::unordered_set<size_t> alreadyTriggeredIndices_;
 	struct TriggerObject

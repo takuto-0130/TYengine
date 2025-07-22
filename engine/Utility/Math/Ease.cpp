@@ -1,42 +1,47 @@
 #include "Ease.h"
 #include <algorithm>
 
-float Ease::Linear(float t)
-{
-    return t;
-}
-
-
-float Ease::EaseIn(float t, float n)
+float Ease::In(float t, float n)
 {
     return powf(t, n);
 }
-float Ease::EaseOut(float t, float n)
+float Ease::Out(float t, float n)
 {
     return 1.0f - powf(1.0f - t, n);
 }
-float Ease::EaseInOut(float t, float n)
+float Ease::InOut(float t, float n)
 {
     return t < 0.5f ? powf(2.0f, n - 1.0f) * powf(t, 2.0f) : 1.0f - powf(-2.0f * t + 2.0f, n) / 2.0f;
 }
 
 
 
-float Ease::EaseInBack(float t)
+
+float EaseFixed::Linear(float t)
+{
+    return t;
+}
+
+
+
+
+float EaseFixed::InBack(float t)
 {
     float c1 = 1.70158f;
     float c3 = c1 + 1.0f;
 
     return c3 * powf(t, 3.0f) - c1 * powf(t, 2.0f);
 }
-float Ease::EaseOutBack(float t)
+
+float EaseFixed::OutBack(float t)
 {
     float c1 = 1.70158f;
     float c3 = c1 + 1.0f;
 
     return 1.0f + c3 * powf(t - 1.0f, 3.0f) + c1 * powf(t - 1.0f, 2.0f);
 }
-float Ease::EaseInOutBack(float t)
+
+float EaseFixed::InOutBack(float t)
 {
     float c1 = 1.70158f;
     float c2 = c1 * 1.525f;
@@ -48,19 +53,21 @@ float Ease::EaseInOutBack(float t)
 
 
 
-float Ease::EaseInElastic(float t)
+float EaseFixed::InElastic(float t)
 {
     if (t == 0.0f || t == 1.0f) return t;
     float c4 = (2.0f * 3.14159265f) / 3.0f;
     return -powf(2.0f, 10.0f * t - 10.0f) * sinf((t * 10.0f - 10.75f) * c4);
 }
-float Ease::EaseOutElastic(float t)
+
+float EaseFixed::OutElastic(float t)
 {
     if (t == 0.0f || t == 1.0f) return t;
     float c4 = (2.0f * 3.14159265f) / 3.0f;
     return powf(2.0f, -10.0f * t) * sinf((t * 10.0f - 0.75f) * c4) + 1.0f;
 }
-float Ease::EaseInOutElastic(float t)
+
+float EaseFixed::InOutElastic(float t)
 {
     if (t == 0.0f || t == 1.0f) return t;
     float c5 = (2.0f * 3.14159265f) / 4.5f;
@@ -97,15 +104,17 @@ static float BounceOut(float t)
     }
 }
 
-float Ease::EaseInBounce(float t)
+float EaseFixed::InBounce(float t)
 {
     return BounceOut(t);
 }
-float Ease::EaseOutBounce(float t)
+
+float EaseFixed::OutBounce(float t)
 {
     return 1.0f - BounceOut(1.0f - t);
 }
-float Ease::EaseInOutBounce(float t)
+
+float EaseFixed::InOutBounce(float t)
 {
     return t < 0.5f
         ? (1.0f - BounceOut(1.0f - 2.0f * t)) * 0.5f

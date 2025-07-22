@@ -46,6 +46,12 @@ void BulletTimeController::Trigger(
 	ChangeState(BulletTimeState::ENTER);
 }
 
+void BulletTimeController::CallStateExit()
+{
+	UnlockState();
+	ChangeState(BulletTimeState::EXIT);
+}
+
 void BulletTimeController::ForceExitNow()
 {
 	timer_->SetTimeScale(1.0f);

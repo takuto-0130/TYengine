@@ -37,6 +37,9 @@ public: // メンバ関数
 	void Trigger(float slowScale, float enterDuration, float holdDuration, float exitDuration, 
 		EaseFunc enterEase, EaseFunc exitEase);
 
+	// 終了処理の呼び出し
+	void CallStateExit();
+
 	// 手動中断
 	void ForceExitNow();
 

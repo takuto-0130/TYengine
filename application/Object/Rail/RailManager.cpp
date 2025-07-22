@@ -1,6 +1,7 @@
 #include "RailManager.h"
 #include "RailEditor.h"
 #include "Camera.h"
+#include "TImer.h"
 #include <imgui.h>
 
 void RailManager::Init()
@@ -40,6 +41,7 @@ void RailManager::Reset()
 
 void RailManager::Update()
 {
+	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 #ifdef _DEBUG
 	RailCameraDebug();
 #else
@@ -58,6 +60,7 @@ void RailManager::Draw()
 
 void RailManager::UpdateEdit()
 {
+	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 	RailCameraDebug();
 	StageEdit();
 }
@@ -131,11 +134,11 @@ void RailManager::RailCameraMove()
 	{
 		if (cameraForwardT <= 1.0f)
 		{
-			cameraForwardT += cameraSegmentCount;
+			cameraForwardT += cameraSegmentCount * deltaTime_ * 60.0f;
 
 			if (cameraForwardT <= 1.0f)
 			{
-				cameraEyeT += cameraSegmentCount;
+				cameraEyeT += cameraSegmentCount * deltaTime_ * 60.0f;
 				Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
 				Vector3 forward = CatmullRomPosition(controlPoints_, cameraForwardT);
 				forward = forward - eye;

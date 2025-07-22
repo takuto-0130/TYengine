@@ -35,8 +35,10 @@ void Timer::Update()
 
 #ifdef _DEBUG
     ImGui::Begin("Timer");
-    ImGui::Text("DeltaTime : %.5f", deltaTime_);
+    ImGui::Text("DeltaTime : %.5f", GetDeltaTime());
+    ImGui::Text("RawDeltaTime : %.5f", GetRawDeltaTime());
     ImGui::Text("fps : %d", fps_);
+    ImGui::SliderFloat("TimeScale", &timeScale_, 0.01f, 1.0f);
     ImGui::End();
 #endif // _DEBUG
 

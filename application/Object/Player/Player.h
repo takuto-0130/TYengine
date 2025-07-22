@@ -5,6 +5,7 @@
 #include "PlayerBullet/PlayerBulletType.h"
 #include "PlayerBullet/PlayerBulletManager.h"
 #include "Reticle/Reticle.h"
+#include <numbers>
 
 
 enum class PlayerState
@@ -38,14 +39,20 @@ private:
 	void Attack();
 	void Move();
 	void ClampOffset();
-	void StartBarrelRoll();
-	void BarrelRoll();
 
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
 	void RotationOffset();
 
-	void DebugGUI();
 
+	// BarrelRoll
+	void StartBarrelRoll();
+	void BarrelRoll();
+	void LeftRoll();
+	void RightRoll();
+
+
+	// Debug
+	void DebugGUI();
 	// test
 	void TestReticleInit();
 	void TestReticleUpdate();
@@ -54,18 +61,36 @@ private:
 private:
 	Input* input_ = nullptr;
 	Camera* camera_ = nullptr;
-	Vector2 screenOffset_ = {}; // カメラ基準のスクリーン内オフセット（例：[-1, 1]）
+	Vector2 screenOffset_{}; // カメラ基準のスクリーン内オフセット（例：[-1, 1]）
 	std::unique_ptr<PlayerCollider> collider_;
-
-	Vector2 defaultSpeed_ = { 1.0f,1.0f };
-	Vector2 speed_ = defaultSpeed_;
 
 	float scale_ = 0.1f;
 	float playerDepthFromCamera_ = 4.0f;
-	float xRange = 1.4f; // 横移動の最大幅（画面内の物理スケール）
-	float yRange = 0.74f; // 縦移動の最大高さ
+	float xRange = 16.0f * 0.09f; // 横移動の最大幅（画面内の物理スケール）
+	float yRange = 9.0f * 0.085f; // 縦移動の最大高さ
+
+	float defaultSpeed_ = 0.5f;
+	Vector2 speed_{ defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
+	Vector2 inputDir_{};
 
 	float deltaTime_ = 1.0f / 60.0f;
+
+
+	// 姿勢
+	// Yaw（Y軸回転）
+	float yaw = 0.0f;
+	// Pitch（上下回転）
+	float pitch = 0.0f;
+	// Roll（横傾き）
+	float roll = 0.0f;
+
+	// バレルロール
+	float rollTime_ = 0.2f;
+	float rollRange_ = 0.3f;
+	float leftRoll_ = 2.0f * std::numbers::pi_v<float>;
+	float rightRoll_ = -2.0f * std::numbers::pi_v<float>;
+	Vector2 startRollPos_{};
+	Vector2 goalRollPos_{};
 
 
 	// 弾関連

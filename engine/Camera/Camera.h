@@ -54,16 +54,32 @@ public: // メンバ関数
 	Vector3 GetPosition() const { return transform_.translate; }
 	Vector3 GetForward() const {
 		// Z軸の向き（正面） = viewMatrix_ の 3列目
-		return Normalize({ viewMatrix_.m[0][2], viewMatrix_.m[1][2], viewMatrix_.m[2][2] });
+		return Normalize(Vector3{ viewMatrix_.m[0][2], viewMatrix_.m[1][2], viewMatrix_.m[2][2] });
 	}
 
 	Vector3 GetRight() const {
 		// X軸の向き（右） = viewMatrix_ の 1列目
-		return Normalize({ viewMatrix_.m[0][0], viewMatrix_.m[1][0], viewMatrix_.m[2][0] });
+		return Normalize(Vector3{ viewMatrix_.m[0][0], viewMatrix_.m[1][0], viewMatrix_.m[2][0] });
 	}
 
 	Vector3 GetUp() const {
 		// Y軸の向き（上） = viewMatrix_ の 2列目
-		return Normalize({ viewMatrix_.m[0][1], viewMatrix_.m[1][1], viewMatrix_.m[2][1] });
+		return Normalize(Vector3{ viewMatrix_.m[0][1], viewMatrix_.m[1][1], viewMatrix_.m[2][1] });
+	}
+
+
+	Vector3 GetLookForward() const {
+		// Z軸の向き（正面） = worldMatrix_ の 3列目
+		return Normalize(Vector3{ worldMatrix_.m[0][2], worldMatrix_.m[1][2], worldMatrix_.m[2][2] });
+	}
+
+	Vector3 GetLookRight() const {
+		// X軸の向き（右） = worldMatrix_ の 1列目
+		return Normalize(Vector3{ worldMatrix_.m[0][0], worldMatrix_.m[1][0], worldMatrix_.m[2][0] });
+	}
+
+	Vector3 GetLookUp() const {
+		// Y軸の向き（上） = worldMatrix_ の 2列目
+		return Normalize(Vector3{ worldMatrix_.m[0][1], worldMatrix_.m[1][1], worldMatrix_.m[2][1] });
 	}
 };

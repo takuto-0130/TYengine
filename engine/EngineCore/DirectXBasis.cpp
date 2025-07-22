@@ -221,7 +221,7 @@ void DirectXBasis::DrawBegin()
 	//描画先のRTVとDSVを設定
 	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, &dsvHandle_);
 
-	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };//RGBA
+	float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };//RGBA
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
 
 	//描画用のDiscriptorHeapの設定

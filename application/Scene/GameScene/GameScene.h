@@ -16,6 +16,7 @@ class ScoreUI;
 class Audio;
 class RailManager;
 class Player;
+class BulletTimeController;
 
 enum class GameSceneState {
 	LOAD,		// データのロード（ロードに時間がかかる場合に使用、使わなければのちに削除）
@@ -77,6 +78,7 @@ private: // メンバ変数
 	IParticleRenderer::Emitter emitter;
 	IParticleRenderer::Emitter emitterRing;
 
+	std::unique_ptr<BulletTimeController> bulletTime_;
 
 
 	std::unique_ptr<ScoreUI> scoreDraw_;

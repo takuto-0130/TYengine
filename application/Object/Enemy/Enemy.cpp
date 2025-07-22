@@ -41,7 +41,7 @@ void Enemy::Update()
 		}
 		float t = popTimer_ / kPopTime_;
 		t = 1.0f - t;
-		worldTransform_.scale_ = Lerp(ZeroScale, defaultScale_, Ease::EaseInOutBounce(t));
+		worldTransform_.scale_ = Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t));
 	}
 
 

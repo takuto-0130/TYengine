@@ -69,7 +69,7 @@ private:
 	float xRange = 16.0f * 0.09f; // 横移動の最大幅（画面内の物理スケール）
 	float yRange = 9.0f * 0.085f; // 縦移動の最大高さ
 
-	float defaultSpeed_ = 0.5f;
+	float defaultSpeed_ = 0.3f;
 	Vector2 speed_{ defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
 	Vector2 inputDir_{};
 
@@ -85,7 +85,7 @@ private:
 	float roll = 0.0f;
 
 	// バレルロール
-	float rollTime_ = 0.2f;
+	float rollTime_ = 0.6f;
 	float rollRange_ = 0.3f;
 	float leftRoll_ = 2.0f * std::numbers::pi_v<float>;
 	float rightRoll_ = -2.0f * std::numbers::pi_v<float>;
@@ -108,8 +108,10 @@ private:
 private: // シーン内のState関連関数
 #pragma region // State関連関数
 	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override {
-		switch (state) {
+	std::string GetStateName(State state) const override 
+	{
+		switch (state) 
+		{
 		case State::IDLE: return "IDLE";
 		case State::ROOT: return "ROOT";
 		case State::BOOST: return "BOOST";

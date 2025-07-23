@@ -8,7 +8,7 @@ void GrayscaleEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Grayscale.PS.hlsl");
-    param_ = copyPass_.AddExtraConstantBuffer<GrayscaleParam>(3);
+    param_ = copyPass_.AddExtraConstantBuffer<GrayscaleParam>(4);
 }
 
 void GrayscaleEffect::Update()

@@ -1,12 +1,5 @@
 #include "CopyImage.hlsli"
 
-cbuffer CopyPassParam : register(b0)
-{
-    float2 offset;
-    float2 scale;
-    //float4x4 invProjection;
-};
-
 static const uint kNumVertex = 3;
 
 static const float4 kPositions[kNumVertex] =

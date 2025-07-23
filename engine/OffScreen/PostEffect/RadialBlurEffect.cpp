@@ -8,7 +8,7 @@ void RadialBlurEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/RadialBlur.PS.hlsl");
-    param_ = copyPass_.AddExtraConstantBuffer<RadialBlurParam>(3);
+    param_ = copyPass_.AddExtraConstantBuffer<RadialBlurParam>(4);
 }
 
 void RadialBlurEffect::Update()

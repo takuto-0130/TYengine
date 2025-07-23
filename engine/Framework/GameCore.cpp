@@ -15,6 +15,7 @@
 #include "GaussianEffect.h"
 #include "RadialBlurEffect.h"
 #include "LuminanceBasedOutlineEffect.h"
+#include "DissolveEffect.h"
 
 #ifdef _DEBUG
 #include <imgui.h>
@@ -84,6 +85,7 @@ void GameCore::Initialize()
 	postEffectManager->AddEffect(std::make_unique<GaussianEffect>());
 	postEffectManager->AddEffect(std::make_unique<RadialBlurEffect>());
 	//postEffectManager->AddEffect(std::make_unique<LuminanceBasedOutlineEffect>());
+	postEffectManager->AddEffect(std::make_unique<DissolveEffect>());
 
 
 	CubemapBasis::GetInstance()->Initialize(directXBasis);

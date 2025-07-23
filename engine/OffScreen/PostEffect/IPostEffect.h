@@ -1,4 +1,5 @@
 #pragma once
+#include "CopyPass.h"
 
 class DirectXBasis;
 class SrvManager;
@@ -11,4 +12,8 @@ public:
     virtual void Initialize(DirectXBasis*, SrvManager*) = 0;
     virtual void Update() = 0;
     virtual void Apply(RenderTexture* input, RenderTexture* output) = 0;
+
+protected:
+    DirectXBasis* dx_ = nullptr;
+    CopyPass copyPass_;
 };

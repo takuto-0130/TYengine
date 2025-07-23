@@ -2,22 +2,27 @@
 #include "DirectXBasis.h"
 #include "SrvManager.h"
 #include "RenderTexture.h"
-#include "CopyPass.h"
+#include "imgui.h"
 
 void GrayscaleEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
-    copyPass_.Initialize(dx, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
+    dx_ = dx;
+    copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Grayscale.PS.hlsl");
+    param_ = copyPass_.AddExtraConstantBuffer<GrayscaleParam>(3);
 }
 
 void GrayscaleEffect::Update()
 {
-    // GUIがあればパラメータ反映
+#ifdef _DEBUG
+    ImGui::Begin("Grayscale");
+    ImGui::SliderFloat("Grayscale Strength", &param_->strength, 0.0f, 1.0f);
+    ImGui::End();
+#endif // _DEBUG
+
     copyPass_.Update();
 }
 
 void GrayscaleEffect::Apply(RenderTexture* input, RenderTexture* output)
 {
-    output->BeginRender();
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
-    output->EndRender();
 }

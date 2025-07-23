@@ -5,15 +5,12 @@ Texture2D<float4> gTexture : register(t0);
 SamplerState gSamplerLinear : register(s0);
 
 // ブラー用定数バッファ
-//cbuffer BlurSettings : register(b1)
-//{
-//    float2 kCenter; // ブラーの中心（例: 0.5, 0.5）
-//    float kBlurWidth; // ブラーの広がり（例: 0.08）
-//    int kNumSamples; // サンプル数（例: 10）
-//}
-static const float2 kCenter = float2(0.5f, 0.5f);
-static const float kBlurWidth = 0.08f;
-static const int kNumSamples = 10;
+cbuffer BlurSettings : register(b1)
+{
+    float2 kCenter; // ブラーの中心（例: 0.5, 0.5）
+    float kBlurWidth; // ブラーの広がり（例: 0.08）
+    int kNumSamples; // サンプル数（例: 10）
+}
 
 // 出力構造
 struct PixelShaderOutput

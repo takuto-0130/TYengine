@@ -300,6 +300,12 @@
     </ClCompile>
     <ClCompile Include="engine\Utility\Math\Quaternion.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\GrayscaleEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffectManager.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\VignetteEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\BoxFilterEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\GaussianEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\RadialBlurEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -587,6 +593,12 @@
     <ClInclude Include="engine\Utility\Math\Quaternion.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\IPostEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\GrayscaleEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffectManager.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\VignetteEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\BoxFilterEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\GaussianEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\RadialBlurEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

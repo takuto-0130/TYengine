@@ -1,8 +1,7 @@
 #pragma once
 #include "IPostEffect.h"
-
-class GrayscaleEffect
-	: public IPostEffect
+class GaussianEffect :
+    public IPostEffect
 {
 public:
     void Initialize(DirectXBasis* dx, SrvManager* srv) override;
@@ -12,9 +11,11 @@ public:
     void Apply(RenderTexture* input, RenderTexture* output) override;
 
 private:
-    struct GrayscaleParam {
-        float strength = 1.0f;
+    struct GaussianParam 
+    {
+        int kernelSize = 3;
+        float sigma = 5.0f;
     };
-    std::shared_ptr<GrayscaleParam> param_;
+    std::shared_ptr<GaussianParam> param_;
 };
 

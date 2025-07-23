@@ -4,12 +4,18 @@
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
+cbuffer GrayscaleParam : register(b1)
+{
+    int kernelSize;
+    float sigma;
+};
+
 struct PixelShaderOutput
 {
     float4 color : SV_TARGET0;
 };
 
-static const int kKernelSizeMax = 7;
+static const int kKernelSizeMax = 15;
 
 void generateOffsetTable(
     in int kernelSize, // 3, 5, 7など（奇数）
@@ -78,9 +84,8 @@ PixelShaderOutput main(VertexShaderOutput input)
     
     float kernel[kKernelSizeMax][kKernelSizeMax]; // 最大サイズを確保
     float2 kIndex[kKernelSizeMax][kKernelSizeMax];
-    int kernelSize = 5;
     generateOffsetTable(kernelSize, kIndex);
-    generateGaussianKernel(kernelSize, 5.0f, kernel);
+    generateGaussianKernel(kernelSize, sigma, kernel);
 
     for (int y = 0; y < kernelSize; ++y)
     {

@@ -16,6 +16,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     if (input.texcoord.x < 0.0f || input.texcoord.x > 1.0f ||
     input.texcoord.y < 0.0f || input.texcoord.y > 1.0f)
     {
+        output.color = float4(0, 0, 0, 0);
         discard;
     }
     

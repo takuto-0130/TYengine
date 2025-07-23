@@ -70,8 +70,8 @@ void Player::LeftRoll()
 	goalRollPos_ = startRollPos_ + inputDir_ * rollRange_;
 	float t = GetStateElapsedTime() / rollTime_;
 	t = std::clamp(t, 0.0f, 1.0f);
-	screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::InOutQuad(t));
-	roll = Lerp(0.0f, leftRoll_, EaseFixed::InOutQuad(t));
+	screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
+	roll = Lerp(0.0f, leftRoll_, EaseFixed::OutBack(t));
 }
 
 void Player::RightRoll()
@@ -79,6 +79,6 @@ void Player::RightRoll()
 	goalRollPos_ = startRollPos_ + inputDir_ * rollRange_;
 	float t = GetStateElapsedTime() / rollTime_;
 	t = std::clamp(t, 0.0f, 1.0f);
-	screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::InOutQuad(t));
-	roll = Lerp(0.0f, rightRoll_, EaseFixed::InOutQuad(t));
+	screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
+	roll = Lerp(0.0f, rightRoll_, EaseFixed::OutBack(t));
 }

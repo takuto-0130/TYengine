@@ -1,0 +1,15 @@
+#pragma once
+#include "IPostEffect.h"
+class BoxFilterEffect :
+    public IPostEffect
+{
+public:
+    void Initialize(DirectXBasis* dx, SrvManager* srv) override;
+
+    void Update() override;
+
+    void Apply(RenderTexture* input, RenderTexture* output) override;
+
+private:
+};
+

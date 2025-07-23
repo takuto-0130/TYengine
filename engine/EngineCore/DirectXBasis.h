@@ -78,6 +78,10 @@ public: // メンバ関数
 	/// <returns>描画コマンドアロケータ</returns>
 	ID3D12CommandAllocator* GetCommandAllocator() const { return commandAllocator_.Get(); }
 
+	D3D12_CPU_DESCRIPTOR_HANDLE GetBackBufferRTV() const { return rtvHandles_[swapChain_->GetCurrentBackBufferIndex()]; }
+	D3D12_VIEWPORT GetViewport() const { return viewportRect_; }
+	D3D12_RECT GetScissorRect() const { return scissorRect_; }
+
 private: // メンバ関数
 	// デバイスの初期化
 	void InitDevice();

@@ -7,7 +7,8 @@
 
 class DirectXBasis;
 
-class SrvManager {
+class SrvManager 
+{
 public:
     void Initialize(DirectXBasis* dxBasis, uint32_t maxDescriptors = 256);
 
@@ -24,6 +25,10 @@ public:
     ID3D12DescriptorHeap* GetHeap() const { return srvHeap_.Get(); }
 
     void BeginDraw();
+
+    uint32_t GetDescriptorSizeSRV() { return descriptorSize_; }
+
+    D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandleFromGpu(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) const;
 
     void CreateSRVforTextureCube(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels);
 

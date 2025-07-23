@@ -124,7 +124,6 @@ void GameCore::Draw()
 	// ---------- オフスクリーン描画 ----------
 	renderTexture->BeginRender();
 
-	srvManager->BeginDraw(); // SRVマネージャでIDリセットなど
 	sceneManager_->Draw();   // 実際の描画
 
 	particleManager->DrawAll();
@@ -135,8 +134,8 @@ void GameCore::Draw()
 	directXBasis->DrawBegin();
 
 	postEffectManager->Apply(renderTexture.get(), nullptr); // nullptr指定でSwapChain描画
-	// ImGuiはSwapChainに描く（上書き）
-	imgui->Draw();
+	
+	imgui->Draw(); // ImGuiはSwapChainに描く（上書き）
 
 
 	directXBasis->DrawEnd();

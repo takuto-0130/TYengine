@@ -72,7 +72,6 @@ void IParticleRenderer::Draw() {
     if (numInstance_ == 0) return;
 
     auto cmd = dxBasis_->GetCommandList();
-    srvManager_->BeginDraw();
 
     cmd->SetGraphicsRootSignature(rootSignature_.Get());
     cmd->SetPipelineState(pipelineState_.Get());

@@ -16,30 +16,35 @@ Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs)
 	return qr;
 }
 
-Quaternion IdentityQuaternion() {
+Quaternion IdentityQuaternion() 
+{
 	Quaternion qr{};
 	qr = { 0,0,0,1 };
 	return qr;
 };
 
-Quaternion Conjugate(const Quaternion& quaternion) {
+Quaternion Conjugate(const Quaternion& quaternion)
+{
 	Quaternion qr{};
 	qr = { quaternion.x * -1.0f,quaternion.y * -1.0f,quaternion.z * -1.0f,quaternion.w };
 	return qr;
 };
 
-float Norm(const Quaternion& quaternion) {
+float Norm(const Quaternion& quaternion)
+{
 	return std::sqrtf(quaternion.x * quaternion.x + quaternion.y * quaternion.y + quaternion.z * quaternion.z + quaternion.w * quaternion.w);
 }
 
-Quaternion Normalize(const Quaternion& quaternion) {
+Quaternion Normalize(const Quaternion& quaternion)
+{
 	Quaternion qr{};
 	float norm = Norm(quaternion);
 	qr = { quaternion.x / norm, quaternion.y / norm, quaternion.z / norm, quaternion.w / norm };
 	return qr;
 };
 
-Quaternion Inverse(const Quaternion& quaternion) {
+Quaternion Inverse(const Quaternion& quaternion)
+{
 	Quaternion qr{};
 	qr = Conjugate(quaternion);
 	float norm = Norm(quaternion);
@@ -47,7 +52,8 @@ Quaternion Inverse(const Quaternion& quaternion) {
 	return qr;
 };
 
-Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, const float theta) {
+Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, const float theta) 
+{
 	Quaternion q = IdentityQuaternion();
 	Vector3 n = Normalize(vec);
 	q.x = n.x * std::sinf(theta / 2.0f);
@@ -57,7 +63,8 @@ Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, const float theta) 
 	return q;
 }
 
-Vector3 RotateVector(const Vector3& v, const Quaternion& q) {
+Vector3 RotateVector(const Vector3& v, const Quaternion& q)
+{
 	Quaternion result = IdentityQuaternion();
 	Quaternion qV = { v.x, v.y, v.z, 0 };
 	Quaternion qConj = Conjugate(q);
@@ -65,7 +72,8 @@ Vector3 RotateVector(const Vector3& v, const Quaternion& q) {
 	return Vector3(result.x, result.y, result.z);
 }
 
-Matrix4x4 MakeRotateMatrix(const Quaternion& q) {
+Matrix4x4 MakeRotateMatrix(const Quaternion& q) 
+{
 	Matrix4x4 result = MakeIdentity4x4();
 	result.m[0][0] = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
 	result.m[0][1] = 2 * (q.x * q.y + q.w * q.z);
@@ -81,29 +89,35 @@ Matrix4x4 MakeRotateMatrix(const Quaternion& q) {
 	return result;
 }
 
-float Dot(const Quaternion& q0, const Quaternion& q1) {
+float Dot(const Quaternion& q0, const Quaternion& q1) 
+{
 	return q0.x * q1.x + q0.y * q1.y + q0.z * q1.z + q0.w * q1.w;
 }
 
-Quaternion Multiply(const Quaternion& q, const float f) {
+Quaternion Multiply(const Quaternion& q, const float f) 
+{
 	return { q.x * f, q.y * f, q.z * f, q.w * f };
 }
 
-Quaternion Add(const Quaternion& q0, const Quaternion& q1) {
+Quaternion Add(const Quaternion& q0, const Quaternion& q1)
+{
 	return { q0.x + q1.x, q0.y + q1.y, q0.z + q1.z, q0.w + q1.w };
 }
 
-Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t) {
+Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t)
+{
 	const float EPSILON = 0.0005f;
 	float dot = Dot(q0, q1);
 	Quaternion q0cul = q0;
 
-	if (dot < 0) {
+	if (dot < 0)
+	{
 		q0cul = { -q0.x, -q0.y, -q0.z,-q0.w };
 		dot = -dot;
 	}
 
-	if (dot >= 1.0f - EPSILON) {
+	if (dot >= 1.0f - EPSILON) 
+	{
 		return Add(Multiply(q0cul, (1.0f - t)), Multiply(q1, t));
 	}
 
@@ -111,7 +125,8 @@ Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t) {
 	float q0num = std::sinf((1 - t) * theta) / std::sinf(theta);
 	float q1num = std::sinf(t * theta) / std::sinf(theta);
 
-	Quaternion result = {
+	Quaternion result = 
+	{
 		q0num * q0cul.x + q1num * q1.x,
 		q0num * q0cul.y + q1num * q1.y,
 		q0num * q0cul.z + q1num * q1.z,
@@ -144,7 +159,8 @@ Quaternion MakeLookRotation(const Vector3& forward, const Vector3& up)
 		q.y = (rot.m[0][2] - rot.m[2][0]) / s;
 		q.z = (rot.m[1][0] - rot.m[0][1]) / s;
 	}
-	else {
+	else
+	{
 		if (rot.m[0][0] > rot.m[1][1] && rot.m[0][0] > rot.m[2][2]) 
 		{
 			float s = std::sqrt(1.0f + rot.m[0][0] - rot.m[1][1] - rot.m[2][2]) * 2.0f;

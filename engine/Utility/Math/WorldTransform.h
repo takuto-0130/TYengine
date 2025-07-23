@@ -6,7 +6,8 @@
 #include <type_traits>
 #include <wrl.h>
 
-struct TransformationMatrix {
+struct TransformationMatrix
+{
 	Matrix4x4 WVP;
 	Matrix4x4 World;
 	Matrix4x4 WorldInverseTranspose;
@@ -15,7 +16,8 @@ struct TransformationMatrix {
 /// <summary>
 /// ワールド変換データ
 /// </summary>
-class WorldTransform {
+class WorldTransform
+{
 public:
 	// ローカルスケール
 	Vector3 scale_ = { 1, 1, 1 };

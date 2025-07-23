@@ -306,6 +306,7 @@
     <ClCompile Include="engine\OffScreen\PostEffect\GaussianEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\RadialBlurEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\DissolveEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -599,6 +600,7 @@
     <ClInclude Include="engine\OffScreen\PostEffect\GaussianEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\RadialBlurEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

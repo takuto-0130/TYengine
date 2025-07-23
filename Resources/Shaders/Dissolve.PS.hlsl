@@ -6,6 +6,12 @@ SamplerState gSampler : register(s0);
 
 Texture2D<float> gMaskTexture : register(t1);
 
+cbuffer DissolveSettings : register(b1)
+{
+    float threshold;
+    bool useEdge;
+}
+
 struct PixelShaderOutput
 {
     float4 color : SV_TARGET0;
@@ -16,7 +22,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     PixelShaderOutput output;
     
     float mask = gMaskTexture.Sample(gSampler, input.texcoord);
-    if(mask <= 0.5f)
+    if (mask < threshold)
     {
         discard;
     }
@@ -28,5 +34,13 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
     
     output.color = gTexture.Sample(gSampler, input.texcoord);
+    
+    // Edge
+    if (useEdge)
+    {
+        float edge = 1.0f - smoothstep(threshold, threshold + 0.05f, mask);
+        output.color.rgb += edge * float3(1.0f, 0.4f, 0.3f);
+    }
+    
     return output;
 }

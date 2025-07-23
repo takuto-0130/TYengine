@@ -12,6 +12,8 @@ class SrvManager;
 struct CopyPassParam {
     Vector2 offset;
     Vector2 scale;
+    float threshold = 0.5f;
+    float padding[3];
 };
 
 struct ExtraBuffer {
@@ -24,15 +26,14 @@ class CopyPass {
 public:
     void Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::wstring& vsPath, const std::wstring& psPath);
     void Update();
-    void Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE srvHandle);
 
-    void Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE srvHandle, bool toSwapChain);
+    void Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE srvHandle, bool toSwapChain = false);
 
     /// <summary>
     /// 個別の定数バッファを追加
     /// </summary>
     /// <typeparam name="T">追加したいバッファの型</typeparam>
-    /// <param name="registerIndex">ルートパラメーターのインデックス（3or4）</param>
+    /// <param name="registerIndex">ルートパラメーターのインデックス（4or5）</param>
     /// <param name="defaultValue">初期値</param>
     /// <returns></returns>
     template<typename T>
@@ -49,6 +50,8 @@ public:
         return std::shared_ptr<T>(reinterpret_cast<T*>(mapped), [resource](T*) {});
     }
 
+    void LoadAndSetMaskTexture(const std::string& filePath);
+
 private:
     DirectXBasis* dxBasis_ = nullptr;
     SrvManager* srvMgr_ = nullptr;
@@ -60,5 +63,8 @@ private:
     CopyPassParam* mappedParam_ = nullptr;
 
     std::vector<ExtraBuffer> extraBuffers_;
+
+    D3D12_GPU_DESCRIPTOR_HANDLE maskSrvHandle_{};
+    bool useMaskTexture_ = false;
 };
 

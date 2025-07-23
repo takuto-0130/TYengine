@@ -206,6 +206,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\AppSystem\Score\ScoreManager.cpp" />
     <ClCompile Include="engine\Utility\Utils\Time\Timer.cpp" />
     <ClCompile Include="engine\Utility\Math\Quaternion.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\GrayscaleEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
@@ -221,6 +222,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\IPostEffect.h" />
     <ClInclude Include="engine\Utility\Math\Ease.h" />
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
@@ -303,6 +305,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\AppSystem\Score\ScoreManager.h" />
     <ClInclude Include="engine\Utility\Utils\Time\Timer.h" />
     <ClInclude Include="engine\Utility\Math\Quaternion.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\GrayscaleEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

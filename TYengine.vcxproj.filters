@@ -299,6 +299,7 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="engine\Utility\Math\Quaternion.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\GrayscaleEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -584,6 +585,8 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="engine\Utility\Math\Quaternion.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\IPostEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\GrayscaleEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

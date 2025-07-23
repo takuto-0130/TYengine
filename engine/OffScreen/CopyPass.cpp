@@ -1,5 +1,6 @@
 #include "CopyPass.h"
 #include "SrvManager.h"
+#include "TextureManager.h"
 #include "imgui.h"
 #include <cassert>
 
@@ -13,18 +14,20 @@ void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::
     CD3DX12_RANGE readRange(0, 0);
     copyParamBuffer_->Map(0, &readRange, reinterpret_cast<void**>(&mappedParam_));
 
-    CD3DX12_DESCRIPTOR_RANGE range{};
-    range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    CD3DX12_DESCRIPTOR_RANGE range[2]{};
+    range[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    range[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
 
     CD3DX12_DESCRIPTOR_RANGE samplerRange{};
     samplerRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
-    CD3DX12_ROOT_PARAMETER rootParams[5]{};
-    rootParams[0].InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_PIXEL);
+    CD3DX12_ROOT_PARAMETER rootParams[6]{};
+    rootParams[0].InitAsDescriptorTable(1, &range[0], D3D12_SHADER_VISIBILITY_PIXEL);
+    rootParams[3].InitAsDescriptorTable(1, &range[1], D3D12_SHADER_VISIBILITY_PIXEL);
     rootParams[1].InitAsDescriptorTable(1, &samplerRange, D3D12_SHADER_VISIBILITY_PIXEL);
     rootParams[2].InitAsConstantBufferView(0); // b0: CopyPassParam
-    rootParams[3].InitAsConstantBufferView(1); // b1: ExtraEffectParamA
-    rootParams[4].InitAsConstantBufferView(2); // b2: ExtraEffectParamB
+    rootParams[4].InitAsConstantBufferView(1); // b1: ExtraEffectParamA
+    rootParams[5].InitAsConstantBufferView(2); // b2: ExtraEffectParamB
 
     CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc{};
     rootSigDesc.Init(_countof(rootParams), rootParams, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -66,35 +69,13 @@ void CopyPass::Update()
     ImGui::Begin("render");
     ImGui::DragFloat2("offset", &mappedParam_->offset.x, 0.01f);
     ImGui::DragFloat2("scale", &mappedParam_->scale.x, 0.01f);
+    ImGui::SliderFloat("dissolve", &mappedParam_->threshold, 0.0f, 1.0f);
     ImGui::End();
 #endif // _DEBUG
 
 }
 
-void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE srvHandle) {
-    cmdList->SetPipelineState(pipelineState_.Get());
-    cmdList->SetGraphicsRootSignature(rootSignature_.Get());
-    cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    // SRVヒープとSamplerヒープを両方指定
-    ID3D12DescriptorHeap* heaps[] = {
-        srvMgr_->GetHeap(),             // CBV/SRV/UAV用
-        dxBasis_->GetSamplerHeap()      // Sampler用
-    };
-    cmdList->SetDescriptorHeaps(_countof(heaps), heaps); // 2つを一括バインド
-
-    cmdList->SetGraphicsRootDescriptorTable(0, srvHandle);
-    cmdList->SetGraphicsRootDescriptorTable(1, dxBasis_->GetSamplerDescriptorHandle());
-    cmdList->SetGraphicsRootConstantBufferView(2, copyParamBuffer_->GetGPUVirtualAddress());
-    
-    for (const auto& extra : extraBuffers_) {
-        cmdList->SetGraphicsRootConstantBufferView(extra.registerIndex, extra.resource->GetGPUVirtualAddress());
-    }
-
-    cmdList->DrawInstanced(3, 1, 0, 0);
-}
-
-void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE srvHandle, bool toSwapChain = false) {
+void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE srvHandle, bool toSwapChain) {
     cmdList->SetPipelineState(pipelineState_.Get());
     cmdList->SetGraphicsRootSignature(rootSignature_.Get());
     cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -106,8 +87,16 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
     cmdList->SetDescriptorHeaps(_countof(heaps), heaps);
 
     cmdList->SetGraphicsRootDescriptorTable(0, srvHandle);
+    if (useMaskTexture_)
+    {
+        cmdList->SetGraphicsRootDescriptorTable(3, maskSrvHandle_);
+    }
     cmdList->SetGraphicsRootDescriptorTable(1, dxBasis_->GetSamplerDescriptorHandle());
     cmdList->SetGraphicsRootConstantBufferView(2, copyParamBuffer_->GetGPUVirtualAddress());
+
+    for (const auto& extra : extraBuffers_) {
+        cmdList->SetGraphicsRootConstantBufferView(extra.registerIndex, extra.resource->GetGPUVirtualAddress());
+    }
 
     if (toSwapChain) {
         D3D12_VIEWPORT vp = dxBasis_->GetViewport();
@@ -117,4 +106,12 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
     }
 
     cmdList->DrawInstanced(3, 1, 0, 0);
+}
+
+void CopyPass::LoadAndSetMaskTexture(const std::string& filePath)
+{
+    TextureManager* texMgr = TextureManager::GetInstance();
+    texMgr->LoadTexture(filePath);
+    maskSrvHandle_ = texMgr->GetSrvHandleGPU(filePath);
+    useMaskTexture_ = true;
 }

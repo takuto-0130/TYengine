@@ -8,7 +8,7 @@ void GaussianEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Gaussian.PS.hlsl");
-    param_ = copyPass_.AddExtraConstantBuffer<GaussianParam>(3);
+    param_ = copyPass_.AddExtraConstantBuffer<GaussianParam>(4);
 }
 
 void GaussianEffect::Update()

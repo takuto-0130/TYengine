@@ -34,6 +34,7 @@ void Player::Init()
 	obj_->Initialize();
 	obj_->SetModel("cube.obj");
 	obj_->SetIsLighting(false);
+	obj_->SetEnvironmentCoefficient(1.0f);
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { scale_, scale_, scale_ };
 	worldTransform_.useQuaternion_ = true; // プレイヤーではQuaternion使うようにする

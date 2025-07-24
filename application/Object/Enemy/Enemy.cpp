@@ -15,6 +15,7 @@ void Enemy::Init()
 	obj_->Initialize();
 	obj_->SetModel("unitSphere.obj");
 	obj_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+	obj_->SetEnvironmentCoefficient(1.0f);
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = defaultScale_;
 	worldTransform_.TransferMatrix();

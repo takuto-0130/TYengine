@@ -1,14 +1,14 @@
 #pragma once
-#include "IPostEffect.h"
+#include "PostEffectBase.h"
 class DissolveEffect :
-    public IPostEffect
+    public PostEffectBase
 {
 public:
     void Initialize(DirectXBasis* dx, SrvManager* srv) override;
 
     void Update() override;
 
-    void Apply(RenderTexture* input, RenderTexture* output) override;
+    void Apply(RenderTexture* input) override;
 
 private:
     struct DissolveParam {

@@ -1,8 +1,7 @@
 #pragma once
 #include "PostEffectBase.h"
-
-class GrayscaleEffect
-	: public PostEffectBase
+class CopyImageEffect :
+    public PostEffectBase
 {
 public:
     void Initialize(DirectXBasis* dx, SrvManager* srv) override;
@@ -12,9 +11,5 @@ public:
     void Apply(RenderTexture* input) override;
 
 private:
-    struct GrayscaleParam {
-        float strength = 1.0f;
-    };
-    std::shared_ptr<GrayscaleParam> param_;
 };
 

@@ -2,7 +2,10 @@
 #include "DirectXBasis.h"
 #include "SrvManager.h"
 #include "RenderTexture.h"
+#ifdef _DEBUG
 #include "imgui.h"
+#endif // _DEBUG
+
 
 void BoxFilterEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
@@ -15,7 +18,7 @@ void BoxFilterEffect::Update()
     copyPass_.Update();
 }
 
-void BoxFilterEffect::Apply(RenderTexture* input, RenderTexture* output)
+void BoxFilterEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

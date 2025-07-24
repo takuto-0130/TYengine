@@ -24,7 +24,7 @@ void DissolveEffect::Update()
     copyPass_.Update();
 }
 
-void DissolveEffect::Apply(RenderTexture* input, RenderTexture* output)
+void DissolveEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

@@ -82,13 +82,13 @@ void GameCore::Initialize()
 	postEffectManager->SetTempRenderTexture(std::move(tempTexture));
 
 	// 適用するエフェクトを追加（順番に処理される）
-	postEffectManager->AddEffect(std::make_unique<GrayscaleEffect>());
-	postEffectManager->AddEffect(std::make_unique<VignetteEffect>());
-	//postEffectManager->AddEffect(std::make_unique<BoxFilterEffect>());
-	postEffectManager->AddEffect(std::make_unique<GaussianEffect>());
-	postEffectManager->AddEffect(std::make_unique<RadialBlurEffect>());
-	//postEffectManager->AddEffect(std::make_unique<LuminanceBasedOutlineEffect>());
-	postEffectManager->AddEffect(std::make_unique<DissolveEffect>());
+	postEffectManager->AddEffect("Grayscale", std::make_unique<GrayscaleEffect>());
+	postEffectManager->AddEffect("Vignette", std::make_unique<VignetteEffect>());
+	//postEffectManager->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
+	postEffectManager->AddEffect("Gaussian", std::make_unique<GaussianEffect>());
+	postEffectManager->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
+	//postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
+	postEffectManager->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
 
 	outlinePass = std::make_unique<OutlinePass>();
 	outlinePass->Initialize(directXBasis, srvManager.get());
@@ -143,8 +143,8 @@ void GameCore::Draw()
 
 	outlinePass->SetDepthSrv(renderTexture->GetDepthSRVHandle());
 	outlinePass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
-	// 深度テクスチャもCopyPass側でバインドされる（GetDepthSRVHandle）
 	outlineTexture->EndRender();
+
 	renderTexture->TransitionDepthToWrite();
 
 	// ---------- SwapChainへの描画 ----------

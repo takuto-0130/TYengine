@@ -28,7 +28,7 @@ void GaussianEffect::Update()
     copyPass_.Update();
 }
 
-void GaussianEffect::Apply(RenderTexture* input, RenderTexture* output)
+void GaussianEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

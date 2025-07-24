@@ -136,6 +136,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Object\Enemy\EnemyEditor.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\CopyImage.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\DissolveEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\BoxFilterEffect.cpp" />
     <ClCompile Include="engine\Utility\Math\Ease.cpp" />
@@ -230,9 +231,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\BoxFilterEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\IPostEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\PostEffectBase.h" />
     <ClInclude Include="engine\Utility\Math\Ease.h" />
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />

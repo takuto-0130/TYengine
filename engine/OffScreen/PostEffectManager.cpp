@@ -185,3 +185,11 @@ void PostEffectManager::MoveEffect(const std::string& name, int newIndex)
     effectStack_.erase(it);
     effectStack_.insert(effectStack_.begin() + newIndex, entry);
 }
+
+void PostEffectManager::EffectAllDisable()
+{
+    SetOutlineEnabled(false);
+	for (auto& entry : effectStack_) {
+		entry.effect->SetEnabled(false);
+	}
+}

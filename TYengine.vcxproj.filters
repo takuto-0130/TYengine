@@ -307,6 +307,8 @@
     <ClCompile Include="engine\OffScreen\PostEffect\RadialBlurEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\DissolveEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\CopyImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -601,6 +603,9 @@
     <ClInclude Include="engine\OffScreen\PostEffect\RadialBlurEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\OutlinePass.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\PostEffectBase.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

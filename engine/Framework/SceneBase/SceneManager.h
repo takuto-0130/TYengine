@@ -26,6 +26,8 @@ public:
 	// 描画
 	void Draw();
 
+	void UIDraw();
+
 	// シーンファクトリーのセッター
 	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
 

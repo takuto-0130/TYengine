@@ -77,9 +77,6 @@ D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandle(uint32_t index) c
     return handle;
 }
 
-void SrvManager::BeginDraw() {
-}
-
 D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandleFromGpu(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) const
 {
     size_t offset = gpuHandle.ptr - srvHeap_->GetGPUDescriptorHandleForHeapStart().ptr;

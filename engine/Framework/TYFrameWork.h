@@ -75,7 +75,8 @@ protected:
 
 	std::unique_ptr<RenderTexture> renderTexture;
 	std::unique_ptr<RenderTexture> tempTexture; // ping-pong用
-	std::unique_ptr<PostEffectManager> postEffectManager;
+	PostEffectManager* postEffectManager;
+	std::unique_ptr<RenderTexture> outlineTexture;
 };
 
 

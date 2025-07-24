@@ -1,5 +1,6 @@
 #pragma once
 #include "PostEffect/IPostEffect.h"
+#include "CopyImage.h"
 #include <vector>
 #include <memory>
 
@@ -13,7 +14,7 @@ class PostEffectManager
 public:
     void Initialize(DirectXBasis* dx, SrvManager* srv);
 
-    void AddEffect(std::unique_ptr<IPostEffect> effect);
+    void AddEffect(const std::string& name, std::shared_ptr<IPostEffect> effect);
 
     void Update();
 
@@ -21,10 +22,20 @@ public:
 
     void SetTempRenderTexture(std::unique_ptr<RenderTexture> rt);
 
+    void SetEffectEnabled(const std::string& name, bool enabled);
+    void MoveEffect(const std::string& name, int newIndex); // 並べ替え
+
 private:
     DirectXBasis* dxBasis_ = nullptr;
     SrvManager* srvMgr_ = nullptr;
-    std::vector<std::unique_ptr<IPostEffect>> effects_;
+
+    struct EffectEntry {
+        std::string name;
+        std::shared_ptr<IPostEffect> effect;
+    };
+
+    std::vector<EffectEntry> effectStack_;
     std::unique_ptr<RenderTexture> tempRt_; // ping-pong用
+    std::unique_ptr<CopyImageEffect> copyImage_;
 };
 

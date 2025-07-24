@@ -15,7 +15,7 @@ void LuminanceBasedOutlineEffect::Update()
     copyPass_.Update();
 }
 
-void LuminanceBasedOutlineEffect::Apply(RenderTexture* input, RenderTexture* output)
+void LuminanceBasedOutlineEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

@@ -12,8 +12,6 @@ class SrvManager;
 struct CopyPassParam {
     Vector2 offset;
     Vector2 scale;
-    float threshold = 0.5f;
-    float padding[3];
 };
 
 struct ExtraBuffer {

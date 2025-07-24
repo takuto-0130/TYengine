@@ -23,7 +23,7 @@ void RadialBlurEffect::Update()
     copyPass_.Update();
 }
 
-void RadialBlurEffect::Apply(RenderTexture* input, RenderTexture* output)
+void RadialBlurEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

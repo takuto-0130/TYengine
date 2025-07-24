@@ -22,7 +22,7 @@ void GrayscaleEffect::Update()
     copyPass_.Update();
 }
 
-void GrayscaleEffect::Apply(RenderTexture* input, RenderTexture* output)
+void GrayscaleEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

@@ -69,7 +69,6 @@ void CopyPass::Update()
     ImGui::Begin("render");
     ImGui::DragFloat2("offset", &mappedParam_->offset.x, 0.01f);
     ImGui::DragFloat2("scale", &mappedParam_->scale.x, 0.01f);
-    ImGui::SliderFloat("dissolve", &mappedParam_->threshold, 0.0f, 1.0f);
     ImGui::End();
 #endif // _DEBUG
 

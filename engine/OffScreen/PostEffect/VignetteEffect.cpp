@@ -15,7 +15,7 @@ void VignetteEffect::Update()
     copyPass_.Update();
 }
 
-void VignetteEffect::Apply(RenderTexture* input, RenderTexture* output)
+void VignetteEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

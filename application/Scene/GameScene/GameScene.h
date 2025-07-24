@@ -45,11 +45,11 @@ public:
 	void Init() override;
 	void Update() override;
 	void Draw() override;
+	void UIDraw() override;
 
 private:
 	// GameSceneUI
 	void UIInit();
-	void UIDraw();
 
 	// GameScenePlay
 	void PlayUIUpdate();
@@ -78,7 +78,7 @@ private: // メンバ変数
 	IParticleRenderer::Emitter emitter;
 	IParticleRenderer::Emitter emitterRing;
 
-	std::unique_ptr<BulletTimeController> bulletTime_;
+	BulletTimeController* bulletTime_ = nullptr;
 
 
 	std::unique_ptr<ScoreUI> scoreDraw_;

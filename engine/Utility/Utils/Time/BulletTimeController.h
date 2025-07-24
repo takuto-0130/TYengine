@@ -20,8 +20,22 @@ class BulletTimeController
 public: // 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
-public: // メンバ関数
+public:
+	static BulletTimeController* GetInstance() {
+		static BulletTimeController instance;
+		return &instance;
+	}
+
+	// コピー・ムーブの禁止
+	BulletTimeController(const BulletTimeController&) = delete;
+	BulletTimeController& operator=(const BulletTimeController&) = delete;
+	BulletTimeController(BulletTimeController&&) = delete;
+	BulletTimeController& operator=(BulletTimeController&&) = delete;
+
+private:
 	BulletTimeController();
+
+public: // メンバ関数
 
 	void Update();
 

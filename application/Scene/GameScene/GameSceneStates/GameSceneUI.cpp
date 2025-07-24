@@ -3,6 +3,7 @@
 #include "../Result/Result.h"
 #include "../PlayUI/PlayUI.h"
 #include "../../../ScoreUI/ScoreUI.h"
+#include "SpriteBasis.h"
 
 void GameScene::UIInit()
 {
@@ -22,6 +23,8 @@ void GameScene::UIInit()
 
 void GameScene::UIDraw()
 {
+	SpriteBasis::GetInstance()->BasisDrawSetting();
+
 	// フェード中は描画しない
 	if (GetCurrentState() != GameSceneState::FADE_OUT && GetCurrentState() != GameSceneState::FADE_IN)
 	{

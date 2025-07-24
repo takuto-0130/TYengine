@@ -2,7 +2,9 @@
 #include "DirectXBasis.h"
 #include "SrvManager.h"
 #include "RenderTexture.h"
+#ifdef _DEBUG
 #include "imgui.h"
+#endif // _DEBUG
 
 void LuminanceBasedOutlineEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
@@ -12,7 +14,6 @@ void LuminanceBasedOutlineEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 
 void LuminanceBasedOutlineEffect::Update()
 {
-    copyPass_.Update();
 }
 
 void LuminanceBasedOutlineEffect::Apply(RenderTexture* input)

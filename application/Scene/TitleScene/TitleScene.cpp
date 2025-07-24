@@ -40,9 +40,6 @@ void TitleScene::Update() {
 	{
 		LoadLevel();
 	}
-	ImGui::Begin("TITLE");
-	ImGui::Text("Space to GameScene");
-	ImGui::End();
 #endif // _DEBUG
 	spaceSpr_->Update();
 	text_->Update();
@@ -63,7 +60,10 @@ void TitleScene::Draw()
 	{
 		obj->Draw();
 	}
+}
 
+void TitleScene::UIDraw()
+{
 	SpriteBasis::GetInstance()->BasisDrawSetting();
 	spaceSpr_->Draw();
 	text_->Draw();

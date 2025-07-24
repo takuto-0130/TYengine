@@ -74,6 +74,9 @@ void GameCore::Initialize()
 	tempTexture = std::make_unique<RenderTexture>();
 	tempTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
 
+	outlineTexture = std::make_unique<RenderTexture>();
+	outlineTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+
 	postEffectManager = std::make_unique<PostEffectManager>();
 	postEffectManager->Initialize(directXBasis, srvManager.get());
 	postEffectManager->SetTempRenderTexture(std::move(tempTexture));
@@ -86,6 +89,9 @@ void GameCore::Initialize()
 	postEffectManager->AddEffect(std::make_unique<RadialBlurEffect>());
 	//postEffectManager->AddEffect(std::make_unique<LuminanceBasedOutlineEffect>());
 	postEffectManager->AddEffect(std::make_unique<DissolveEffect>());
+
+	outlinePass = std::make_unique<OutlinePass>();
+	outlinePass->Initialize(directXBasis, srvManager.get());
 
 
 	CubemapBasis::GetInstance()->Initialize(directXBasis);
@@ -130,10 +136,21 @@ void GameCore::Draw()
 
 	renderTexture->EndRender();
 
+	// ---------- アウトライン適用 ----------
+	outlineTexture->BeginRender(); // 中間結果用
+
+	renderTexture->TransitionDepthToSRV();
+
+	outlinePass->SetDepthSrv(renderTexture->GetDepthSRVHandle());
+	outlinePass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
+	// 深度テクスチャもCopyPass側でバインドされる（GetDepthSRVHandle）
+	outlineTexture->EndRender();
+	renderTexture->TransitionDepthToWrite();
+
 	// ---------- SwapChainへの描画 ----------
 	directXBasis->DrawBegin();
 
-	postEffectManager->Apply(renderTexture.get(), nullptr); // nullptr指定でSwapChain描画
+	postEffectManager->Apply(outlineTexture.get(), nullptr); // nullptr指定でSwapChain描画
 	
 	imgui->Draw(); // ImGuiはSwapChainに描く（上書き）
 

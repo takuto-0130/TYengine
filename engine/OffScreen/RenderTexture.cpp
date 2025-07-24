@@ -50,6 +50,8 @@ void RenderTexture::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager, ui
     srvManager_->CreateSRVforTexture2D(srvIndex_, texture_.Get(), format, 1);
 
     currentState_ = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+    CreateDepthStencil();
 }
 
 void RenderTexture::BeginRender() {
@@ -62,8 +64,16 @@ void RenderTexture::BeginRender() {
         currentState_ = D3D12_RESOURCE_STATE_RENDER_TARGET;
     }
 
-    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dxBasis_->GetDSVHandle();
-    dxBasis_->GetCommandList()->OMSetRenderTargets(1, &rtvHandle_, FALSE, &dsvHandle);
+    if (depthBuffer_) {
+        dxBasis_->GetCommandList()->ClearDepthStencilView(
+            dsvHandle_,
+            D3D12_CLEAR_FLAG_DEPTH,
+            1.0f, 0,
+            0, nullptr);
+    }
+
+    //dsvHandle_ = dxBasis_->GetDSVHandle();
+    dxBasis_->GetCommandList()->OMSetRenderTargets(1, &rtvHandle_, FALSE, &dsvHandle_);
 
     // ビューポートとシザー設定
     D3D12_VIEWPORT viewport{};
@@ -98,6 +108,89 @@ void RenderTexture::EndRender() {
     }
 }
 
+void RenderTexture::TransitionDepthToSRV()
+{
+    D3D12_RESOURCE_BARRIER barrier{};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = depthBuffer_.Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    dxBasis_->GetCommandList()->ResourceBarrier(1, &barrier);
+}
+
+void RenderTexture::TransitionDepthToWrite()
+{
+    D3D12_RESOURCE_BARRIER barrier{};
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Transition.pResource = depthBuffer_.Get();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    dxBasis_->GetCommandList()->ResourceBarrier(1, &barrier);
+}
+
+
+
+
 D3D12_GPU_DESCRIPTOR_HANDLE RenderTexture::GetGPUHandle() const {
     return srvManager_->GetGPUDescriptorHandle(srvIndex_);
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE RenderTexture::GetDepthSRVHandle() const
+{
+    return srvManager_->GetGPUDescriptorHandle(depthSRVIndex_);
+}
+
+void RenderTexture::CreateDepthStencil()
+{
+    // 深度バッファのリソース作成
+    D3D12_RESOURCE_DESC depthDesc{};
+    depthDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    depthDesc.Width = width_;
+    depthDesc.Height = height_;
+    depthDesc.DepthOrArraySize = 1;
+    depthDesc.MipLevels = 1;
+    depthDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+    depthDesc.SampleDesc.Count = 1;
+    depthDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+    depthDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+
+    D3D12_HEAP_PROPERTIES heapProps{};
+    heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+    D3D12_CLEAR_VALUE depthClear{};
+    depthClear.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthClear.DepthStencil.Depth = 1.0f;
+    depthClear.DepthStencil.Stencil = 0;
+
+    HRESULT hr = dxBasis_->GetDevice()->CreateCommittedResource(
+        &heapProps,
+        D3D12_HEAP_FLAG_NONE,
+        &depthDesc,
+        D3D12_RESOURCE_STATE_DEPTH_WRITE,
+        &depthClear,
+        IID_PPV_ARGS(&depthBuffer_));
+    assert(SUCCEEDED(hr));
+
+    // 明示的に記述子を渡す（Typeless に対応）
+    D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+    dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // ← Typeless に対応する具体的フォーマット
+    dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+    dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+    dsvDesc.Texture2D.MipSlice = 0;
+
+    // DSV作成
+    dsvHeap_ = dxBasis_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+    dsvHandle_ = dxBasis_->GetCpuDescriptorHandle(dsvHeap_.Get(), dxBasis_->GetDescriptorSizeDSV(), 0);
+    dxBasis_->GetDevice()->CreateDepthStencilView(depthBuffer_.Get(), &dsvDesc, dsvHandle_);
+
+    // SRV作成（HLSLから読み取り用）
+    depthSRVIndex_ = srvManager_->Allocate();
+    srvManager_->CreateSRVforTexture2D(
+        depthSRVIndex_,
+        depthBuffer_.Get(),
+        DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+        1
+    );
 }

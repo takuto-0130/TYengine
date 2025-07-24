@@ -87,9 +87,9 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
     cmdList->SetDescriptorHeaps(_countof(heaps), heaps);
 
     cmdList->SetGraphicsRootDescriptorTable(0, srvHandle);
-    if (useMaskTexture_)
+    if (useExtraTexture_)
     {
-        cmdList->SetGraphicsRootDescriptorTable(3, maskSrvHandle_);
+        cmdList->SetGraphicsRootDescriptorTable(3, extraSrvHandle_);
     }
     cmdList->SetGraphicsRootDescriptorTable(1, dxBasis_->GetSamplerDescriptorHandle());
     cmdList->SetGraphicsRootConstantBufferView(2, copyParamBuffer_->GetGPUVirtualAddress());
@@ -112,6 +112,6 @@ void CopyPass::LoadAndSetMaskTexture(const std::string& filePath)
 {
     TextureManager* texMgr = TextureManager::GetInstance();
     texMgr->LoadTexture(filePath);
-    maskSrvHandle_ = texMgr->GetSrvHandleGPU(filePath);
-    useMaskTexture_ = true;
+    extraSrvHandle_ = texMgr->GetSrvHandleGPU(filePath);
+    useExtraTexture_ = true;
 }

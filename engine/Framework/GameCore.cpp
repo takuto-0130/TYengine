@@ -77,21 +77,19 @@ void GameCore::Initialize()
 	outlineTexture = std::make_unique<RenderTexture>();
 	outlineTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
 
-	postEffectManager = std::make_unique<PostEffectManager>();
+	postEffectManager = PostEffectManager::GetInstance();
 	postEffectManager->Initialize(directXBasis, srvManager.get());
 	postEffectManager->SetTempRenderTexture(std::move(tempTexture));
+	postEffectManager->SetOutlineRenderTexture(std::move(outlineTexture));
 
 	// 適用するエフェクトを追加（順番に処理される）
 	postEffectManager->AddEffect("Grayscale", std::make_unique<GrayscaleEffect>());
 	postEffectManager->AddEffect("Vignette", std::make_unique<VignetteEffect>());
-	//postEffectManager->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
+	postEffectManager->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
 	postEffectManager->AddEffect("Gaussian", std::make_unique<GaussianEffect>());
 	postEffectManager->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
-	//postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
+	postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
 	postEffectManager->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
-
-	outlinePass = std::make_unique<OutlinePass>();
-	outlinePass->Initialize(directXBasis, srvManager.get());
 
 
 	CubemapBasis::GetInstance()->Initialize(directXBasis);
@@ -137,22 +135,24 @@ void GameCore::Draw()
 	renderTexture->EndRender();
 
 	// ---------- アウトライン適用 ----------
-	outlineTexture->BeginRender(); // 中間結果用
+	//outlineTexture->BeginRender(); // 中間結果用
 
-	renderTexture->TransitionDepthToSRV();
+	//renderTexture->TransitionDepthToSRV();
 
-	outlinePass->SetDepthSrv(renderTexture->GetDepthSRVHandle());
-	outlinePass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
-	outlineTexture->EndRender();
+	//outlinePass->SetDepthSrv(renderTexture->GetDepthSRVHandle());
+	//outlinePass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
+	//outlineTexture->EndRender();
 
-	renderTexture->TransitionDepthToWrite();
+	//renderTexture->TransitionDepthToWrite();
 
 	// ---------- SwapChainへの描画 ----------
 	directXBasis->DrawBegin();
 
-	postEffectManager->Apply(outlineTexture.get(), nullptr); // nullptr指定でSwapChain描画
+	postEffectManager->Apply(renderTexture.get(), nullptr); // nullptr指定でSwapChain描画
+
+	sceneManager_->UIDraw(); // ポストエフェクト後にUIを描画
 	
-	imgui->Draw(); // ImGuiはSwapChainに描く（上書き）
+	imgui->Draw();
 
 
 	directXBasis->DrawEnd();

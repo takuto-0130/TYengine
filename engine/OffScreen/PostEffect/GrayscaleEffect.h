@@ -14,6 +14,7 @@ public:
 private:
     struct GrayscaleParam {
         float strength = 1.0f;
+        Vector3 tintColor = { 1.0f, 1.0f, 1.0f };
     };
     std::shared_ptr<GrayscaleParam> param_;
 };

@@ -2,7 +2,9 @@
 #include "DirectXBasis.h"
 #include "SrvManager.h"
 #include "RenderTexture.h"
+#ifdef _DEBUG
 #include "imgui.h"
+#endif // _DEBUG
 
 void GrayscaleEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
@@ -15,11 +17,10 @@ void GrayscaleEffect::Update()
 {
 #ifdef _DEBUG
     ImGui::Begin("Grayscale");
-    ImGui::SliderFloat("Grayscale Strength", &param_->strength, 0.0f, 1.0f);
+    ImGui::SliderFloat("Strength", &param_->strength, 0.0f, 1.0f);
+    ImGui::ColorEdit3("tintColor", &param_->tintColor.x);
     ImGui::End();
 #endif // _DEBUG
-
-    copyPass_.Update();
 }
 
 void GrayscaleEffect::Apply(RenderTexture* input)

@@ -11,7 +11,6 @@ void CopyImageEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 
 void CopyImageEffect::Update()
 {
-    copyPass_.Update();
 }
 
 void CopyImageEffect::Apply(RenderTexture* input)

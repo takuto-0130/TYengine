@@ -15,7 +15,6 @@ void BoxFilterEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 
 void BoxFilterEffect::Update()
 {
-    copyPass_.Update();
 }
 
 void BoxFilterEffect::Apply(RenderTexture* input)

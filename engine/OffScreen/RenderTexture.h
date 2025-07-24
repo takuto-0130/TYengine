@@ -13,9 +13,17 @@ public:
     void BeginRender();
     void EndRender();
 
+    void TransitionDepthToSRV();
+    void TransitionDepthToWrite();
+
     ID3D12Resource* GetResource() const { return texture_.Get(); }
     D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() const;
     uint32_t GetSRVIndex() const { return srvIndex_; }
+
+    D3D12_GPU_DESCRIPTOR_HANDLE GetDepthSRVHandle() const;
+
+private:
+    void CreateDepthStencil();
 
 private:
     DirectXBasis* dxBasis_ = nullptr;
@@ -30,4 +38,9 @@ private:
     uint32_t width_ = 0;
     uint32_t height_ = 0;
     D3D12_RESOURCE_STATES currentState_ = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> depthBuffer_;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap_;
+    D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_{};
+    uint32_t depthSRVIndex_ = 0;
 };

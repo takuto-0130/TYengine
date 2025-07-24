@@ -46,6 +46,8 @@ public:
 
     void SetOutlineEnabled(bool enabled) { enabledOutline_ = enabled; }
 
+    void EffectAllDisable();
+
 private:
     DirectXBasis* dxBasis_ = nullptr;
     SrvManager* srvMgr_ = nullptr;

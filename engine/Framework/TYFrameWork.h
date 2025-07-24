@@ -22,6 +22,7 @@
 #include "CopyPass.h"
 #include "RenderTexture.h"
 #include "PostEffectManager.h"
+#include "OutlinePass.h"
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG
@@ -76,6 +77,8 @@ protected:
 	std::unique_ptr<RenderTexture> renderTexture;
 	std::unique_ptr<RenderTexture> tempTexture; // ping-pong用
 	std::unique_ptr<PostEffectManager> postEffectManager;
+	std::unique_ptr<OutlinePass> outlinePass;
+	std::unique_ptr<RenderTexture> outlineTexture;
 };
 
 

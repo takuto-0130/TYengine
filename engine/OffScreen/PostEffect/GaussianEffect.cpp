@@ -2,7 +2,9 @@
 #include "DirectXBasis.h"
 #include "SrvManager.h"
 #include "RenderTexture.h"
+#ifdef _DEBUG
 #include "imgui.h"
+#endif // _DEBUG
 
 void GaussianEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
@@ -24,11 +26,9 @@ void GaussianEffect::Update()
     ImGui::Text("Size 11+ : Sigma 2.5~5.0+");
     ImGui::End();
 #endif // _DEBUG
-
-    copyPass_.Update();
 }
 
-void GaussianEffect::Apply(RenderTexture* input, RenderTexture* output)
+void GaussianEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

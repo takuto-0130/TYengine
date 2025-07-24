@@ -24,8 +24,6 @@ public:
     D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index) const;
     ID3D12DescriptorHeap* GetHeap() const { return srvHeap_.Get(); }
 
-    void BeginDraw();
-
     uint32_t GetDescriptorSizeSRV() { return descriptorSize_; }
 
     D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandleFromGpu(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) const;

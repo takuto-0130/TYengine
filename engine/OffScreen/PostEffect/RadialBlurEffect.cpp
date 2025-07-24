@@ -2,7 +2,9 @@
 #include "DirectXBasis.h"
 #include "SrvManager.h"
 #include "RenderTexture.h"
+#ifdef _DEBUG
 #include "imgui.h"
+#endif // _DEBUG
 
 void RadialBlurEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
@@ -20,10 +22,9 @@ void RadialBlurEffect::Update()
     ImGui::SliderInt("Sample", &param_->kNumSamples, 1, 50);
     ImGui::End();
 #endif // _DEBUG
-    copyPass_.Update();
 }
 
-void RadialBlurEffect::Apply(RenderTexture* input, RenderTexture* output)
+void RadialBlurEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

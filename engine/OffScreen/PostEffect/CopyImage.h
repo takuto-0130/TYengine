@@ -1,6 +1,6 @@
 #pragma once
 #include "PostEffectBase.h"
-class RadialBlurEffect :
+class CopyImageEffect :
     public PostEffectBase
 {
 public:
@@ -11,12 +11,5 @@ public:
     void Apply(RenderTexture* input) override;
 
 private:
-	struct RadialBlurParam
-	{
-		Vector2 kCenter = { 0.5f, 0.5f };
-		float kBlurWidth = 0.03f;
-		int kNumSamples = 5;
-	};
-	std::shared_ptr<RadialBlurParam> param_;
 };
 

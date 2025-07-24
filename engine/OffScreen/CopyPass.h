@@ -12,8 +12,6 @@ class SrvManager;
 struct CopyPassParam {
     Vector2 offset;
     Vector2 scale;
-    float threshold = 0.5f;
-    float padding[3];
 };
 
 struct ExtraBuffer {
@@ -52,6 +50,11 @@ public:
 
     void LoadAndSetMaskTexture(const std::string& filePath);
 
+    void SetDepthSrv(D3D12_GPU_DESCRIPTOR_HANDLE depthSrv) { 
+        extraSrvHandle_ = depthSrv;
+        useExtraTexture_ = true;
+    }
+
 private:
     DirectXBasis* dxBasis_ = nullptr;
     SrvManager* srvMgr_ = nullptr;
@@ -64,7 +67,7 @@ private:
 
     std::vector<ExtraBuffer> extraBuffers_;
 
-    D3D12_GPU_DESCRIPTOR_HANDLE maskSrvHandle_{};
-    bool useMaskTexture_ = false;
+    D3D12_GPU_DESCRIPTOR_HANDLE extraSrvHandle_{};
+    bool useExtraTexture_ = false;
 };
 

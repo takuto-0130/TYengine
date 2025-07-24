@@ -43,5 +43,10 @@ void SceneManager::Update()
 void SceneManager::Draw()
 {
 	scene_->Draw();
+}
+
+void SceneManager::UIDraw()
+{
+	scene_->UIDraw();
 	TransitionManager::GetInstance()->Draw();
 }

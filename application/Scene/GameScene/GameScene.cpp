@@ -1,5 +1,4 @@
 #include "GameScene.h"
-#include "SpriteBasis.h"
 #include "Object3dBasis.h"
 #include "Audio/Audio.h"
 #include "CubemapBasis.h"
@@ -64,16 +63,18 @@ void GameScene::Init()
 	UIInit();
 	ChangeState(GameSceneState::FADE_IN);
 
-	bulletTime_ = std::make_unique<BulletTimeController>();
+	bulletTime_ = BulletTimeController::GetInstance();
 }
 
 void GameScene::Update()
 {
+#ifdef _DEBUG
 	if (input_->TriggerKey(DIK_3))
 	{
 		bulletTime_->Trigger(0.05f, 0.5f, 2.0f, 0.8f,
 			EaseFixed::InQuart, EaseFixed::OutQuart);
 	}
+#endif // _DEBUG
 
 	bulletTime_->Update();
 
@@ -91,7 +92,4 @@ void GameScene::Draw()
 
 	Object3dBasis::GetInstance()->BasisDrawSetting();
 	stageManager_->Draw();
-
-	SpriteBasis::GetInstance()->BasisDrawSetting();
-	UIDraw();
 }

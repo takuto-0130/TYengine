@@ -1,6 +1,7 @@
 #include "../Player.h"
 #include "input.h"
 #include "Ease.h"
+#include "BulletTimeController.h"
 
 void Player::InitBarrelRoll()
 {
@@ -24,6 +25,9 @@ void Player::StartBarrelRoll()
 	if(input_->TriggerKey(DIK_LSHIFT))
 	{
 		ChangeState(PlayerState::BARREL_ROLL);
+		BulletTimeController::GetInstance()->Trigger(
+			0.05f, 0.0f, 1.0f, 0.8f,
+			EaseFixed::InQuart, EaseFixed::OutQuart);
 	}
 }
 

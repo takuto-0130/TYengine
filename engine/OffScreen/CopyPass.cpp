@@ -69,7 +69,6 @@ void CopyPass::Update()
     ImGui::Begin("render");
     ImGui::DragFloat2("offset", &mappedParam_->offset.x, 0.01f);
     ImGui::DragFloat2("scale", &mappedParam_->scale.x, 0.01f);
-    ImGui::SliderFloat("dissolve", &mappedParam_->threshold, 0.0f, 1.0f);
     ImGui::End();
 #endif // _DEBUG
 
@@ -87,9 +86,9 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
     cmdList->SetDescriptorHeaps(_countof(heaps), heaps);
 
     cmdList->SetGraphicsRootDescriptorTable(0, srvHandle);
-    if (useMaskTexture_)
+    if (useExtraTexture_)
     {
-        cmdList->SetGraphicsRootDescriptorTable(3, maskSrvHandle_);
+        cmdList->SetGraphicsRootDescriptorTable(3, extraSrvHandle_);
     }
     cmdList->SetGraphicsRootDescriptorTable(1, dxBasis_->GetSamplerDescriptorHandle());
     cmdList->SetGraphicsRootConstantBufferView(2, copyParamBuffer_->GetGPUVirtualAddress());
@@ -112,6 +111,6 @@ void CopyPass::LoadAndSetMaskTexture(const std::string& filePath)
 {
     TextureManager* texMgr = TextureManager::GetInstance();
     texMgr->LoadTexture(filePath);
-    maskSrvHandle_ = texMgr->GetSrvHandleGPU(filePath);
-    useMaskTexture_ = true;
+    extraSrvHandle_ = texMgr->GetSrvHandleGPU(filePath);
+    useExtraTexture_ = true;
 }

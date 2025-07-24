@@ -91,6 +91,8 @@ void GameCore::Initialize()
 	postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
 	postEffectManager->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
 
+	postEffectManager->EffectAllDisable();
+
 
 	CubemapBasis::GetInstance()->Initialize(directXBasis);
 	CubemapBasis::GetInstance()->SetDefaultCamera(camera.get());
@@ -133,17 +135,6 @@ void GameCore::Draw()
 	particleManager->DrawAll();
 
 	renderTexture->EndRender();
-
-	// ---------- アウトライン適用 ----------
-	//outlineTexture->BeginRender(); // 中間結果用
-
-	//renderTexture->TransitionDepthToSRV();
-
-	//outlinePass->SetDepthSrv(renderTexture->GetDepthSRVHandle());
-	//outlinePass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
-	//outlineTexture->EndRender();
-
-	//renderTexture->TransitionDepthToWrite();
 
 	// ---------- SwapChainへの描画 ----------
 	directXBasis->DrawBegin();

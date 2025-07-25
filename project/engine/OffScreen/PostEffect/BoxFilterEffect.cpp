@@ -11,10 +11,16 @@ void BoxFilterEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/BoxFilter.PS.hlsl");
+    param_ = copyPass_.AddExtraConstantBuffer<BoxFilterParam>(4);
 }
 
 void BoxFilterEffect::Update()
 {
+#ifdef _DEBUG
+    ImGui::Begin("BoxFilter");
+    ImGui::SliderInt("kernelSize", &param_->kernelSize, 1, 15);
+    ImGui::End();
+#endif // _DEBUG
 }
 
 void BoxFilterEffect::Apply(RenderTexture* input)

@@ -74,13 +74,20 @@
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist "$(TargetDir)" mkdir "$(TargetDir)"
+      <Command>:: プロジェクトディレクトリを基準に移動
+cd /d $(ProjectDir)
 
-if exist "$(ProjectDir)externals\dxcompiler.dll" (
-    xcopy /Y /D /R "$(ProjectDir)externals\dxcompiler.dll" "$(TargetDir)"
+:: 出力先フォルダが無ければ作成
+if not exist "..\generated\outputs\$(Configuration)\" (
+    mkdir "..\generated\outputs\$(Configuration)\"
 )
-if exist "$(ProjectDir)externals\dxil.dll" (
-    xcopy /Y /D /R "$(ProjectDir)externals\dxil.dll" "$(TargetDir)"
+
+:: DLLをコピー
+if exist "externals\dxcompiler.dll" (
+    xcopy /Y /D /R "externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
+)
+if exist "externals\dxil.dll" (
+    xcopy /Y /D /R "externals\dxil.dll" "..\generated\outputs\$(Configuration)\"
 )</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -107,13 +114,20 @@ if exist "$(ProjectDir)externals\dxil.dll" (
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist "$(TargetDir)" mkdir "$(TargetDir)"
+      <Command>:: プロジェクトディレクトリを基準に移動
+cd /d $(ProjectDir)
 
-if exist "$(ProjectDir)externals\dxcompiler.dll" (
-    xcopy /Y /D /R "$(ProjectDir)externals\dxcompiler.dll" "$(TargetDir)"
+:: 出力先フォルダが無ければ作成
+if not exist "..\generated\outputs\$(Configuration)\" (
+    mkdir "..\generated\outputs\$(Configuration)\"
 )
-if exist "$(ProjectDir)externals\dxil.dll" (
-    xcopy /Y /D /R "$(ProjectDir)externals\dxil.dll" "$(TargetDir)"
+
+:: DLLをコピー
+if exist "externals\dxcompiler.dll" (
+    xcopy /Y /D /R "externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
+)
+if exist "externals\dxil.dll" (
+    xcopy /Y /D /R "externals\dxil.dll" "..\generated\outputs\$(Configuration)\"
 )</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

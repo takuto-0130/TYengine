@@ -5,6 +5,7 @@ class OutlinePass
 {
 public:
 	void Initialize(DirectXBasis* dx, SrvManager* srvMgr);
+	void Update();
 	void Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE inputSrv);
 	void SetDepthSrv(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 

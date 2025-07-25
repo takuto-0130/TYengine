@@ -83,12 +83,12 @@ void GameCore::Initialize()
 	postEffectManager->SetOutlineRenderTexture(std::move(outlineTexture));
 
 	// 適用するエフェクトを追加（順番に処理される）
+	postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
 	postEffectManager->AddEffect("Grayscale", std::make_unique<GrayscaleEffect>());
 	postEffectManager->AddEffect("Vignette", std::make_unique<VignetteEffect>());
 	postEffectManager->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
 	postEffectManager->AddEffect("Gaussian", std::make_unique<GaussianEffect>());
 	postEffectManager->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
-	postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
 	postEffectManager->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
 
 	postEffectManager->EffectAllDisable();

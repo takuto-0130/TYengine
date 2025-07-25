@@ -216,6 +216,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\OffScreen\PostEffect\RadialBlurEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
@@ -325,6 +326,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\OffScreen\PostEffect\RadialBlurEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\OutlinePass.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -10,7 +10,7 @@ public:
 
 private:
 	struct OutlinePassParam {
-		Vector2 texelSize = { 1.0f / 1280.0f, 1.0f / 720.0f };
+		Vector2 texelSize = { 1.0f / 1280.0f, 1.0f / 720.0f }; // レンダリングターゲットの解像度
 		float depthThreshold = 0.001f;
 		float pad0;
 		Vector3 outlineColor = { 0.0f, 0.0f, 0.0f };

@@ -86,7 +86,7 @@ void PostEffectManager::Update()
 
     ImGui::End();
 #endif // _DEBUG
-
+    outlinePass->Update();
     for (auto& fx : effectStack_)
     {
         fx.effect->Update();

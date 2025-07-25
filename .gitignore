@@ -361,8 +361,41 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# imgui.ini
+/imgui.ini
+
+# ---- generated / outputs を無視 ----
+# ビルドフォルダと中間ファイル
+.vs/
+Debug/
+Release/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+generated/
+outputs/
+
+*.obj
+*.pdb
+*.idb
+*.tlog
+*.log
+*.pch
+*.ipch
+*.ilk
+*.res
+*.exp
+*.lib
+*.exe
+*.dll
+
+# 例外ルール：externals内のDLLは追跡
+!externals/dxcompiler.dll
+!externals/dxil.dll
+
 # Assimp lib
 !externals/assimp/lib/
 
-# imgui.ini
-/imgui.ini
+# 例外：Resourcesフォルダのモデル用 .obj は追跡
+!project/Resources/**/*.obj

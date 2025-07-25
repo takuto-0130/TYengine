@@ -74,13 +74,13 @@
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist "..\generated\outputs\$(Configuration)\" mkdir "..\generated\outputs\$(Configuration)\"
+      <Command>if not exist "$(TargetDir)" mkdir "$(TargetDir)"
 
-if exist "project\externals\dxcompiler.dll" (
-    xcopy /Y /D /R "project\externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
+if exist "$(ProjectDir)externals\dxcompiler.dll" (
+    xcopy /Y /D /R "$(ProjectDir)externals\dxcompiler.dll" "$(TargetDir)"
 )
-if exist "project\externals\dxil.dll" (
-    xcopy /Y /D /R "project\externals\dxil.dll" "..\generated\outputs\$(Configuration)\"
+if exist "$(ProjectDir)externals\dxil.dll" (
+    xcopy /Y /D /R "$(ProjectDir)externals\dxil.dll" "$(TargetDir)"
 )</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -107,13 +107,13 @@ if exist "project\externals\dxil.dll" (
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist "..\generated\outputs\$(Configuration)\" mkdir "..\generated\outputs\$(Configuration)\"
+      <Command>if not exist "$(TargetDir)" mkdir "$(TargetDir)"
 
-if exist "project\externals\dxcompiler.dll" (
-    xcopy /Y /D /R "project\externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
+if exist "$(ProjectDir)externals\dxcompiler.dll" (
+    xcopy /Y /D /R "$(ProjectDir)externals\dxcompiler.dll" "$(TargetDir)"
 )
-if exist "project\externals\dxil.dll" (
-    xcopy /Y /D /R "project\externals\dxil.dll" "..\generated\outputs\$(Configuration)\"
+if exist "$(ProjectDir)externals\dxil.dll" (
+    xcopy /Y /D /R "$(ProjectDir)externals\dxil.dll" "$(TargetDir)"
 )</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

@@ -10,7 +10,7 @@ void DissolveEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Dissolve.PS.hlsl");
-    copyPass_.LoadAndSetMaskTexture("Resources/noise0.png");
+    copyPass_.LoadAndSetMaskTexture("Resources/Texture/noise1.png");
     param_ = copyPass_.AddExtraConstantBuffer<DissolveParam>(4);
 }
 

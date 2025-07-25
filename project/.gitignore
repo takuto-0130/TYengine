@@ -368,11 +368,30 @@ FodyWeavers.xsd
 /imgui.ini
 
 # ---- generated / outputs を無視 ----
+# ビルドフォルダと中間ファイル
+.vs/
+Debug/
+Release/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
 generated/
 outputs/
 
-# ---- ビルド成果物の .obj は無視 ----
 *.obj
+*.pdb
+*.idb
+*.tlog
+*.log
+*.pch
+*.ipch
+*.ilk
+*.res
+*.exp
+*.lib
+*.exe
+*.dll
 
-# ---- モデルファイル(.obj)は例外的に追跡 ----
+# 例外：Resourcesフォルダのモデル用 .obj は追跡
 !Resources/**/*.obj

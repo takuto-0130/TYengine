@@ -74,8 +74,21 @@
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+      <Command>:: プロジェクトディレクトリを基準に移動
+cd /d $(ProjectDir)
+
+:: 出力先フォルダが無ければ作成
+if not exist "..\generated\outputs\$(Configuration)\" (
+    mkdir "..\generated\outputs\$(Configuration)\"
+)
+
+:: DLLをコピー
+if exist "externals\dxcompiler.dll" (
+    xcopy /Y /D /R "externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
+)
+if exist "externals\dxil.dll" (
+    xcopy /Y /D /R "externals\dxil.dll" "..\generated\outputs\$(Configuration)\"
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -101,8 +114,21 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
-copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+      <Command>:: プロジェクトディレクトリを基準に移動
+cd /d $(ProjectDir)
+
+:: 出力先フォルダが無ければ作成
+if not exist "..\generated\outputs\$(Configuration)\" (
+    mkdir "..\generated\outputs\$(Configuration)\"
+)
+
+:: DLLをコピー
+if exist "externals\dxcompiler.dll" (
+    xcopy /Y /D /R "externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
+)
+if exist "externals\dxil.dll" (
+    xcopy /Y /D /R "externals\dxil.dll" "..\generated\outputs\$(Configuration)\"
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -216,6 +242,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\OffScreen\PostEffect\RadialBlurEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
@@ -325,6 +352,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\OffScreen\PostEffect\RadialBlurEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\OutlinePass.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

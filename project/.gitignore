@@ -366,3 +366,13 @@ FodyWeavers.xsd
 
 # imgui.ini
 /imgui.ini
+
+# ---- generated / outputs を無視 ----
+generated/
+outputs/
+
+# ---- ビルド成果物の .obj は無視 ----
+*.obj
+
+# ---- モデルファイル(.obj)は例外的に追跡 ----
+!Resources/**/*.obj

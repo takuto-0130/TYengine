@@ -393,5 +393,9 @@ outputs/
 *.exe
 *.dll
 
+# 例外ルール：externals内のDLLは追跡
+!externals/dxcompiler.dll
+!externals/dxil.dll
+
 # 例外：Resourcesフォルダのモデル用 .obj は追跡
-!Resources/**/*.obj
+!project/Resources/**/*.obj

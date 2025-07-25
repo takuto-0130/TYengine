@@ -37,7 +37,6 @@ void PlayUI::Update()
 
 void PlayUI::Draw()
 {
-	Vector2 mouse = input_->GetMousePosition();
 	reticle_->Draw();
 	comboNumTex_->Draw();
 	comboText_->Draw();

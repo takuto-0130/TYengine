@@ -74,8 +74,14 @@
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /D /R "$(ProjectDir)externals\dxcompiler.dll" "$(TargetDir)"
-xcopy /Y /D /R "$(ProjectDir)externals\dxil.dll" "$(TargetDir)"</Command>
+      <Command>if not exist "$(TargetDir)" mkdir "$(TargetDir)"
+
+if exist "$(ProjectDir)externals\dxcompiler.dll" (
+    xcopy /Y /D /R "$(ProjectDir)externals\dxcompiler.dll" "$(TargetDir)"
+)
+if exist "$(ProjectDir)externals\dxil.dll" (
+    xcopy /Y /D /R "$(ProjectDir)externals\dxil.dll" "$(TargetDir)"
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -101,8 +107,14 @@ xcopy /Y /D /R "$(ProjectDir)externals\dxil.dll" "$(TargetDir)"</Command>
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /D /R "$(ProjectDir)externals\dxcompiler.dll" "$(TargetDir)"
-xcopy /Y /D /R "$(ProjectDir)externals\dxil.dll" "$(TargetDir)"</Command>
+      <Command>if not exist "$(TargetDir)" mkdir "$(TargetDir)"
+
+if exist "$(ProjectDir)externals\dxcompiler.dll" (
+    xcopy /Y /D /R "$(ProjectDir)externals\dxcompiler.dll" "$(TargetDir)"
+)
+if exist "$(ProjectDir)externals\dxil.dll" (
+    xcopy /Y /D /R "$(ProjectDir)externals\dxil.dll" "$(TargetDir)"
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

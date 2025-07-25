@@ -3,10 +3,19 @@
 #include "SceneFactory.h"
 #include "ColliderManager.h"
 #include "CubemapBasis.h"
+#include "Timer.h"
 
 #include "PlaneParticle.h"
 #include "RingParticle.h"
 #include "CylinderParticle.h"
+
+#include "GrayscaleEffect.h"
+#include "VignetteEffect.h"
+#include "BoxFilterEffect.h"
+#include "GaussianEffect.h"
+#include "RadialBlurEffect.h"
+#include "LuminanceBasedOutlineEffect.h"
+#include "DissolveEffect.h"
 
 #ifdef _DEBUG
 #include <imgui.h>
@@ -15,6 +24,8 @@
 void GameCore::Initialize()
 {
 	TYFrameWork::Initialize();
+
+	Timer::GetInstance()->Start();
 
 	imgui = ImGuiManager::GetInstance();
 	imgui->Initialize(windowsApp.get(), directXBasis);
@@ -48,32 +59,39 @@ void GameCore::Initialize()
 	particleManager->Add(std::move(cylinder));
 
 	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
-	IParticleRenderer::Emitter emitter;
-	emitter.transform.scale = { 0.05f,1.0f,1.0f };
-	emitter.transform.rotate = { 0,0,0 };
-	emitter.transform.translate = { 0,0,0 };
-	emitter.count = 5;
-	emitter.frequency = 1.5f;
+	IParticleRenderer::Emitter emitter{};
 	particleManager->SetEmitter(index, emitter);
 
-	IParticleRenderer::Emitter emitterRing;
-	emitterRing.transform.scale = { 0.5f,0.5f,0.5f };
-	emitterRing.transform.rotate = { 0,0,0 };
-	emitterRing.transform.translate = { 0,0,0 };
-	emitterRing.count = 4;
-	emitterRing.frequency = 1.5f;
+	IParticleRenderer::Emitter emitterRing{};
 	particleManager->SetEmitter(indexRing, emitterRing);
-
-	//particleManager->SetEmitter(indexRing, emitterRing);
 
 	ColliderManager::GetInstance();
 
 
 	renderTexture = std::make_unique<RenderTexture>();
-	renderTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1,0,0,1 });
+	renderTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1, 0, 0, 1 }); 
+	
+	tempTexture = std::make_unique<RenderTexture>();
+	tempTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
 
-	copyPass = std::make_unique<CopyPass>();
-	copyPass->Initialize(directXBasis, srvManager.get(), L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
+	outlineTexture = std::make_unique<RenderTexture>();
+	outlineTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+
+	postEffectManager = PostEffectManager::GetInstance();
+	postEffectManager->Initialize(directXBasis, srvManager.get());
+	postEffectManager->SetTempRenderTexture(std::move(tempTexture));
+	postEffectManager->SetOutlineRenderTexture(std::move(outlineTexture));
+
+	// 適用するエフェクトを追加（順番に処理される）
+	postEffectManager->AddEffect("Grayscale", std::make_unique<GrayscaleEffect>());
+	postEffectManager->AddEffect("Vignette", std::make_unique<VignetteEffect>());
+	postEffectManager->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
+	postEffectManager->AddEffect("Gaussian", std::make_unique<GaussianEffect>());
+	postEffectManager->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
+	postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
+	postEffectManager->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
+
+	postEffectManager->EffectAllDisable();
 
 
 	CubemapBasis::GetInstance()->Initialize(directXBasis);
@@ -94,10 +112,11 @@ void GameCore::Update()
 	}
 	else { //ゲーム処理
 		imgui->Begin();
+		Timer::GetInstance()->Update();
 		TYFrameWork::Update();
 		particleManager->UpdateAll();
 		camera->Update();
-		copyPass->Update();
+		postEffectManager->Update();
 		ColliderManager::GetInstance()->Update();
 		imgui->End();
 	}
@@ -111,7 +130,6 @@ void GameCore::Draw()
 	// ---------- オフスクリーン描画 ----------
 	renderTexture->BeginRender();
 
-	srvManager->BeginDraw(); // SRVマネージャでIDリセットなど
 	sceneManager_->Draw();   // 実際の描画
 
 	particleManager->DrawAll();
@@ -121,8 +139,10 @@ void GameCore::Draw()
 	// ---------- SwapChainへの描画 ----------
 	directXBasis->DrawBegin();
 
-	copyPass->Draw(directXBasis->GetCommandList(), renderTexture->GetGPUHandle());
-	// ImGuiはSwapChainに描く（上書き）
+	postEffectManager->Apply(renderTexture.get(), nullptr); // nullptr指定でSwapChain描画
+
+	sceneManager_->UIDraw(); // ポストエフェクト後にUIを描画
+	
 	imgui->Draw();
 
 

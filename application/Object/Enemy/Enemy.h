@@ -39,7 +39,7 @@ private:
 	float popTimer_ = 0;
 	const float kPopTime_ = 1.0f;
 
-	const float deltaTime_ = 1.0f / 60.0f;
+	float deltaTime_ = 1.0f / 60.0f;
 
 	Vector3 defaultScale_ = { 0.3f, 0.3f, 0.3f };
 
@@ -48,5 +48,3 @@ private:
 
 	IEnemyEventListener* listener_ = nullptr;
 };
-
-float easeOutBounce(float x);

@@ -280,10 +280,35 @@
     <ClCompile Include="application\Object\Player\Reticle\ReticleCollider.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp" />
-    <ClCompile Include="application\Stage\ComboManager.cpp" />
-    <ClCompile Include="application\AppSystem\Score\ScoreManager.cpp" />
-    <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
+    <ClCompile Include="application\AppSystem\Score\ScoreManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\ScoreUI\ScoreUI.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Utils\Time\Timer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Utils\Time\BulletTimeController.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Math\Ease.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Math\Quaternion.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\GrayscaleEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffectManager.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\VignetteEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\BoxFilterEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\GaussianEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\RadialBlurEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\DissolveEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\CopyImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -544,12 +569,43 @@
     <ClInclude Include="application\Object\Player\Reticle\ReticleCollider.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
-    <ClInclude Include="application\Stage\ComboManager.h" />
-    <ClInclude Include="application\AppSystem\Score\ScoreManager.h" />
-    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h" />
-    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\ComboAndScoreHandler.h" />
-    <ClInclude Include="application\ScoreUI\ScoreUI.h" />
+    <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\ComboAndScoreHandler.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Math\Ease.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\Score\ScoreManager.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\ScoreUI\ScoreUI.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\Time\Timer.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Math\Quaternion.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\IPostEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\GrayscaleEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffectManager.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\VignetteEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\BoxFilterEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\GaussianEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\RadialBlurEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\OutlinePass.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\PostEffectBase.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

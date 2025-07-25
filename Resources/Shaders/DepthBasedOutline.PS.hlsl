@@ -4,15 +4,17 @@
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
-Texture2D<float> gDepthTexture : register(t1);
+Texture2D<float> gDepth : register(t1);
 
 SamplerState gSamplerPoint : register(s1);
 
-cbuffer CopyPassParam : register(b0)
+
+cbuffer OutlineParam : register(b1)
 {
-    float2 offset;
-    float2 scale;
-    float4x4 invProjection;
+    float2 texelSize; // ピクセルサイズ（1.0 / textureSize）
+    float depthThreshold; // 境界と判定する深度差のしきい値
+    float3 outlineColor;
+    float outlineWidth; // 1.0 = 1ピクセル相当
 };
 
 struct PixelShaderOutput
@@ -49,35 +51,22 @@ float Luminance(float3 v)
 PixelShaderOutput main(VertexShaderOutput input)
 {
     PixelShaderOutput output;
-    uint width, height;
-    gTexture.GetDimensions(width, height);
-    float2 uvStepSize = float2(1.0 / width, 1.0 / height);
 
-    float2 difference = float2(0.0f, 0.0f);
-    float4 viewPos;
-    float ndcDepth;
-    for (int x = 0; x < 3; ++x)
+    float centerDepth = gDepth.Sample(gSampler, input.texcoord);
+    float edge = 0.0f;
+
+    for (int y = -1; y <= 1; ++y)
     {
-        for (int y = 0; y < 3; ++y)
+        for (int x = -1; x <= 1; ++x)
         {
-            float2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
-
-            ndcDepth = gDepthTexture.Sample(gSamplerPoint, texcoord);
-            float4 clipPos = float4(texcoord * 2.0f - 1.0f, ndcDepth, 1.0f);
-            viewPos = mul(clipPos, invProjection);
-            viewPos /= viewPos.w;
-
-            float luminance = viewPos.z;
-
-            difference.x += luminance * kPrewittHorizontalKernel[x][y];
-            difference.y += luminance * kPrewittVerticalKernel[x][y];
+            float2 offset = float2(x, y) * texelSize * outlineWidth;
+            float neighborDepth = gDepth.Sample(gSampler, input.texcoord + offset);
+            edge = max(edge, abs(neighborDepth - centerDepth) > depthThreshold ? 1.0f : 0.0f);
         }
     }
 
-    float weight = saturate(length(difference));
-
-    output.color.rgb = ndcDepth.xxx/*(1.0f - weight) * gTexture.Sample(gSampler, input.texcoord).rgb*/;
-    output.color.a = 1.0f;
+    float4 baseColor = gTexture.Sample(gSampler, input.texcoord);
+    output.color = lerp(baseColor, float4(outlineColor, 1.0f), edge);
 
     if (input.texcoord.x < 0.0f || input.texcoord.x > 1.0f ||
         input.texcoord.y < 0.0f || input.texcoord.y > 1.0f)

@@ -26,6 +26,8 @@ const Vector3 Multiply(const float& s, const Vector3& v);
 
 float Lerp(const float& a, const float& b, float t);
 
+Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
+
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
@@ -55,5 +57,10 @@ Vector3 operator/(const Vector3& v, const float& s);
 
 Vector2 operator-(const Vector2& a, const Vector2& b);
 Vector2 operator+(const Vector2& a, const Vector2& b);
+
+Vector2 operator*(const Vector2& a, const Vector2& b);
 Vector2 operator*(const Vector2& v, const float& s);
+Vector2 operator*(const float& s, const Vector2& v);
+
+Vector2 operator/(const Vector2& a, const Vector2& b);
 Vector2 operator/(const Vector2& v, const float& s);

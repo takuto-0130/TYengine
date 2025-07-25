@@ -21,6 +21,7 @@
 #include "AbstractSceneFactory.h"
 #include "CopyPass.h"
 #include "RenderTexture.h"
+#include "PostEffectManager.h"
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG
@@ -73,7 +74,9 @@ protected:
 	bool endRequest_ = false;
 
 	std::unique_ptr<RenderTexture> renderTexture;
-	std::unique_ptr<CopyPass> copyPass;
+	std::unique_ptr<RenderTexture> tempTexture; // ping-pong用
+	PostEffectManager* postEffectManager;
+	std::unique_ptr<RenderTexture> outlineTexture;
 };
 
 

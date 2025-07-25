@@ -56,7 +56,7 @@ public:
     // ステートのアップデート
     void UpdateState(float deltaTime) 
     {
-        if (stateRequest_) 
+        if (stateRequest_ && allowExit_)
         {
             if (exitTable_.contains(currState_)) 
             {
@@ -94,6 +94,11 @@ public:
     // 現在のステートの経過時間を取得
     float GetStateElapsedTime() const { return stateTimer_; }
 
+    // 現在のステートで固定
+    void LockState() { allowExit_ = false; }
+    // 現在のステートの固定を解除
+    void UnlockState() { allowExit_ = true; }
+
 protected:
     // オーバーライドで列挙名を文字列化（ImGui表示用）
     virtual std::string GetStateName(State state) const = 0;
@@ -110,6 +115,7 @@ private:
     State prevState_{};
     std::optional<State> stateRequest_;
     float stateTimer_ = 0.0f;
+    bool allowExit_ = true;
 
     std::unordered_map<State, std::function<void()>> initTable_;
     std::unordered_map<State, std::function<void()>> updateTable_;

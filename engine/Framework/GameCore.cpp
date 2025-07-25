@@ -16,6 +16,7 @@
 #include "RadialBlurEffect.h"
 #include "LuminanceBasedOutlineEffect.h"
 #include "DissolveEffect.h"
+#include "RandomEffect.h"
 
 #ifdef _DEBUG
 #include <imgui.h>
@@ -89,8 +90,9 @@ void GameCore::Initialize()
 	postEffectManager->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
 	postEffectManager->AddEffect("Gaussian", std::make_unique<GaussianEffect>());
 	postEffectManager->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
+	postEffectManager->AddEffect("Random", std::make_unique<RandomEffect>());
 	postEffectManager->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
-
+	
 	postEffectManager->EffectAllDisable();
 
 

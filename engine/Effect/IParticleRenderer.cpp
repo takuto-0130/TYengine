@@ -1,4 +1,5 @@
 #include "IParticleRenderer.h"
+#include "Timer.h"
 #include <numbers>
 #ifdef _DEBUG
 #include <imgui.h>
@@ -30,6 +31,8 @@ void IParticleRenderer::Update() {
     billboardMatrix.m[3][2] = 0.0f;
 
     numInstance_ = 0;
+
+    kDeltaTime = Timer::GetInstance()->GetDeltaTime();
 
     emitter_.frequencyTime += kDeltaTime;
     if (!useTrigger_ &&  emitter_.frequencyTime >= emitter_.frequency) {
@@ -69,7 +72,6 @@ void IParticleRenderer::Draw() {
     if (numInstance_ == 0) return;
 
     auto cmd = dxBasis_->GetCommandList();
-    srvManager_->BeginDraw();
 
     cmd->SetGraphicsRootSignature(rootSignature_.Get());
     cmd->SetPipelineState(pipelineState_.Get());

@@ -1,4 +1,6 @@
 #include "Enemy.h"
+#include "Timer.h"
+#include "Ease.h"
 #include "ColliderManager.h"
 #include "ParticleManager.h"
 
@@ -12,7 +14,7 @@ void Enemy::Init()
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("unitSphere.obj");
-	obj_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+	obj_->SetEnvironmentCoefficient(1.0f);
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = defaultScale_;
 	worldTransform_.TransferMatrix();
@@ -28,6 +30,8 @@ void Enemy::Init()
 
 void Enemy::Update()
 {
+	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+
 	if (popTimer_ > 0)
 	{
 		popTimer_ -= deltaTime_;
@@ -37,7 +41,7 @@ void Enemy::Update()
 		}
 		float t = popTimer_ / kPopTime_;
 		t = 1.0f - t;
-		worldTransform_.scale_ = Lerp(ZeroScale, defaultScale_, easeOutBounce(t));
+		worldTransform_.scale_ = Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t));
 	}
 
 
@@ -75,27 +79,5 @@ void Enemy::OnCollision()
 
 	if (listener_) {
 		listener_->OnEnemyDied(this);
-	}
-}
-
-
-float easeOutBounce(float x) {
-	const float n1 = 7.5625f;
-	const float d1 = 2.75f;
-
-	if (x < 1.0f / d1) {
-		return n1 * x * x;
-	}
-	else if (x < 2.0f / d1) {
-		x -= 1.5f / d1;
-		return n1 * x * x + 0.75f;
-	}
-	else if (x < 2.5f / d1) {
-		x -= 2.25f / d1;
-		return n1 * x * x + 0.9375f;
-	}
-	else {
-		x -= 2.625f / d1;
-		return n1 * x * x + 0.984375f;
 	}
 }

@@ -221,7 +221,7 @@ void DirectXBasis::DrawBegin()
 	//描画先のRTVとDSVを設定
 	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, &dsvHandle_);
 
-	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };//RGBA
+	float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };//RGBA
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
 
 	//描画用のDiscriptorHeapの設定
@@ -237,11 +237,8 @@ void DirectXBasis::DrawBegin()
 
 void DirectXBasis::DrawEnd()
 {
-	//書き込むバックバッファのインデックス
-	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
-
 	//画面に描く処理はすべて終わり、画面に映すので、状態を遷移
-			//今回はRenderTargetからPresentにする
+	//今回はRenderTargetからPresentにする
 	barrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	//TransitionBarrierを張る

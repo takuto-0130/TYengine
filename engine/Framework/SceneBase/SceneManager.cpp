@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "Timer.h"
 #include "../../../application/Scene/Transition/TransitionManager.h"
 
 SceneManager::~SceneManager()
@@ -36,11 +37,16 @@ void SceneManager::Update()
 
 	// 実行中シーンを更新する
 	scene_->Update();
-	TransitionManager::GetInstance()->Update(1.0f / 60.0f);
+	TransitionManager::GetInstance()->Update(Timer::GetInstance()->GetRawDeltaTime());
 }
 
 void SceneManager::Draw()
 {
 	scene_->Draw();
+}
+
+void SceneManager::UIDraw()
+{
+	scene_->UIDraw();
 	TransitionManager::GetInstance()->Draw();
 }

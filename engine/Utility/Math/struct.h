@@ -7,6 +7,34 @@
 struct Vector2 {
 	float x;
 	float y;
+
+	Vector2& operator+=(const Vector2& a) {
+		x = a.x + x;
+		y = a.y + y;
+		return *this;
+	}
+
+	Vector2& operator-=(const Vector2& a) {
+		x = x - a.x;
+		y = y - a.y;
+		return *this;
+	}
+
+	Vector2& operator*=(const float& a) {
+		x = x * a;
+		y = y * a;
+		return *this;
+	}
+
+	Vector2& operator/=(const float& a) {
+		x = x / a;
+		y = y / a;
+		return *this;
+	}
+
+	bool operator==(const Vector2& a) const {
+		return (x == a.x && y == a.y);
+	}
 };
 
 struct Vector3 {
@@ -56,6 +84,13 @@ struct Vector4 {
 
 struct Matrix4x4 {
 	std::array<std::array<float,4>, 4> m;
+};
+
+struct Quaternion {
+	float x;
+	float y;
+	float z;
+	float w;
 };
 
 struct Transform {

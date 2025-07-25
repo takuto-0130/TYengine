@@ -1,6 +1,5 @@
 #include "SrvManager.h"
 #include "DirectXBasis.h"
-#include "DirectXTex/d3dx12.h"
 #include <cassert>
 
 void SrvManager::Initialize(DirectXBasis* dxBasis, uint32_t maxDescriptors) {
@@ -78,7 +77,11 @@ D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandle(uint32_t index) c
     return handle;
 }
 
-void SrvManager::BeginDraw() {
+D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandleFromGpu(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) const
+{
+    size_t offset = gpuHandle.ptr - srvHeap_->GetGPUDescriptorHandleForHeapStart().ptr;
+    size_t index = offset / descriptorSize_;
+    return GetCPUDescriptorHandle(static_cast<uint32_t>(index));
 }
 
 void SrvManager::CreateSRVforTextureCube(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels) {

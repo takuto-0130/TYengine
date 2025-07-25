@@ -1,4 +1,5 @@
 #include "PlaneParticle.h"
+#include "Timer.h"
 #include <numbers>
 
 void PlaneParticle::CreateResources() {
@@ -68,6 +69,8 @@ void PlaneParticle::Update() {
     billboardMatrix.m[3][2] = 0.0f;
 
     numInstance_ = 0;
+
+    kDeltaTime = Timer::GetInstance()->GetDeltaTime();
 
     emitter_.frequencyTime += kDeltaTime;
     if (!useTrigger_ && emitter_.frequencyTime >= emitter_.frequency) {

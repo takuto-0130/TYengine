@@ -1,11 +1,13 @@
 #pragma once
 #include "struct.h"
 #include "Matrix4x4Func.h"
+#include "Quaternion.h"
 #include <d3d12.h>
 #include <type_traits>
 #include <wrl.h>
 
-struct TransformationMatrix {
+struct TransformationMatrix
+{
 	Matrix4x4 WVP;
 	Matrix4x4 World;
 	Matrix4x4 WorldInverseTranspose;
@@ -14,12 +16,16 @@ struct TransformationMatrix {
 /// <summary>
 /// ワールド変換データ
 /// </summary>
-class WorldTransform {
+class WorldTransform
+{
 public:
 	// ローカルスケール
 	Vector3 scale_ = { 1, 1, 1 };
 	// X,Y,Z軸回りのローカル回転角
 	Vector3 rotation_ = { 0, 0, 0 };
+	// クォータニオン
+	Quaternion rotationQ_{};
+	bool useQuaternion_ = false; // 使用するかどうか
 	// ローカル座標
 	Vector3 translation_ = { 0, 0, 0 };
 	// ローカル → ワールド変換行列

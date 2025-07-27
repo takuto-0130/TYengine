@@ -17,10 +17,21 @@ void RadialBlurEffect::Update()
 {
 #ifdef _DEBUG
     ImGui::Begin("RadialBlur");
-    ImGui::SliderFloat2("Center", &param_->kCenter.x, 0.0f, 1.0f);
-    ImGui::SliderFloat("BlurWidth", &param_->kBlurWidth, 0.0f, 1.0f);
-    ImGui::SliderInt("Sample", &param_->kNumSamples, 1, 50);
+    ImGuiUpdate();
     ImGui::End();
+#endif // _DEBUG
+}
+
+void RadialBlurEffect::ImGuiUpdate()
+{
+#ifdef _DEBUG
+    if (ImGui::TreeNode("RadialBlur"))
+    {
+        ImGui::SliderFloat2("Center", &param_->kCenter.x, 0.0f, 1.0f);
+        ImGui::SliderFloat("BlurWidth", &param_->kBlurWidth, 0.0f, 1.0f);
+        ImGui::SliderInt("Sample", &param_->kNumSamples, 1, 50);
+        ImGui::TreePop();
+    }
 #endif // _DEBUG
 }
 

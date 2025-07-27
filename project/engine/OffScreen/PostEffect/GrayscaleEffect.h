@@ -13,6 +13,15 @@ public:
 
     void Apply(RenderTexture* input) override;
 
+public:
+    // Setter
+    void SetStrength(float s) { param_->strength = s; }
+    void SetTintColor(const Vector3& color) { param_->tintColor = color; }
+
+    // Getter
+    float GetStrength() const { return param_->strength; }
+    Vector3 GetTintColor() const { return param_->tintColor; }
+
 private:
     struct GrayscaleParam {
         float strength = 1.0f;

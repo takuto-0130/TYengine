@@ -48,6 +48,16 @@ public:
 
     void EffectAllDisable();
 
+    template<typename T>
+    T* GetEffect(const std::string& name) {
+        for (auto& e : effectStack_) {
+            if (e.name == name) {
+                return dynamic_cast<T*>(e.effect.get());
+            }
+        }
+        return nullptr;
+    }
+
 private:
     DirectXBasis* dxBasis_ = nullptr;
     SrvManager* srvMgr_ = nullptr;

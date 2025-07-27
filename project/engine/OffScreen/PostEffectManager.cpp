@@ -35,62 +35,87 @@ void PostEffectManager::Update()
 #ifdef _DEBUG
     ImGui::Begin("PostEffectManager");
 
-    const float windowWidth = ImGui::GetWindowContentRegionMax().x;
-    const float buttonWidth = 48.0f;
-    const float spacing = ImGui::GetStyle().ItemSpacing.x;
+    // 列幅設定用のパラメータ
+    const float buttonWidth = 36.0f;           // UP/DOWNボタンの幅
+    const float buttonSpacing = ImGui::GetStyle().ItemSpacing.x;
+    const float rightColumnWidth = buttonWidth * 2 + buttonSpacing; // 右列の固定幅
 
-    ImGui::Checkbox("Outline", &enabledOutline_);
+    // 2カラムテーブル: 左 = エフェクト設定, 右 = UP/DOWN ボタン
+    if (ImGui::BeginTable("EffectTable", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingFixedFit)) {
 
-    for (size_t i = 0; i < effectStack_.size(); ++i) {
-        ImGui::PushID(static_cast<int>(i));
+        // 列幅を設定（左は自動、右は固定幅）
+        ImGui::TableSetupColumn("Effect", ImGuiTableColumnFlags_WidthStretch); // 左: 自動伸縮
+        ImGui::TableSetupColumn("Buttons", ImGuiTableColumnFlags_WidthFixed, rightColumnWidth); // 右: 固定幅
 
-        // チェックボックス（名前付き）
-        bool enabled = effectStack_[i].effect->IsEnabled();
-        if (ImGui::Checkbox(effectStack_[i].name.c_str(), &enabled)) {
-            effectStack_[i].effect->SetEnabled(enabled);
-        }
-
-        // ボタンの有無
-        bool hasUp = (i > 0);
-        bool hasDown = (i + 1 < effectStack_.size());
-
-        // 常に2ボタン分のスペースを確保（整列のため）
-        float totalButtonWidth = buttonWidth * 2 + spacing;
-
-        ImGui::SameLine(windowWidth - totalButtonWidth);
-
-        // --- UPボタン or ダミー ---
-        if (hasUp) {
-            if (ImGui::Button("UP", ImVec2(buttonWidth, 0))) {
-                std::swap(effectStack_[i], effectStack_[i - 1]);
-            }
-        }
-        else {
-            ImGui::Dummy(ImVec2(buttonWidth, 0));
-        }
-
+        // Outline (固定項目)
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); // 左カラム
+        ImGui::PushID(-1);
+        ImGui::Checkbox("", &enabledOutline_);
         ImGui::SameLine();
-
-        // --- DOWNボタン or ダミー ---
-        if (hasDown) {
-            if (ImGui::Button("DOWN", ImVec2(buttonWidth, 0))) {
-                std::swap(effectStack_[i], effectStack_[i + 1]);
-            }
+        if (ImGui::TreeNode("Outline")) {
+            outlinePass->ImGuiUpdate();
+            ImGui::TreePop();
         }
-        else {
-            ImGui::Dummy(ImVec2(buttonWidth, 0));
-        }
-
         ImGui::PopID();
+
+        ImGui::TableSetColumnIndex(1); // 右カラム (Outlineは上下移動不要)
+        ImGui::TextDisabled("-");
+
+        // effectStack_ のループ
+        for (size_t i = 0; i < effectStack_.size(); ++i) {
+            ImGui::TableNextRow();
+
+            // --- 左カラム: エフェクト設定 ---
+            ImGui::TableSetColumnIndex(0);
+            ImGui::PushID(static_cast<int>(i));
+
+            // チェックボックス
+            bool enabled = effectStack_[i].effect->IsEnabled();
+            if (ImGui::Checkbox("", &enabled)) {
+                effectStack_[i].effect->SetEnabled(enabled);
+            }
+            ImGui::SameLine();
+
+            // エフェクト固有のUI
+            effectStack_[i].effect->ImGuiUpdate();
+
+            // --- 右カラム: 横並びの UP / DOWN ボタン ---
+            ImGui::TableSetColumnIndex(1);
+
+            bool hasUp = (i > 0);
+            bool hasDown = (i + 1 < effectStack_.size());
+
+            // UP ボタン or Dummy
+            if (hasUp) {
+                if (ImGui::Button("UP", ImVec2(buttonWidth, 0))) {
+                    std::swap(effectStack_[i], effectStack_[i - 1]);
+                }
+            }
+            else {
+                ImGui::Dummy(ImVec2(buttonWidth, 0));
+            }
+
+            ImGui::SameLine();
+
+            // DOWN ボタン or Dummy
+            if (hasDown) {
+                if (ImGui::Button("DOWN", ImVec2(buttonWidth, 0))) {
+                    std::swap(effectStack_[i], effectStack_[i + 1]);
+                }
+            }
+            else {
+                ImGui::Dummy(ImVec2(buttonWidth, 0));
+            }
+
+            ImGui::PopID();
+        }
+
+        ImGui::EndTable();
     }
 
     ImGui::End();
 #endif // _DEBUG
-    outlinePass->Update();
-    for (auto& fx : effectStack_)
-    {
-        fx.effect->Update();
-    }
 }
 
 RenderTexture* PostEffectManager::ApplyOutline(RenderTexture* source)

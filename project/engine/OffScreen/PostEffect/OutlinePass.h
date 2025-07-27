@@ -9,6 +9,8 @@ public:
 	void Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE inputSrv);
 	void SetDepthSrv(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 
+	void ImGuiUpdate();
+
 private:
 	struct OutlinePassParam {
 		Vector2 texelSize = { 1.0f / 1280.0f, 1.0f / 720.0f }; // レンダリングターゲットの解像度

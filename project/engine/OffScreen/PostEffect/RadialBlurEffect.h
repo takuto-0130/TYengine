@@ -8,6 +8,8 @@ public:
 
     void Update() override;
 
+	void ImGuiUpdate() override;
+
     void Apply(RenderTexture* input) override;
 
 private:

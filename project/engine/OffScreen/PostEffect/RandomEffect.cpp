@@ -17,10 +17,21 @@ void RandomEffect::Update()
 {
 #ifdef _DEBUG
     ImGui::Begin("Random");
-    ImGui::SliderFloat("t", &param_->t, 0.0f, 1.0f);
-    ImGui::SliderFloat("NoiseStrength", &param_->noiseStrength, 0.0f, 1.0f);
-    ImGui::ColorEdit3("NoiseTint", &param_->noiseTint.x);
+    ImGuiUpdate();
     ImGui::End();
+#endif // _DEBUG
+}
+
+void RandomEffect::ImGuiUpdate()
+{
+#ifdef _DEBUG
+    if (ImGui::TreeNode("Random"))
+    {
+        ImGui::SliderFloat("t", &param_->t, 0.0f, 1.0f);
+        ImGui::SliderFloat("NoiseStrength", &param_->noiseStrength, 0.0f, 1.0f);
+        ImGui::ColorEdit3("NoiseTint", &param_->noiseTint.x);
+        ImGui::TreePop();
+    }
 #endif // _DEBUG
 }
 

@@ -17,9 +17,20 @@ void GrayscaleEffect::Update()
 {
 #ifdef _DEBUG
     ImGui::Begin("Grayscale");
-    ImGui::SliderFloat("Strength", &param_->strength, 0.0f, 1.0f);
-    ImGui::ColorEdit3("tintColor", &param_->tintColor.x);
+    ImGuiUpdate();
     ImGui::End();
+#endif // _DEBUG
+}
+
+void GrayscaleEffect::ImGuiUpdate()
+{
+#ifdef _DEBUG
+    if (ImGui::TreeNode("Grayscale"))
+    {
+        ImGui::SliderFloat("Strength", &param_->strength, 0.0f, 1.0f);
+        ImGui::ColorEdit3("tintColor", &param_->tintColor.x);
+        ImGui::TreePop();
+    }
 #endif // _DEBUG
 }
 

@@ -310,6 +310,7 @@
     <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\CopyImage.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\DoFPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -608,6 +609,7 @@
     <ClInclude Include="engine\OffScreen\PostEffect\PostEffectBase.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

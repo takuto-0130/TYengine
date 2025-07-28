@@ -28,7 +28,7 @@ void GaussianEffect::ImGuiUpdate()
     if (ImGui::TreeNode("Gaussian"))
     {
         ImGui::SliderInt("KernelSize", &param_->kernelSize, 1, 15); // 最大値はPSに合わせる
-        ImGui::SliderFloat("Sigma", &param_->sigma, 0.1f, 7.0f); // kernelSizeを15にしても7移行は変化量が小さすぎるので最大値は7
+        ImGui::SliderFloat("Sigma", &param_->sigma, 0.1f, 7.0f); // sigmaを15にしても7移行は変化量が小さすぎるので最大値は7
 
         if (ImGui::TreeNode("Help"))
         {

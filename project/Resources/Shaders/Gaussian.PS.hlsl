@@ -4,7 +4,7 @@
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
-cbuffer GrayscaleParam : register(b1)
+cbuffer GaussianParam : register(b1)
 {
     int kernelSize;
     float sigma;

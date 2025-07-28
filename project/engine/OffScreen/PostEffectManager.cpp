@@ -18,6 +18,9 @@ void PostEffectManager::Initialize(DirectXBasis* dx, SrvManager* srv)
 
     outlinePass = std::make_unique<OutlinePass>();
     outlinePass->Initialize(dxBasis_, srvMgr_);
+
+    dofPass = std::make_unique<DoFPass>();
+    dofPass->Initialize(dxBasis_, srvMgr_);
 }
 
 void PostEffectManager::AddEffect(const std::string& name, std::shared_ptr<IPostEffect> effect)
@@ -50,11 +53,26 @@ void PostEffectManager::Update()
         // Outline (固定項目)
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0); // 左カラム
-        ImGui::PushID(-1);
+        ImGui::PushID(-2);
         ImGui::Checkbox("", &enabledOutline_);
         ImGui::SameLine();
         if (ImGui::TreeNode("Outline")) {
             outlinePass->ImGuiUpdate();
+            ImGui::TreePop();
+        }
+        ImGui::PopID();
+
+        ImGui::TableSetColumnIndex(1); // 右カラム (Outlineは上下移動不要)
+        ImGui::TextDisabled("-");
+
+        // DoF (固定項目)
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); // 左カラム
+        ImGui::PushID(-1);
+        ImGui::Checkbox("", &enabledDoF_);
+        ImGui::SameLine();
+        if (ImGui::TreeNode("DoF")) {
+            dofPass->ImGuiUpdate();
             ImGui::TreePop();
         }
         ImGui::PopID();
@@ -118,18 +136,49 @@ void PostEffectManager::Update()
 #endif // _DEBUG
 }
 
-RenderTexture* PostEffectManager::ApplyOutline(RenderTexture* source)
+RenderTexture* PostEffectManager::ApplyOutlineAndDoF(RenderTexture* source)
 {
-    // ---------- アウトライン適用 ----------
-    outlineRt_->BeginRender(); // 中間結果用
+    if (!enabledOutline_ && !enabledDoF_)
+    {
+        return source;
+    }
 
-    source->TransitionDepthToSRV();
+    if (enabledOutline_)
+    {
+        // ---------- アウトライン適用 ----------
+        outlineRt_->BeginRender(); // 中間結果用
 
-    outlinePass->SetDepthSrv(source->GetDepthSRVHandle());
-    outlinePass->Draw(dxBasis_->GetCommandList(), source->GetGPUHandle());
-    outlineRt_->EndRender();
+        source->TransitionDepthToSRV();
 
-    source->TransitionDepthToWrite();
+        outlinePass->SetDepthSrv(source->GetDepthSRVHandle());
+        outlinePass->Draw(dxBasis_->GetCommandList(), source->GetGPUHandle());
+        outlineRt_->EndRender();
+
+        source->TransitionDepthToWrite();
+    }
+
+    if (enabledDoF_)
+    {
+        // ---------- 被写界深度適用 ----------
+        tempRt_->BeginRender(); // 中間結果用
+
+        source->TransitionDepthToSRV();
+
+        dofPass->SetDepthSrv(source->GetDepthSRVHandle());
+        if(enabledOutline_)
+        {
+            dofPass->Draw(dxBasis_->GetCommandList(), outlineRt_->GetGPUHandle());
+        }
+        else
+        {
+            dofPass->Draw(dxBasis_->GetCommandList(), source->GetGPUHandle());
+        }
+        tempRt_->EndRender();
+
+        source->TransitionDepthToWrite();
+
+        std::swap(outlineRt_, tempRt_);
+    }
 
     return outlineRt_.get();
 }
@@ -139,7 +188,7 @@ void PostEffectManager::Apply(RenderTexture* source, RenderTexture* target)
     RenderTexture* ping = source;
     RenderTexture* pong = tempRt_.get();
 
-    if (enabledOutline_) ping = ApplyOutline(ping);
+    ping = ApplyOutlineAndDoF(ping);
 
     // 有効なエフェクトだけ抽出
     std::vector<IPostEffect*> enabledEffects;
@@ -214,6 +263,7 @@ void PostEffectManager::MoveEffect(const std::string& name, int newIndex)
 void PostEffectManager::EffectAllDisable()
 {
     SetOutlineEnabled(false);
+    SetDoFEnabled(false);
 	for (auto& entry : effectStack_) {
 		entry.effect->SetEnabled(false);
 	}

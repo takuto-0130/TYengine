@@ -27,7 +27,6 @@ void OutlinePass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_
 
 void OutlinePass::Update()
 {
-
 #ifdef _DEBUG
     ImGui::Begin("Outline");
     ImGuiUpdate();

@@ -1,6 +1,7 @@
 #pragma once
 #include "PostEffect/IPostEffect.h"
 #include "OutlinePass.h"
+#include "DoFPass.h"
 #include "CopyImage.h"
 #include <vector>
 #include <memory>
@@ -33,7 +34,7 @@ public:
 
     void Update();
 
-    RenderTexture* ApplyOutline(RenderTexture* source);
+    RenderTexture* ApplyOutlineAndDoF(RenderTexture* source);
 
     void Apply(RenderTexture* source, RenderTexture* target);
 
@@ -46,7 +47,19 @@ public:
 
     void SetOutlineEnabled(bool enabled) { enabledOutline_ = enabled; }
 
+    void SetDoFEnabled(bool enabled) { enabledDoF_ = enabled; }
+
     void EffectAllDisable();
+
+    template<typename T>
+    T* GetEffect(const std::string& name) {
+        for (auto& e : effectStack_) {
+            if (e.name == name) {
+                return dynamic_cast<T*>(e.effect.get());
+            }
+        }
+        return nullptr;
+    }
 
 private:
     DirectXBasis* dxBasis_ = nullptr;
@@ -63,6 +76,9 @@ private:
     std::unique_ptr<RenderTexture> outlineRt_; // outline用
     std::unique_ptr<OutlinePass> outlinePass;
     bool enabledOutline_ = true;
+
+    std::unique_ptr<DoFPass> dofPass;
+    bool enabledDoF_ = true;
 
     std::unique_ptr<CopyImageEffect> copyImage_;
 };

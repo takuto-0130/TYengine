@@ -17,14 +17,30 @@ void GaussianEffect::Update()
 {
 #ifdef _DEBUG
     ImGui::Begin("Gaussian");
-    ImGui::SliderInt("KernelSize", &param_->kernelSize, 1, 15); // 最大値はPSに合わせる
-    ImGui::SliderFloat("Sigma", &param_->sigma, 0.1f, 7.0f); // kernelSizeを15にしても7移行は変化量が小さすぎるので最大値は7
-    ImGui::Text("Size 3   : Sigma 0.3~0.8");
-    ImGui::Text("Size 5   : Sigma 0.5~1.5");
-    ImGui::Text("Size 7   : Sigma 1.0~2.5");
-    ImGui::Text("Size 9   : Sigma 1.5~3.5");
-    ImGui::Text("Size 11+ : Sigma 2.5~5.0+");
+    ImGuiUpdate();
     ImGui::End();
+#endif // _DEBUG
+}
+
+void GaussianEffect::ImGuiUpdate()
+{
+#ifdef _DEBUG
+    if (ImGui::TreeNode("Gaussian"))
+    {
+        ImGui::SliderInt("KernelSize", &param_->kernelSize, 1, 15); // 最大値はPSに合わせる
+        ImGui::SliderFloat("Sigma", &param_->sigma, 0.1f, 7.0f); // sigmaを15にしても7移行は変化量が小さすぎるので最大値は7
+
+        if (ImGui::TreeNode("Help"))
+        {
+            ImGui::Text("Size 3   : Sigma 0.3~0.8");
+            ImGui::Text("Size 5   : Sigma 0.5~1.5");
+            ImGui::Text("Size 7   : Sigma 1.0~2.5");
+            ImGui::Text("Size 9   : Sigma 1.5~3.5");
+            ImGui::Text("Size 11+ : Sigma 2.5~5.0+");
+            ImGui::TreePop();
+        }
+        ImGui::TreePop();
+    }
 #endif // _DEBUG
 }
 

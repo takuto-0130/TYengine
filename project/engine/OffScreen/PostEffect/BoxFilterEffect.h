@@ -8,7 +8,18 @@ public:
 
     void Update() override;
 
+    void ImGuiUpdate() override;
+
     void Apply(RenderTexture* input) override;
+
+public:
+    // Setter
+    void SetKernelSize(int size) { param_->kernelSize = size; }
+    void SetTexelSize(const Vector2& texel) { param_->texelSize = texel; }
+
+    // Getter
+    int GetKernelSize() const { return param_->kernelSize; }
+    Vector2 GetTexelSize() const { return param_->texelSize; }
 
 private:
     struct BoxFilterParam

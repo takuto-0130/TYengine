@@ -4,6 +4,7 @@
 #include "IParticleRenderer.h"
 #include "../../AppSystem/EventListener/EnemyEvent/IEnemyEventListener .h"
 
+class EnemyBulletManager;
 class Enemy :
     public BaseCharacter
 {
@@ -25,11 +26,18 @@ public:
 public:
 	void SetEventListener(IEnemyEventListener* listener) { listener_ = listener; }
 
+	void SetEnemyBulletManager(EnemyBulletManager* bulletManager) { bulletManager_ = bulletManager; }
+
 	void SetAndApplyPos(Vector3 pos) 
 	{
 		worldTransform_.translation_ = pos;
 		worldTransform_.TransferMatrix();
 	}
+
+	void SetTargetPos(Vector3 pos) { targetPos_ = pos; }
+
+private:
+	void IsShot();
 
 private:
 	std::unique_ptr<EnemyCollider> collider_;
@@ -39,12 +47,21 @@ private:
 	float popTimer_ = 0;
 	const float kPopTime_ = 1.0f;
 
+
+	float kBulletCoolTime_ = 1.5f;
+	float bulletTimer_ = 0.0f;
+
+
 	float deltaTime_ = 1.0f / 60.0f;
 
 	Vector3 defaultScale_ = { 0.3f, 0.3f, 0.3f };
 
 	const Vector3 ZeroScale = {};
 
+	Vector3 targetPos_ = {};
+
 
 	IEnemyEventListener* listener_ = nullptr;
+
+	EnemyBulletManager* bulletManager_;  // ポインタで保持
 };

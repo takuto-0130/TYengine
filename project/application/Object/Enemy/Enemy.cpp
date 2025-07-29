@@ -1,8 +1,10 @@
 #include "Enemy.h"
+#include "./EnemyBullet/EnemyBulletManager.h"
 #include "Timer.h"
 #include "Ease.h"
 #include "ColliderManager.h"
 #include "ParticleManager.h"
+#include "EnemyBullet/Liner/Liner.h"
 
 Enemy::~Enemy()
 {
@@ -43,6 +45,14 @@ void Enemy::Update()
 		t = 1.0f - t;
 		worldTransform_.scale_ = Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t));
 	}
+	else if (bulletTimer_ > 0.0f)
+	{
+		bulletTimer_ -= deltaTime_;
+	}
+	else if (bulletTimer_ <= 0.0f)
+	{
+		IsShot();
+	}
 
 
 	UpdateTransform();
@@ -80,4 +90,14 @@ void Enemy::OnCollision()
 	if (listener_) {
 		listener_->OnEnemyDied(this);
 	}
+}
+
+void Enemy::IsShot()
+{
+	bulletTimer_ = kBulletCoolTime_;
+	std::unique_ptr<EnemyBullet::Liner> bullet = std::make_unique<EnemyBullet::Liner>();
+	bullet->Init();
+	bullet->SetTranslation(GetWorldPosition());
+	bullet->SetShotDirection(Normalize(targetPos_ - GetWorldPosition()));
+	bulletManager_->AddBullet(std::move(bullet));
 }

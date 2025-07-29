@@ -38,10 +38,10 @@ void PlayerBulletNormal::RotationDirection()
 	float lenXZ = std::sqrt(direction_.x * direction_.x + direction_.z * direction_.z);
 	float pitch = std::atan2(-direction_.y, lenXZ);
 
-	// Roll（横傾き）は普通は 0 でOK（必要な場合だけ）
+	// Roll（横傾き）
 	float roll = 0.0f;
 
-	// プレイヤーに回転を適用（Y軸回転のみ、またはX,Y）
-	worldTransform_.rotation_ = { pitch, yaw, roll }; // ← 自由に調整可能
+	// 回転を適用
+	worldTransform_.rotation_ = { pitch, yaw, roll }; 
 	worldTransform_.TransferMatrix();
 }

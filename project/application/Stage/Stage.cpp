@@ -43,6 +43,9 @@ void Stage::Update()
 
     player_->Update();
 
+    Vector3 pos = player_->GetWorldPosition();
+    enemyManager_->SetTargetPos(&pos);
+
     comboManager_->Update();
 }
 

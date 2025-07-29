@@ -259,10 +259,10 @@
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletAfterCollision.cpp">
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletLiner.cpp">
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinerState.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\PlayerBullet\PlayerBulletManager.cpp">
@@ -311,6 +311,10 @@
     <ClCompile Include="engine\OffScreen\PostEffect\CopyImage.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\DoFPass.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\Liner.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\ShotState.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\AfterCollisionState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -610,6 +614,9 @@
     <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\Liner\Liner.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

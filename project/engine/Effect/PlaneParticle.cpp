@@ -21,12 +21,13 @@ void PlaneParticle::TriggerEmit()
     emitterStateUploadBuffer_.Reset();
 
     emitterParam_.emitCount = 5;
+    emitterParam_.emitInterval = 0.5f;
     // 1. 初期データ
     emitterState_.emitRemaining = 5;
     emitterState_.emitThisFrame = 0;
     emitterState_.emitTimer = 0.0f;
     // モードをONESHOTに
-    emitterState_.emitMode = 2;
+    emitterState_.emitMode = 1;
 
     // 2. 一時アップロード用バッファ
     emitterStateUploadBuffer_ = dxBasis_->CreateBufferResource(

@@ -86,29 +86,111 @@ void main(uint3 DTid : SV_DispatchThreadID)
     // =============================
     if (id == 0)
     {
-        uint emitted = 0;
-        for (uint i = 0; i < NumParticles; i++)
-        {
-            if (emitted >= gEmitterState[0].emitRemaining)
-                break;
+        EmitterState s = gEmitterState[0];
 
-            if (gParticles[i].alive == 0)
+    // =============================
+    // ONESHOT
+    // =============================
+        if (s.emitMode == 2)
+        {
+            uint emitted = 0;
+            for (uint i = 0; i < NumParticles; i++)
             {
-                // alive = 2 で「このフレームEmit予定」をマーク
-                gParticles[i].alive = 2;
-                emitted++;
+                if (emitted >= s.emitRemaining)
+                    break;
+
+                if (gParticles[i].alive == 0)
+                {
+                    gParticles[i].alive = 2;
+                    emitted++;
+                }
             }
+
+        // emitRemaining減少
+            if (s.emitRemaining > emitted)
+                s.emitRemaining -= emitted;
+            else
+                s.emitRemaining = 0;
+
+            if (s.emitRemaining == 0)
+                s.emitMode = 0;
+
+            gEmitterState[0] = s;
         }
 
-        // 残数を減らす
-        if (gEmitterState[0].emitRemaining > emitted)
-            gEmitterState[0].emitRemaining -= emitted;
-        else
-            gEmitterState[0].emitRemaining = 0;
+    // =============================
+    // LOOP
+    // =============================
+        else if (s.emitMode == 1)
+        {
+            s.emitTimer -= DeltaTime;
 
-        // emitRemainingが尽きたらモード終了
-        if (gEmitterState[0].emitRemaining == 0)
-            gEmitterState[0].emitMode = 0;
+            if (s.emitTimer <= 0.0f)
+            {
+                uint emitted = 0;
+                for (uint i = 0; i < NumParticles; i++)
+                {
+                    if (emitted >= emitCount)
+                        break;
+
+                    if (gParticles[i].alive == 0)
+                    {
+                        gParticles[i].alive = 2;
+                        emitted++;
+                    }
+                }
+
+            // emitIntervalまで待機
+                s.emitTimer = emitInterval;
+            }
+
+            gEmitterState[0] = s;
+        }
+
+    // =============================
+    // SEQUENTIAL
+    // =============================
+        else if (s.emitMode == 3)
+        {
+            if (s.emitRemaining == 0)
+            {
+                s.emitMode = 0;
+            }
+            else
+            {
+                s.emitTimer -= DeltaTime;
+
+                if (s.emitTimer <= 0.0f)
+                {
+                    uint emitted = 0;
+                    for (uint i = 0; i < NumParticles; i++)
+                    {
+                        if (emitted >= min(emitCount, s.emitRemaining))
+                            break;
+
+                        if (gParticles[i].alive == 0)
+                        {
+                            gParticles[i].alive = 2;
+                            emitted++;
+                        }
+                    }
+
+                // emitRemainingを減らす
+                    if (s.emitRemaining > emitted)
+                        s.emitRemaining -= emitted;
+                    else
+                        s.emitRemaining = 0;
+
+                // emitIntervalまで待機
+                    s.emitTimer = emitInterval;
+
+                    if (s.emitRemaining == 0)
+                        s.emitMode = 0;
+                }
+            }
+
+            gEmitterState[0] = s;
+        }
     }
 
     GroupMemoryBarrierWithGroupSync();
@@ -125,7 +207,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
     {
         // 新しいパーティクルを生成
         p.position = position;
-        float3 dir = RotateDirection2D(direction, 7.283f, FrameIndex * id);
+        float3 dir = RotateDirection2D(direction, angle, FrameIndex * id);
         p.velocity = dir * lerp(speedMin, speedMax, frac(id * 0.13));
         p.currentTime = 0;
         p.lifeTime = lerp(lifeMin, lifeMax, frac(id * 0.37));

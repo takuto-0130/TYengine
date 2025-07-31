@@ -75,8 +75,8 @@ private: // メンバ変数
 
 
 
-	IParticleRenderer::Emitter emitter;
-	IParticleRenderer::Emitter emitterRing;
+	IParticleRenderer::ParticleEmitter emitter;
+	IParticleRenderer::ParticleEmitter emitterRing;
 
 	BulletTimeController* bulletTime_ = nullptr;
 

@@ -131,6 +131,46 @@ ComPtr<ID3D12Resource> DirectXBasis::CreateBufferResource(const size_t& sizeInBy
 	return bufferResource;
 }
 
+ComPtr<ID3D12Resource> DirectXBasis::CreateBufferResource(
+	size_t sizeInBytes,
+	D3D12_HEAP_TYPE heapType,
+	D3D12_RESOURCE_STATES initState,
+	D3D12_RESOURCE_FLAGS flags)
+{
+	assert(sizeInBytes > 0);
+
+	D3D12_HEAP_PROPERTIES heapProps{};
+	heapProps.Type = heapType;
+	heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProps.CreationNodeMask = 1;
+	heapProps.VisibleNodeMask = 1;
+
+	D3D12_RESOURCE_DESC bufferDesc{};
+	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	bufferDesc.Width = sizeInBytes;
+	bufferDesc.Height = 1;
+	bufferDesc.DepthOrArraySize = 1;
+	bufferDesc.MipLevels = 1;
+	bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+	bufferDesc.SampleDesc.Count = 1;
+	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	bufferDesc.Flags = flags; // UAV対応
+
+	ComPtr<ID3D12Resource> buffer = nullptr;
+	HRESULT hr = device_->CreateCommittedResource(
+		&heapProps,
+		D3D12_HEAP_FLAG_NONE,
+		&bufferDesc,
+		D3D12_RESOURCE_STATE_COMMON,
+		nullptr,
+		IID_PPV_ARGS(&buffer)
+	);
+	assert(SUCCEEDED(hr));
+
+	return buffer;
+}
+
 ComPtr<ID3D12Resource> DirectXBasis::CreateTextureResource(const DirectX::TexMetadata& metadata)
 {
 	//metadataを元にResourceの設定

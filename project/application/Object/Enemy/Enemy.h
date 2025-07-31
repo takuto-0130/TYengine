@@ -42,7 +42,7 @@ private:
 private:
 	std::unique_ptr<EnemyCollider> collider_;
 
-	IParticleRenderer::Emitter emitter;
+	IParticleRenderer::ParticleEmitter emitter;
 
 	float popTimer_ = 0;
 	const float kPopTime_ = 1.0f;

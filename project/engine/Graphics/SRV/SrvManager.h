@@ -18,6 +18,10 @@ public:
     void CreateSRVforTexture2D(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels);
     void CreateSRVforStructuredBuffer(uint32_t index, ID3D12Resource* resource, UINT elementCount, UINT elementSize);
 
+    void CreateUAVforStructuredBuffer(uint32_t index, ID3D12Resource* resource, uint32_t numElements, uint32_t stride);
+
+    void SetComputeRootDescriptorTable(ID3D12GraphicsCommandList* cmd, uint32_t rootParamIndex, uint32_t index);
+
     void SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndex, uint32_t index);
 
     D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index) const;

@@ -75,12 +75,12 @@ void Enemy::Pop()
 	popTimer_ = kPopTime_;
 	worldTransform_.scale_ = ZeroScale;
 	worldTransform_.TransferMatrix();
-	emitter.transform.translate = GetWorldPosition();
+	/*emitter.transform.translate = GetWorldPosition();
 	emitter.transform.translate.y += 0.1f;
 	emitter.transform.scale = { 0.5f,0.4f,0.5f };
 	emitter.count = 1;
 	ParticleManager::GetInstance()->SetEmitter(2, emitter);
-	ParticleManager::GetInstance()->TriggerEmit(2, true);
+	ParticleManager::GetInstance()->TriggerEmit(2, true);*/
 }
 
 void Enemy::OnCollision()

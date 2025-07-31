@@ -31,6 +31,20 @@ void TitleScene::Init()
 
 	skybox_ = std::make_unique<ObjectCubemap>();
 	skybox_->Initialize("Resources/Texture/rostock_laage_airport_4k.dds");
+
+
+
+	emitter.transform.scale = { 0.05f,1.0f,1.0f };
+	emitter.transform.rotate = { 0,0,0 };
+	emitter.transform.translate = { 0,1.3f,0 };
+	emitter.count = 5;
+	emitter.frequency = 1.5f;
+
+	emitterRing.transform.scale = { 0.5f,0.5f,0.5f };
+	emitterRing.transform.rotate = { 0,0,0 };
+	emitterRing.transform.translate = { 0,0,0 };
+	emitterRing.count = 1;
+	emitterRing.frequency = 1.5f;
 }
 
 void TitleScene::Update() {
@@ -39,6 +53,8 @@ void TitleScene::Update() {
 	if (input_->TriggerKey(DIK_RETURN))
 	{
 		LoadLevel();
+		ParticleManager::GetInstance()->SetEmitter(0, emitter);
+		ParticleManager::GetInstance()->TriggerEmit(0, true);
 	}
 #endif // _DEBUG
 	spaceSpr_->Update();

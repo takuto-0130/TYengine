@@ -56,15 +56,16 @@ void GameCore::Initialize()
 	auto cylinder = std::make_unique<CylinderParticle>();
 
 	int index = particleManager->Add(std::move(plane));
-	int indexRing = particleManager->Add(std::move(ring));
-	particleManager->Add(std::move(cylinder));
+	/*int indexRing = particleManager->Add(std::move(ring));
+	particleManager->Add(std::move(cylinder));*/
+
 
 	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
-	IParticleRenderer::Emitter emitter{};
+	IParticleRenderer::ParticleEmitter emitter{};
 	particleManager->SetEmitter(index, emitter);
 
-	IParticleRenderer::Emitter emitterRing{};
-	particleManager->SetEmitter(indexRing, emitterRing);
+	IParticleRenderer::ParticleEmitter emitterRing{};
+	//particleManager->SetEmitter(indexRing, emitterRing);
 
 	ColliderManager::GetInstance();
 

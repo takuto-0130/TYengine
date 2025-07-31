@@ -58,6 +58,32 @@ void SrvManager::CreateSRVforStructuredBuffer(uint32_t index, ID3D12Resource* re
     dxBasis_->GetDevice()->CreateShaderResourceView(resource, &desc, handle);
 }
 
+void SrvManager::CreateUAVforStructuredBuffer(
+    uint32_t index, ID3D12Resource* resource,
+    uint32_t numElements, uint32_t stride)
+{
+    D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+    uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+    uavDesc.Buffer.NumElements = numElements;
+    uavDesc.Buffer.StructureByteStride = stride;
+    uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+
+    D3D12_CPU_DESCRIPTOR_HANDLE handle = srvHeap_->GetCPUDescriptorHandleForHeapStart();
+    handle.ptr += index * descriptorSize_;
+
+    dxBasis_->GetDevice()->CreateUnorderedAccessView(
+        resource, nullptr, &uavDesc, handle);
+}
+
+void SrvManager::SetComputeRootDescriptorTable(
+    ID3D12GraphicsCommandList* cmd, uint32_t rootParamIndex, uint32_t index)
+{
+    D3D12_GPU_DESCRIPTOR_HANDLE handle = srvHeap_->GetGPUDescriptorHandleForHeapStart();
+    handle.ptr += index * descriptorSize_;
+
+    cmd->SetComputeRootDescriptorTable(rootParamIndex, handle);
+}
+
 void SrvManager::SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* cmdList, UINT rootParamIndex, uint32_t index) {
     D3D12_GPU_DESCRIPTOR_HANDLE handle = GetGPUDescriptorHandle(index);
     cmdList->SetGraphicsRootDescriptorTable(rootParamIndex, handle);

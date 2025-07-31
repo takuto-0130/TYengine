@@ -2,6 +2,82 @@
 #include "Timer.h"
 #include <numbers>
 
+#ifdef _DEBUG
+#include "imgui.h"
+#endif // _DEBUG
+
+
+void PlaneParticle::TriggerEmit()
+{
+    //emitterParam_.emitMode = 2; // ONESHOT
+    //emitterParam_.emitCount = 5;
+
+    /*mitterParam_.emitMode = 3;
+    emitterParam_.emitRemaining = 50;
+    emitterParam_.emitCount = 5;
+    emitterParam_.emitRate = 5;
+    emitterParam_.emitInterval = 1.0f / emitterParam_.emitRate;
+    emitterParam_.emitTimer = 0.0f;*/
+    emitterStateUploadBuffer_.Reset();
+
+    emitterParam_.emitCount = 5;
+    // 1. 初期データ
+    emitterState_.emitRemaining = 5;
+    emitterState_.emitThisFrame = 0;
+    emitterState_.emitTimer = 0.0f;
+    // モードをONESHOTに
+    emitterState_.emitMode = 2;
+
+    // 2. 一時アップロード用バッファ
+    emitterStateUploadBuffer_ = dxBasis_->CreateBufferResource(
+        sizeof(EmitterState),
+        D3D12_HEAP_TYPE_UPLOAD,
+        D3D12_RESOURCE_STATE_GENERIC_READ
+    );
+
+    // 3. データ書き込み
+    void* mapped = nullptr;
+    emitterStateUploadBuffer_->Map(0, nullptr, &mapped);
+    memcpy(mapped, &emitterState_, sizeof(EmitterState));
+    emitterStateUploadBuffer_->Unmap(0, nullptr);
+
+    // 4. コマンドでDEFAULTヒープのemitterStateBuffer_にコピー
+    auto cmd = dxBasis_->GetCommandList();
+
+    // コピー先をCopyDestに遷移
+    D3D12_RESOURCE_BARRIER barrierBegin = CD3DX12_RESOURCE_BARRIER::Transition(
+        emitterStateBuffer_.Get(),
+        D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+        D3D12_RESOURCE_STATE_COPY_DEST
+    );
+    cmd->ResourceBarrier(1, &barrierBegin);
+
+    cmd->CopyResource(emitterStateBuffer_.Get(), emitterStateUploadBuffer_.Get());
+
+    // UAVに戻す
+    D3D12_RESOURCE_BARRIER barrierEnd = CD3DX12_RESOURCE_BARRIER::Transition(
+        emitterStateBuffer_.Get(),
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        D3D12_RESOURCE_STATE_UNORDERED_ACCESS
+    );
+    cmd->ResourceBarrier(1, &barrierEnd);
+
+
+
+    /*EmitterState init = {};
+    init.emitRemaining = 5;
+    init.emitThisFrame = 0;
+    init.emitTimer = 0.0f;
+
+    void* mapped = nullptr;
+    emitterStateBuffer_->Map(0, nullptr, &mapped);
+    memcpy(mapped, &init, sizeof(EmitterState));
+    emitterStateBuffer_->Unmap(0, nullptr);
+
+    emitterParam_.emitMode = 3;
+    emitterParam_.emitInterval = 10;*/
+}
+
 void PlaneParticle::CreateResources() {
     std::vector<VertexData> vertices = {
         {{ 1, 1, 0, 1 }, {0, 0}, {0, 0, 1}},
@@ -23,10 +99,30 @@ void PlaneParticle::CreateResources() {
     TextureManager::GetInstance()->LoadTexture(texturePath);
     textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(texturePath);
 
-    instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kMaxInstance);
-    instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
+    instancingResource_ = dxBasis_->CreateBufferResource(
+        sizeof(ParticleForGPU) * kMaxInstance,
+        D3D12_HEAP_TYPE_DEFAULT,
+        D3D12_RESOURCE_STATE_COMMON,
+        D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
+    );
     srvIndex_ = srvManager_->Allocate();
     srvManager_->CreateSRVforStructuredBuffer(srvIndex_, instancingResource_.Get(), kMaxInstance, sizeof(ParticleForGPU));
+
+    uavIndex_ = srvManager_->Allocate();
+    srvManager_->CreateUAVforStructuredBuffer(uavIndex_, instancingResource_.Get(), kMaxInstance, sizeof(ParticleForGPU));
+
+
+    emitterStateBuffer_ = dxBasis_->CreateBufferResource(
+        sizeof(EmitterState),
+        D3D12_HEAP_TYPE_DEFAULT,
+        D3D12_RESOURCE_STATE_COMMON,
+        D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
+    uavEmitterStateIndex_ = srvManager_->Allocate();
+    srvManager_->CreateUAVforStructuredBuffer(
+        uavEmitterStateIndex_, emitterStateBuffer_.Get(), 1, sizeof(EmitterState));
+
+
 
     materialResource_ = dxBasis_->CreateBufferResource(256);
     materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
@@ -38,9 +134,24 @@ void PlaneParticle::CreateResources() {
     cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
 
     vertexCount_ = static_cast<uint32_t>(vertices.size());
+
+
+    csParamBuffer_ = dxBasis_->CreateBufferResource(
+        sizeof(CSParams),
+        D3D12_HEAP_TYPE_UPLOAD,
+        D3D12_RESOURCE_STATE_GENERIC_READ
+    );
+
+    // Mapして初期値を設定
+    void* mapped = nullptr;
+    csParamBuffer_->Map(0, nullptr, &mapped);
+    memcpy(mapped, &csParams_, sizeof(CSParams));
+    csParamBuffer_->Unmap(0, nullptr);
+
+    CreateComputeRootSignatureAndPSO();
 }
 
-PlaneParticle::ParticleP PlaneParticle::MakeNewParticle(std::mt19937& random, const Emitter& emitter) {
+PlaneParticle::ParticleP PlaneParticle::MakeNewParticle(std::mt19937& random, const ParticleEmitter& emitter) {
     ParticleP parti;
     std::uniform_real_distribution<float> distScale(0.2f, 0.8f);
     parti.transform.scale = { emitter.transform.scale.x,distScale(random), emitter.transform.scale.z};
@@ -59,55 +170,78 @@ PlaneParticle::ParticleP PlaneParticle::MakeNewParticle(std::mt19937& random, co
     return parti;
 }
 
-void PlaneParticle::Update() {
-    std::mt19937 random(seedGene_());
+void PlaneParticle::Update() 
+{
+   auto cmd = dxBasis_->GetCommandList();
 
-    Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
-    Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, camera_->GetWorldMatrix());
-    billboardMatrix.m[3][0] = 0.0f;
-    billboardMatrix.m[3][1] = 0.0f;
-    billboardMatrix.m[3][2] = 0.0f;
+    ID3D12DescriptorHeap* heaps[] = { srvManager_->GetHeap() };
+    cmd->SetDescriptorHeaps(_countof(heaps), heaps);
 
-    numInstance_ = 0;
+    cmd->SetComputeRootSignature(computeRootSignature_.Get());
+    cmd->SetPipelineState(computePipelineState_.Get());
 
-    kDeltaTime = Timer::GetInstance()->GetDeltaTime();
+    // UAV (particles)
+    srvManager_->SetComputeRootDescriptorTable(cmd, 0, uavIndex_);
 
-    emitter_.frequencyTime += kDeltaTime;
-    if (!useTrigger_ && emitter_.frequencyTime >= emitter_.frequency) {
-        particles_.splice(particles_.end(), Emit(random));
-        emitter_.frequencyTime -= emitter_.frequency;
-    }
+    // CSParams 更新
+    csParams_.deltaTime = Timer::GetInstance()->GetDeltaTime();
+    csParams_.numParticles = kMaxInstance;
+    csParams_.cameraViewProj = camera_->GetViewProjectionMatrix();
+    csParams_.frameIndex++;
 
-    for (auto it = particles_.begin(); it != particles_.end();) {
-        it->currentTime += kDeltaTime;
-        it->transform.translate += it->velocity * kDeltaTime;
-        float t = it->currentTime / it->lifeTime;
-        t = powf(t, 3.0f);
-        float scaleF = 2.0f;
-        scaleF = scaleF * t;
-        Vector3 scale = it->transform.scale;
-        scale.y += scaleF;
+    void* mapped = nullptr;
+    csParamBuffer_->Map(0, nullptr, &mapped);
+    memcpy(mapped, &csParams_, sizeof(CSParams));
+    csParamBuffer_->Unmap(0, nullptr);
+    cmd->SetComputeRootConstantBufferView(2, csParamBuffer_->GetGPUVirtualAddress());
 
-        if (it->currentTime >= it->lifeTime) {
-            it = particles_.erase(it);
-            continue;
-        }
+    // EmitterParam 更新
+    void* mappedEmitter = nullptr;
+    emitterBuffer_->Map(0, nullptr, &mappedEmitter);
+    memcpy(mappedEmitter, &emitterParam_, sizeof(EmitterParam));
+    emitterBuffer_->Unmap(0, nullptr);
+    cmd->SetComputeRootConstantBufferView(3, emitterBuffer_->GetGPUVirtualAddress());
 
-        if (numInstance_ < kMaxInstance) {
-            Matrix4x4 world = MakeAffineMatrix(scale, it->transform.rotate, it->transform.translate);
-            if (useBillboard_) {
-                world = MakeScaleMatrix(scale)
-                    * billboardMatrix
-                    * MakeRotateZMatrix(it->transform.rotate.z)
-                    * MakeTranslateMatrix(it->transform.translate);
-            }
-            Matrix4x4 WVP = world * camera_->GetViewProjectionMatrix();
-            instancingData_[numInstance_].WVP = WVP;
-            instancingData_[numInstance_].World = world;
-            instancingData_[numInstance_].color = it->color;
-            instancingData_[numInstance_].color.w *= (1.0f - (it->currentTime / it->lifeTime));
-            ++numInstance_;
-        }
-        ++it;
-    }
+    // UAV (emitterState)
+    srvManager_->SetComputeRootDescriptorTable(cmd, 1, uavEmitterStateIndex_);
+
+    // Dispatch
+    cmd->Dispatch((kMaxInstance + 255) / 256, 1, 1);
+
+    // UAV Barrier
+    D3D12_RESOURCE_BARRIER barriers[] = {
+        CD3DX12_RESOURCE_BARRIER::UAV(instancingResource_.Get()),
+        CD3DX12_RESOURCE_BARRIER::UAV(emitterStateBuffer_.Get())
+    };
+    cmd->ResourceBarrier(_countof(barriers), barriers);
+
+    numInstance_ = kMaxInstance;
+}
+
+void PlaneParticle::Draw()
+{
+    if (numInstance_ == 0) return;
+
+    auto cmd = dxBasis_->GetCommandList();
+
+    ID3D12DescriptorHeap* heaps[] = { srvManager_->GetHeap() };
+    cmd->SetDescriptorHeaps(_countof(heaps), heaps);
+
+    cmd->SetGraphicsRootSignature(rootSignature_.Get());
+    cmd->SetPipelineState(pipelineState_.Get());
+
+    cmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    cmd->IASetVertexBuffers(0, 1, &vertexBufferView_);
+
+    srvManager_->SetGraphicsRootDescriptorTable(cmd, 1, srvIndex_);
+    srvManager_->SetGraphicsRootDescriptorTable(cmd, 2, textureIndex_);
+    cmd->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+    cmd->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
+
+    cmd->DrawInstanced(vertexCount_, numInstance_, 0, 0);
+
+    /*if (emitterStateUploadBuffer_)
+    {
+        emitterStateUploadBuffer_.Reset();
+    }*/
 }

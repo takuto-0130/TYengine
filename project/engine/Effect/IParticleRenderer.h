@@ -9,7 +9,33 @@
 #include <wrl.h>
 #include <numbers>
 
-class IParticleRenderer {
+struct EmitterParam
+{
+    Vector3 position = { 0,0,0 };
+    float emitRate = 10.0f;   // 秒間発生数
+
+    uint32_t emitCount = 5;
+    float emitInterval;
+    float padding[2];
+
+    Vector3 direction = { 0,1,0 };
+    float angle = std::numbers::pi_v<float> * 2.0f;       // 方向のばらつき
+
+    float speedMin = 1.0f, speedMax = 2.0f;
+    float lifeMin = 1.0f, lifeMax = 3.0f;
+
+    Vector4 color = { 1,1,1,1 };
+};
+
+struct EmitterState {
+    uint32_t emitRemaining;
+    uint32_t emitThisFrame;
+    float emitTimer;
+    uint32_t emitMode = 0;    // 0=OFF, 1=LOOP, 2=ONESHOT, 3=SEQUENTIAL
+};
+
+class IParticleRenderer 
+{
 public:
     virtual ~IParticleRenderer() = default;
     virtual void Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam);
@@ -17,8 +43,10 @@ public:
     virtual void Draw();
 
 
-    struct Emitter {
-        Transform transform{
+    struct ParticleEmitter 
+    {
+        Transform transform
+        {
             {1.0f, 1.0f, 1.0f},
             {0.0f, 0.0f, 0.0f},
             {0.0f, 0.0f, 0.0f}
@@ -29,11 +57,12 @@ public:
         Vector4 color = { 1,1,1,1 };
     };
 
-    virtual void SetEmitter(Emitter& emitter) { emitter_ = emitter; }
+    virtual void SetEmitter(ParticleEmitter& emitter) { emitter_ = emitter; }
 
     virtual void TriggerEmit();
 protected:
-    struct ParticleP {
+    struct ParticleP
+    {
         Transform transform;
         Vector3 velocity;
         Vector4 color;
@@ -41,26 +70,48 @@ protected:
         float currentTime;
     };
 
-    struct ParticleForGPU {
+    struct ParticleForGPU 
+    {
         Matrix4x4 WVP;
         Matrix4x4 World;
         Vector4 color;
+
+        // 追加 (Compute Shader用)
+        Vector3 position;
+        float pad0;
+        Vector3 velocity;
+        float pad1;
+        float currentTime;
+        float lifeTime;
+        uint32_t alive = 0;
     };
 
-    struct CameraForGPUP {
+    struct CameraForGPUP
+    {
         Vector3 worldPosition;
     };
 
-    struct VertexData {
+    struct VertexData 
+    {
         Vector4 position;
         Vector2 texCoord;
         Vector3 normal;
     };
-    struct Material {
+    struct Material
+    {
         Vector4 color;
         int32_t enableLighting;
         float padding[3];
         Matrix4x4 uvTransform;
+    };
+
+    struct CSParams
+    {
+        float deltaTime;
+        uint32_t numParticles;
+        uint32_t frameIndex = 0;
+        float padding;
+        Matrix4x4 cameraViewProj;
     };
 
     virtual void CreateResources() = 0;
@@ -68,7 +119,10 @@ protected:
     void CreateRootSignature();
     void LoadShader();
     void CreatePipelineState();
-    virtual ParticleP MakeNewParticle(std::mt19937& random, const Emitter& emitter);
+
+    void CreateComputeRootSignatureAndPSO();
+
+    virtual ParticleP MakeNewParticle(std::mt19937& random, const ParticleEmitter& emitter);
     virtual std::list<ParticleP> Emit(std::mt19937& random);
 
 protected:
@@ -93,6 +147,7 @@ protected:
 
     D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
     uint32_t srvIndex_ = 0;
+    uint32_t uavIndex_ = 0;
     uint32_t textureIndex_ = 0;
 
     ParticleForGPU* instancingData_ = nullptr;
@@ -104,15 +159,31 @@ protected:
     std::random_device seedGene_;
     uint32_t numInstance_ = 0;
 
-    Emitter emitter_;
+    ParticleEmitter emitter_;
 
     Transform transform_{};
 
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState_;
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> computeRootSignature_;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> computePipelineState_;
     Microsoft::WRL::ComPtr<IDxcBlob> vsBlob_;
     Microsoft::WRL::ComPtr<IDxcBlob> psBlob_;
 
     D3D12_BLEND_DESC blendDesc_{};
     D3D12_RASTERIZER_DESC rasterizerDesc_{};
+
+
+    CSParams csParams_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> csParamBuffer_;
+
+
+
+    EmitterParam emitterParam_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> emitterBuffer_;
+
+    EmitterState emitterState_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> emitterStateBuffer_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> emitterStateUploadBuffer_;
+    uint32_t uavEmitterStateIndex_ = 0;
 };

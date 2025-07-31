@@ -55,7 +55,7 @@ void CylinderParticle::CreateResources() {
     vertexCount_ = static_cast<uint32_t>(vertices.size());
 }
 
-IParticleRenderer::ParticleP CylinderParticle::MakeNewParticle(std::mt19937& random, const Emitter& emitter)
+IParticleRenderer::ParticleP CylinderParticle::MakeNewParticle(std::mt19937& random, const ParticleEmitter& emitter)
 {
     ParticleP parti;
     std::uniform_real_distribution<float> dist(-1.0f, 1.0f);

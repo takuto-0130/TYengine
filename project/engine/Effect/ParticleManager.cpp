@@ -23,7 +23,7 @@ void ParticleManager::DrawAll() {
     }
 }
 
-void ParticleManager::SetEmitter(int index, IParticleRenderer::Emitter& emitter)
+void ParticleManager::SetEmitter(int index, IParticleRenderer::ParticleEmitter& emitter)
 {
     particles_[index]->SetEmitter(emitter);
 }

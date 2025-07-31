@@ -3,6 +3,7 @@
 #include "LevelObject.h"
 #include "BlenderLevelLoader.h"
 #include "ObjectCubemap.h"
+#include "ParticleManager.h"
 
 #include "Sprite.h"
 class TitleScene : public IScene {
@@ -26,4 +27,9 @@ private:
 
 
 	std::unique_ptr<ObjectCubemap> skybox_;
+
+
+
+	IParticleRenderer::ParticleEmitter emitter;
+	IParticleRenderer::ParticleEmitter emitterRing;
 };

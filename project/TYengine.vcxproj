@@ -269,6 +269,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
+    <ClInclude Include="engine\Effect\Emitter.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />

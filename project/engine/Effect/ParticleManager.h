@@ -17,7 +17,7 @@ public:
     void DrawAll();
 
 public:
-    void SetEmitter(int index, IParticleRenderer::Emitter& emitter);
+    void SetEmitter(int index, IParticleRenderer::ParticleEmitter& emitter);
 
     void TriggerEmit(int index, bool flag);
 

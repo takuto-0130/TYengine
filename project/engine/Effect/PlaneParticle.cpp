@@ -20,14 +20,14 @@ void PlaneParticle::TriggerEmit()
     emitterParam_.emitTimer = 0.0f;*/
     emitterStateUploadBuffer_.Reset();
 
-    emitterParam_.emitCount = 5;
-    emitterParam_.emitInterval = 0.5f;
-    // 1. 初期データ
-    emitterState_.emitRemaining = 5;
+    if (emitterState_.emitMode == 2)
+    {
+        emitterState_.emitRemaining = emitterParam_.emitCount;
+    }
     emitterState_.emitThisFrame = 0;
     emitterState_.emitTimer = 0.0f;
     // モードをONESHOTに
-    emitterState_.emitMode = 1;
+    //emitterState_.emitMode = 3;
 
     // 2. 一時アップロード用バッファ
     emitterStateUploadBuffer_ = dxBasis_->CreateBufferResource(
@@ -173,6 +173,43 @@ PlaneParticle::ParticleP PlaneParticle::MakeNewParticle(std::mt19937& random, co
 
 void PlaneParticle::Update() 
 {
+#ifdef _DEBUG
+    ImGui::Begin("Particle");
+
+
+    if (ImGui::Button("Mode:LOOP"))
+    {
+        emitterState_.emitMode = 1;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Mode:ONESHOT"))
+    {
+        emitterState_.emitMode = 2;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Mode:SEQUENTIAL"))
+    {
+        emitterState_.emitMode = 3;
+    }
+    int a = emitterParam_.emitCount;
+    ImGui::DragInt("1frame/count", &a, 1.0f, 1, 256);
+    emitterParam_.emitCount = a;
+
+    int b = emitterState_.emitRemaining;
+    ImGui::DragInt("SEQUENTIAL/MaxCount", &b, 1.0f, 1, 256);
+    emitterState_.emitRemaining = b;
+
+    ImGui::DragFloat("Interval", &emitterParam_.emitInterval, 0.1f, 0.1f, 5.0f);
+
+    if (ImGui::Button("Apply/Emit"))
+    {
+        TriggerEmit();
+    }
+    ImGui::End();
+#endif // _DEBUG
+
+
+
    auto cmd = dxBasis_->GetCommandList();
 
     ID3D12DescriptorHeap* heaps[] = { srvManager_->GetHeap() };

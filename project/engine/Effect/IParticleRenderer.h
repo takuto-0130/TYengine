@@ -12,14 +12,14 @@
 struct EmitterParam
 {
     Vector3 position = { 0,0,0 };
-    float emitRate = 10.0f;   // 秒間発生数
+    float emitRate = 10.0f;
 
     uint32_t emitCount = 5;
-    float emitInterval;
+    float emitInterval = 0.5f;
     float padding[2];
 
     Vector3 direction = { 0,1,0 };
-    float angle = std::numbers::pi_v<float> * 2.0f;       // 方向のばらつき
+    float angle = std::numbers::pi_v<float> * 2.0f;
 
     float speedMin = 1.0f, speedMax = 2.0f;
     float lifeMin = 1.0f, lifeMax = 3.0f;
@@ -28,9 +28,9 @@ struct EmitterParam
 };
 
 struct EmitterState {
-    uint32_t emitRemaining;
-    uint32_t emitThisFrame;
-    float emitTimer;
+    uint32_t emitRemaining = 15;
+    uint32_t emitThisFrame = 0;
+    float emitTimer = 0.0f;
     uint32_t emitMode = 0;    // 0=OFF, 1=LOOP, 2=ONESHOT, 3=SEQUENTIAL
 };
 

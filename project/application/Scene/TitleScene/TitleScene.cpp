@@ -50,12 +50,12 @@ void TitleScene::Init()
 void TitleScene::Update() {
 	Transition();
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_RETURN))
+	/*if (input_->TriggerKey(DIK_RETURN))
 	{
 		LoadLevel();
 		ParticleManager::GetInstance()->SetEmitter(0, emitter);
 		ParticleManager::GetInstance()->TriggerEmit(0, true);
-	}
+	}*/
 #endif // _DEBUG
 	spaceSpr_->Update();
 	text_->Update();

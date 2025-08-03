@@ -28,7 +28,7 @@ void VignetteEffect::ImGuiUpdate()
     if (ImGui::TreeNode("Vignette")) 
     {
         ImGui::SliderFloat("intensity", &param_->intensity, 2.0f, 30.0f);
-        ImGui::SliderFloat("power", &param_->power, 0.5f, 3.0f);
+        ImGui::SliderFloat("power", &param_->power, 0.0f, 3.0f);
         ImGui::ColorEdit3("color", &param_->vignetteColor.x);
         ImGui::TreePop();
     }

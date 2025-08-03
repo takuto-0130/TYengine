@@ -134,11 +134,11 @@ void RailManager::RailCameraMove()
 	{
 		if (cameraForwardT <= 1.0f)
 		{
-			cameraForwardT += cameraSegmentCount * deltaTime_ * 60.0f;
+			cameraForwardT += cameraSegmentCount * deltaTime_ * 60.0f * speedMultiply_;
 
 			if (cameraForwardT <= 1.0f)
 			{
-				cameraEyeT += cameraSegmentCount * deltaTime_ * 60.0f;
+				cameraEyeT += cameraSegmentCount * deltaTime_ * 60.0f * speedMultiply_;
 				Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
 				Vector3 forward = CatmullRomPosition(controlPoints_, cameraForwardT);
 				forward = forward - eye;
@@ -198,6 +198,7 @@ void RailManager::RailCameraDebug()
 	}
 	ImGui::Text("eye%.03f", cameraEyeT);
 	ImGui::Text("forward%.03f", cameraForwardT);
+	ImGui::SliderFloat("SpeedMultiply", &speedMultiply_, 0.0f, 3.0f);
 	ImGui::End();
 #endif
 }

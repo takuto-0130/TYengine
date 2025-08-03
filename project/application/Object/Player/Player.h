@@ -35,6 +35,8 @@ public:
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
+	Object3d* GetObj() { return obj_.get(); }
+
 private:
 	void Attack();
 	void Move();
@@ -91,6 +93,8 @@ private:
 	float rightRoll_ = -2.0f * std::numbers::pi_v<float>;
 	Vector2 startRollPos_{};
 	Vector2 goalRollPos_{};
+
+	float rollEfectTimer_ = 0.0f;
 
 
 	// 弾関連

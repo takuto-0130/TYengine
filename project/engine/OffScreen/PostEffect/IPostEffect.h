@@ -1,9 +1,9 @@
 #pragma once
 #include "CopyPass.h"
+#include "RenderTexture.h"
 
 class DirectXBasis;
 class SrvManager;
-class RenderTexture;
 
 class IPostEffect 
 {

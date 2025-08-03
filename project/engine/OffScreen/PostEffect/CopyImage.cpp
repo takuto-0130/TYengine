@@ -13,6 +13,10 @@ void CopyImageEffect::Update()
 {
 }
 
+void CopyImageEffect::ImGuiUpdate()
+{
+}
+
 void CopyImageEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());

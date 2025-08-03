@@ -7,6 +7,7 @@
 //----------------------------------
 void EnemyManager::Init()
 {
+	bulletManager_.Init();
 	enemyEditor_ = std::make_unique<EnemyEditor>(&enemyGroupsEditor_);
 	Reset();
 }
@@ -30,6 +31,7 @@ void EnemyManager::Update()
 	{
 		enemy->Update();
 	}
+	bulletManager_.Update();
 }
 
 void EnemyManager::Draw()
@@ -38,6 +40,7 @@ void EnemyManager::Draw()
 	{
 		enemy->Draw();
 	}
+	bulletManager_.Draw();
 }
 
 void EnemyManager::TriggerNextEnemyGroup()
@@ -83,6 +86,17 @@ void EnemyManager::DrawEditorUI()
 	enemyEditor_->DrawEditorUI();
 }
 
+void EnemyManager::SetTargetPos(Vector3* pos)
+{
+	if(pos)
+	{
+		for (auto& enemy : activeEnemies_)
+		{
+			enemy->SetTargetPos(*pos);
+		}
+	}
+}
+
 std::list<std::list<std::unique_ptr<Enemy>>> EnemyManager::DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src) {
 	std::list<std::list<std::unique_ptr<Enemy>>> copy;
 
@@ -92,6 +106,7 @@ std::list<std::list<std::unique_ptr<Enemy>>> EnemyManager::DeepCopyEnemyGroups(c
 		for (const auto& enemy : group) 
 		{
 			std::unique_ptr<Enemy> newEnemy = std::make_unique<Enemy>();
+			newEnemy->SetEnemyBulletManager(&bulletManager_);
 			newEnemy->SetEventListener(comboAndScoreHandler_.get());
 			newEnemy->Init();
 			newEnemy->SetAndApplyPos(enemy->GetWorldPosition());

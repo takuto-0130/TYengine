@@ -50,9 +50,9 @@ void GameScene::Init()
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 
-	Object3dBasis::GetInstance()->SetSkyboxFilePath("Resources/Texture/rostock_laage_airport_4k.dds");
+	Object3dBasis::GetInstance()->SetSkyboxFilePath("Resources/Texture/output_skybox.dds");
 	skybox_ = std::make_unique<ObjectCubemap>();
-	skybox_->Initialize("Resources/Texture/rostock_laage_airport_4k.dds");
+	skybox_->Initialize("Resources/Texture/output_skybox.dds");
 
 	Audio::GetInstance()->LoadWave("fanfare");
 

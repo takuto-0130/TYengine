@@ -32,6 +32,7 @@ void PlayerBulletNormal::Init()
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("cube.obj");
+	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { scale_, scale_, scale_ };
 	worldTransform_.TransferMatrix();

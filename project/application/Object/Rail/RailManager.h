@@ -67,6 +67,8 @@ private:
 
 	float deltaTime_ = 1.0f / 60.0f;
 
+	float speedMultiply_ = 1.0f;
+
 	std::unordered_set<size_t> alreadyTriggeredIndices_;
 	struct TriggerObject
 	{

@@ -8,7 +8,20 @@ public:
 
     void Update() override;
 
+	void ImGuiUpdate() override;
+
     void Apply(RenderTexture* input) override;
+
+public:
+    // Setter
+    void SetCenter(const Vector2& c) { param_->kCenter = c; }
+    void SetBlurWidth(float w) { param_->kBlurWidth = w; }
+    void SetNumSamples(int n) { param_->kNumSamples = n; }
+
+    // Getter
+    Vector2 GetCenter() const { return param_->kCenter; }
+    float GetBlurWidth() const { return param_->kBlurWidth; }
+    int GetNumSamples() const { return param_->kNumSamples; }
 
 private:
 	struct RadialBlurParam

@@ -16,7 +16,8 @@ void Enemy::Init()
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("unitSphere.obj");
-	obj_->SetEnvironmentCoefficient(1.0f);
+	obj_->SetColor({ 1,0,0,1 });
+	//obj_->SetEnvironmentCoefficient(0.01f);
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = defaultScale_;
 	worldTransform_.TransferMatrix();

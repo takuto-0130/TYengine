@@ -1,11 +1,21 @@
 #include "../Player.h"
 #include "input.h"
+#include "Timer.h"
 #include "Ease.h"
 #include "BulletTimeController.h"
+#include "PostEffectManager.h"
+#include "VignetteEffect.h"
+#include "RadialBlurEffect.h"
 
 void Player::InitBarrelRoll()
 {
 	startRollPos_ = screenOffset_;
+	rollEfectTimer_ = 0.0f;
+	PostEffectManager::GetInstance()->SetEffectEnabled("Vignette", true);
+	PostEffectManager::GetInstance()->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
+	PostEffectManager::GetInstance()->SetEffectEnabled("RadialBlur", true);
+	PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
+	PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(screenOffset_);
 }
 
 void Player::UpdateBarrelRoll()
@@ -15,7 +25,8 @@ void Player::UpdateBarrelRoll()
 
 void Player::ExitBarrelRoll()
 {
-
+	PostEffectManager::GetInstance()->SetEffectEnabled("Vignette", false);
+	PostEffectManager::GetInstance()->SetEffectEnabled("RadialBlur", false);
 }
 
 
@@ -54,6 +65,23 @@ void Player::BarrelRoll()
 		{
 			RightRoll();
 		}
+	}
+	if (rollEfectTimer_ <= 2.1f)
+	{
+		rollEfectTimer_ += Timer::GetInstance()->GetRawDeltaTime();
+		float t = 0.0f;
+		if(rollEfectTimer_ <= 1.2f)
+		{
+			t = rollEfectTimer_ / 1.2f;
+		}
+		else
+		{
+			t = 0.9f - (rollEfectTimer_ - 1.2f) / 0.9f;
+			t = EaseFixed::InQuint(t);
+		}
+		PostEffectManager::GetInstance()->GetEffect<VignetteEffect>("Vignette")->SetPower(t);
+		PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((screenOffset_ + Vector2(1.0f,1.0f)) / 2.0f);
+		PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.035f * t);
 	}
 
 	ClampOffset();

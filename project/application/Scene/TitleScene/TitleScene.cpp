@@ -30,7 +30,7 @@ void TitleScene::Init()
 
 
 	skybox_ = std::make_unique<ObjectCubemap>();
-	skybox_->Initialize("Resources/Texture/rostock_laage_airport_4k.dds");
+	skybox_->Initialize("Resources/Texture/output_skybox.dds");
 }
 
 void TitleScene::Update() {

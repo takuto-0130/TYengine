@@ -37,7 +37,7 @@ void SceneManager::Update()
 
 	// 実行中シーンを更新する
 	scene_->Update();
-	TransitionManager::GetInstance()->Update(Timer::GetInstance()->GetRawDeltaTime());
+	TransitionManager::GetInstance()->Update(1.0f / 60.0f);
 }
 
 void SceneManager::Draw()

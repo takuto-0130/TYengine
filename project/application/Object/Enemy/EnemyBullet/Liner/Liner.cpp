@@ -40,6 +40,7 @@ void Liner::Init()
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("cube.obj");
+	obj_->SetColor({ 1.0f, 0.1f, 0.1f, 1.0f });
 	obj_->SetIsLighting(false);
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { scale_, scale_, scale_ };

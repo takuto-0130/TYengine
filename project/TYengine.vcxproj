@@ -66,6 +66,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)%(RelativeDir)\$(FileName)</ObjectFileName>
+      <PrecompiledHeaderOutputFile>$(IntDir)%(RelativeDir)$(FileName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -104,6 +106,8 @@ if exist "externals\dxil.dll" (
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)%(RelativeDir)\$(FileName)</ObjectFileName>
+      <PrecompiledHeaderOutputFile>$(IntDir)%(RelativeDir)$(FileName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,8 +137,10 @@ if exist "externals\dxil.dll" (
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletAfterCollision.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\NormalBulletLiner.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\AfterCollisionState.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\ShotState.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinerState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBoost.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerDead.cpp" />
@@ -162,6 +168,8 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Enemy\EnemyEditor.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
+    <ClCompile Include="engine\OffScreen\PostEffect\DoFPass.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\CopyImage.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\DissolveEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\BoxFilterEffect.cpp" />
@@ -243,6 +251,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\Liner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
@@ -250,6 +259,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
     <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h" />
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h" />
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
@@ -258,6 +268,8 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
+    <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\BoxFilterEffect.h" />
@@ -353,6 +365,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\OutlinePass.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\Liner\Liner.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -34,6 +34,7 @@ void Player::Init()
 	obj_->Initialize();
 	obj_->SetModel("cube.obj");
 	obj_->SetIsLighting(false);
+	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { scale_, scale_, scale_ };
 	worldTransform_.useQuaternion_ = true; // プレイヤーではQuaternion使うようにする
@@ -61,6 +62,8 @@ void Player::Init()
 void Player::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+
+	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
 
 	UpdateState(deltaTime_);
 	RotationOffset();
@@ -167,6 +170,8 @@ void Player::DebugGUI()
 {
 #ifdef _DEBUG
 	ImGui::Begin("Player");
+	ImGui::DragFloat2("ScreenOffset", &screenOffset_.x);
+
 	Vector3 pos = GetWorldPosition();
 	ImGui::DragFloat3("pos", &pos.x);
 
@@ -193,6 +198,7 @@ void Player::TestReticleInit()
 	reticleObj_->Initialize();
 	reticleObj_->SetModel("cube.obj");
 	reticleObj_->SetIsLighting(false);
+	reticleObj_->SetColor({ 0,1,0,1 });
 	reticleWT_.Initialize();
 	reticleWT_.scale_ = { scale_, scale_, scale_ };
 	reticleWT_.TransferMatrix();

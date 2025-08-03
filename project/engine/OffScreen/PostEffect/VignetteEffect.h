@@ -9,7 +9,20 @@ public:
 
     void Update() override;
 
+    void ImGuiUpdate() override;
+
     void Apply(RenderTexture* input) override;
+
+public:
+    // Setter
+    void SetIntensity(float i) { param_->intensity = i; }
+    void SetPower(float p) { param_->power = p; }
+    void SetColor(const Vector3& c) { param_->vignetteColor = c; }
+
+    // Getter
+    float GetIntensity() const { return param_->intensity; }
+    float GetPower() const { return param_->power; }
+    Vector3 GetColor() const { return param_->vignetteColor; }
 
 private:
     struct VignetteParam

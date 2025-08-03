@@ -13,17 +13,23 @@ void OutlinePass::SetDepthSrv(D3D12_GPU_DESCRIPTOR_HANDLE handle) {
     copyPass_.SetDepthSrv(handle); // register(t1) にバインド
 }
 
+void OutlinePass::ImGuiUpdate()
+{
+#ifdef _DEBUG
+    ImGui::ColorEdit3("color", &outlineParam_->outlineColor.x);
+    ImGui::SliderFloat("depthThreshold", &outlineParam_->depthThreshold, 0.001f, 0.008f, "%.5f");
+#endif // _DEBUG
+}
+
 void OutlinePass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE inputSrv) {
     copyPass_.Draw(cmdList, inputSrv);
 }
 
 void OutlinePass::Update()
 {
-
 #ifdef _DEBUG
     ImGui::Begin("Outline");
-    ImGui::ColorEdit3("color", &outlineParam_->outlineColor.x);
-    ImGui::SliderFloat("depthThreshold", &outlineParam_->depthThreshold, 0.001f, 0.008f, "%.5f");
+    ImGuiUpdate();
     ImGui::End();
 #endif // _DEBUG
 }

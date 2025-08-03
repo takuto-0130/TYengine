@@ -18,8 +18,19 @@ void BoxFilterEffect::Update()
 {
 #ifdef _DEBUG
     ImGui::Begin("BoxFilter");
-    ImGui::SliderInt("kernelSize", &param_->kernelSize, 1, 15);
+    ImGuiUpdate();
     ImGui::End();
+#endif // _DEBUG
+}
+
+void BoxFilterEffect::ImGuiUpdate()
+{
+#ifdef _DEBUG
+    if (ImGui::TreeNode("BoxFilter"))
+    {
+        ImGui::SliderInt("kernelSize", &param_->kernelSize, 1, 15);
+        ImGui::TreePop();
+    }
 #endif // _DEBUG
 }
 

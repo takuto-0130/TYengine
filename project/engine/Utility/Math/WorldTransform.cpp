@@ -6,7 +6,7 @@
 void WorldTransform::Initialize()
 {
     // ワールド行列の初期化
-    matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
+    matWorld_ = MakeAffineMatrix(colliderScale_, rotation_, translation_);
 
     // 定数バッファ生成
     CreateConstBuffer();
@@ -31,10 +31,10 @@ void WorldTransform::TransferMatrix()
 {
     // スケール、回転、平行移動を合成して行列を計算する
     if (useQuaternion_) {
-        matWorld_ = MakeAffineMatrix(scale_, rotationQ_, translation_);
+        matWorld_ = MakeAffineMatrix(colliderScale_, rotationQ_, translation_);
     }
     else {
-        matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
+        matWorld_ = MakeAffineMatrix(colliderScale_, rotation_, translation_);
     }
 
     // ワールド行列を定数バッファに転送

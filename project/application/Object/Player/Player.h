@@ -1,6 +1,7 @@
 #pragma once
 #include "../BaseCharacter/BaseCharacter.h"
 #include "PlayerCollider.h"
+#include "JustCollider.h"
 #include "StateMachine.h"
 #include "PlayerBullet/PlayerBulletType.h"
 #include "PlayerBullet/PlayerBulletManager.h"
@@ -37,6 +38,11 @@ public:
 
 	Object3d* GetObj() { return obj_.get(); }
 
+	void OnJust() { isJust_ = true; }
+	void OffJust() { isJust_ = false; }
+
+	bool IsJust() { return isJust_; }
+
 private:
 	void Attack();
 	void Move();
@@ -65,8 +71,9 @@ private:
 	Camera* camera_ = nullptr;
 	Vector2 screenOffset_{}; // カメラ基準のスクリーン内オフセット（例：[-1, 1]）
 	std::unique_ptr<PlayerCollider> collider_;
+	std::unique_ptr<JustCollider> justCollider_;
 
-	float scale_ = 0.1f;
+	float colliderScale_ = 0.2f;
 	float playerDepthFromCamera_ = 4.0f;
 	float xRange = 16.0f * 0.09f; // 横移動の最大幅（画面内の物理スケール）
 	float yRange = 9.0f * 0.085f; // 縦移動の最大高さ
@@ -86,6 +93,9 @@ private:
 	// Roll（横傾き）
 	float roll = 0.0f;
 
+	// Pitch（上下回転）
+	float movePitch = 0.0f;
+
 	// バレルロール
 	float rollTime_ = 0.6f;
 	float rollRange_ = 0.3f;
@@ -96,10 +106,16 @@ private:
 
 	float rollEfectTimer_ = 0.0f;
 
+	bool isJust_ = false;
+	bool justRoll_ = false;
+	float justScale_ = 3.0f;
+
 
 	// 弾関連
 	std::unique_ptr<PlayerBulletManager> bulletManager_;
 	PlayerBulletType currentBulletType_ = PlayerBulletType::NORMAL;
+	float bulletCoolTime_ = 0.3f;
+	float bulletTimer_ = 0.0f;
 
 	std::unique_ptr<Reticle> reticle_;
 

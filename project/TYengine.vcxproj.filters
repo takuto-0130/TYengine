@@ -315,6 +315,7 @@
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\Liner.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\ShotState.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\AfterCollisionState.cpp" />
+    <ClCompile Include="application\Object\Player\JustCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
@@ -617,6 +618,7 @@
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\Liner\Liner.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
+    <ClInclude Include="application\Object\Player\JustCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

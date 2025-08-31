@@ -3,6 +3,8 @@
 #include "EnemyCollider.h"
 #include "IParticleRenderer.h"
 #include "../../AppSystem/EventListener/EnemyEvent/IEnemyEventListener .h"
+#include <iostream>
+#include <random>
 
 class EnemyBulletManager;
 class Enemy :
@@ -39,6 +41,8 @@ public:
 private:
 	void IsShot();
 
+	void Rotate();
+
 private:
 	std::unique_ptr<EnemyCollider> collider_;
 
@@ -48,13 +52,15 @@ private:
 	const float kPopTime_ = 1.0f;
 
 
-	float kBulletCoolTime_ = 1.5f;
+	float kBulletCoolTime_ = 2.0f;
 	float bulletTimer_ = 0.0f;
 
 
 	float deltaTime_ = 1.0f / 60.0f;
 
 	Vector3 defaultScale_ = { 0.3f, 0.3f, 0.3f };
+
+	Vector3 upScale_ = { 0.45f, 0.45f, 0.45f };
 
 	const Vector3 ZeroScale = {};
 
@@ -64,4 +70,6 @@ private:
 	IEnemyEventListener* listener_ = nullptr;
 
 	EnemyBulletManager* bulletManager_;  // ポインタで保持
+
+	std::random_device rd;
 };

@@ -21,12 +21,13 @@ void TitleScene::Init()
 	spaceSpr_ = std::make_unique<Sprite>();
 	spaceSpr_->Initialize("Resources/Texture/TitleSpace.png");
 	spaceSpr_->SetAnchorPoint({ 0.5f,0.5f });
-	spaceSpr_->SetPosition({ 640,360 });
+	spaceSpr_->SetPosition({ 640,440 });
 
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/TitleText.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Title.png");
 	text_ = std::make_unique<Sprite>();
-	text_->Initialize("Resources/Texture/TitleText.png");
+	text_->Initialize("Resources/Texture/Title.png");
+	text_->SetPosition({ 40,0 });
 
 
 	skybox_ = std::make_unique<ObjectCubemap>();

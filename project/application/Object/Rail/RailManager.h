@@ -35,6 +35,23 @@ public:
 
 	bool IsEndRail() { return cameraForwardT >= 1.0f ? true : false; }
 
+	bool ClearEnemyGroup()
+	{
+		return (cameraEyeT >= 0.25f && !firstClear_) || (cameraEyeT >= 0.83f && !secondClear_);
+	}
+
+	void ClearAccept()
+	{
+		if (!firstClear_)
+		{
+			firstClear_ = true;
+		}
+		else
+		{
+			secondClear_ = true;
+		}
+	}
+
 private:
 	void PopRail(Vector3 position, Vector3 rota);
 
@@ -69,6 +86,11 @@ private:
 
 	float speedMultiply_ = 1.0f;
 
+
+	bool firstClear_ = false;
+	bool secondClear_ = false;
+
+
 	std::unordered_set<size_t> alreadyTriggeredIndices_;
 	struct TriggerObject
 	{
@@ -79,7 +101,7 @@ private:
 		{
 			world.Initialize();
 			world.translation_ = pos;
-			world.scale_ = { 0.5f, 0.5f, 0.5f };
+			world.colliderScale_ = { 0.5f, 0.5f, 0.5f };
 			object.Initialize();
 			object.SetModel("unitSphere.obj");
 		}

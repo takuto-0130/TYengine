@@ -36,6 +36,10 @@ Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vect
 
 Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t);
 
+size_t WrapIndex(ptrdiff_t i, size_t n);
+
+Vector3 CatmullRomPositionClosed(const std::vector<Vector3>& points, float t);
+
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
 void OBBRotation(const Vector3& rotate, OBB& obb);

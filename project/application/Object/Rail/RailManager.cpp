@@ -37,6 +37,17 @@ void RailManager::Reset()
 	segmentCount = oneSegmentCount * controlPoints_.size();
 	SetSegment();
 	RailReDraw();
+
+	// 距離トリガーを再構築
+	RebuildTriggerSFromSegments();
+
+	// 発火履歴をクリア
+	alreadyTriggeredIndices_.clear();
+
+	// 弧長の初期値
+	eyeS_ = 0.0f;
+	forwardS_ = std::min(arcMap_.total, lookAhead_);
+	prevEyeS_ = eyeS_;
 }
 
 void RailManager::Update()
@@ -126,57 +137,80 @@ void RailManager::RailReDraw()
 		rotate.x = std::atan2(-forward.y, len);
 		PopRail(v, rotate);
 	}
+	arcMap_ = BuildPolylineArc(pointsDrawing_);
+	eyeS_ = 0.0f;
+	forwardS_ = std::min(arcMap_.total, lookAhead_);
 }
 
 void RailManager::RailCameraMove()
 {
-	if(rails_.size() > 0)
-	{
-		if (cameraForwardT <= 1.0f)
-		{
-			cameraForwardT += cameraSegmentCount * deltaTime_ * 60.0f * speedMultiply_;
+	if (!isRailCameraMove_) return;
 
-			if (cameraForwardT <= 1.0f)
-			{
-				cameraEyeT += cameraSegmentCount * deltaTime_ * 60.0f * speedMultiply_;
-				Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
-				Vector3 forward = CatmullRomPosition(controlPoints_, cameraForwardT);
-				forward = forward - eye;
+	if (controlPoints_.size() < 4 || pointsDrawing_.size() < 2 || arcMap_.total <= 0.0f) {
+		isRailCameraMove_ = false;
+		return;
+	}
 
-				Vector3 rot{};
-				rot.y = std::atan2(forward.x, forward.z);
-				float len = Length({ forward.x, 0, forward.z });
-				rot.x = std::atan2(-forward.y, len);
-				camera_->SetRotate(rot);
+	// 前フレームの弧長を保持
+	prevEyeS_ = eyeS_;
 
-				Matrix4x4 rotMat = MakeRotateXYZMatrix(rot);
-				Vector3 upOffset = TransformNormal(offsetCameraPos_, rotMat);
-				eye += upOffset;
+	// 時間更新
+	const float ds = speedMps_ * speedMultiply_ * deltaTime_;
+	eyeS_ = std::min(eyeS_ + ds, arcMap_.total);
+	forwardS_ = std::min(eyeS_ + lookAhead_, arcMap_.total);
 
-				camera_->SetTranslate(eye);
-			}
+	// 距離→t（pointsDrawing_ベース）
+	const float eyeT = DistanceToT_Hybrid(arcMap_, eyeS_);
+	const float forwardT = DistanceToT_Hybrid(arcMap_, forwardS_);
 
-		}
-		else
-		{
-			isRailCameraMove_ = false;
-		}
+	// 位置と向きはCatmullRomPositionで
+	Vector3 eye = CatmullRomPosition(controlPoints_, eyeT);
+	Vector3 target = CatmullRomPosition(controlPoints_, forwardT);
+	Vector3 forward = target - eye;
+
+	Vector3 rot{};
+	rot.y = std::atan2(forward.x, forward.z);
+	const float lenXZ = Length({ forward.x, 0.0f, forward.z });
+	rot.x = std::atan2(-forward.y, lenXZ);
+
+	// 進行方向に追従するカメラオフセット
+	Matrix4x4 rotMat = MakeRotateXYZMatrix(rot);
+	Vector3 upOffset = TransformNormal(offsetCameraPos_, rotMat);
+	eye += upOffset;
+
+	camera_->SetRotate(rot);
+	camera_->SetTranslate(eye);
+
+	if (forwardS_ >= arcMap_.total) {
+		isRailCameraMove_ = false;
 	}
 }
 
 bool RailManager::RailTrigger()
 {
-	size_t currentIndex = static_cast<size_t>(cameraEyeT * controlPoints_.size());
-	const auto& segments = RailEditor::Instance()->GetSegments();
-	if (currentIndex < segments.size() && segments[currentIndex].triggerEvent)
+	if (triggerS_.empty()) return false;
+
+	// 通過方向に対応（通常は prevEyeS_ <= eyeS_）
+	const float s0 = std::min<float>(prevEyeS_, eyeS_);
+	const float s1 = std::max<float>(prevEyeS_, eyeS_);
+
+	bool firedAny = false;
+
+	// 昇順になっているので前から見るだけでOK
+	for (size_t i = 0; i < triggerS_.size(); ++i)
 	{
-		if (alreadyTriggeredIndices_.find(currentIndex) == alreadyTriggeredIndices_.end())
+		if (triggerFired_[i]) continue;
+
+		const float s = triggerS_[i];
+		if (s > s1) break;                 // これより先はまだ到達していない
+		if (s >= s0 && s <= s1)            // 区間内に入ったらエッジ発火
 		{
-			alreadyTriggeredIndices_.insert(currentIndex);
-			return true;
+			triggerFired_[i] = true;
+			firedAny = true;
+			// 複数個を同一フレームで通過しても全部拾える
 		}
 	}
-	return false;
+	return firedAny;
 }
 
 void RailManager::RailCameraDebug()
@@ -213,5 +247,66 @@ void RailManager::ResetRailCamera()
 {
 	float denom = kDivisionSpan * controlPoints_.size();
 	cameraEyeT = 0;
-	cameraForwardT = 30.0f / denom;
+	cameraForwardT = 60.0f / denom;
+
+	// 初期位置と向きを強制的に設定
+	Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
+	Vector3 target = CatmullRomPosition(controlPoints_, cameraForwardT);
+	Vector3 forward = target - eye;
+
+	Vector3 rot{};
+	rot.y = std::atan2(forward.x, forward.z);
+	float lenXZ = Length({ forward.x, 0.0f, forward.z });
+	rot.x = std::atan2(-forward.y, lenXZ);
+
+	Matrix4x4 rotMat = MakeRotateXYZMatrix(rot);
+	Vector3 upOffset = TransformNormal(offsetCameraPos_, rotMat);
+	eye += upOffset;
+
+	if (camera_) {
+		camera_->SetRotate(rot);
+		camera_->SetTranslate(eye);
+	}
+
+	eyeS_ = 0.0f;
+	forwardS_ = std::min(lookAhead_, arcMap_.total);
+}
+
+void RailManager::RebuildTriggerSFromSegments()
+{
+	triggerS_.clear();
+	triggerFired_.clear();
+
+	if (controlPoints_.size() < 2 || pointsDrawing_.size() < 2 || arcMap_.S.empty())
+		return;
+
+	const auto& segments = RailEditor::Instance()->GetSegments();
+
+	const size_t Nctrl = controlPoints_.size();
+	const size_t Npoly = pointsDrawing_.size();
+
+	for (size_t i = 0; i < Nctrl && i < segments.size(); ++i)
+	{
+		if (!segments[i].triggerEvent) continue;
+
+		float t = (Nctrl <= 1) ? 0.0f : static_cast<float>(i) / static_cast<float>(Nctrl - 1);
+		size_t idx = static_cast<size_t>(std::round(t * static_cast<float>(Npoly - 1)));
+		idx = std::min(idx, arcMap_.S.size() - 1);
+
+		triggerS_.push_back(arcMap_.S[idx]);
+		triggerFired_.push_back(false);
+	}
+
+	// s の昇順に整列（安全のため）
+	std::vector<size_t> order(triggerS_.size());
+	std::iota(order.begin(), order.end(), 0);
+	std::sort(order.begin(), order.end(), [&](size_t a, size_t b) { return triggerS_[a] < triggerS_[b]; });
+
+	std::vector<float> sSorted;
+	std::vector<bool>  fSorted;
+	sSorted.reserve(triggerS_.size());
+	fSorted.reserve(triggerS_.size());
+	for (size_t k : order) { sSorted.push_back(triggerS_[k]); fSorted.push_back(triggerFired_[k]); }
+	triggerS_.swap(sSorted);
+	triggerFired_.swap(fSorted);
 }

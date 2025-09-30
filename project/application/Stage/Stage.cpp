@@ -22,9 +22,6 @@ void Stage::Init()
 
     Reset();
 
-    // 1フレームだけカメラを動かす
-    railManager_->RailCameraMove();
-
     ground_ = std::make_unique<Object3d>();
     ground_->Initialize();
     ground_->SetModel("ground.obj");

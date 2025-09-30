@@ -6,6 +6,23 @@
 #include "ParticleManager.h"
 #include "EnemyBullet/Liner/Liner.h"
 
+#define ENEMY_STATE_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(Enemy, stateEnum, funcName)
+
+const std::vector<StateMachine<Enemy, EnemyState>::StateFunctionSet>& Enemy::GetStateTable()
+{
+	using enum EnemyState;
+	static const std::vector<StateFunctionSet> stateTable =
+	{
+		ENEMY_STATE_ENTRY(PRE_ENTER, PreEnter),
+		ENEMY_STATE_ENTRY(ENTERING, Entering),
+		ENEMY_STATE_ENTRY(ACTIVE, Active),
+		ENEMY_STATE_ENTRY(EXITING, Exiting),
+		ENEMY_STATE_ENTRY(DESPAWNED, Despawned),
+	};
+	return stateTable;
+}
+
 Enemy::~Enemy()
 {
 	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
@@ -13,6 +30,8 @@ Enemy::~Enemy()
 
 void Enemy::Init()
 {
+	RegisterFromDefaultTable(this);
+
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("crystal.obj");
@@ -32,45 +51,21 @@ void Enemy::Init()
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dist(0.2f, 1.0f);
 	bulletTimer_ = dist(gen);
+
+
+	ChangeState(EnemyState::ENTERING);
 }
 
 void Enemy::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 
-	if (popTimer_ > 0)
-	{
-		popTimer_ -= deltaTime_;
-		if (popTimer_ < 0)
-		{
-			popTimer_ = 0;
-		}
-		float t = popTimer_ / kPopTime_;
-		t = 1.0f - t;
-		worldTransform_.colliderScale_ = Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t));
-	}
-	else if (bulletTimer_ > 0.0f)
-	{
-		bulletTimer_ -= deltaTime_;
-		if (bulletTimer_ >= 1.5f)
-		{
-			float t = bulletTimer_;
-			if (t < 1.5f)
-			{
-				t = 1.5f;
-			}
-			worldTransform_.colliderScale_ = Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f));
-		}
-	}
-	else if (bulletTimer_ <= 0.0f)
-	{
-		IsShot();
-	}
 
+	UpdateState(deltaTime_);
+	
 
 	UpdateTransform();
 	Rotate();
-
 	collider_->Update(GetWorldPosition());
 }
 

@@ -44,6 +44,8 @@ public:
 	bool IsJust() { return isJust_; }
 
 private:
+	void PostStateUpdate();
+
 	void Attack();
 	void Move();
 	void ClampOffset();

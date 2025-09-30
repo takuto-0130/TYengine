@@ -10,7 +10,8 @@
 const std::vector<StateMachine<Player, PlayerState>::StateFunctionSet>& Player::GetStateTable()
 {
 	using enum PlayerState;
-	static const std::vector<StateFunctionSet> stateTable = {
+	static const std::vector<StateFunctionSet> stateTable = 
+	{
 		PLAYER_STATE_ENTRY(IDLE, Idle),
 		PLAYER_STATE_ENTRY(ROOT, Root),
 		PLAYER_STATE_ENTRY(BOOST, Boost),
@@ -78,6 +79,21 @@ void Player::Update()
 	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	UpdateState(deltaTime_);
+
+	PostStateUpdate();
+}
+
+void Player::Draw()
+{
+	obj_->Draw(worldTransform_);
+	bulletManager_->Draw();
+
+	// test
+	TestReticleDraw();
+}
+
+void Player::PostStateUpdate()
+{
 	RotationOffset();
 	worldTransform_.TransferMatrix();
 	collider_->Update(GetWorldPosition());
@@ -92,15 +108,6 @@ void Player::Update()
 	TestReticleUpdate();
 
 	DebugGUI();
-}
-
-void Player::Draw()
-{
-	obj_->Draw(worldTransform_);
-	bulletManager_->Draw();
-
-	// test
-	TestReticleDraw();
 }
 
 void Player::Attack()

@@ -103,11 +103,15 @@ void Enemy::OnCollision()
 void Enemy::IsShot()
 {
 	bulletTimer_ = kBulletCoolTime_;
-	std::unique_ptr<EnemyBullet::Liner> bullet = std::make_unique<EnemyBullet::Liner>();
-	bullet->Init();
-	bullet->SetTranslation(GetWorldPosition());
-	bullet->SetShotDirection(Normalize(targetPos_ - GetWorldPosition()));
-	bulletManager_->AddBullet(std::move(bullet));
+
+	if (isInGame_)
+	{
+		std::unique_ptr<EnemyBullet::Liner> bullet = std::make_unique<EnemyBullet::Liner>();
+		bullet->Init();
+		bullet->SetTranslation(GetWorldPosition());
+		bullet->SetShotDirection(Normalize(targetPos_ - GetWorldPosition()));
+		bulletManager_->AddBullet(std::move(bullet));
+	}
 }
 
 void Enemy::Rotate()

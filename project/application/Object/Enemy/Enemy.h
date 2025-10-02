@@ -134,25 +134,22 @@ private: // シーン内のState関連関数
 	void InitActive() {}
 	void UpdateActive() 
 	{
-		if (isInGame_)
+		if (bulletTimer_ > 0.0f)
 		{
-			if (bulletTimer_ > 0.0f)
+			bulletTimer_ -= deltaTime_;
+			if (bulletTimer_ >= 1.5f)
 			{
-				bulletTimer_ -= deltaTime_;
-				if (bulletTimer_ >= 1.5f)
+				float t = bulletTimer_;
+				if (t < 1.5f)
 				{
-					float t = bulletTimer_;
-					if (t < 1.5f)
-					{
-						t = 1.5f;
-					}
-					worldTransform_.colliderScale_ = Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f));
+					t = 1.5f;
 				}
+				worldTransform_.colliderScale_ = Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f));
 			}
-			else if (bulletTimer_ <= 0.0f)
-			{
-				IsShot();
-			}
+		}
+		else if (bulletTimer_ <= 0.0f)
+		{
+			IsShot();
 		}
 	}
 	void ExitActive() {}

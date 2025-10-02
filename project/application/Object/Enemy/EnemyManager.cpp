@@ -97,7 +97,8 @@ void EnemyManager::SetTargetPos(Vector3* pos)
 	}
 }
 
-std::list<std::list<std::unique_ptr<Enemy>>> EnemyManager::DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src) {
+std::list<std::list<std::unique_ptr<Enemy>>> EnemyManager::DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src)
+{
 	std::list<std::list<std::unique_ptr<Enemy>>> copy;
 
 	for (const auto& group : src) 

@@ -2,633 +2,728 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="engine\Audio\Audio.cpp">
-      <Filter>Source</Filter>
+      <Filter>engine\source</Filter>
     </ClCompile>
     <ClCompile Include="engine\Utility\Loader\BlenderLevelLoader.cpp">
-      <Filter>Source</Filter>
+      <Filter>engine\source</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Camera\Camera.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Collider\ColliderManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\OffScreen\CopyPass.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Cubemap\CubemapBasis.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Effect\CylinderParticle.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\EngineCore\D3DResourceLeakChecker.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\EngineCore\DirectXBasis.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\emitterInit.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Enemy\Enemy.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Enemy\EnemyEditor.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Enemy\EnemyManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\Transition\Fade\FadeTransition.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Framework\GameCore.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameScene.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneCollision.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeOut.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneLoad.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePause.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePlay.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneReady.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_demo.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_draw.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_tables.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Debugger\ImGuiManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Framework\Input\Input.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Effect\IParticleRenderer.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\SceneObjects\LevelObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\EngineCore\Logger.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\main.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Math\mathFunc.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Math\Matrix4x4Func.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Model\Model.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Model\ModelLoader.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Model\ModelManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Model\Object3d.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Model\Object3dBasis.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Cubemap\ObjectCubemap.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Effect\ParticleManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Effect\PlaneParticle.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Effect\RingParticle.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\Player.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerState\PlayerBoost.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerCollider.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerState\PlayerDead.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerState\PlayerIdle.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerState\PlayerRoot.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerState\PlayerTakeDamage.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\PlayUI\PlayUI.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Rail\Rail.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Rail\RailEditor.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Rail\RailManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\OffScreen\RenderTexture.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\Result\Result.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Framework\SceneBase\SceneFactory.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Framework\SceneBase\SceneManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\Transition\TransitionManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TitleScene.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Sprite\TextureManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Audio\StreamingAudio.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Utils\StringUtility.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Stage\Stage.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Stage\StageManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Sprite\SpriteBasis.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\SRV\SrvManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Graphics\Sprite\Sprite.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Collider\Sphere\SphereCollider.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Skydome\Skydome.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Framework\TYFrameWork.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\EngineCore\WindowsApp.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Math\WorldTransform.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Collider\CollisionFunc.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinerState.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\PlayerBulletManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Collider\Ray\RayCollider.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\Reticle\Reticle.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\Reticle\ReticleCollider.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\AppSystem\Score\ScoreManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\ScoreUI\ScoreUI.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Utils\Time\Timer.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="engine\OffScreen\PostEffect\BoxFilterEffect.cpp">
+      <Filter>engine\source</Filter>
     </ClCompile>
     <ClCompile Include="engine\Utility\Utils\Time\BulletTimeController.cpp">
-      <Filter>Source</Filter>
+      <Filter>engine\source</Filter>
     </ClCompile>
-    <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="engine\Camera\Camera.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Collider\ColliderManager.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Collider\CollisionFunc.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\CopyImage.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\CopyPass.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Cubemap\CubemapBasis.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Effect\CylinderParticle.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\EngineCore\D3DResourceLeakChecker.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\EngineCore\DirectXBasis.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\DissolveEffect.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\DoFPass.cpp">
+      <Filter>engine\source</Filter>
     </ClCompile>
     <ClCompile Include="engine\Utility\Math\Ease.cpp">
-      <Filter>Source</Filter>
+      <Filter>engine\source</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Utility\Math\Quaternion.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\GrayscaleEffect.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffectManager.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\VignetteEffect.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\BoxFilterEffect.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\GaussianEffect.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\RadialBlurEffect.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\DissolveEffect.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\CopyImage.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
-    <ClCompile Include="engine\OffScreen\PostEffect\DoFPass.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\Liner.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\ShotState.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\AfterCollisionState.cpp" />
-    <ClCompile Include="application\Object\Player\JustCollider.cpp" />
+    <ClCompile Include="engine\Framework\GameCore.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\GaussianEffect.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\GrayscaleEffect.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui.cpp">
+      <Filter>externals</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_demo.cpp">
+      <Filter>externals</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_draw.cpp">
+      <Filter>externals</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>externals</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
+      <Filter>externals</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_tables.cpp">
+      <Filter>externals</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
+      <Filter>externals</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Debugger\ImGuiManager.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Framework\Input\Input.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Effect\IParticleRenderer.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\SceneObjects\LevelObject.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\EngineCore\Logger.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Math\mathFunc.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Math\Matrix4x4Func.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Model\Model.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Model\ModelLoader.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Model\ModelManager.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Model\Object3d.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Model\Object3dBasis.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Cubemap\ObjectCubemap.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Effect\ParticleManager.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Effect\PlaneParticle.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\AfterCollisionState.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\emitterInit.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\Enemy.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\EnemyEditor.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\EnemyManager.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\Transition\Fade\FadeTransition.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameScene.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneCollision.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeOut.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneLoad.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePause.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScenePlay.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneReady.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\JustCollider.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\Liner.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinerState.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\main.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Player.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerState\PlayerBoost.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\PlayerBulletManager.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerCollider.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerState\PlayerDead.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerState\PlayerIdle.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerState\PlayerRoot.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerState\PlayerTakeDamage.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\PlayUI\PlayUI.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\RadialBlurEffect.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffectManager.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Math\Quaternion.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Collider\Ray\RayCollider.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\RenderTexture.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Effect\RingParticle.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Framework\SceneBase\SceneFactory.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Framework\SceneBase\SceneManager.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Collider\Sphere\SphereCollider.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Sprite\Sprite.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Sprite\SpriteBasis.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\SRV\SrvManager.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Audio\StreamingAudio.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Utils\StringUtility.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Graphics\Sprite\TextureManager.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Utils\Time\Timer.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Framework\TYFrameWork.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\OffScreen\PostEffect\VignetteEffect.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\EngineCore\WindowsApp.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Utility\Math\WorldTransform.cpp">
+      <Filter>engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Rail\Rail.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Rail\RailEditor.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Rail\RailManager.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\Result\Result.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Reticle\Reticle.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Player\Reticle\ReticleCollider.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AppSystem\Score\ScoreManager.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\ScoreUI\ScoreUI.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\ShotState.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Skydome\Skydome.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Stage\Stage.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Stage\StageManager.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\TitleScene\TitleScene.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\Transition\TransitionManager.cpp">
+      <Filter>application\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Audio\Audio.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\ObjectBasis\BaseObject.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\SceneObjects\BaseObject.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Loader\BlenderLevelLoader.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Camera\Camera.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Collider\Collider.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Collider\ColliderManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\OffScreen\CopyPass.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Cubemap\CubemapBasis.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Effect\CylinderParticle.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\EngineCore\D3DResourceLeakChecker.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\EngineCore\DirectXBasis.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Enemy\Enemy.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Enemy\EnemyEditor.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Enemy\EnemyManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\Transition\Fade\FadeTransition.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Framework\GameCore.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\GameScene\GameScene.h">
-      <Filter>Header</Filter>
+    <ClInclude Include="externals\imgui\imstb_truetype.h">
+      <Filter>externals</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
-      <Filter>Header</Filter>
+      <Filter>externals</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui.h">
-      <Filter>Header</Filter>
+      <Filter>externals</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
-      <Filter>Header</Filter>
+      <Filter>externals</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_impl_win32.h">
-      <Filter>Header</Filter>
+      <Filter>externals</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imgui_internal.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Debugger\ImGuiManager.h">
-      <Filter>Header</Filter>
+      <Filter>externals</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_rectpack.h">
-      <Filter>Header</Filter>
+      <Filter>externals</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_textedit.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="externals\imgui\imstb_truetype.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Framework\Input\Input.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Effect\IParticleRenderer.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Framework\SceneBase\IScene.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\Transition\ITransition.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\SceneObjects\LevelObject.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\EngineCore\Logger.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Math\mathFunc.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Math\Matrix4x4Func.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Model\Model.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Model\ModelManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Model\ModelLoader.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Model\Object3d.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Model\Object3dBasis.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Cubemap\ObjectCubemap.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Effect\ParticleManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\GameScene\Pause\Pause.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Effect\PlaneParticle.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\Player.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\PlayerCollider.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\GameScene\PlayUI\PlayUI.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Rail\Rail.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Rail\RailEditor.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Rail\RailManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\OffScreen\RenderTexture.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\GameScene\Result\Result.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Effect\RingParticle.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Framework\SceneBase\SceneFactory.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Framework\SceneBase\SceneManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Skydome\Skydome.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Collider\Sphere\SphereCollider.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Sprite\Sprite.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Sprite\SpriteBasis.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\SRV\SrvManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Stage\Stage.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Stage\StageManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Utils\StateMachine.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\Transition\StateMachineTransition.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Audio\StreamingAudio.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Utils\StringUtility.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Math\struct.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Graphics\Sprite\TextureManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\TitleScene\TitleScene.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\Transition\TransitionManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Framework\TYFrameWork.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\EngineCore\WindowsApp.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Math\WorldTransform.h">
-      <Filter>Header</Filter>
+      <Filter>externals</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h">
-      <Filter>Header</Filter>
+      <Filter>application\header</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\Collider\CollisionFunc.h">
-      <Filter>Header</Filter>
+    <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h">
+      <Filter>application\header</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Enemy\EnemyCollider.h">
-      <Filter>Header</Filter>
+    <ClInclude Include="engine\Utility\SceneObjects\BaseObject.h">
+      <Filter>application\header</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletManager.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Collider\Ray\RayCollider.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\Reticle\Reticle.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Player\Reticle\ReticleCollider.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h">
-      <Filter>Header</Filter>
+    <ClInclude Include="engine\Utility\ObjectBasis\BaseObject.h">
+      <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\ComboAndScoreHandler.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Utility\Math\Ease.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h">
-      <Filter>Header</Filter>
+      <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
-      <Filter>Header</Filter>
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\Enemy.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\EnemyCollider.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\EnemyEditor.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\EnemyManager.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Transition\Fade\FadeTransition.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\GameScene\GameScene.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\JustCollider.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\GameScene\Pause\Pause.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\PBulletCollider.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Player.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletManager.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\NormalBullet\PlayerBulletNormal.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerCollider.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\GameScene\PlayUI\PlayUI.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Rail\Rail.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Rail\RailEditor.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Rail\RailManager.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\GameScene\Result\Result.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Reticle\Reticle.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\Reticle\ReticleCollider.h">
+      <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\AppSystem\Score\ScoreManager.h">
-      <Filter>Header</Filter>
+      <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\ScoreUI\ScoreUI.h">
-      <Filter>Header</Filter>
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Skydome\Skydome.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Stage\Stage.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Stage\StageManager.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\TitleScene\TitleScene.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Transition\TransitionManager.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Audio\Audio.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Loader\BlenderLevelLoader.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\BoxFilterEffect.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Camera\Camera.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Collider\Collider.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Collider\ColliderManager.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Collider\CollisionFunc.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\CopyPass.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Cubemap\CubemapBasis.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Effect\CylinderParticle.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\EngineCore\D3DResourceLeakChecker.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\EngineCore\DirectXBasis.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Math\Ease.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Framework\GameCore.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\GaussianEffect.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\GrayscaleEffect.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Debugger\ImGuiManager.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Framework\Input\Input.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Effect\IParticleRenderer.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\IPostEffect.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Framework\SceneBase\IScene.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Transition\ITransition.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\SceneObjects\LevelObject.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\Liner\Liner.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\EngineCore\Logger.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Math\mathFunc.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Math\Matrix4x4Func.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Model\Model.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Model\ModelLoader.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Model\ModelManager.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Model\Object3d.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Model\Object3dBasis.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Cubemap\ObjectCubemap.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\OutlinePass.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Effect\ParticleManager.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Effect\PlaneParticle.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\PostEffectBase.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffectManager.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Math\Quaternion.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\RadialBlurEffect.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Collider\Ray\RayCollider.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\RenderTexture.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Effect\RingParticle.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Framework\SceneBase\SceneFactory.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Framework\SceneBase\SceneManager.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Collider\Sphere\SphereCollider.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Sprite\Sprite.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Sprite\SpriteBasis.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\SRV\SrvManager.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\StateMachine.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\Transition\StateMachineTransition.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Audio\StreamingAudio.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\StringUtility.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Math\struct.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Graphics\Sprite\TextureManager.h">
+      <Filter>engine\header</Filter>
     </ClInclude>
     <ClInclude Include="engine\Utility\Utils\Time\Timer.h">
-      <Filter>Header</Filter>
+      <Filter>engine\header</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\Math\Quaternion.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\IPostEffect.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\GrayscaleEffect.h" />
-    <ClInclude Include="engine\OffScreen\PostEffectManager.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\VignetteEffect.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\BoxFilterEffect.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\GaussianEffect.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\RadialBlurEffect.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\OutlinePass.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\PostEffectBase.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
-    <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyBullet\Liner\Liner.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
-    <ClInclude Include="application\Object\Player\JustCollider.h" />
+    <ClInclude Include="engine\Framework\TYFrameWork.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\OffScreen\PostEffect\VignetteEffect.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\EngineCore\WindowsApp.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Math\WorldTransform.h">
+      <Filter>engine\header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="application">
+      <UniqueIdentifier>{07870742-c300-471c-afdd-aa728d5c5d9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine">
+      <UniqueIdentifier>{28fc193b-b987-4e1b-a46a-e58b652bdf20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="externals">
+      <UniqueIdentifier>{a36bc16a-e15a-4f07-8b37-3325c3fe4393}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\header">
+      <UniqueIdentifier>{b62b056e-11c4-4242-a6aa-9c251ed55195}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\header">
+      <UniqueIdentifier>{d3654d57-c2c7-497b-bf6d-01b17b8ea2c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\source">
+      <UniqueIdentifier>{fb71eb13-1969-418b-b8c4-3f80afe328de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\source">
+      <UniqueIdentifier>{f1bcb4d5-7195-4646-ba7d-51660c884607}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Source">
-      <UniqueIdentifier>{3eaf6728-bc0b-4079-bd3c-a6b852d70a9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header">
-      <UniqueIdentifier>{ff713001-1882-4c35-bef1-6d29a8d0ad75}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

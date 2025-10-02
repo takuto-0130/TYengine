@@ -43,6 +43,8 @@ public:
 
 	bool IsJust() { return isJust_; }
 
+	void SetScreenOffset(const Vector2& offset) { screenOffset_ = offset; }
+
 private:
 	void PostStateUpdate();
 

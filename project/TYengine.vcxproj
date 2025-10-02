@@ -253,6 +253,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\Liner.cpp" />
     <ClCompile Include="application\Object\Player\JustCollider.cpp" />
+    <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
@@ -368,6 +369,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\Liner\Liner.h" />
     <ClInclude Include="application\Object\Player\JustCollider.h" />
+    <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -32,15 +32,23 @@ void TitleScene::Init()
 
 	skybox_ = std::make_unique<ObjectCubemap>();
 	skybox_->Initialize("Resources/Texture/output_skybox.dds");
+
+
+	player_ = std::make_unique<Player>();
+	player_->SetCamera(camera_);
+	player_->Init();
+	player_->SetScreenOffset({ 0, -0.85f });
+
+	enemyMgr_.Init(camera_);
 }
 
 void TitleScene::Update() {
 	Transition();
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_RETURN))
+	/*if (input_->TriggerKey(DIK_RETURN))
 	{
 		LoadLevel();
-	}
+	}*/
 #endif // _DEBUG
 	spaceSpr_->Update();
 	text_->Update();
@@ -48,7 +56,18 @@ void TitleScene::Update() {
 	{
 		obj->Update();
 	}
+	player_->Update();
 	skybox_->Update();
+
+	Vector3 pos = player_->GetWorldPosition();
+	enemyMgr_.SetTargetPos(&pos);
+
+	enemyMgr_.Update();
+
+	if (input_->TriggerKey(DIK_RETURN))
+	{
+		enemyMgr_.Pop();
+	}
 }
 
 void TitleScene::Draw() 
@@ -61,6 +80,9 @@ void TitleScene::Draw()
 	{
 		obj->Draw();
 	}
+	player_->Draw();
+
+	enemyMgr_.Draw();
 }
 
 void TitleScene::UIDraw()

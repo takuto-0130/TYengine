@@ -81,7 +81,6 @@ void Enemy::Draw()
 
 void Enemy::Pop()
 {
-	popTimer_ = kPopTime_;
 	worldTransform_.colliderScale_ = ZeroScale;
 	worldTransform_.TransferMatrix();
 	emitter.transform.translate = GetWorldPosition();
@@ -96,7 +95,7 @@ void Enemy::OnCollision()
 {
 	isDead_ = true;
 
-	if (listener_) {
+	if (listener_ && isInGame_) {
 		listener_->OnEnemyDied(this);
 	}
 }

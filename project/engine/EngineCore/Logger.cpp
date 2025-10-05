@@ -4,6 +4,7 @@
 namespace Logger
 {
 	void Log(const std::string & message) {
+		(void)message;
 #ifdef _DEBUG
 		OutputDebugStringA(message.c_str());
 #endif // _DEBUG

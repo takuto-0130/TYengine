@@ -12,6 +12,7 @@ void SrvManager::Initialize(DirectXBasis* dxBasis, uint32_t maxDescriptors) {
     desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
     HRESULT hr = dxBasis_->GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&srvHeap_));
+    (void)hr;
     assert(SUCCEEDED(hr));
 
     descriptorSize_ = dxBasis_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);

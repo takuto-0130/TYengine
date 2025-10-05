@@ -39,6 +39,7 @@ void RenderTexture::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager, ui
         D3D12_RESOURCE_STATE_RENDER_TARGET,
         &clear,
         IID_PPV_ARGS(&texture_));
+    (void)hr;
     assert(SUCCEEDED(hr));
 
     rtvHeap_ = dxBasis->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1, false);
@@ -171,6 +172,7 @@ void RenderTexture::CreateDepthStencil()
         D3D12_RESOURCE_STATE_DEPTH_WRITE,
         &depthClear,
         IID_PPV_ARGS(&depthBuffer_));
+    (void)hr;
     assert(SUCCEEDED(hr));
 
     // 明示的に記述子を渡す（Typeless に対応）

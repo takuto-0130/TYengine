@@ -212,5 +212,6 @@ void IParticleRenderer::CreatePipelineState() {
     desc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
     HRESULT hr = dxBasis_->GetDevice()->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(&pipelineState_));
+    (void)hr;
     assert(SUCCEEDED(hr));
 }

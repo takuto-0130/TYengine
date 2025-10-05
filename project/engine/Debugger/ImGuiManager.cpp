@@ -33,6 +33,7 @@ void ImGuiManager::Initialize(WindowsApp* winApp, DirectXBasis* dxBasis)
 	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	// デスクリプタ―ヒープ生成
 	HRESULT result = dxBasis_->GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&srvHeap_));
+	(void)result;
 	assert(SUCCEEDED(result));
 
 	ImGui_ImplDX12_Init(

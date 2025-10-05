@@ -28,6 +28,7 @@ LRESULT WindowsApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
 void WindowsApp::Initialize()
 {
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	(void)hr;
 	assert(SUCCEEDED(hr));
 
 	wc.lpfnWndProc = WindowProc;

@@ -126,6 +126,7 @@ ComPtr<ID3D12Resource> DirectXBasis::CreateBufferResource(const size_t& sizeInBy
 	HRESULT hr = device_->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&bufferResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&bufferResource));
+	(void)hr;
 	assert(SUCCEEDED(hr));
 
 	return bufferResource;
@@ -158,6 +159,7 @@ ComPtr<ID3D12Resource> DirectXBasis::CreateTextureResource(const DirectX::TexMet
 		nullptr,
 		IID_PPV_ARGS(&resource));
 
+	(void)hr;
 	assert(SUCCEEDED(hr));
 	return resource;
 }
@@ -580,6 +582,7 @@ ComPtr<ID3D12DescriptorHeap> DirectXBasis::CreateDescriptorHeap(const D3D12_DESC
 	descriptorHeapDesc.NumDescriptors = numDescriptors;
 	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	(void)hr;
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
 }
@@ -591,6 +594,7 @@ void DirectXBasis::CreateSamplerHeap()
 	desc.NumDescriptors = 1;
 	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	HRESULT hr = device_->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&samplerHeap_));
+	(void)hr;
 	assert(SUCCEEDED(hr));
 
 	D3D12_SAMPLER_DESC samplerDesc{};

@@ -31,4 +31,12 @@ private:
 	std::unique_ptr<Player> player_;
 
 	TitleEnemyManager enemyMgr_;
+
+
+	std::unique_ptr<Object3d> ground_;
+	WorldTransform groundWT_;
+
+	std::unique_ptr<Sprite> operation_;
+
+	std::unique_ptr<Sprite> reticle_;
 };

@@ -26,6 +26,13 @@ void PlayUI::Init()
 	comboNumTex_->SetTextureLeftTop({ 128,0 });
 	comboNumTex_->SetPosition(offsetComboNum_);
 	comboNumTex_->SetSize({ 64,64 });
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
+	operation_ = std::make_unique<Sprite>();
+	operation_->Initialize("Resources/Texture/Operation.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/hightLight.png");
+	hightLight_ = std::make_unique<Sprite>();
+	hightLight_->Initialize("Resources/Texture/hightLight.png");
 }
 
 void PlayUI::Update()
@@ -33,6 +40,8 @@ void PlayUI::Update()
 	comboText_->Update();
 	comboNumTex_->Update();
 	reticle_->Update();
+	operation_->Update();
+	hightLight_->Update();
 }
 
 void PlayUI::Draw()
@@ -41,6 +50,15 @@ void PlayUI::Draw()
 	comboNumTex_->Draw();
 	comboText_->Draw();
 	scoreDraw_->Draw();
+#ifndef _DEBUG
+	operation_->Draw();
+#endif // _DEBUG
+
+}
+
+void PlayUI::DrawHightLight()
+{
+	hightLight_->Draw();
 }
 
 void PlayUI::ComboTexUpdate()

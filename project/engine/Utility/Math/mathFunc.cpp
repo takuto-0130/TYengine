@@ -131,6 +131,40 @@ Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
 	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
 }
 
+// t は任意の実数（0～1で一周）。負の t も OK。
+size_t WrapIndex(ptrdiff_t i, size_t n)
+{
+	// i が負でも正でも 0..n-1 に丸める
+	ptrdiff_t m = i % static_cast<ptrdiff_t>(n);
+	if (m < 0) m += static_cast<ptrdiff_t>(n);
+	return static_cast<size_t>(m);
+}
+
+Vector3 CatmullRomPositionClosed(const std::vector<Vector3>& points, float t)
+{
+	assert(points.size() >= 4 && "制御点は4点以上必要です");
+	const size_t N = points.size();
+
+	// t を [0,1) に正規化（1.0 ちょうどは 0.0 と同じ位置にする）
+	float u = t - std::floor(t);        // u in [0,1)
+	float fseg = u * static_cast<float>(N);
+	size_t seg = static_cast<size_t>(std::floor(fseg)) % N; // 区間の先頭インデックス
+	float  lt = fseg - std::floor(fseg);                   // 区間内 t in [0,1)
+
+	// p0..p3 を循環参照で取得
+	size_t i0 = WrapIndex(static_cast<ptrdiff_t>(seg) - 1, N);
+	size_t i1 = seg;
+	size_t i2 = WrapIndex(static_cast<ptrdiff_t>(seg) + 1, N);
+	size_t i3 = WrapIndex(static_cast<ptrdiff_t>(seg) + 2, N);
+
+	const Vector3& p0 = points[i0];
+	const Vector3& p1 = points[i1];
+	const Vector3& p2 = points[i2];
+	const Vector3& p3 = points[i3];
+
+	return CatmullRomInterpolation(p0, p1, p2, p3, lt);
+}
+
 Vector3 Cross(const Vector3& v1, const Vector3& v2) { 
 	return Vector3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
 }

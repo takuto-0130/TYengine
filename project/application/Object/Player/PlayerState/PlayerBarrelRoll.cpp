@@ -11,11 +11,14 @@ void Player::InitBarrelRoll()
 {
 	startRollPos_ = screenOffset_;
 	rollEfectTimer_ = 0.0f;
-	PostEffectManager::GetInstance()->SetEffectEnabled("Vignette", true);
-	PostEffectManager::GetInstance()->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
-	PostEffectManager::GetInstance()->SetEffectEnabled("RadialBlur", true);
-	PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
-	PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(screenOffset_);
+	if(justRoll_)
+	{
+		PostEffectManager::GetInstance()->SetEffectEnabled("Vignette", true);
+		PostEffectManager::GetInstance()->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
+		PostEffectManager::GetInstance()->SetEffectEnabled("RadialBlur", true);
+		PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
+		PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(screenOffset_);
+	}
 }
 
 void Player::UpdateBarrelRoll()
@@ -25,8 +28,11 @@ void Player::UpdateBarrelRoll()
 
 void Player::ExitBarrelRoll()
 {
-	PostEffectManager::GetInstance()->SetEffectEnabled("Vignette", false);
-	PostEffectManager::GetInstance()->SetEffectEnabled("RadialBlur", false);
+	if (justRoll_)
+	{
+		PostEffectManager::GetInstance()->SetEffectEnabled("Vignette", false);
+		PostEffectManager::GetInstance()->SetEffectEnabled("RadialBlur", false);
+	}
 }
 
 
@@ -36,9 +42,14 @@ void Player::StartBarrelRoll()
 	if(input_->TriggerKey(DIK_LSHIFT))
 	{
 		ChangeState(PlayerState::BARREL_ROLL);
-		BulletTimeController::GetInstance()->Trigger(
-			0.05f, 0.0f, 1.0f, 0.8f,
-			EaseFixed::InQuart, EaseFixed::OutQuart);
+		justRoll_ = false;
+		if(isJust_)
+		{
+			justRoll_ = true;
+			BulletTimeController::GetInstance()->Trigger(
+				0.05f, 0.0f, 1.0f, 0.8f,
+				EaseFixed::InQuart, EaseFixed::OutQuart);
+		}
 	}
 }
 
@@ -79,9 +90,12 @@ void Player::BarrelRoll()
 			t = 0.9f - (rollEfectTimer_ - 1.2f) / 0.9f;
 			t = EaseFixed::InQuint(t);
 		}
-		PostEffectManager::GetInstance()->GetEffect<VignetteEffect>("Vignette")->SetPower(t);
-		PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((screenOffset_ + Vector2(1.0f,1.0f)) / 2.0f);
-		PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.035f * t);
+		if (justRoll_)
+		{
+			PostEffectManager::GetInstance()->GetEffect<VignetteEffect>("Vignette")->SetPower(t);
+			PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((screenOffset_ + Vector2(1.0f, 1.0f)) / 2.0f);
+			PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * t);
+		}
 	}
 
 	ClampOffset();

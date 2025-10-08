@@ -19,7 +19,7 @@ Input* Input::GetInstance()
 // 初期化処理
 void Input::Initialize(const HWND& hwnd) {
     HRESULT hr;
-    cliantHwnd_ = hwnd;
+    clientHwnd_ = hwnd;
     hr = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dInput_, nullptr);
     assert(SUCCEEDED(hr));
 
@@ -101,37 +101,38 @@ int32_t Input::GetWheel() const {
     return mouse_.lZ;
 }
 
-const Vector2& Input::GetMousePosition() const {
+Vector2 Input::GetMousePosition() {
     POINT point;
     if (GetCursorPos(&point)) {
-        if (cliantHwnd_) {
-            ScreenToClient(cliantHwnd_, &point);
+        if (clientHwnd_) {
+            ScreenToClient(clientHwnd_, &point);
         }
     }
 
     RECT rect{};
-    GetClientRect(cliantHwnd_, &rect);
+    if (clientHwnd_) {
+        GetClientRect(clientHwnd_, &rect);
+    }
     float width = static_cast<float>(rect.right - rect.left);
     float height = static_cast<float>(rect.bottom - rect.top);
 
-    Vector2 result = {};
-    result.x = (point.x / width) * kBaseWidth;
-    result.y = (point.y / height) * kBaseHeight;
+    mousePosition_.x = (point.x / width) * kBaseWidth;
+    mousePosition_.y = (point.y / height) * kBaseHeight;
 
-    return result;
+    return mousePosition_;
 }
 
 Vector2 Input::GetMousePositionRelative() const
 {
     POINT point;
     if (GetCursorPos(&point)) {
-        if (cliantHwnd_) {
-            ScreenToClient(cliantHwnd_, &point);
+        if (clientHwnd_) {
+            ScreenToClient(clientHwnd_, &point);
         }
     }
 
     RECT rect{};
-    GetClientRect(cliantHwnd_, &rect);
+    GetClientRect(clientHwnd_, &rect);
     float width = static_cast<float>(rect.right - rect.left);
     float height = static_cast<float>(rect.bottom - rect.top);
 
@@ -145,7 +146,7 @@ Vector2 Input::GetMousePositionRelative() const
 Vector2 Input::GetClientSize() const
 {
     RECT rect{};
-    GetClientRect(cliantHwnd_, &rect);
+    GetClientRect(clientHwnd_, &rect);
     float width = static_cast<float>(rect.right - rect.left);
     float height = static_cast<float>(rect.bottom - rect.top);
     return { width, height };

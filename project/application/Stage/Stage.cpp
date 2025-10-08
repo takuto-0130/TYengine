@@ -22,8 +22,11 @@ void Stage::Init()
 
     Reset();
 
-    // 1フレームだけカメラを動かす
-    railManager_->RailCameraMove();
+    ground_ = std::make_unique<Object3d>();
+    ground_->Initialize();
+    ground_->SetModel("ground.obj");
+    groundWT_.Initialize();
+    groundWT_.TransferMatrix();
 }
 
 void Stage::Reset()
@@ -41,6 +44,12 @@ void Stage::Update()
 
     if (railManager_->RailTrigger()) enemyManager_->TriggerNextEnemyGroup();
 
+    if (railManager_->ClearEnemyGroup())
+    {
+        enemyManager_->GetActiveEnemies().clear();
+        railManager_->ClearAccept();
+    }
+
     player_->Update();
 
     Vector3 pos = player_->GetWorldPosition();
@@ -51,7 +60,9 @@ void Stage::Update()
 
 void Stage::Draw()
 {
-    railManager_->Draw();
+    ground_->Draw(groundWT_);
+
+    //railManager_->Draw();
 
     if (isEdit_) {
 #ifdef _DEBUG

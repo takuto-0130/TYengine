@@ -17,7 +17,7 @@ public:
 	}
 
 	// ローカルスケールをセット
-	virtual void SetScale(const Vector3& scale) { worldTransform_.scale_ = scale; }
+	virtual void SetScale(const Vector3& scale) { worldTransform_.colliderScale_ = scale; }
 
 	// ローカル回転をセット
 	virtual void SetRotate(const Vector3& rota) { worldTransform_.rotation_ = rota; }

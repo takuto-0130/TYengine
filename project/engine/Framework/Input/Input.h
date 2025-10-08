@@ -95,7 +95,7 @@ public: // メンバ関数
 	int32_t GetWheel() const;
 
 	/// 画面上のピクセル位置（基準解像度にスケーリング済み）を返す
-	const Vector2& GetMousePosition() const;
+	Vector2 GetMousePosition();
 
 	/// ウィンドウ内での相対座標（0.0～1.0）を返す
 	Vector2 GetMousePositionRelative() const;
@@ -151,6 +151,6 @@ private: // メンバ変数
 	DIMOUSESTATE2 mouse_;
 	DIMOUSESTATE2 mousePre_;
 	HWND hwnd_;
-	HWND cliantHwnd_;
-	Vector2 mousePosition_{};
+	HWND clientHwnd_;
+	Vector2 mousePosition_ = {};
 };

@@ -39,17 +39,17 @@ void Liner::Init()
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
-	obj_->SetModel("cube.obj");
-	obj_->SetColor({ 1.0f, 0.1f, 0.1f, 1.0f });
-	obj_->SetIsLighting(false);
+	obj_->SetModel("unitSphere.obj");
+	obj_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+	obj_->SetIsLighting(true);
 	worldTransform_.Initialize();
-	worldTransform_.scale_ = { scale_, scale_, scale_ };
+	worldTransform_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
 	worldTransform_.TransferMatrix();
 
 	collider_ = std::make_unique<EBulletCollider>(
 		static_cast<uint32_t>(ColliderTypeID::E_BULLET),
 		GetWorldPosition(),
-		scale_,
+		colliderScale_,
 		this
 	);
 	ColliderManager::GetInstance()->AddCollider(collider_.get());

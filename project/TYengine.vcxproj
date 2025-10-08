@@ -68,6 +68,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\$(FileName)</ObjectFileName>
       <PrecompiledHeaderOutputFile>$(IntDir)%(RelativeDir)$(FileName).pch</PrecompiledHeaderOutputFile>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,6 +109,7 @@ if exist "externals\dxil.dll" (
       <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\$(FileName)</ObjectFileName>
       <PrecompiledHeaderOutputFile>$(IntDir)%(RelativeDir)$(FileName).pch</PrecompiledHeaderOutputFile>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -252,6 +254,8 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\Liner.cpp" />
+    <ClCompile Include="application\Object\Player\JustCollider.cpp" />
+    <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
@@ -263,6 +267,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
+    <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeOverlay.h" />
     <ClInclude Include="application\Scene\Transition\ITransition.h" />
     <ClInclude Include="application\Scene\Transition\StateMachineTransition.h" />
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
@@ -366,6 +371,8 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\OffScreen\PostEffect\OutlinePass.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\Liner\Liner.h" />
+    <ClInclude Include="application\Object\Player\JustCollider.h" />
+    <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

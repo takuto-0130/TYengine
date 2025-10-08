@@ -12,6 +12,7 @@ public:
 	void Init() ;
 	void Update();
 	void Draw();
+	void DrawHightLight();
 
 	void ComboTexUpdate();
 
@@ -32,6 +33,8 @@ private:
 
 	std::unique_ptr<Sprite> reticle_;
 
+	std::unique_ptr<Sprite> operation_;
+	std::unique_ptr<Sprite> hightLight_;
 
 	float comboTimer_ = 0;
 	float kComboTime_ = 0;

@@ -148,6 +148,7 @@ void TextureManager::CreateDummyCubemap() {
         D3D12_RESOURCE_STATE_COPY_DEST,
         nullptr,
         IID_PPV_ARGS(&dummyCubemap_));
+    (void)hr;
     assert(SUCCEEDED(hr));
 
     UINT64 uploadSize = GetRequiredIntermediateSize(dummyCubemap_.Get(), 0, 6);

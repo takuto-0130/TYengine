@@ -10,7 +10,8 @@
 const std::vector<StateMachine<Player, PlayerState>::StateFunctionSet>& Player::GetStateTable()
 {
 	using enum PlayerState;
-	static const std::vector<StateFunctionSet> stateTable = {
+	static const std::vector<StateFunctionSet> stateTable = 
+	{
 		PLAYER_STATE_ENTRY(IDLE, Idle),
 		PLAYER_STATE_ENTRY(ROOT, Root),
 		PLAYER_STATE_ENTRY(BOOST, Boost),
@@ -24,6 +25,7 @@ const std::vector<StateMachine<Player, PlayerState>::StateFunctionSet>& Player::
 Player::~Player()
 {
 	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+	ColliderManager::GetInstance()->RemoveCollider(justCollider_.get());
 }
 
 void Player::Init()
@@ -32,21 +34,32 @@ void Player::Init()
 	input_ = Input::GetInstance();
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
-	obj_->SetModel("cube.obj");
+	obj_->SetModel("jett.obj");
 	obj_->SetIsLighting(false);
-	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
+	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 	worldTransform_.Initialize();
-	worldTransform_.scale_ = { scale_, scale_, scale_ };
+	worldTransform_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
 	worldTransform_.useQuaternion_ = true; // プレイヤーではQuaternion使うようにする
 	worldTransform_.TransferMatrix();
+
 
 	collider_ = std::make_unique<PlayerCollider>(
 		static_cast<uint32_t>(ColliderTypeID::PLAYER), 
 		GetWorldPosition(), 
-		scale_, 
+		colliderScale_, 
 		this
 	);
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
+
+	justCollider_ = std::make_unique<JustCollider>(
+		static_cast<uint32_t>(ColliderTypeID::JUST_AREA),
+		GetWorldPosition(),
+		justScale_,
+		this
+	);
+	ColliderManager::GetInstance()->AddCollider(justCollider_.get());
+
+
 	ChangeState(PlayerState::ROOT);
 
 	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
@@ -63,12 +76,28 @@ void Player::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 
-	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
+	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	UpdateState(deltaTime_);
+
+	PostStateUpdate();
+}
+
+void Player::Draw()
+{
+	obj_->Draw(worldTransform_);
+	bulletManager_->Draw();
+
+	// test
+	TestReticleDraw();
+}
+
+void Player::PostStateUpdate()
+{
 	RotationOffset();
 	worldTransform_.TransferMatrix();
 	collider_->Update(GetWorldPosition());
+	justCollider_->Update(GetWorldPosition());
 
 	Attack();
 	bulletManager_->Update();
@@ -81,37 +110,55 @@ void Player::Update()
 	DebugGUI();
 }
 
-void Player::Draw()
-{
-	obj_->Draw(worldTransform_);
-	bulletManager_->Draw();
-
-	// test
-	TestReticleDraw();
-}
-
 void Player::Attack()
 {
-	if (input_->TriggerKey(DIK_SPACE))
+	if (bulletTimer_ > 0)
+	{
+		bulletTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
+	}
+	if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bulletTimer_ <= 0)
 	{
 		currentBulletType_ = PlayerBulletType::NORMAL;
 		Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
 		bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+		bulletTimer_ = bulletCoolTime_;
 	}
 }
 
 void Player::Move()
 {
 	inputDir_ = {};
+	roll = 0;
+	movePitch = 0;
 
-	if (input_->PushKey(DIK_W)) inputDir_.y += 1.0f;
-	if (input_->PushKey(DIK_S)) inputDir_.y -= 1.0f;
-	if (input_->PushKey(DIK_A)) inputDir_.x -= 1.0f;
-	if (input_->PushKey(DIK_D)) inputDir_.x += 1.0f;
+	if (input_->PushKey(DIK_W)) 
+	{
+		inputDir_.y += 1.0f;
+		movePitch = -0.1f;
+	}
+	if (input_->PushKey(DIK_S)) 
+	{
+		inputDir_.y -= 1.0f;
+		movePitch = 0.1f;
+	}
+	if (input_->PushKey(DIK_A)) 
+	{
+		inputDir_.x -= 1.0f;
+		roll = 0.1f;
+		
+	}
+	if (input_->PushKey(DIK_D)) 
+	{
+		inputDir_.x += 1.0f;
+		roll = -0.1f;
+	}
 
 	if (Length(inputDir_) != 0) 
 	{
 		inputDir_ = Normalize(inputDir_);
+
+		speed_.x = defaultSpeed_;
+		speed_.y = defaultSpeed_ * (xRange / yRange);
 		screenOffset_ += inputDir_ * speed_ * deltaTime_;
 	}
 	ClampOffset();
@@ -154,7 +201,7 @@ void Player::RotationOffset()
 
 	// 回転クォータニオン（Yaw → Pitch）
 	Quaternion qYaw = MakeRotateAxisAngleQuaternion({ 0, 1, 0 }, yaw);
-	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1, 0, 0 }, pitch);
+	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1, 0, 0 }, pitch + movePitch);
 
 	// ロール回転（カメラforward軸に沿って回す）
 	Quaternion qRoll = MakeRotateAxisAngleQuaternion(camForward, roll + camera_->GetRotate().z);
@@ -200,7 +247,7 @@ void Player::TestReticleInit()
 	reticleObj_->SetIsLighting(false);
 	reticleObj_->SetColor({ 0,1,0,1 });
 	reticleWT_.Initialize();
-	reticleWT_.scale_ = { scale_, scale_, scale_ };
+	reticleWT_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
 	reticleWT_.TransferMatrix();
 #endif // _DEBUG
 }

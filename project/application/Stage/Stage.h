@@ -60,6 +60,9 @@ private:
 	std::unique_ptr<ComboManager> comboManager_;
 	std::unique_ptr<ScoreManager> scoreManager_;
 
+	std::unique_ptr<Object3d> ground_;
+	WorldTransform groundWT_;
+
 	bool isEdit_ = false;
 };
 

@@ -699,6 +699,9 @@
     <ClInclude Include="engine\Utility\Math\WorldTransform.h">
       <Filter>engine\header</Filter>
     </ClInclude>
+    <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeOverlay.h">
+      <Filter>application\header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">

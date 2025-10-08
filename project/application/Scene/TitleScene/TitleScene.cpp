@@ -63,6 +63,21 @@ void TitleScene::Init()
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
+
+	BlockFadeConfig cfg;
+	cfg.cols = 32; cfg.rows = 18;
+	cfg.flowMode = FlowMode::DiagonalSimple;
+	cfg.diagSlopeCols = 0.3f;        // 斜めの角度調整
+
+	// 矢印なら
+	cfg.flowMode = FlowMode::DiagonalArrow;
+	cfg.arrowAmpCols = 9.0f;         // 中央の先行量（列）
+	cfg.arrowPow = 1.0f;             // カーブ（大きいほど中央がより先行）
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white1x1.png");
+	fadeOverlay_.Init("Resources/Texture/white1x1.png", cfg);
+	fadeOverlay_.LoadMaskImage(L"Resources/Texture/game_HUD.png");
+	fadeOverlay_.StartFadeIn();
 }
 
 void TitleScene::Update() {
@@ -97,6 +112,8 @@ void TitleScene::Update() {
 
 	Vector2 mouse = input_->GetMousePosition();
 	reticle_->SetPosition(mouse);
+
+	fadeOverlay_.Update(Timer::GetInstance()->GetDeltaTime());
 }
 
 void TitleScene::Draw() 
@@ -123,6 +140,7 @@ void TitleScene::UIDraw()
 	text_->Draw();
 	operation_->Draw();
 	reticle_->Draw();
+	fadeOverlay_.Draw();
 }
 
 void TitleScene::LoadLevel()
@@ -134,6 +152,18 @@ void TitleScene::LoadLevel()
 
 void TitleScene::Transition()
 {
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_1))
+	{
+		fadeOverlay_.StartFadeIn();
+	}
+	if (input_->TriggerKey(DIK_2))
+	{
+		fadeOverlay_.StartFadeOut();
+	}
+#endif // _DEBUG
+
+	
 	if (input_->TriggerKey(DIK_RETURN)) 
 	{
 		auto transition = std::make_unique<FadeTransition>(FadeTransition::Type::FADE_OUT, 1.0f);

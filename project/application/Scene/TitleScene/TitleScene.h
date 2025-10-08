@@ -5,6 +5,7 @@
 #include "ObjectCubemap.h"
 #include "Object/Player/Player.h"
 #include "../../Object/Enemy/TitleEnemy/TitleEnemyManager.h"
+#include "../Transition/Fade2/BlockFadeOverlay.h"
 
 #include "Sprite.h"
 class TitleScene : public IScene {
@@ -39,4 +40,6 @@ private:
 	std::unique_ptr<Sprite> operation_;
 
 	std::unique_ptr<Sprite> reticle_;
+
+	BlockFadeOverlay fadeOverlay_;
 };

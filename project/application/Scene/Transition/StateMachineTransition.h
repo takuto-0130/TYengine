@@ -4,8 +4,9 @@
 
 enum class TransitionStage
 {
-	IDLE,       // 待機中・処理なし
+	IDLE,       // 待機中/処理なし
 	ENTERING,   // 遷移開始（シーンへ入る）
+    HOLD,       // 保持
 	EXITING,	// 遷移終了（シーンを出る）
 };
 
@@ -24,6 +25,7 @@ protected:
         switch (state) {
         case TransitionStage::IDLE: return "IDLE";
         case TransitionStage::ENTERING: return "ENTERING";
+        case TransitionStage::HOLD: return "HOLD";
         case TransitionStage::EXITING: return "EXITING";
         default: return "Unknown";
         }

@@ -14,4 +14,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build with MSBuild
-        run: msbuild ${{env.SOLUTION_FILE_PATH}} /p:Platform=x64,Configuration=${{env.CONFIGURATION}}
+        run: msbuild ${{env.SOLUTION_FILE_PATH}} /p:Platform=x64;Configuration=${{env.CONFIGURATION}}

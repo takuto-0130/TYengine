@@ -59,6 +59,7 @@ bool FadeTransition::IsFinished() const
 	return finished_;
 }
 
+
 void FadeTransition::InitIdle()
 {
 	sprite_->SetColor(Vector4{ 1,1,1,1 });

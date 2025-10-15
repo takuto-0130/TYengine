@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - master
+
 env:
   SOLUTION_FILE_PATH: project/TYengine.sln
   CONFIGURATION: Debug
+
 jobs:
   build:
     runs-on: windows-2022
@@ -13,9 +15,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
         with:
-         mabuild-architecture: x64
-      - name: Build
-        run: msbuild ${{env.SOLUTION_FILE_PATH}} /p:Platform=x64,Configuration=${{env.CONFIGURATION}}
+          msbuild-architecture: x64
+
+      - name: Build with MSBuild
+        shell: pwsh
+        run: |
+          # 引数中のセミコロンを PowerShell に分割されないように一つの引数で渡す
+          msbuild ${{ env.SOLUTION_FILE_PATH }} "/p:Platform=x64;Configuration=${{ env.CONFIGURATION }}" /m

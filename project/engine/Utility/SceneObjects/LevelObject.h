@@ -1,5 +1,7 @@
 #pragma once
 #include "BaseObject.h"
+
+// blenderで作成したレベルエディタの配置オブジェクトを受け取るクラス
 class LevelObject :
     public BaseObject
 {

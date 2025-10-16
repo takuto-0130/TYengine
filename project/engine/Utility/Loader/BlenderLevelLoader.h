@@ -20,16 +20,21 @@ struct LevelData
 	std::vector<ObjectData> objects;
 };
 
+// blenderで作成したレベルエディタの配置データを読み込むクラス
 class BlenderLevelLoader
 {
 public:
+	// コンストラクタ
 	BlenderLevelLoader(std::string directoryPath) : kBaseDirectoryName_(directoryPath) {}
 
+	// ロード
 	LevelData* Load(const std::string& filename);
 
+	// ロードしたデータを配置
 	void DataToObject(LevelData* data, std::vector<std::unique_ptr<LevelObject>>& objects);
 
 private:
+	// オブジェクト走査
 	void ObjectTraversal(LevelData* levelData, nlohmann::json& j, std::string contains);
 
 private:

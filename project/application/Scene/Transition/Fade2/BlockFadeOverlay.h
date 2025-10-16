@@ -1,3 +1,6 @@
+// クラス移行中のため残しておく
+
+
 //// BlockFadeOverlay.h
 //#pragma once
 //#include "Sprite.h"

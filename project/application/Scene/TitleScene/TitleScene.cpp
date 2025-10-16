@@ -16,7 +16,6 @@
 
 TitleScene::~TitleScene()
 {
-	//Audio::GetInstance()->StopStreaming();
 }
 
 void TitleScene::Init()
@@ -70,14 +69,6 @@ void TitleScene::Init()
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
-
-	BlockFadeConfig cfg;
-
-	/*TextureManager::GetInstance()->LoadTexture("Resources/Texture/Transition01.png");
-	fadeOverlay_.Init("Resources/Texture/Transition01.png", cfg);
-	fadeOverlay_.StartFadeIn();*/
-
-	//Audio::GetInstance()->StartStreaming("BGM_2.wav");
 }
 
 void TitleScene::Update() {
@@ -112,8 +103,6 @@ void TitleScene::Update() {
 
 	Vector2 mouse = input_->GetMousePosition();
 	reticle_->SetPosition(mouse);
-
-	//fadeOverlay_.Update(Timer::GetInstance()->GetDeltaTime());
 }
 
 void TitleScene::Draw() 
@@ -140,7 +129,6 @@ void TitleScene::UIDraw()
 	text_->Draw();
 	operation_->Draw();
 	reticle_->Draw();
-	//fadeOverlay_.Draw();
 }
 
 void TitleScene::LoadLevel()
@@ -152,28 +140,8 @@ void TitleScene::LoadLevel()
 
 void TitleScene::Transition()
 {
-#ifdef _DEBUG
-	/*if (input_->TriggerKey(DIK_1))
-	{
-		fadeOverlay_.StartFadeIn();
-	}
-	if (input_->TriggerKey(DIK_2))
-	{
-		fadeOverlay_.StartFadeOut();
-	}*/
-#endif // _DEBUG
-
-	
 	if (input_->TriggerKey(DIK_RETURN)) 
 	{
-		/*auto transition = std::make_unique<FadeTransition>(FadeTransition::Type::FADE_OUT, 1.0f);
-		transition->SetOnFinishCallback([this]() 
-			{
-			sceneManager_->ChangeScene("GAME");
-			TransitionManager::GetInstance()->Enqueue(std::make_unique<FadeTransition>(FadeTransition::Type::FADE_IN, 1.0f));
-			});
-		TransitionManager::GetInstance()->Start(std::move(transition));*/
-
 		BlockFadeConfig cfg;
 		auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
 		transition->SetOnFinishCallback([this]()

@@ -26,7 +26,6 @@ void Timer::Update()
     // FPS 計測
     ++frameCount_;
     timeAccumulator_ += deltaTime_;
-
     if (timeAccumulator_ >= 1.0f) {
         fps_ = frameCount_;
         frameCount_ = 0;

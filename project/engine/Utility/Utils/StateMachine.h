@@ -5,6 +5,11 @@
 #include <cassert>
 #include <string>
 #include <imgui.h>
+/// --------------------------------------------------------------------------------- ///
+/// !!!!!!!!!!!!!!!!!!!!!!!継承より委譲の方が適切なようなので後に修正!!!!!!!!!!!!!!!!!!!!!!! ///
+/// --------------------------------------------------------------------------------- ///
+
+
 
 // クラスの型 'C' に 'StateFunctionSet' が定義されていて、
 // 'C::GetStateTable()' が返す型が 'std::vector<C::StateFunctionSet>' であることを要求するコンセプト
@@ -33,6 +38,11 @@ public:
         StateFunc init, update, exit;
     };
 
+public: // メンバ関数
+    /// <summary>
+    /// 関数テーブル登録用
+    /// </summary>
+    /// <param name="instance"> 継承先時クラスのインスタンス </param>
     template<HasStateTable C>
     void RegisterFromDefaultTable(C* instance) 
     {
@@ -103,26 +113,28 @@ protected:
     // オーバーライドで列挙名を文字列化（ImGui表示用）
     virtual std::string GetStateName(State state) const = 0;
 
-private:
+private: // 関数テーブルsetter
     void SetInitFunction(State state, std::function<void()> func) { initTable_[state] = func; }
 
     void SetUpdateFunction(State state, std::function<void()> func) { updateTable_[state] = func; }
 
     void SetExitFunction(State state, std::function<void()> func) { exitTable_[state] = func; }
 
-private:
+private: // メンバ変数
     State currState_{};
     State prevState_{};
     std::optional<State> stateRequest_;
     float stateTimer_ = 0.0f;
     bool allowExit_ = true;
 
+    // 関数テーブル
     std::unordered_map<State, std::function<void()>> initTable_;
     std::unordered_map<State, std::function<void()>> updateTable_;
     std::unordered_map<State, std::function<void()>> exitTable_;
 };
 
 // StateMachine.h
+// 関数テーブルの登録用マクロ
 #define STATE_ENTRY_FOR(cls, stateEnum, funcName) \
     { stateEnum, &cls::Init##funcName, &cls::Update##funcName, &cls::Exit##funcName }
 

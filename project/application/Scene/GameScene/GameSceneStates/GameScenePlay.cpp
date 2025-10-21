@@ -17,6 +17,12 @@ void GameScene::UpdatePlay()
 	PlayUIUpdate();
 
 	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
+
+	/*if(isReady_ && GetStateElapsedTime() >= 0.3f) 
+	{
+		isReady_ = false;
+		ChangeState(GameSceneState::FADE_IN);
+	}*/
 }
 void GameScene::ExitPlay()
 {

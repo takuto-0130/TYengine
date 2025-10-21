@@ -50,7 +50,8 @@ void StageManager::AddStage()
 
 void StageManager::RemoveStage(size_t index) 
 {
-    if (index < stages_.size()) {
+    if (index < stages_.size()) 
+    {
         stages_.erase(stages_.begin() + index);
         if (stages_.empty()) 
         {

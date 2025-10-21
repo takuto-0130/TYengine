@@ -358,6 +358,7 @@
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp">
       <Filter>application\source</Filter>
     </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
@@ -708,6 +709,7 @@
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h">
       <Filter>application\header</Filter>
     </ClInclude>
+    <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">

@@ -59,6 +59,11 @@ void GameScene::Init()
 	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
 
+	startCameraPos_ = camera_->GetPosition();
+	startCameraRot_ = camera_->GetRotate();
+	isReady_ = true;
+	readyCount_ = 0;
+
 	EmitterInit();
 	UIInit();
 	ChangeState(GameSceneState::FADE_IN);

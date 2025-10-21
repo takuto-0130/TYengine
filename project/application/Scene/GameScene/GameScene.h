@@ -13,6 +13,7 @@ class PauseClass;
 class ResultClass;
 class PlayUI;
 class ScoreUI;
+class StartUI;
 class Audio;
 class RailManager;
 class Player;
@@ -51,6 +52,9 @@ private:
 	// GameSceneUI
 	void UIInit();
 
+	// GameSceneReady
+	void StartCamera();
+
 	// GameScenePlay
 	void PlayUIUpdate();
 	void ComboUIUpdate();
@@ -80,7 +84,8 @@ private: // メンバ変数
 
 	BulletTimeController* bulletTime_ = nullptr;
 
-
+	
+	std::unique_ptr<StartUI> startDraw_;
 	std::unique_ptr<ScoreUI> scoreDraw_;
 	std::unique_ptr<PauseClass> pauseMenu_;
 	std::unique_ptr<ResultClass> resultMenu_;
@@ -88,6 +93,12 @@ private: // メンバ変数
 	std::unique_ptr<ObjectCubemap> skybox_;
 
 	bool otherEditorSwitch_ = false;
+
+	bool isReady_ = true;
+	int readyCount_ = 0;
+	Vector3 startCameraPos_{};
+	Vector3 startCameraRot_{};
+	float startCameraTimer_ = 0;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数

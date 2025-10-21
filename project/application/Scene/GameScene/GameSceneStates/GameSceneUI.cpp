@@ -26,7 +26,7 @@ void GameScene::UIDraw()
 	SpriteBasis::GetInstance()->BasisDrawSetting();
 
 	// フェード中は描画しない
-	if (GetCurrentState() != GameSceneState::FADE_OUT && GetCurrentState() != GameSceneState::FADE_IN)
+	if (/*GetCurrentState() != GameSceneState::FADE_OUT && GetCurrentState() != GameSceneState::FADE_IN*/true)
 	{
 		if (GetCurrentState() != GameSceneState::RESULT)
 		{

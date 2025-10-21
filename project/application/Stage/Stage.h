@@ -50,6 +50,8 @@ public:
 	ComboManager* GetComboManager() { return comboManager_.get(); }
 	ScoreManager* GetScoreManager() { return scoreManager_.get(); }
 
+	Player* GetPlayer() { return player_.get(); }
+
 private:
 	Camera* camera_ = nullptr;
 	std::unique_ptr<Player> player_;

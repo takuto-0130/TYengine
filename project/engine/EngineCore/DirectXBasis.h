@@ -33,16 +33,20 @@ public: // メンバ関数
 
 	// シェーダーのコンパイル
 	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
-	
+
+	// バッファリソースの作成
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(const size_t& sizeInBytes);
 
+	// テクスチャリソースの作成
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
+	// 
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 
+	// テクスチャのロード
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);
 
-
+	// 深度ステンシルビューのクリア
 	void ClearDepthStencilView();
 
 	// 描画前処理
@@ -51,6 +55,7 @@ public: // メンバ関数
 	// 描画後処理
 	void DrawEnd();
 
+	// 
 	void CommandListAndFence();
 
 

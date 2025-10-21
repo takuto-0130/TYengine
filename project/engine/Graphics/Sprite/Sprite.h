@@ -20,6 +20,7 @@ public: // メンバ関数
 	// 描画
 	void Draw();
 
+	// 4頂点を指定して描画
 	void DrawRect(const Vector2& lt, const Vector2& rt, const Vector2& lb, const Vector2& rb);
 
 	// getter
@@ -43,10 +44,9 @@ public: // メンバ関数
 	void SetAnchorPoint(const Vector2& anchorPoint) { anchorPoint_ = anchorPoint; }
 	void SetIsFlipX(bool isFlipX) { isFlipX_ = isFlipX; }
 	void SetIsFlipY(bool isFlipY) { isFlipY_ = isFlipY; }
-
 	void SetVertex(const Vector2& position, int index) { vertexData_[index].position = { position.x, position.y, 0.0f,1.0f }; }
-
 	void SetSpriteData();
+
 private: // メンバ関数
 	// 頂点データ作成
 	void CreateVertexData();

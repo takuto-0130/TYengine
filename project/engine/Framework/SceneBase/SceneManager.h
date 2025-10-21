@@ -1,6 +1,8 @@
 #pragma once
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
+
+// シーン管理クラス
 class SceneManager
 {
 public:

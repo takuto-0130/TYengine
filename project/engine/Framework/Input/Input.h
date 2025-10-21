@@ -28,7 +28,6 @@ public:
 		XInput,
 	};
 
-	// variantがC++17から
 	union State {
 		XINPUT_STATE xInput_;
 		DIJOYSTATE2 directInput_;

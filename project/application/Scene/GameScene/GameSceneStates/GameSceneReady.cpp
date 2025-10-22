@@ -1,4 +1,5 @@
 #include "../GameScene.h"
+#include "../StartUI/StartUI.h"
 #include "Timer.h"
 #ifdef _DEBUG
 #include "imgui.h"
@@ -8,15 +9,19 @@
 void GameScene::InitReady()
 {
 	startCameraTimer_ = 0;
+	prevStateElapsed_ = 0;
 }
 void GameScene::UpdateReady()
 {
+	startDraw_->Update();
 	startCameraTimer_ += Timer::GetInstance()->GetDeltaTime();
 	StartCamera();
 }
 void GameScene::ExitReady()
 {
+	startDraw_->Reset();
 	startCameraTimer_ = 0;
+	prevStateElapsed_ = 0;
 }
 
 
@@ -27,15 +32,20 @@ void GameScene::StartCamera()
 {
 	Vector3 pos = { 0,0,7 };
 
+	float cur = GetStateElapsedTime();
+	float prev = prevStateElapsed_;
 
 	// 演出タイマーのリセット用
 	std::function<void(float)> resetTimer = [&](float threshold)
 		{
-			if (GetStateElapsedTime() + Timer::GetInstance()->GetDeltaTime() > threshold)
+
+			if (prev < threshold && cur >= threshold)
 			{
 				startCameraTimer_ = 0;
 			}
 		};
+	prevStateElapsed_ = cur;
+
 
 	// カメラワークを適用
 	std::function<void(Vector3&)> applyCameraWork = [&](Vector3& pos)
@@ -62,13 +72,17 @@ void GameScene::StartCamera()
 		};
 
 
+	resetTimer(3.0f);
+	resetTimer(6.0f);
+	resetTimer(10.0f);
+	resetTimer(13.0f);
+
 	if (GetStateElapsedTime() <= 3.0f)
 	{
 		Matrix4x4 rotY = MakeRotateYMatrix((startCameraTimer_ - 7.0f) / 3.0f);
 		pos = TransformM(pos, rotY);
 
 		applyCameraWork(pos);
-		resetTimer(3.0f);
 	}
 	else if (GetStateElapsedTime() <= 6.0f)
 	{
@@ -76,7 +90,6 @@ void GameScene::StartCamera()
 		pos = TransformM(pos, rotY);
 
 		applyCameraWork(pos);
-		resetTimer(6.0f);
 	}
 	else if (GetStateElapsedTime() <= 10.0f)
 	{
@@ -86,15 +99,20 @@ void GameScene::StartCamera()
 		pos = TransformM(pos, rotA);
 
 		applyCameraWork(pos);
-		resetTimer(10.0f);
 	}
 	else if (GetStateElapsedTime() <= 13.0f)
 	{
+		if (GetStateElapsedTime() <= 12.0f)
+		{
+			startDraw_->Start();
+		}
 		Matrix4x4 rotX = MakeRotateXMatrix((-startCameraTimer_) / 5.0f);
 		pos = TransformM(pos, rotX);
 
 		applyCameraWork(pos);
-		resetTimer(13.0f);
+	}
+	else if (GetStateElapsedTime() <= 16.0f)
+	{
 	}
 	else
 	{

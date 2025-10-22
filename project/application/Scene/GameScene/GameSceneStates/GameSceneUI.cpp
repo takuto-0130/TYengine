@@ -2,6 +2,7 @@
 #include "../Pause/Pause.h"
 #include "../Result/Result.h"
 #include "../PlayUI/PlayUI.h"
+#include "../StartUI/StartUI.h"
 #include "../../../ScoreUI/ScoreUI.h"
 #include "SpriteBasis.h"
 
@@ -9,6 +10,9 @@ void GameScene::UIInit()
 {
 	scoreDraw_ = std::make_unique<ScoreUI>();
 	scoreDraw_->Initialze();
+
+	startDraw_ = std::make_unique<StartUI>();
+	startDraw_->Initialze();
 
 	playUI_ = std::make_unique<PlayUI>();
 	playUI_->SetScoreDraw(scoreDraw_.get());
@@ -31,6 +35,17 @@ void GameScene::UIDraw()
 		if (GetCurrentState() != GameSceneState::RESULT)
 		{
 			playUI_->Draw();
+		}
+		if (GetCurrentState() != GameSceneState::RESULT &&
+			GetCurrentState() != GameSceneState::READY &&
+			GetCurrentState() != GameSceneState::FADE_IN)
+		{
+			playUI_->DrawRT();
+		}
+
+		if (GetCurrentState() == GameSceneState::READY)
+		{
+			startDraw_->Draw();
 		}
 
 		if (GetCurrentState() == GameSceneState::RESULT)

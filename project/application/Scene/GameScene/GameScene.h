@@ -99,6 +99,7 @@ private: // メンバ変数
 	Vector3 startCameraPos_{};
 	Vector3 startCameraRot_{};
 	float startCameraTimer_ = 0;
+	float prevStateElapsed_ = 0.0f;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数

@@ -9,10 +9,12 @@ class ScoreUI;
 class PlayUI
 {
 public:
-	void Init() ;
+	void Init();
 	void Update();
 	void Draw();
 	void DrawHightLight();
+
+	void DrawRT();
 
 	void ComboTexUpdate();
 
@@ -35,6 +37,7 @@ private:
 
 	std::unique_ptr<Sprite> operation_;
 	std::unique_ptr<Sprite> hightLight_;
+	std::unique_ptr<Sprite> returnTitle_;
 
 	float comboTimer_ = 0;
 	float kComboTime_ = 0;

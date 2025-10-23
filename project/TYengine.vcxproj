@@ -110,6 +110,7 @@ if exist "externals\dxil.dll" (
       <ObjectFileName>$(IntDir)%(RelativeDir)\$(FileName)</ObjectFileName>
       <PrecompiledHeaderOutputFile>$(IntDir)%(RelativeDir)$(FileName).pch</PrecompiledHeaderOutputFile>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

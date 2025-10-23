@@ -9,15 +9,6 @@
 
 void PlaneParticle::TriggerEmit()
 {
-    //emitterParam_.emitMode = 2; // ONESHOT
-    //emitterParam_.emitCount = 5;
-
-    /*mitterParam_.emitMode = 3;
-    emitterParam_.emitRemaining = 50;
-    emitterParam_.emitCount = 5;
-    emitterParam_.emitRate = 5;
-    emitterParam_.emitInterval = 1.0f / emitterParam_.emitRate;
-    emitterParam_.emitTimer = 0.0f;*/
     emitterStateUploadBuffer_.Reset();
 
     if (emitterState_.emitMode == 2)
@@ -62,21 +53,6 @@ void PlaneParticle::TriggerEmit()
         D3D12_RESOURCE_STATE_UNORDERED_ACCESS
     );
     cmd->ResourceBarrier(1, &barrierEnd);
-
-
-
-    /*EmitterState init = {};
-    init.emitRemaining = 5;
-    init.emitThisFrame = 0;
-    init.emitTimer = 0.0f;
-
-    void* mapped = nullptr;
-    emitterStateBuffer_->Map(0, nullptr, &mapped);
-    memcpy(mapped, &init, sizeof(EmitterState));
-    emitterStateBuffer_->Unmap(0, nullptr);
-
-    emitterParam_.emitMode = 3;
-    emitterParam_.emitInterval = 10;*/
 }
 
 void PlaneParticle::CreateResources() {

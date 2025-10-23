@@ -142,8 +142,9 @@ private: // メンバ変数
 // 使い方
 // 更新処理の中で UpdateState(float deltaTime) を呼び出し、ステートを切り替えたいときに適宜ChangeState(State next)を呼び出す
 // 以下宣言の例
-/*
-.h
+#ifdef 0
+
+//.h
 enum class State
 {
     ONE,
@@ -185,7 +186,7 @@ private:
     void ExitThree() {}
 };
 
-.cpp
+//.cpp
 #define CLASS_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Class, stateEnum, funcName)
 
@@ -199,4 +200,5 @@ const std::vector<StateMachine<Class, State>::StateFunctionSet>& Class::GetState
     };
     return stateTable;
 }
-*/
+
+#endif // 0

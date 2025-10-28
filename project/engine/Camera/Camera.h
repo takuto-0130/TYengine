@@ -2,6 +2,8 @@
 #include "Matrix4x4Func.h"
 #include "mathFunc.h"
 #include "WindowsApp.h"
+#include "CameraShake.h"
+
 class Camera
 {
 public: // メンバ関数
@@ -30,7 +32,16 @@ private: // メンバ変数
 
 	Vector3 followCameraOffsetRotare_ = Vector3(0.51f, 0.0f, 0.0f);
 
+	Vector3 shake_ = {};
+
+	CameraShake shakeController_;
+
 public: // メンバ関数
+	void StartShake(const CameraShake::ShakeParams& params)
+	{
+		shakeController_.Start(params);
+	}
+
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 	const Vector3& GetRotate() { return transform_.rotate; }
 	
@@ -40,6 +51,8 @@ public: // メンバ関数
 	void SetOffsetRotate(const Vector3& rotate) { followCameraOffsetRotare_ = rotate; }
 
 	void SetOffsetTranslate(const Vector3& translate) { followCameraOffsetPosition_ = translate; }
+
+	void SetShake(const Vector3& shake) { shake_ = shake; }
 
 	void SetFovY(const float& horizontalFOV) { horizontalFOV_ = horizontalFOV; }
 	void SetAspectRate(const float& aspectRatio) { aspectRatio_ = aspectRatio; }

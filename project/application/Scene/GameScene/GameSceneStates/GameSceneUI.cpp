@@ -32,12 +32,14 @@ void GameScene::UIDraw()
 	// フェード中は描画しない
 	if (/*GetCurrentState() != GameSceneState::FADE_OUT && GetCurrentState() != GameSceneState::FADE_IN*/true)
 	{
-		if (GetCurrentState() != GameSceneState::RESULT)
+		if (GetCurrentState() != GameSceneState::RESULT &&
+			GetCurrentState() != GameSceneState::RETRY)
 		{
 			playUI_->Draw();
 		}
 		if (GetCurrentState() != GameSceneState::RESULT &&
 			GetCurrentState() != GameSceneState::READY &&
+			GetCurrentState() != GameSceneState::RETRY &&
 			GetCurrentState() != GameSceneState::FADE_IN)
 		{
 			playUI_->DrawRT();

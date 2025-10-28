@@ -259,6 +259,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Player\JustCollider.cpp" />
     <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
+    <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
@@ -278,6 +279,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h" />
+    <ClInclude Include="engine\Camera\CameraShake.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />
@@ -378,6 +380,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Player\JustCollider.h" />
     <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
+    <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

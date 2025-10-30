@@ -18,7 +18,7 @@ void ResultClass::Initialze()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ScoreText.png");
 	scoretext_ = std::make_unique<Sprite>();
 	scoretext_->Initialize("Resources/Texture/ScoreText.png");
-	scoretext_->SetPosition({ 450, 360 });
+	scoretext_->SetPosition({ 400, 360 });
 
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/TitleSpace.png");

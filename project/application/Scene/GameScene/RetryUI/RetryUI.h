@@ -19,7 +19,8 @@ public:
 
 private:
 	std::unique_ptr<Sprite> ready_;
-	std::unique_ptr<Sprite> go_;
+	std::unique_ptr<Sprite> scoretext_;
+	std::unique_ptr<Sprite> spaceSpr_;
 
 	float timer_ = -1.0f;
 

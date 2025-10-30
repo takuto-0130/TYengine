@@ -7,6 +7,7 @@
 #include "PlayUI/PlayUI.h"
 #include "ScoreUI/ScoreUI.h"
 #include "StartUI/StartUI.h"
+#include "RetryUI/RetryUI.h"
 #include "BulletTimeController.h"
 #include "Timer.h"
 #include "Ease.h"

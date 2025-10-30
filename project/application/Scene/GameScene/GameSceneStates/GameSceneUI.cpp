@@ -3,6 +3,7 @@
 #include "../Result/Result.h"
 #include "../PlayUI/PlayUI.h"
 #include "../StartUI/StartUI.h"
+#include "../RetryUI/RetryUI.h"
 #include "../../../ScoreUI/ScoreUI.h"
 #include "SpriteBasis.h"
 
@@ -23,6 +24,9 @@ void GameScene::UIInit()
 
 	resultMenu_ = std::make_unique<ResultClass>();
 	resultMenu_->Initialze();
+
+	retryDraw_ = std::make_unique<RetryUI>();
+	retryDraw_->Initialze();
 }
 
 void GameScene::UIDraw()
@@ -30,7 +34,7 @@ void GameScene::UIDraw()
 	SpriteBasis::GetInstance()->BasisDrawSetting();
 
 	// フェード中は描画しない
-	if (/*GetCurrentState() != GameSceneState::FADE_OUT && GetCurrentState() != GameSceneState::FADE_IN*/true)
+	if (GetCurrentState() != GameSceneState::FADE_OUT)
 	{
 		if (GetCurrentState() != GameSceneState::RESULT &&
 			GetCurrentState() != GameSceneState::RETRY)
@@ -53,6 +57,12 @@ void GameScene::UIDraw()
 		if (GetCurrentState() == GameSceneState::RESULT)
 		{
 			resultMenu_->Draw();
+			scoreDraw_->Draw();
+		}
+
+		if (GetCurrentState() == GameSceneState::RETRY)
+		{
+			retryDraw_->Draw();
 			scoreDraw_->Draw();
 		}
 

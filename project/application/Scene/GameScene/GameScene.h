@@ -14,6 +14,7 @@ class ResultClass;
 class PlayUI;
 class ScoreUI;
 class StartUI;
+class RetryUI;
 class Audio;
 class RailManager;
 class Player;
@@ -87,6 +88,7 @@ private: // メンバ変数
 	
 	std::unique_ptr<StartUI> startDraw_;
 	std::unique_ptr<ScoreUI> scoreDraw_;
+	std::unique_ptr<RetryUI> retryDraw_;
 	std::unique_ptr<PauseClass> pauseMenu_;
 	std::unique_ptr<ResultClass> resultMenu_;
 
@@ -104,8 +106,10 @@ private: // メンバ変数
 private: // シーン内のState関連関数
 #pragma region // State関連関数
 	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override {
-		switch (state) {
+	std::string GetStateName(State state) const override 
+	{
+		switch (state) 
+		{
 		case State::LOAD: return "LOAD";
 		case State::FADE_IN: return "FADE_IN";
 		case State::READY: return "READY";

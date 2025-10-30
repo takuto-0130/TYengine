@@ -73,7 +73,7 @@ void ScoreUI::Draw()
 
 void ScoreUI::SetResult()
 {
-	float X = 700.0f;
+	float X = 650.0f;
 	float Y = 360.0f;
 	one_->SetPosition({ X,Y });
 	two_->SetPosition({ 45.0f + X,Y });

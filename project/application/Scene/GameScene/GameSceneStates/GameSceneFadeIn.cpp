@@ -23,7 +23,7 @@ void GameScene::UpdateFadeIn()
 
 	if (!TransitionManager::GetInstance()->IsBusy())
 	{
-		ChangeState(GameSceneState::READY);
+		ChangeState(GameSceneState::PLAY);
 	}
 
 }

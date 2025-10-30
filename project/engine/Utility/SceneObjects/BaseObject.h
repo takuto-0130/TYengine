@@ -1,28 +1,22 @@
 #pragma once
-
 #include "Object3d.h"
 #include "WorldTransform.h"
 
+// オブジェクトのベースクラス
 class BaseObject
 {
 public:
+	// デストラクタ
 	virtual ~BaseObject() {};
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
+	// 初期化
 	virtual void Init() = 0;
 
-	/// <summary>
-	/// 毎フレーム処理
-	/// </summary>
+	// 更新
 	virtual void Update() = 0;
 
-	/// <summary>
-	/// 描画
-	/// </summary>
+	// 描画
 	virtual void Draw() = 0;
-
 
 protected:
 	// 3Dオブジェクト

@@ -3,6 +3,8 @@
 #include "DirectXBasis.h"
 #include <memory>
 #include <mutex>
+
+// ImGui管理クラス
 class ImGuiManager
 {
 public:

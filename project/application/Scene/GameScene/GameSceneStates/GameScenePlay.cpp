@@ -17,6 +17,25 @@ void GameScene::UpdatePlay()
 	PlayUIUpdate();
 
 	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
+
+	if (input_->TriggerKey(DIK_T)) ChangeState(GameSceneState::FADE_OUT);
+
+	if (stageManager_->GetPlayer()->IsDead())
+	{
+		CameraShake::ShakeParams params;
+		params.duration = 0.6f;
+		params.amplitude = 0.15f;
+		params.frequency = 20.0f;
+
+		camera_->StartShake(params);
+		ChangeState(GameSceneState::RETRY);
+	}
+
+	/*if(isReady_ && GetStateElapsedTime() >= 0.3f) 
+	{
+		isReady_ = false;
+		ChangeState(GameSceneState::FADE_IN);
+	}*/
 }
 void GameScene::ExitPlay()
 {

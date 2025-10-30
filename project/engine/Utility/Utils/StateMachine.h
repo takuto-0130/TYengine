@@ -142,7 +142,8 @@ private: // メンバ変数
 // 使い方
 // 更新処理の中で UpdateState(float deltaTime) を呼び出し、ステートを切り替えたいときに適宜ChangeState(State next)を呼び出す
 // 以下宣言の例
-#ifdef 0
+
+#if 0
 
 //.h
 enum class State

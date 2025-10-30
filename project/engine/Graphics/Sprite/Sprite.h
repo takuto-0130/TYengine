@@ -64,6 +64,7 @@ public: // メンバ関数
     void SetPosition(const Vector2& position) { position_ = position; }
     void SetRotation(const float& rotation) { rotation_ = rotation; }
     void SetColor(const Vector4& color) { materialData_->color = color; }
+    void SetAlpha(const float& alpha) { materialData_->color.w = alpha; }
     void SetSize(const Vector2& size) { size_ = size; }
     void SetTextureLeftTop(Vector2 textureLeftTop) { textureLeftTop_ = textureLeftTop; }
     void SetTextureSize(Vector2 textureSize) { textureSize_ = textureSize; }

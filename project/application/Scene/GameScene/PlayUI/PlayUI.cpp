@@ -33,15 +33,20 @@ void PlayUI::Init()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/hightLight.png");
 	hightLight_ = std::make_unique<Sprite>();
 	hightLight_->Initialize("Resources/Texture/hightLight.png");
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
+	returnTitle_ = std::make_unique<Sprite>();
+	returnTitle_->Initialize("Resources/Texture/ReturnTitle.png");
+	
 }
 
 void PlayUI::Update()
 {
 	comboText_->Update();
 	comboNumTex_->Update();
-	reticle_->Update();
 	operation_->Update();
 	hightLight_->Update();
+	returnTitle_->Update();
 }
 
 void PlayUI::Draw()
@@ -59,6 +64,12 @@ void PlayUI::Draw()
 void PlayUI::DrawHightLight()
 {
 	hightLight_->Draw();
+}
+
+void PlayUI::DrawRT()
+{
+	reticle_->Update();
+	returnTitle_->Draw();
 }
 
 void PlayUI::ComboTexUpdate()

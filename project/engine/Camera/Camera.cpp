@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Timer.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
@@ -26,7 +27,10 @@ void Camera::Update()
 	ImGui::End();
 #endif // _DEBUG
 
-	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	shakeController_.Update(Timer::GetInstance()->GetDeltaTime());
+	shake_ = shakeController_.GetOffset();
+
+	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate + shake_);
 	viewMatrix_ = Inverse(worldMatrix_);
 	projectionMatrix_ = MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_);
 	worldViewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;

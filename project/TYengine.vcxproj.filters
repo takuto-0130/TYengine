@@ -352,6 +352,8 @@
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp">
       <Filter>application\source</Filter>
     </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
+    <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
@@ -702,6 +704,9 @@
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h">
       <Filter>application\header</Filter>
     </ClInclude>
+    <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
+    <ClInclude Include="engine\Camera\CameraShake.h" />
+    <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">

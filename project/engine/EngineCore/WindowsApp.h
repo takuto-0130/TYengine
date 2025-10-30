@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include <cstdint>
+
+// WindowsAPIクラス
 class WindowsApp
 {
 public:// 静的メンバ関数

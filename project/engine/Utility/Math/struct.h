@@ -4,6 +4,7 @@
 #include <vector>
 #include <array>
 
+// 2次元ベクトル
 struct Vector2 {
 	float x;
 	float y;
@@ -37,6 +38,7 @@ struct Vector2 {
 	}
 };
 
+// 3次元ベクトル
 struct Vector3 {
 	float x;
 	float y;
@@ -75,11 +77,54 @@ struct Vector3 {
 	}
 };
 
+
+// 4次元ベクトル
 struct Vector4 {
 	float x;
 	float y;
 	float z;
 	float w;
+
+	Vector4& operator+=(const Vector4& a)
+	{
+		x = a.x + x;
+		y = a.y + y;
+		z = a.z + z;
+		w = a.w + w;
+		return *this;
+	}
+
+	Vector4& operator-=(const Vector4& a)
+	{
+		x = x - a.x;
+		y = y - a.y;
+		z = z - a.z;
+		w = w - a.w;
+		return *this;
+	}
+
+	Vector4& operator*=(const float& a)
+	{
+		x = x * a;
+		y = y * a;
+		z = z * a;
+		w = w * a;
+		return *this;
+	}
+
+	Vector4& operator/=(const float& a)
+	{
+		x = x / a;
+		y = y / a;
+		z = z / a;
+		w = w / a;
+		return *this;
+	}
+
+	bool operator==(const Vector4& a) const
+	{
+		return (x == a.x && y == a.y && z == a.z && w == a.w);
+	}
 };
 
 struct Matrix4x4 {

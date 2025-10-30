@@ -16,77 +16,120 @@ enum class Lighting
 	LAMBERT,
 };
 
+/// <summary>
+/// 単一の 3D オブジェクトを描画するためのクラス。  
+/// マテリアル、カメラ、モデル、各種 GPU リソースを保持し、描画を実行する。
+/// </summary>
 class Object3d
 {
 public: // メンバ関数
-	Object3d() = default;
-	~Object3d() = default;
+    /// <summary>デフォルトコンストラクタ。</summary>
+    Object3d() = default;
 
-	void Initialize();
+    /// <summary>デストラクタ。</summary>
+    ~Object3d() = default;
 
-	void Draw(WorldTransform& worldTransform);
+    /// <summary>
+    /// 初期化処理。  
+    /// Object3dBasis の参照取得、マテリアル／カメラ用定数バッファの作成とマッピングを行う。
+    /// </summary>
+    void Initialize();
+
+    /// <summary>
+    /// 描画処理。  
+    /// 渡されたワールド変換と、内部のモデル・マテリアル・カメラ情報を用いて描画する。
+    /// </summary>
+    /// <param name="worldTransform">オブジェクトのワールド変換（WVP 計算に使用）。</param>
+    void Draw(WorldTransform& worldTransform);
 
 private:
+    /// <summary>
+    /// マテリアル用の定数バッファを作成・マップする。
+    /// </summary>
+    void CreateMaterialResource();
 
-	void CreateMaterialResource();
-
-	void CreateCameraResource();
+    /// <summary>
+    /// カメラ用の定数バッファを作成・マップする。
+    /// </summary>
+    void CreateCameraResource();
 
 private: // 構造体
+    /// <summary>
+    /// マテリアル定数バッファ。  
+    /// color：RGBA 色、enableLighting：ライティング有効、uvTransform：UV 変換、  
+    /// environmentCoefficient：環境マップ反射係数、shininess：鏡面ハイライトの鋭さ。
+    /// </summary>
+    struct Material
+    {
+        Vector4 color;             ///< マテリアルカラー（RGBA）
+        bool   enableLighting;     ///< ライティングの有効フラグ
+        float  padding[3];         ///< アライメント用パディング
+        Matrix4x4 uvTransform;     ///< UV 変換行列
+        float environmentCoefficient; ///< 環境マップ反射係数（0～1）
+        float shininess;           ///< 鏡面反射の鋭さ（ハイライト係数）
+    };
 
-	struct Material {
-		Vector4 color;
-		bool enableLighting;
-		float padding[3];
-		Matrix4x4 uvTransform;
-		float environmentCoefficient;
-		float shininess;
-	};
-
-	// カメラ座標
-	struct CameraForGPU {
-		Vector3 worldPosition;
-	};
+    /// <summary>
+    /// カメラ定数バッファ。  
+    /// worldPosition：カメラのワールド座標（スペキュラ等で使用）。
+    /// </summary>
+    struct CameraForGPU
+    {
+        Vector3 worldPosition;     ///< カメラのワールド座標
+    };
 
 private: // メンバ変数
-	Object3dBasis* objectManager_ = nullptr;
-	Model* model_ = nullptr;
-	Camera* camera_ = nullptr;
+    Object3dBasis* objectManager_ = nullptr;        ///< 3D 共通基盤（ルートシグネチャ／PSO 等）。
+    Model* model_ = nullptr;                ///< 描画対象モデル。
+    Camera* camera_ = nullptr;               ///< 使用するカメラ。
 
+    Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr; ///< マテリアル CB リソース。
+    Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_ = nullptr; ///< カメラ CB リソース。
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_ = nullptr;
+    Material* materialData_ = nullptr;         ///< マテリアル CB のマップ先。
+    CameraForGPU* cameraData_ = nullptr;         ///< カメラ CB のマップ先。
 
+    const std::string defaultModelsPath_ = "Resources/Models/"; ///< モデル読み込みの既定ディレクトリ。
 
-	Material* materialData_ = nullptr;
-	CameraForGPU* cameraData_ = nullptr;
+    // コピー禁止
+    Object3d(const Object3d&) = delete;
+    Object3d& operator=(const Object3d&) = delete;
 
-	const std::string defaultModelsPath_ = "Resources/Models/";
+public: // プロパティ操作
+    /// <summary>描画に使用するモデルを設定する。</summary>
+    /// <param name="model">モデルインスタンス。</param>
+    void SetModel(Model* model) { model_ = model; }
 
+    /// <summary>ファイルからモデルを読み込み設定する。</summary>
+    /// <param name="filePath">モデルファイルへの相対／絶対パス。</param>
+    void SetModel(const std::string& filePath);
 
-	// コピー禁止
-	Object3d(const Object3d&) = delete;
-	Object3d& operator=(const Object3d&) = delete;
+    /// <summary>使用するカメラを設定する。</summary>
+    /// <param name="camera">カメラインスタンス。</param>
+    void SetCamera(Camera* camera) { camera_ = camera; }
 
-public:
-	// モデル
-	void SetModel(Model* model) { model_ = model; }
-	void SetModel(const std::string& filePath);
+    /// <summary>現在のマテリアルカラーを取得する。</summary>
+    /// <returns>RGBA カラー。</returns>
+    const Vector4& GetColor() const { return materialData_->color; }
 
-	// カメラ
-	void SetCamera(Camera* camera) { camera_ = camera; }
+    /// <summary>マテリアルカラーを設定する。</summary>
+    /// <param name="color">RGBA カラー。</param>
+    void SetColor(const Vector4& color) { materialData_->color = color; }
 
-	// 色
-	const Vector4& GetColor() const { return materialData_->color; }
-	void SetColor(const Vector4& color) { materialData_->color = color; }
+    /// <summary>ライティング有効フラグを取得する。</summary>
+    /// <returns>true でライティング有効。</returns>
+    const bool& GetIsLighting() const { return materialData_->enableLighting; }
 
-	// Lighting
-	const bool& GetIsLighting() const { return materialData_->enableLighting; }
-	void SetIsLighting(const bool isLighting) { materialData_->enableLighting = isLighting; }
+    /// <summary>ライティングの有効・無効を設定する。</summary>
+    /// <param name="isLighting">true で有効、false で無効。</param>
+    void SetIsLighting(const bool isLighting) { materialData_->enableLighting = isLighting; }
 
-	// 環境マップの映り込み
-	void SetEnvironmentCoefficient(float environmentCoefficient) { materialData_->environmentCoefficient = environmentCoefficient; }
+    /// <summary>環境マップ反射係数を設定する（0～1）。</summary>
+    /// <param name="environmentCoefficient">反射係数。</param>
+    void SetEnvironmentCoefficient(float environmentCoefficient) { materialData_->environmentCoefficient = environmentCoefficient; }
 };
 
+/// <summary>
+/// Object3d はコピー代入不可であることをコンパイル時に検証する static_assert。
+/// </summary>
 static_assert(!std::is_copy_assignable_v<Object3d>);
-

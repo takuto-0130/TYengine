@@ -3,25 +3,41 @@
 #include "IScene.h"
 #include "ParticleManager.h"
 
+/// <summary>
+/// ゲーム全体のメインエントリーポイント。  
+/// TYFrameWork を継承し、ゲーム特有の初期化・更新・描画ロジックを実装する。
+/// </summary>
 class GameCore : public TYFrameWork
 {
-public: // メンバ変数
+public:
+    /// <summary>
+    /// 初期化処理。  
+    /// ゲームで使用する各種マネージャ（入力・パーティクル・シーンなど）を初期化する。
+    /// </summary>
+    void Initialize() override;
 
-	// 初期化
-	void Initialize() override;
+    /// <summary>
+    /// 終了処理。  
+    /// 使用している全リソースの解放やマネージャの終了処理を行う。
+    /// </summary>
+    void Finalize() override;
 
-	// 終了
-	void Finalize() override;
+    /// <summary>
+    /// 毎フレーム更新処理。  
+    /// 入力状態やシーンの更新、パーティクルなどの動作を制御する。
+    /// </summary>
+    void Update() override;
 
-	// 毎フレーム更新
-	void Update() override;
-
-	// 描画
-	void Draw() override;
+    /// <summary>
+    /// 描画処理。  
+    /// フレーム全体のレンダリングを行う。
+    /// </summary>
+    void Draw() override;
 
 private:
-	Input* input = nullptr;
+    /// <summary>入力管理クラス（キーボード、マウス、パッドなど）。</summary>
+    Input* input = nullptr;
 
-	ParticleManager* particleManager;
+    /// <summary>パーティクル描画および管理クラス。</summary>
+    ParticleManager* particleManager = nullptr;
 };
-

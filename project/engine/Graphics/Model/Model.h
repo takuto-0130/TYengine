@@ -9,72 +9,132 @@
 #include <Camera.h>
 
 class WorldTransform;
+
+/// <summary>
+/// 単一の 3D モデルを表すクラス。  
+/// モデルデータ（頂点・マテリアル・ノード階層）を保持し、描画処理を提供する。
+/// </summary>
 class Model
 {
 public: // メンバ関数
-	// 初期化
-	void Initialize(ModelLoader* modelLoader, const std::string& directoryPath, const std::string& fileName);
+    /// <summary>
+    /// モデルの初期化処理。  
+    /// 指定ディレクトリからモデルファイルを読み込み、頂点データやマテリアル情報を構築する。
+    /// </summary>
+    /// <param name="modelLoader">モデル読み込み管理クラス。</param>
+    /// <param name="directoryPath">モデルのディレクトリパス。</param>
+    /// <param name="fileName">モデルファイル名。</param>
+    void Initialize(ModelLoader* modelLoader, const std::string& directoryPath, const std::string& fileName);
 
-	// 描画
-	void Draw(WorldTransform& transform, Camera* camera);
+    /// <summary>
+    /// モデルの描画処理。  
+    /// ワールド変換およびカメラ情報を使用してレンダリングを行う。
+    /// </summary>
+    /// <param name="transform">オブジェクトのワールド変換情報。</param>
+    /// <param name="camera">描画に使用するカメラ。</param>
+    void Draw(WorldTransform& transform, Camera* camera);
 
-	// 頂点データの生成
-	void CreateVertexResource();
+    /// <summary>
+    /// モデルの頂点データから頂点バッファを生成する。  
+    /// GPU 上にリソースを確保し、頂点ビューを構築する。
+    /// </summary>
+    void CreateVertexResource();
+
 private: // 構造体
-	struct VertexData {
-		Vector4 position;
-		Vector2 texcoord;
-		Vector3 normal;
-	};
+    /// <summary>
+    /// 頂点データ構造体。  
+    /// 各頂点の座標、UV 座標、法線ベクトルを保持する。
+    /// </summary>
+    struct VertexData
+    {
+        Vector4 position;  ///< 頂点座標。
+        Vector2 texcoord;  ///< テクスチャ座標。
+        Vector3 normal;    ///< 法線ベクトル。
+    };
 
-	struct Color {
-		float r, g, b;
-	};
+    /// <summary>
+    /// RGB カラー構造体。
+    /// </summary>
+    struct Color
+    {
+        float r, g, b;
+    };
 
-	struct MaterialData {
-		std::string name;
-		float Ns;
-		Color Ka; // 環境光色
-		Color Kd; // 拡散反射色
-		Color Ks; // 鏡面反射光
-		float Ni;
-		float d;
-		uint32_t illum;
-		std::string textureFilePath;
-		uint32_t textureIndex = 0;
-	};
+    /// <summary>
+    /// マテリアルデータ構造体。  
+    /// 拡散・反射・環境光情報、テクスチャファイルパスなどを保持する。
+    /// </summary>
+    struct MaterialData
+    {
+        std::string name;           ///< マテリアル名。
+        float Ns;                   ///< スペキュラ強度。
+        Color Ka;                   ///< 環境光色。
+        Color Kd;                   ///< 拡散反射色。
+        Color Ks;                   ///< 鏡面反射色。
+        float Ni;                   ///< 屈折率。
+        float d;                    ///< 透過度。
+        uint32_t illum;             ///< 照明モデル。
+        std::string textureFilePath;///< テクスチャファイルパス。
+        uint32_t textureIndex = 0;  ///< テクスチャ SRV インデックス。
+    };
 
-	struct Node {
-		Matrix4x4 localMatrix;
-		std::string name;
-		std::vector<Node> children;
-	};
+    /// <summary>
+    /// モデル階層構造を表すノード。
+    /// 子ノードを持つことができ、階層的なモデル構成を再現する。
+    /// </summary>
+    struct Node
+    {
+        Matrix4x4 localMatrix;          ///< ローカル変換行列。
+        std::string name;               ///< ノード名。
+        std::vector<Node> children;     ///< 子ノード群。
+    };
 
-	struct ModelData {
-		std::vector<VertexData> vertices;
-		MaterialData material;
-		Node rootNode;
-	};
+    /// <summary>
+    /// モデル全体のデータ構造体。  
+    /// 頂点配列、マテリアル、ルートノードをまとめる。
+    /// </summary>
+    struct ModelData
+    {
+        std::vector<VertexData> vertices; ///< 頂点データ配列。
+        MaterialData material;            ///< マテリアル情報。
+        Node rootNode;                    ///< ルートノード。
+    };
 
-private:
-	ModelLoader* modelLoader_ = nullptr;
+private: // メンバ変数
+    ModelLoader* modelLoader_ = nullptr; ///< モデルローダへの参照。
+    ModelData modelData_;                ///< モデルデータ本体。
 
-	ModelData modelData_;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_ = nullptr;
-
-	VertexData* vertexData_ = nullptr;
-
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_ = nullptr; ///< 頂点バッファリソース。
+    VertexData* vertexData_ = nullptr;                                ///< 頂点データマッピングポインタ。
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;                       ///< 頂点バッファビュー。
 
 public:
-	// objロード
-	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
-	// ノードをモデルデータに変換
-	static Node ReadNode(aiNode* node);
+    /// <summary>
+    /// OBJ モデルファイルを読み込む。  
+    /// Assimp などを使用してデータを解析し、ModelData 構造体として返す。
+    /// </summary>
+    /// <param name="directoryPath">モデルのディレクトリパス。</param>
+    /// <param name="filename">読み込むファイル名。</param>
+    /// <returns>ロード済みモデルデータ。</returns>
+    static ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
+
+    /// <summary>
+    /// ノード階層情報を再帰的に解析し、Node 構造体に変換する。
+    /// </summary>
+    /// <param name="node">Assimp のノード構造体。</param>
+    /// <returns>変換後の Node 構造体。</returns>
+    static Node ReadNode(aiNode* node);
+
 public:
-	void SetVertices(VertexData vertex);
-	void SetTexturePath(const std::string& filePath) { modelData_.material.textureFilePath = filePath; }
+    /// <summary>
+    /// 頂点データを追加する。
+    /// </summary>
+    /// <param name="vertex">追加する頂点情報。</param>
+    void SetVertices(VertexData vertex);
+
+    /// <summary>
+    /// 使用するテクスチャファイルのパスを設定する。
+    /// </summary>
+    /// <param name="filePath">テクスチャファイルへのパス。</param>
+    void SetTexturePath(const std::string& filePath) { modelData_.material.textureFilePath = filePath; }
 };
-
-

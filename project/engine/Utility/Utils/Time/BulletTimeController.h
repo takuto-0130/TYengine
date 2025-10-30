@@ -21,7 +21,9 @@ public: // 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
-	static BulletTimeController* GetInstance() {
+	// シングルトンインスタンス
+	static BulletTimeController* GetInstance() 
+	{
 		static BulletTimeController instance;
 		return &instance;
 	}
@@ -33,10 +35,11 @@ public:
 	BulletTimeController& operator=(BulletTimeController&&) = delete;
 
 private:
+	// コンストラクタ
 	BulletTimeController();
 
 public: // メンバ関数
-
+	// 更新
 	void Update();
 
 	/// <summary>
@@ -50,15 +53,17 @@ public: // メンバ関数
 	/// <param name="exitEase">		：スロー終了の際のイージング</param>
 	void Trigger(float slowScale, float enterDuration, float holdDuration, float exitDuration, 
 		EaseFunc enterEase, EaseFunc exitEase);
+	// ↑今後、開始や終了のトリガーを個別でも設定できるようにする
 
 	// 終了処理の呼び出し
 	void CallStateExit();
 
-	// 手動中断
+	// タイムスケールを等倍にして強制中断
 	void ForceExitNow();
 
 private: // メンバ変数
-	struct BulletTimeParams {
+	struct BulletTimeParams 
+	{
 
 		float slowScale = 0.0f;
 		float enterDuration = 0.0f;
@@ -71,12 +76,16 @@ private: // メンバ変数
 	BulletTimeParams params_;
 	float elapsed_ = 0.0f;
 
+	// タイマーインスタンスの保持用
 	Timer* timer_ = nullptr;
 
 private: // State関連関数
 #pragma region // State関連関数
-	std::string GetStateName(BulletTimeState state) const override {
-		switch (state) {
+	// 状態名を文字列化（デバッグ・ImGui表示用）
+	std::string GetStateName(BulletTimeState state) const override
+	{
+		switch (state) 
+		{
 		case BulletTimeState::NONE: return "NONE";
 		case BulletTimeState::ENTER: return "ENTER";
 		case BulletTimeState::HOLD:  return "HOLD";
@@ -85,18 +94,22 @@ private: // State関連関数
 		}
 	}
 
+	// 通常時
 	void InitNone();
 	void UpdateNone();
 	void ExitNone();
 
+	// 開始時
 	void InitEnter();
 	void UpdateEnter();
 	void ExitEnter();
 
+	// バレットタイム中
 	void InitHold();
 	void UpdateHold();
 	void ExitHold();
 
+	// 終了時
 	void InitExit();
 	void UpdateExit();
 	void ExitExit();

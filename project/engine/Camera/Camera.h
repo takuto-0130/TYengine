@@ -41,15 +41,14 @@ public: // メンバ関数
 	{
 		shakeController_.Start(params);
 	}
+    // ========================
+    //        Setter
+    // ========================
 
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
-	const Vector3& GetRotate() { return transform_.rotate; }
-	
 	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
-	const Vector3& GetTranslate() { return transform_.translate; }
 
 	void SetOffsetRotate(const Vector3& rotate) { followCameraOffsetRotare_ = rotate; }
-
 	void SetOffsetTranslate(const Vector3& translate) { followCameraOffsetPosition_ = translate; }
 
 	void SetShake(const Vector3& shake) { shake_ = shake; }
@@ -59,6 +58,12 @@ public: // メンバ関数
 	void SetNearClip(const float& nearClip) { nearClip_ = nearClip; }
 	void SetFarClip(const float& farClip) { farClip_ = farClip; }
 
+	// ========================
+	//        Getter
+	// ========================
+
+	const Vector3& GetTranslate() { return transform_.translate; }
+	const Vector3& GetRotate() { return transform_.rotate; }
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
 	const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
 	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }

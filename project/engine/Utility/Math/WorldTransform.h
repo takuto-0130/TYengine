@@ -33,7 +33,9 @@ public:
 	// 親となるワールド変換へのポインタ
 	const WorldTransform* parent_ = nullptr;
 
+	// コンストラクタ
 	WorldTransform() = default;
+	// デストラクタ
 	~WorldTransform() = default;
 
 	/// <summary>
@@ -58,7 +60,15 @@ public:
 	/// </summary>
 	/// <param name="wvp">WVP行列</param>
 	void SetMapWVP(const Matrix4x4& wvp) { constMap->WVP = wvp; }
+	/// <summary>
+	/// マップのセット
+	/// </summary>
+	/// <param name="world">World行列</param>
 	void SetMapWorld(const Matrix4x4& world) { constMap->World = world; }
+	/// <summary>
+	/// ワールド行列の取得
+	/// </summary>
+	/// <returns>>World行列</returns>
 	const Matrix4x4& GetMatWorld() { return matWorld_; }
 
 private:

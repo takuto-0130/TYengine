@@ -1,54 +1,100 @@
 #pragma once
 #include "DirectXBasis.h"
 
-// スプライト共通部
+/// <summary>
+/// スプライト描画の共通設定（ルートシグネチャ／グラフィックスパイプライン等）を一元管理するクラス。  
+/// シングルトンとして提供し、スプライト描画時の共通セットアップを行う。
+/// </summary>
 class SpriteBasis
 {
 public: // メンバ関数
-	// シングルトンインスタンスの取得
-	static SpriteBasis* GetInstance();
+    /// <summary>
+    /// シングルトンインスタンスの取得。
+    /// </summary>
+    /// <returns>SpriteBasis の唯一のインスタンス。</returns>
+    static SpriteBasis* GetInstance();
 
-	// 初期化
-	void Initialize(DirectXBasis* directXBasis);
+    /// <summary>
+    /// 初期化処理。DirectX 基盤を登録し、必要なリソース/状態を構築する。
+    /// </summary>
+    /// <param name="directXBasis">DirectX 基盤（デバイス・コマンド関連）。</param>
+    void Initialize(DirectXBasis* directXBasis);
 
-	// 共通描画設定
-	void BasisDrawSetting();
+    /// <summary>
+    /// スプライト描画の共通設定をコマンドリストへ反映する。  
+    /// ルートシグネチャ／PSO／ブレンド／ラスタライザ等の状態をセット。
+    /// </summary>
+    void BasisDrawSetting();
 
-	DirectXBasis* GetDirectXBasis() const { return directXBasis_; }
+    /// <summary>登録済みの DirectX 基盤を取得する。</summary>
+    /// <returns>DirectXBasis へのポインタ。</returns>
+    DirectXBasis* GetDirectXBasis() const { return directXBasis_; }
 
-	ID3D12RootSignature* GetRootSignature() const { return rootSignature_.Get(); }
+    /// <summary>スプライト用ルートシグネチャを取得する。</summary>
+    /// <returns>ID3D12RootSignature へのポインタ。</returns>
+    ID3D12RootSignature* GetRootSignature() const { return rootSignature_.Get(); }
 
-	ID3D12PipelineState* GetGraphicsPipelineState() const { return graphicsPipelineState_.Get(); }
+    /// <summary>スプライト用グラフィックスパイプラインステートを取得する。</summary>
+    /// <returns>ID3D12PipelineState へのポインタ。</returns>
+    ID3D12PipelineState* GetGraphicsPipelineState() const { return graphicsPipelineState_.Get(); }
 
 private: // メンバ関数
-	// ルートシグネチャの作成
-	void CreateRootSignature();
+    /// <summary>
+    /// ルートシグネチャを作成する（SRV／CBV／サンプラ等のレイアウトを定義）。
+    /// </summary>
+    void CreateRootSignature();
 
-	// グラフィックスパイプラインの作成
-	void CreateGraphicsPipeline();
+    /// <summary>
+    /// グラフィックスパイプライン（PSO）を作成する。  
+    /// シェーダ、入力レイアウト、ブレンド、ラスタライザ、深度等の設定を含む。
+    /// </summary>
+    void CreateGraphicsPipeline();
 
 private: // メンバ変数
-	DirectXBasis* directXBasis_; 
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
+    /// <summary>DirectX 基盤への参照。</summary>
+    DirectXBasis* directXBasis_ = nullptr;
 
-	D3D12_BLEND_DESC blendDesc_{};
-	D3D12_RASTERIZER_DESC rasterizerDesc_{};
+    /// <summary>スプライト描画用ルートシグネチャ。</summary>
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
 
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob_ = nullptr;
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
+    /// <summary>スプライト描画用パイプラインステート（PSO）。</summary>
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 
-	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
-	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
+    /// <summary>ブレンドステート記述子。</summary>
+    D3D12_BLEND_DESC blendDesc_{};
+
+    /// <summary>ラスタライザステート記述子。</summary>
+    D3D12_RASTERIZER_DESC rasterizerDesc_{};
+
+    /// <summary>頂点シェーダバイナリ。</summary>
+    Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob_ = nullptr;
+
+    /// <summary>ピクセルシェーダバイナリ。</summary>
+    Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
+
+    /// <summary>ルートシグネチャ生成時の出力バイナリ。</summary>
+    Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
+
+    /// <summary>ルートシグネチャ生成時のエラーメッセージ出力。</summary>
+    Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
 
 private:
-	static std::unique_ptr<SpriteBasis> instance;
-	static std::once_flag initInstanceFlag;
+    /// <summary>シングルトン本体。</summary>
+    static std::unique_ptr<SpriteBasis> instance;
 
-	SpriteBasis(SpriteBasis&) = default;
-	SpriteBasis& operator=(SpriteBasis&) = default;
+    /// <summary>スレッドセーフな一度きりの初期化用フラグ。</summary>
+    static std::once_flag initInstanceFlag;
+
+    /// <summary>コピーコンストラクタ（非公開／未使用）。</summary>
+    SpriteBasis(SpriteBasis&) = default;
+
+    /// <summary>代入演算子（非公開／未使用）。</summary>
+    SpriteBasis& operator=(SpriteBasis&) = default;
+
 public:
-	SpriteBasis() = default;
-	~SpriteBasis() = default;
-};
+    /// <summary>デフォルトコンストラクタ。</summary>
+    SpriteBasis() = default;
 
+    /// <summary>デストラクタ。</summary>
+    ~SpriteBasis() = default;
+};

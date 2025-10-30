@@ -256,9 +256,9 @@ void DirectXBasis::CommandListAndFence()
 	hr = commandList_->Close();
 	assert(SUCCEEDED(hr));
 
-	// ✅ 正しいコマンドリスト配列
+	// 正しいコマンドリスト配列
 	ID3D12CommandList* commandLists[] = { commandList_.Get() };
-	commandQueue_->ExecuteCommandLists(1, commandLists); // ← これでOK！
+	commandQueue_->ExecuteCommandLists(1, commandLists);
 
 	swapChain_->Present(1, 0);
 

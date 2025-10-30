@@ -5,6 +5,11 @@
 #include <cassert>
 #include <string>
 #include <imgui.h>
+/// --------------------------------------------------------------------------------- ///
+/// !!!!!!!!!!!!!!!!!!!!!!!継承より委譲の方が適切なようなので後に修正!!!!!!!!!!!!!!!!!!!!!!! ///
+/// --------------------------------------------------------------------------------- ///
+
+
 
 // クラスの型 'C' に 'StateFunctionSet' が定義されていて、
 // 'C::GetStateTable()' が返す型が 'std::vector<C::StateFunctionSet>' であることを要求するコンセプト
@@ -33,6 +38,11 @@ public:
         StateFunc init, update, exit;
     };
 
+public: // メンバ関数
+    /// <summary>
+    /// 関数テーブル登録用
+    /// </summary>
+    /// <param name="instance"> 継承先時クラスのインスタンス </param>
     template<HasStateTable C>
     void RegisterFromDefaultTable(C* instance) 
     {
@@ -103,26 +113,28 @@ protected:
     // オーバーライドで列挙名を文字列化（ImGui表示用）
     virtual std::string GetStateName(State state) const = 0;
 
-private:
+private: // 関数テーブルsetter
     void SetInitFunction(State state, std::function<void()> func) { initTable_[state] = func; }
 
     void SetUpdateFunction(State state, std::function<void()> func) { updateTable_[state] = func; }
 
     void SetExitFunction(State state, std::function<void()> func) { exitTable_[state] = func; }
 
-private:
+private: // メンバ変数
     State currState_{};
     State prevState_{};
     std::optional<State> stateRequest_;
     float stateTimer_ = 0.0f;
     bool allowExit_ = true;
 
+    // 関数テーブル
     std::unordered_map<State, std::function<void()>> initTable_;
     std::unordered_map<State, std::function<void()>> updateTable_;
     std::unordered_map<State, std::function<void()>> exitTable_;
 };
 
 // StateMachine.h
+// 関数テーブルの登録用マクロ
 #define STATE_ENTRY_FOR(cls, stateEnum, funcName) \
     { stateEnum, &cls::Init##funcName, &cls::Update##funcName, &cls::Exit##funcName }
 
@@ -130,8 +142,9 @@ private:
 // 使い方
 // 更新処理の中で UpdateState(float deltaTime) を呼び出し、ステートを切り替えたいときに適宜ChangeState(State next)を呼び出す
 // 以下宣言の例
-/*
-.h
+#ifdef 0
+
+//.h
 enum class State
 {
     ONE,
@@ -173,7 +186,7 @@ private:
     void ExitThree() {}
 };
 
-.cpp
+//.cpp
 #define CLASS_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Class, stateEnum, funcName)
 
@@ -187,4 +200,5 @@ const std::vector<StateMachine<Class, State>::StateFunctionSet>& Class::GetState
     };
     return stateTable;
 }
-*/
+
+#endif // 0

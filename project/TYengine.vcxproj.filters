@@ -259,9 +259,6 @@
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp">
       <Filter>engine\source</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Utility\Collider\Ray\RayCollider.cpp">
-      <Filter>engine\source</Filter>
-    </ClCompile>
     <ClCompile Include="engine\OffScreen\RenderTexture.cpp">
       <Filter>engine\source</Filter>
     </ClCompile>
@@ -272,9 +269,6 @@
       <Filter>engine\source</Filter>
     </ClCompile>
     <ClCompile Include="engine\Framework\SceneBase\SceneManager.cpp">
-      <Filter>engine\source</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Utility\Collider\Sphere\SphereCollider.cpp">
       <Filter>engine\source</Filter>
     </ClCompile>
     <ClCompile Include="engine\Graphics\Sprite\Sprite.cpp">

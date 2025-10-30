@@ -6,6 +6,8 @@
 #include "Pause/Pause.h"
 #include "PlayUI/PlayUI.h"
 #include "ScoreUI/ScoreUI.h"
+#include "StartUI/StartUI.h"
+#include "RetryUI/RetryUI.h"
 #include "BulletTimeController.h"
 #include "Timer.h"
 #include "Ease.h"
@@ -58,6 +60,11 @@ void GameScene::Init()
 
 	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
+
+	startCameraPos_ = camera_->GetPosition();
+	startCameraRot_ = camera_->GetRotate();
+	isReady_ = true;
+	readyCount_ = 0;
 
 	EmitterInit();
 	UIInit();

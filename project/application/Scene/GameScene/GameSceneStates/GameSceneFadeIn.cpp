@@ -8,10 +8,24 @@ void GameScene::InitFadeIn()
 }
 void GameScene::UpdateFadeIn()
 {
+	if (readyCount_ < 2)
+	{
+		++readyCount_;
+		ComboUIUpdate();
+		PlayUIUpdate();
+		stageManager_->GetPlayer()->Update();
+	}
+	if(readyCount_ == 2)
+	{
+		++readyCount_;
+		StartCamera();
+	}
+
 	if (!TransitionManager::GetInstance()->IsBusy())
 	{
 		ChangeState(GameSceneState::PLAY);
 	}
+
 }
 void GameScene::ExitFadeIn()
 {

@@ -49,13 +49,13 @@ void Liner::Init()
 	collider_ = std::make_unique<EBulletCollider>(
 		static_cast<uint32_t>(ColliderTypeID::E_BULLET),
 		GetWorldPosition(),
-		colliderScale_,
+		3.0f,////////////////////////
 		this
 	);
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 	ChangeState(LinerState::SHOT);
 
-	defaultSpeed_ = 12.0f;
+	defaultSpeed_ = 40.0f;
 }
 
 void Liner::Update()

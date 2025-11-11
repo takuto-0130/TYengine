@@ -148,7 +148,7 @@ private:
 
 	float deltaTime_ = 1.0f / 60.0f;
 
-	float speedMultiply_ = 1.0f;
+	float speedMultiply_ = 0.7f;
 
 
 	bool firstClear_ = false;

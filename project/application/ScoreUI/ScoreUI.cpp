@@ -40,9 +40,10 @@ void ScoreUI::Initialze()
 	back_->Initialize("Resources/Texture/white2x2.png");
 	back_->SetSize({ 215,80 });
 	back_->SetPosition({ 990,542 });
-	back_->SetColor({ 100.f / 256.f,160.f / 256.f,7.f / 256.f,1.0f });
+	back_->SetColor({ 100.0f/256.0f, 160.0f/256.0f, 7.0f/256.0f, 1.0f });
 
 
+	// 一旦オフセット
 	float X = 1020.0f;
 	float Y = 620.0f;
 	one_->SetPosition({ X,Y });

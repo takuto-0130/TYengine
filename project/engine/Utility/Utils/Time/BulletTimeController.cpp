@@ -9,8 +9,7 @@
 const std::vector<StateMachine<BulletTimeController, BulletTimeState>::StateFunctionSet>& BulletTimeController::GetStateTable()
 {
 	using enum BulletTimeState;
-	static const std::vector<StateFunctionSet> stateTable =
-	{
+	static const std::vector<StateFunctionSet> stateTable = {
 		BULLET_TIME_ENTRY(NONE, None),
 		BULLET_TIME_ENTRY(ENTER, Enter),
 		BULLET_TIME_ENTRY(HOLD, Hold),
@@ -28,12 +27,11 @@ BulletTimeController::BulletTimeController()
 
 void BulletTimeController::Update()
 {
-	// スケール前の時間基準で更新する
 	UpdateState(timer_->GetRawDeltaTime());
 }
 
 void BulletTimeController::Trigger(
-	float slowScale, float enterDuration, float holdDuration, float exitDuration, 
+	float slowScale, float enterDuration, float holdDuration, float exitDuration,
 	EaseFunc enterEase, EaseFunc exitEase)
 {
 	params_.slowScale = slowScale;
@@ -64,7 +62,7 @@ void BulletTimeController::ForceExitNow()
 
 
 //-----通常-----//
-void BulletTimeController::InitNone() 
+void BulletTimeController::InitNone()
 {
 	// スロー終了後に再びトリガーを呼ばないとスローが発生しないように
 	LockState();
@@ -87,37 +85,33 @@ void BulletTimeController::UpdateEnter()
 	elapsed_ += timer_->GetRawDeltaTime();
 	if (elapsed_ >= params_.enterDuration)
 	{
+		timer_->SetTimeScale(params_.slowScale);
+		elapsed_ = 0.0f;
 		ChangeState(BulletTimeState::HOLD);
 	}
 }
-void BulletTimeController::ExitEnter() 
-{
-	timer_->SetTimeScale(params_.slowScale);
-	elapsed_ = 0.0f;
-}
+void BulletTimeController::ExitEnter() {}
 
 
 //-----維持-----//
 void BulletTimeController::InitHold() {}
-void BulletTimeController::UpdateHold() 
+void BulletTimeController::UpdateHold()
 {
 	timer_->SetTimeScale(params_.slowScale);
 
 	elapsed_ += timer_->GetRawDeltaTime();
-	if (elapsed_ >= params_.holdDuration) 
+	if (elapsed_ >= params_.holdDuration)
 	{
+		elapsed_ = 0.0f;
 		ChangeState(BulletTimeState::EXIT);
 	}
 }
-void BulletTimeController::ExitHold() 
-{
-	elapsed_ = 0.0f;
-}
+void BulletTimeController::ExitHold() {}
 
 
 //-----終了-----//
 void BulletTimeController::InitExit() {}
-void BulletTimeController::UpdateExit() 
+void BulletTimeController::UpdateExit()
 {
 	float t = elapsed_ / params_.exitDuration;
 	t = std::clamp(t, 0.0f, 1.0f);
@@ -127,12 +121,10 @@ void BulletTimeController::UpdateExit()
 	timer_->SetTimeScale(currentScale);
 
 	elapsed_ += timer_->GetRawDeltaTime();
-	if (elapsed_ >= params_.exitDuration) 
+	if (elapsed_ >= params_.exitDuration)
 	{
+		timer_->SetTimeScale(1.0f);
 		ChangeState(BulletTimeState::NONE);
 	}
 }
-void BulletTimeController::ExitExit() 
-{
-	timer_->SetTimeScale(1.0f);
-}
+void BulletTimeController::ExitExit() {}

@@ -11,6 +11,9 @@ void RailManager::Init()
 	Reset();
 	ResetRailCamera();
 
+	railFinished_ = false;
+	railFinishedJustNow_ = false;
+
 #ifdef _DEBUG
 	isRailCameraMove_ = false;
 #else
@@ -146,12 +149,16 @@ void RailManager::RailCameraMove()
 {
 	if (!isRailCameraMove_) return;
 
-	if (controlPoints_.size() < 4 || pointsDrawing_.size() < 2 || arcMap_.total <= 0.0f) {
+	// “今フレーム到達”は毎フレーム先にクリア
+	railFinishedJustNow_ = false;
+
+	if (controlPoints_.size() < 4 || pointsDrawing_.size() < 2 || arcMap_.total <= 0.0f)
+	{
 		isRailCameraMove_ = false;
 		return;
 	}
 
-	// 前フレームの弧長を保持
+	// 前フレーム弧長を保持
 	prevEyeS_ = eyeS_;
 
 	// 時間更新
@@ -159,11 +166,11 @@ void RailManager::RailCameraMove()
 	eyeS_ = std::min(eyeS_ + ds, arcMap_.total);
 	forwardS_ = std::min(eyeS_ + lookAhead_, arcMap_.total);
 
-	// 距離→t（pointsDrawing_ベース）
+	// 距離→t
 	const float eyeT = DistanceToT_Hybrid(arcMap_, eyeS_);
 	const float forwardT = DistanceToT_Hybrid(arcMap_, forwardS_);
 
-	// 位置と向きはCatmullRomPositionで
+	// 位置・向き
 	Vector3 eye = CatmullRomPosition(controlPoints_, eyeT);
 	Vector3 target = CatmullRomPosition(controlPoints_, forwardT);
 	Vector3 forward = target - eye;
@@ -173,18 +180,30 @@ void RailManager::RailCameraMove()
 	const float lenXZ = Length({ forward.x, 0.0f, forward.z });
 	rot.x = std::atan2(-forward.y, lenXZ);
 
-	// 進行方向に追従するカメラオフセット
+	// オフセット追従
 	Matrix4x4 rotMat = MakeRotateXYZMatrix(rot);
-	Vector3 upOffset = TransformNormal(offsetCameraPos_, rotMat);
+	Vector3   upOffset = TransformNormal(offsetCameraPos_, rotMat);
 	eye += upOffset;
 
 	camera_->SetRotate(rot);
 	camera_->SetTranslate(eye);
 
-	if (forwardS_ >= arcMap_.total) {
-		isRailCameraMove_ = false;
+	// ── 終端到達判定 ─────────────────────────────
+	// 前フレームは未到達で、今フレームで total に到達/超過したら到達扱い
+	constexpr float eps = 1e-6f;
+	const bool reachedEnd =
+		(prevEyeS_ < arcMap_.total - eps) &&
+		((eyeS_ >= arcMap_.total - eps) || (forwardS_ >= arcMap_.total - eps));
+
+	if (reachedEnd)
+	{
+		railFinished_ = true;
+		railFinishedJustNow_ = true;   // このフレームだけ true
+		isRailCameraMove_ = false;  // 自動で停止
+		return;
 	}
 }
+
 
 bool RailManager::RailTrigger()
 {

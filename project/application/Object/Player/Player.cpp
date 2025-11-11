@@ -69,6 +69,8 @@ void Player::Init()
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
 
+	hitpoint_ = 5;
+
 	// test
 	TestReticleInit();
 }
@@ -275,6 +277,9 @@ void Player::DebugGUI()
 {
 #ifdef _DEBUG
 	ImGui::Begin("Player");
+
+	ImGui::Text("hp : %d", hitpoint_);
+
 	ImGui::DragFloat2("ScreenOffset", &screenOffset_.x);
 
 	Vector3 pos = GetWorldPosition();

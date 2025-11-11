@@ -11,7 +11,6 @@ void Player::InitBarrelRoll()
 {
 	startRollPos_ = screenOffset_;
 	rollEfectTimer_ = 0.0f;
-    justRoll_ = true;
 	if (justRoll_)
 	{
 		auto* pem = PostEffectManager::GetInstance();

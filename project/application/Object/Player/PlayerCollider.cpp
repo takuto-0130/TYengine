@@ -4,10 +4,10 @@
 
 void PlayerCollider::OnCollisionEnter([[maybe_unused]]Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
-	if (other.GetTypeID() == static_cast<uint32_t>(ColliderTypeID::E_BULLET))
+	if (other.GetTypeID() == static_cast<uint32_t>(ColliderTypeID::E_BULLET) && player_->GetCurrentState() != PlayerState::BARREL_ROLL)
 	{
 		player_->GetObj()->SetColor({ 1,0.1f,0.1f,1.0f });
-		player_->OnCollision();
+		player_->TakeDamage();
 	}
 }
 

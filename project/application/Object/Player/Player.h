@@ -23,7 +23,7 @@ class Input;
 class Camera;
 
 class Player :
-    public BaseCharacter, StateMachine<Player, PlayerState>
+    public BaseCharacter, public StateMachine<Player, PlayerState>
 {
 public: // 関数テーブル
     static const std::vector<StateFunctionSet>& GetStateTable();
@@ -44,6 +44,20 @@ public:
 	bool IsJust() { return isJust_; }
 
 	void SetScreenOffset(const Vector2& offset) { screenOffset_ = offset; }
+
+	void TakeDamage()
+	{
+		if (hitpoint_ > 1)
+		{
+			hitpoint_--;
+		}
+		else
+		{
+			OnCollision();
+		}
+	}
+
+	int GetHP() { return hitpoint_; }
 
 private:
 	void PostStateUpdate();
@@ -89,6 +103,9 @@ private:
 	Vector2 inputDir_{};
 
 	float deltaTime_ = 1.0f / 60.0f;
+
+	// hp
+	int hitpoint_ = 5;
 
 
 	// 姿勢

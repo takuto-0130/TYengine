@@ -58,4 +58,12 @@ void GameScene::ComboUIUpdate()
 	{
 		scoreDraw_->SetScore(stageManager_->GetScoreManager()->GetScore());
 	}
+	if (stageManager_->GetPlayer())
+	{
+		playUI_->SetHPNum(stageManager_->GetPlayer()->GetHP());
+	}
+	else
+	{
+		playUI_->SetHPNum(0);
+	}
 }

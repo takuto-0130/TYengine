@@ -41,6 +41,14 @@ void ScoreUI::Initialze()
 	back_->SetSize({ 215,80 });
 	back_->SetPosition({ 990,542 });
 	back_->SetColor({ 100.f / 256.f,160.f / 256.f,7.f / 256.f,1.0f });
+
+
+	float X = 1020.0f;
+	float Y = 620.0f;
+	one_->SetPosition({ X,Y });
+	two_->SetPosition({ 45.0f + X,Y });
+	three_->SetPosition({ 90.0f + X,Y });
+	four_->SetPosition({ 135.0f + X,Y });
 }
 
 void ScoreUI::Update()

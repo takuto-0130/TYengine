@@ -92,6 +92,8 @@ private:
 
 	bool isInGame_ = true;
 
+	float lifeTime_ = 6.5f;
+
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数

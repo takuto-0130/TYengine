@@ -55,7 +55,7 @@ void Liner::Init()
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 	ChangeState(LinerState::SHOT);
 
-	defaultSpeed_ = 10.0f;
+	defaultSpeed_ = 20.0f;
 }
 
 void Liner::Update()

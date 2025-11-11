@@ -60,13 +60,20 @@ void Enemy::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 
+	lifeTime_ -= deltaTime_;
+	if(lifeTime_ > 0)
+	{
+		UpdateState(deltaTime_);
 
-	UpdateState(deltaTime_);
-	
 
-	UpdateTransform();
-	Rotate();
-	collider_->Update(GetWorldPosition());
+		UpdateTransform();
+		Rotate();
+		collider_->Update(GetWorldPosition());
+	}
+	else
+	{
+		isDead_ = true;
+	}
 }
 
 void Enemy::UpdateTransform()

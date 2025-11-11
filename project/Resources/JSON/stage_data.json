@@ -65,74 +65,74 @@
     "rail": {
         "controlPoints": [
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": false,
                 "x": 0.0,
                 "y": 0.0,
-                "z": 0.0,
-                "segmentSpeed": 1.0,
-                "triggerEvent": false
+                "z": 0.0
             },
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": true,
                 "x": 10.0,
                 "y": 10.0,
-                "z": 10.0,
-                "segmentSpeed": 1.0,
-                "triggerEvent": true
+                "z": 10.0
             },
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": false,
                 "x": 10.0,
                 "y": 15.0,
-                "z": 20.0,
-                "segmentSpeed": 1.0,
-                "triggerEvent": false
+                "z": 20.0
             },
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": false,
                 "x": 20.0,
                 "y": 15.0,
-                "z": 30.0,
-                "segmentSpeed": 1.0,
-                "triggerEvent": false
+                "z": 30.0
             },
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": false,
                 "x": 20.0,
                 "y": 0.0,
-                "z": 35.0,
-                "segmentSpeed": 1.0,
-                "triggerEvent": false
+                "z": 35.0
             },
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": true,
                 "x": 30.0,
                 "y": 0.0,
-                "z": 40.0,
-                "segmentSpeed": 1.0,
-                "triggerEvent": false
+                "z": 40.0
             },
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": false,
                 "x": 31.339366912841797,
                 "y": 0.0,
-                "z": 48.85297775268555,
-                "segmentSpeed": 1.0,
-                "triggerEvent": true
+                "z": 48.85297775268555
             },
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": false,
                 "x": 40.0,
                 "y": 0.0,
-                "z": 55.0,
-                "segmentSpeed": 1.0,
-                "triggerEvent": false
+                "z": 55.0
             },
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": false,
                 "x": 45.900001525878906,
                 "y": 0.0,
-                "z": 61.5,
-                "segmentSpeed": 1.0,
-                "triggerEvent": false
+                "z": 61.5
             },
             {
+                "segmentSpeed": 1.0,
+                "triggerEvent": false,
                 "x": 53.70000076293945,
                 "y": 5.599999904632568,
-                "z": 66.5999984741211,
-                "segmentSpeed": 1.0,
-                "triggerEvent": false
+                "z": 66.5999984741211
             }
         ]
     }

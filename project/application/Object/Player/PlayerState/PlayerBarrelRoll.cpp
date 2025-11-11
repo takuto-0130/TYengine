@@ -11,6 +11,7 @@ void Player::InitBarrelRoll()
 {
 	startRollPos_ = screenOffset_;
 	rollEfectTimer_ = 0.0f;
+    justRoll_ = true;
 	if (justRoll_)
 	{
 		auto* pem = PostEffectManager::GetInstance();
@@ -19,7 +20,7 @@ void Player::InitBarrelRoll()
 		pem->SetEffectEnabled("RadialBlur", true);
 		pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
 		// 中心は画面座標系（-1..1）→ [0..1] に変換して渡す想定
-		pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((screenOffset_ + Vector2(1.0f, 1.0f)) * 0.5f);
+		pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(screenOffset_);
 	}
 }
 

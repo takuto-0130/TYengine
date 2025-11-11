@@ -30,6 +30,8 @@ void PlayUI::Init()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	operation_ = std::make_unique<Sprite>();
 	operation_->Initialize("Resources/Texture/Operation.png");
+	operation_->SetSize(operation_->GetSize() * 0.8f);
+	operation_->SetPosition({15,145});
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/hightLight.png");
 	hightLight_ = std::make_unique<Sprite>();
 	hightLight_->Initialize("Resources/Texture/hightLight.png");
@@ -55,9 +57,9 @@ void PlayUI::Draw()
 	comboNumTex_->Draw();
 	comboText_->Draw();
 	scoreDraw_->Draw();
-#ifndef _DEBUG
+//#ifndef _DEBUG
 	operation_->Draw();
-#endif // _DEBUG
+//#endif // _DEBUG
 
 }
 

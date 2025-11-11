@@ -52,8 +52,10 @@ private:
 	void Move();
 	void ClampOffset();
 
+	void RotationOffsetLocal();
+
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
-	void RotationOffset();
+	//void RotationOffset();
 
 
 	// BarrelRoll

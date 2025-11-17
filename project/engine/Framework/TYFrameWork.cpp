@@ -45,7 +45,6 @@ void TYFrameWork::Initialize()
 void TYFrameWork::Finalize()
 {
 	imgui->Finalize();
-	input->Finalize();
 	windowsApp->Finalize();
 }
 

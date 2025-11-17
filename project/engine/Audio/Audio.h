@@ -75,10 +75,16 @@ public:
 	}
 
 private:
-	Audio() = default;
+	Audio()
+		: masterVoice(nullptr)
+		, isStreaming(false)
+		, isLoopStreaming(false)
+		, streamVoice(nullptr)
+		, BUFFER_SIZE(0)
+	{}
 	~Audio();
-	Audio(Audio&) = default;
-	Audio& operator=(Audio&) = default;
+	Audio(Audio&) = delete;
+	Audio& operator=(Audio&) = delete;
 
 #pragma region
 public:
@@ -87,9 +93,8 @@ public:
 		if (isStreaming.load()) {
 			StopStreaming();
 		}
-		if (isLoop) {
-			isLoopStreaming.store(true);
-		}
+
+		isLoopStreaming.store(isLoop);
 
 		isStreaming.store(true);
 

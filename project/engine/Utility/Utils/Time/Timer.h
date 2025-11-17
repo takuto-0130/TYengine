@@ -42,10 +42,11 @@ private: // メンバ関数
 private: // メンバ変数
     LARGE_INTEGER frequency_{};
     LARGE_INTEGER previousTime_{};
+
     float deltaTime_ = 0.0f;
     float timeScale_ = 1.0f;
+    float timeAccumulator_ = 0.0f;
 
     int frameCount_ = 0;
-    float timeAccumulator_ = 0.0f;
     int fps_ = 0;
 };

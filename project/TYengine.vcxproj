@@ -166,6 +166,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScene_Clear.cpp" />
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Skydome\Skydome.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
@@ -286,6 +287,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\OffScreen\PostEffect\IPostEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\PostEffectBase.h" />
     <ClInclude Include="engine\Utility\Math\Ease.h" />
+    <ClInclude Include="engine\Utility\Utils\Random.h" />
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
     <ClInclude Include="engine\Utility\Collider\Collider.h" />

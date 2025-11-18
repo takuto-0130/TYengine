@@ -2,7 +2,9 @@
 #include "SpriteBasis.h"
 #include "TextureManager.h"
 #include "mathFunc.h"
+#include "Ease.h"
 #include "Timer.h"
+#include "Random.h"
 
 void ScoreUI::Initialze()
 {
@@ -80,6 +82,66 @@ void ScoreUI::Draw()
 	four_->Draw();
 }
 
+void ScoreUI::UpdateResult(float currentTime)
+{
+	(void)currentTime;
+
+	int32_t view = currentScore_;
+	scoreDisp_.num[0] = view / 1000;
+	view = view % 1000;
+
+	scoreDisp_.num[1] = view / 100;
+	view = view % 100;
+
+	scoreDisp_.num[2] = view / 10;
+	view = view % 10;
+
+	scoreDisp_.num[3] = view;
+
+	if (currentTime < 2.5f)
+	{
+		currentTime += Timer::GetInstance()->GetDeltaTime();
+
+		float t = currentTime / 2.5f;
+
+		one_->SetAlpha(t);
+		two_->SetAlpha(t);
+		three_->SetAlpha(t);
+		four_->SetAlpha(t);
+
+		if (currentTime < 1.0f)
+		{
+			scoreDisp_.num[0] = Random::GetInstance()->Int(0, 9);
+		}
+
+		if (currentTime < 1.5f)
+		{
+			scoreDisp_.num[1] = Random::GetInstance()->Int(0, 9);
+		}
+
+		if (currentTime < 2.0f)
+		{
+			scoreDisp_.num[2] = Random::GetInstance()->Int(0, 9);
+		}
+
+		if (currentTime < 2.5f)
+		{
+			scoreDisp_.num[3] = Random::GetInstance()->Int(0, 9);
+		}
+	}
+
+
+	one_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[0],0 });
+	two_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[1],0 });
+	three_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[2],0 });
+	four_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[3],0 });
+
+	one_->Update();
+	two_->Update();
+	three_->Update();
+	four_->Update();
+}
+
 void ScoreUI::SetResult()
 {
 	float X = 650.0f;
@@ -95,17 +157,17 @@ void ScoreUI::ScoreDisplay()
 	float t = scoreViewTimer_ / kScoreViewTime_;
 	viewScore_ = int(Lerp(float(prevScore_), float(currentScore_), t));
 
-	int32_t byou = viewScore_;
-	scoreDisp_.num[0] = byou / 1000;
-	byou = byou % 1000;
+	int32_t view = viewScore_;
+	scoreDisp_.num[0] = view / 1000;
+	view = view % 1000;
 
-	scoreDisp_.num[1] = byou / 100;
-	byou = byou % 100;
+	scoreDisp_.num[1] = view / 100;
+	view = view % 100;
 
-	scoreDisp_.num[2] = byou / 10;
-	byou = byou % 10;
+	scoreDisp_.num[2] = view / 10;
+	view = view % 10;
 
-	scoreDisp_.num[3] = byou;
+	scoreDisp_.num[3] = view;
 
 	one_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[0],0 });
 	two_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[1],0 });

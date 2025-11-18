@@ -22,13 +22,15 @@
 const std::vector<StateMachine<GameScene, GameSceneState>::StateFunctionSet>& GameScene::GetStateTable()
 {
 	using enum GameSceneState;
-	static const std::vector<StateFunctionSet> stateTable = {
+	static const std::vector<StateFunctionSet> stateTable =
+	{
 		GAME_SCENE_ENTRY(LOAD, Load),
 		GAME_SCENE_ENTRY(FADE_IN, FadeIn),
 		GAME_SCENE_ENTRY(READY, Ready),
 		GAME_SCENE_ENTRY(PLAY, Play),
 		GAME_SCENE_ENTRY(PAUSE, Pause),
 		GAME_SCENE_ENTRY(DEAD, Dead),
+		GAME_SCENE_ENTRY(CLEAR, Clear),
 		GAME_SCENE_ENTRY(RESULT, Result),
 		GAME_SCENE_ENTRY(RETRY, Retry),
 		GAME_SCENE_ENTRY(FADE_OUT, FadeOut),
@@ -81,6 +83,9 @@ void GameScene::Update()
 		bulletTime_->Trigger(0.05f, 0.5f, 2.0f, 0.8f,
 			EaseFixed::InQuart, EaseFixed::OutQuart);
 	}
+	ImGui::Begin("GameScene State Debug");
+	DebugImGui("GameScene");
+	ImGui::End();
 #endif // _DEBUG
 
 	bulletTime_->Update();

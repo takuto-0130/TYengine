@@ -12,7 +12,7 @@ void GameScene::UpdatePlay()
 
 	stageManager_->Update();
 
-	if (stageManager_->EndRail()) ChangeState(GameSceneState::RESULT);
+	if (stageManager_->EndRail()) ChangeState(GameSceneState::CLEAR);
 
 	PlayUIUpdate();
 

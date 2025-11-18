@@ -10,6 +10,8 @@ public:
 
 	void Draw();
 
+	void UpdateResult(float currentTime);
+
 	struct ScoreDisp {
 		std::array<int32_t, 4> num;
 	};

@@ -354,6 +354,7 @@
     </ClCompile>
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScene_Clear.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
@@ -707,6 +708,7 @@
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
     <ClInclude Include="engine\Camera\CameraShake.h" />
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
+    <ClInclude Include="engine\Utility\Utils\Random.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">

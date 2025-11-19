@@ -5,6 +5,8 @@
 #include "ParticleManager.h"
 #include "../../Stage/StageManager.h"
 #include "ObjectCubemap.h"
+#include "Result/ConfettiSystem.h"
+#include "UISpriteColliderManager.h"
 
 #include <memory>
 #include <vector>
@@ -83,6 +85,9 @@ private: // メンバ変数
 
 	IParticleRenderer::Emitter emitter;
 	IParticleRenderer::Emitter emitterRing;
+
+	UISpriteColliderManager uiCollider_;
+	ConfettiSystem confetti_;
 
 	BulletTimeController* bulletTime_ = nullptr;
 

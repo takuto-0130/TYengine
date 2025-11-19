@@ -32,9 +32,19 @@ void ResultClass::Initialze()
 	spaceSpr_->SetPosition({ 1200,700 });
 	spaceSpr_->SetAlpha(0.0f);
 
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle2.png");
+	returnTitle_ = std::make_unique<Sprite>();
+	returnTitle_->Initialize("Resources/Texture/ReturnTitle2.png");
+	returnTitle_->SetSize(returnTitle_->GetSize() * 0.8f);
+	returnTitle_->SetPosition({ 0,-70 });
+
 
 	timer_ = -1.0f;
 	maxTime_ = 2.5f;
+
+	setSpr_.push_back(text_.get());
+	setSpr_.push_back(scoretext_.get());
+	setSpr_.push_back(spaceSpr_.get());
 }
 
 void ResultClass::Reset()
@@ -49,6 +59,7 @@ void ResultClass::Update()
 	text_->Update();
 	scoretext_->Update();
 	spaceSpr_->Update();
+	returnTitle_->Update();
 }
 
 void ResultClass::Draw()
@@ -57,6 +68,7 @@ void ResultClass::Draw()
 	text_->Draw();
 	scoretext_->Draw();
 	spaceSpr_->Draw();
+	returnTitle_->Draw();
 }
 
 void ResultClass::Start()

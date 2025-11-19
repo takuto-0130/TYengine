@@ -355,6 +355,7 @@
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScene_Clear.cpp" />
+    <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
@@ -709,6 +710,11 @@
     <ClInclude Include="engine\Camera\CameraShake.h" />
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
     <ClInclude Include="engine\Utility\Utils\Random.h" />
+    <ClInclude Include="application\Scene\GameScene\Result\ConfettiParticle.h" />
+    <ClInclude Include="application\Scene\GameScene\Result\ConfettiSystem.h" />
+    <ClInclude Include="engine\Utility\Collider\2DCollider\Collision2D.h" />
+    <ClInclude Include="engine\Utility\Collider\2DCollider\SpriteAABBUtil.h" />
+    <ClInclude Include="engine\Utility\Collider\2DCollider\UISpriteColliderManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">

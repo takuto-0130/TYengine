@@ -33,7 +33,7 @@ void WindowsApp::Initialize()
 
 	wc.lpfnWndProc = WindowProc;
 
-	wc.lpszClassName = L"CG2WindowClass";
+	wc.lpszClassName = L"TYengineWindowClass";
 
 	wc.hInstance = GetModuleHandle(nullptr);
 
@@ -47,7 +47,7 @@ void WindowsApp::Initialize()
 
 	hwnd = CreateWindow(
 		wc.lpszClassName,
-		L"TYEngine",
+		L"TYengine",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,

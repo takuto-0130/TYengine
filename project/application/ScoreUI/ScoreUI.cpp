@@ -52,6 +52,12 @@ void ScoreUI::Initialze()
 	two_->SetPosition({ 45.0f + X,Y });
 	three_->SetPosition({ 90.0f + X,Y });
 	four_->SetPosition({ 135.0f + X,Y });
+
+
+	setSpr_.push_back(one_.get());
+	setSpr_.push_back(two_.get());
+	setSpr_.push_back(three_.get());
+	setSpr_.push_back(four_.get());
 }
 
 void ScoreUI::Update()
@@ -108,26 +114,26 @@ void ScoreUI::UpdateResult(float currentTime)
 		two_->SetAlpha(t);
 		three_->SetAlpha(t);
 		four_->SetAlpha(t);
+	}
 
-		if (currentTime < 1.0f)
-		{
-			scoreDisp_.num[0] = Random::GetInstance()->Int(0, 9);
-		}
+	if (currentTime < 1.5f)
+	{
+		scoreDisp_.num[0] = Random::GetInstance()->Int(0, 9);
+	}
 
-		if (currentTime < 1.5f)
-		{
-			scoreDisp_.num[1] = Random::GetInstance()->Int(0, 9);
-		}
+	if (currentTime < 2.5f)
+	{
+		scoreDisp_.num[1] = Random::GetInstance()->Int(0, 9);
+	}
 
-		if (currentTime < 2.0f)
-		{
-			scoreDisp_.num[2] = Random::GetInstance()->Int(0, 9);
-		}
+	if (currentTime < 3.5f)
+	{
+		scoreDisp_.num[2] = Random::GetInstance()->Int(0, 9);
+	}
 
-		if (currentTime < 2.5f)
-		{
-			scoreDisp_.num[3] = Random::GetInstance()->Int(0, 9);
-		}
+	if (currentTime < 4.5f)
+	{
+		scoreDisp_.num[3] = Random::GetInstance()->Int(0, 9);
 	}
 
 

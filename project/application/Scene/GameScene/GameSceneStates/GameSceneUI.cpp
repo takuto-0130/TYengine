@@ -58,6 +58,7 @@ void GameScene::UIDraw()
 		{
 			resultMenu_->Draw();
 			scoreDraw_->Draw();
+			confetti_.Draw();
 		}
 
 		if (GetCurrentState() == GameSceneState::RETRY)

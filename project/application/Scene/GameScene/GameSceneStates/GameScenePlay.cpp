@@ -12,9 +12,15 @@ void GameScene::UpdatePlay()
 
 	stageManager_->Update();
 
-	if (stageManager_->EndRail()) ChangeState(GameSceneState::CLEAR);
+	if (stageManager_->EndRail()) ChangeState(GameSceneState::RESULT);
 
 	PlayUIUpdate();
+
+	if (input_->TriggerKey(DIK_C))
+	{
+		scoreDraw_->SetScore(1234);
+		ChangeState(GameSceneState::RESULT);
+	}
 
 	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
 

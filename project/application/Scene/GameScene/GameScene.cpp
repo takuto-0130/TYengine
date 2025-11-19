@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "WindowsApp.h"
 #include "Object3dBasis.h"
 #include "Audio/Audio.h"
 #include "CubemapBasis.h"

@@ -73,6 +73,11 @@ Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 
 /// <summary>
+/// 4次元ベクトルを線形補間する
+/// </summary>
+Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t);
+
+/// <summary>
 /// 3次元ベクトルを球面線形補間（Slerp）する
 /// </summary>
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
@@ -181,4 +186,20 @@ Vector2 operator/(const Vector2& a, const Vector2& b);
 /// 2次元ベクトルをスカラーで割る
 /// </summary>
 Vector2 operator/(const Vector2& v, const float& s);
+
+Vector4 operator+(const Vector4& a, const Vector4& b);
+
+Vector4 operator-(const Vector4& a, const Vector4& b);
+
+Vector4 operator-(const Vector4& a);
+
+Vector4 operator*(const Vector4& a, const Vector4& b);
+
+Vector4 operator*(const Vector4& v, const float& s);
+
+Vector4 operator*(const float& s, const Vector4& v);
+
+Vector4 operator/(const Vector4& a, const Vector4& b);
+
+Vector4 operator/(const Vector4& v, const float& s);
 

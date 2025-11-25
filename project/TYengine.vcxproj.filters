@@ -356,6 +356,10 @@
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScene_Clear.cpp" />
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
+    <ClCompile Include="engine\Effect\ContrailBehaviour.cpp" />
+    <ClCompile Include="engine\Effect\ExplosionBehaviour.cpp" />
+    <ClCompile Include="engine\Effect\ExplosionRingBehaviour.cpp" />
+    <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
@@ -716,6 +720,12 @@
     <ClInclude Include="engine\Utility\Collider\2DCollider\SpriteAABBUtil.h" />
     <ClInclude Include="engine\Utility\Collider\2DCollider\UISpriteColliderManager.h" />
     <ClInclude Include="engine\Utility\Utils\JSON\JsonManager.h" />
+    <ClInclude Include="engine\Effect\IParticleBehaviour.h" />
+    <ClInclude Include="engine\Effect\ContrailBehaviour.h" />
+    <ClInclude Include="engine\Effect\ParticleParam.h" />
+    <ClInclude Include="engine\Effect\ExplosionBehaviour.h" />
+    <ClInclude Include="engine\Effect\ExplosionRingBehaviour.h" />
+    <ClInclude Include="engine\Effect\DebrisBehaviour.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">

@@ -59,6 +59,8 @@ public:
 
 	int GetHP() { return hitpoint_; }
 
+	void OnCollision() override;
+
 private:
 	void PostStateUpdate();
 
@@ -146,6 +148,8 @@ private:
 	// test
 	std::unique_ptr<Object3d> reticleObj_;
 	WorldTransform reticleWT_;
+
+	int contrailIndex_;
 
 
 private: // シーン内のState関連関数

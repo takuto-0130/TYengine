@@ -1,10 +1,12 @@
 #include "IParticleRenderer.h"
+#include "IParticleBehaviour.h"
 #include "Timer.h"
 #include <numbers>
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG
 
+IParticleRenderer::~IParticleRenderer() = default;
 
 void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam) {
     dxBasis_ = dx;
@@ -47,6 +49,11 @@ void IParticleRenderer::Update() {
         if (it->currentTime >= it->lifeTime) {
             it = particles_.erase(it);
             continue;
+        }
+
+        if (behaviour_)
+        {
+            behaviour_->Update(*it, kDeltaTime);
         }
 
         if (numInstance_ < kMaxInstance) {
@@ -96,8 +103,8 @@ void IParticleRenderer::TriggerEmit()
     }
 }
 
-IParticleRenderer::ParticleP IParticleRenderer::MakeNewParticle(std::mt19937& random, const Emitter& emitter) {
-    ParticleP parti;
+ParticleParam IParticleRenderer::MakeNewParticle(std::mt19937& random, const Emitter& emitter) {
+    ParticleParam parti;
     std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
     parti.transform.scale = { 1.f,1.f,1.f };
     parti.transform.rotate = { 0.f,0.f,0.f };
@@ -114,8 +121,8 @@ IParticleRenderer::ParticleP IParticleRenderer::MakeNewParticle(std::mt19937& ra
     return parti;
 }
 
-std::list<IParticleRenderer::ParticleP> IParticleRenderer::Emit(std::mt19937& random) {
-    std::list<ParticleP> result;
+std::list<ParticleParam> IParticleRenderer::Emit(std::mt19937& random) {
+    std::list<ParticleParam> result;
     for (uint32_t i = 0; i < emitter_.count; ++i) {
         result.push_back(MakeNewParticle(random, emitter_));
     }

@@ -70,6 +70,11 @@ Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) {
 	return v1 + t * (v2 - v1);
 }
 
+Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t)
+{
+	return v1 + t * (v2 - v1);
+}
+
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) { 
 	Vector3 nV1 = Normalize(v1);
 	Vector3 nV2 = Normalize(v2);
@@ -304,5 +309,88 @@ Vector2 operator/(const Vector2& v, const float& s)
 	Vector2 result;
 	result.x = v.x / s;
 	result.y = v.y / s;
+	return result;
+}
+
+// --------------------------------------
+// Vector4 operator overloads
+// --------------------------------------
+Vector4 operator+(const Vector4& a, const Vector4& b)
+{
+	Vector4 result;
+	result.x = a.x + b.x;
+	result.y = a.y + b.y;
+	result.z = a.z + b.z;
+	result.w = a.w + b.w;
+	return result;
+}
+
+Vector4 operator-(const Vector4& a, const Vector4& b)
+{
+	Vector4 result;
+	result.x = a.x - b.x;
+	result.y = a.y - b.y;
+	result.z = a.z - b.z;
+	result.w = a.w - b.w;
+	return result;
+}
+
+Vector4 operator-(const Vector4& a)
+{
+	Vector4 result;
+	result.x = -a.x;
+	result.y = -a.y;
+	result.z = -a.z;
+	result.w = -a.w;
+	return result;
+}
+
+Vector4 operator*(const Vector4& a, const Vector4& b)
+{
+	Vector4 result;
+	result.x = a.x * b.x;
+	result.y = a.y * b.y;
+	result.z = a.z * b.z;
+	result.w = a.w * b.w;
+	return result;
+}
+
+Vector4 operator*(const Vector4& v, const float& s)
+{
+	Vector4 result;
+	result.x = v.x * s;
+	result.y = v.y * s;
+	result.z = v.z * s;
+	result.w = v.w * s;
+	return result;
+}
+
+Vector4 operator*(const float& s, const Vector4& v)
+{
+	Vector4 result;
+	result.x = v.x * s;
+	result.y = v.y * s;
+	result.z = v.z * s;
+	result.w = v.w * s;
+	return result;
+}
+
+Vector4 operator/(const Vector4& a, const Vector4& b)
+{
+	Vector4 result;
+	result.x = a.x / b.x;
+	result.y = a.y / b.y;
+	result.z = a.z / b.z;
+	result.w = a.w / b.w;
+	return result;
+}
+
+Vector4 operator/(const Vector4& v, const float& s)
+{
+	Vector4 result;
+	result.x = v.x / s;
+	result.y = v.y / s;
+	result.z = v.z / s;
+	result.w = v.w / s;
 	return result;
 }

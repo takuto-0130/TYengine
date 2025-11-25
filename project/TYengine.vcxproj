@@ -176,6 +176,10 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp" />
+    <ClCompile Include="engine\Effect\ContrailBehaviour.cpp" />
+    <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />
+    <ClCompile Include="engine\Effect\ExplosionBehaviour.cpp" />
+    <ClCompile Include="engine\Effect\ExplosionRingBehaviour.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\DoFPass.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\CopyImage.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\DissolveEffect.cpp" />
@@ -282,7 +286,13 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h" />
+    <ClInclude Include="engine\Effect\ContrailBehaviour.h" />
     <ClInclude Include="engine\Camera\CameraShake.h" />
+    <ClInclude Include="engine\Effect\DebrisBehaviour.h" />
+    <ClInclude Include="engine\Effect\ExplosionBehaviour.h" />
+    <ClInclude Include="engine\Effect\ExplosionRingBehaviour.h" />
+    <ClInclude Include="engine\Effect\IParticleBehaviour.h" />
+    <ClInclude Include="engine\Effect\ParticleParam.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />

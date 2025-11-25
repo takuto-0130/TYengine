@@ -293,6 +293,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Utility\Collider\2DCollider\SpriteAABBUtil.h" />
     <ClInclude Include="engine\Utility\Collider\2DCollider\UISpriteColliderManager.h" />
     <ClInclude Include="engine\Utility\Math\Ease.h" />
+    <ClInclude Include="engine\Utility\Utils\JSON\JsonManager.h" />
     <ClInclude Include="engine\Utility\Utils\Random.h" />
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />

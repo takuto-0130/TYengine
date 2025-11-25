@@ -715,6 +715,7 @@
     <ClInclude Include="engine\Utility\Collider\2DCollider\Collision2D.h" />
     <ClInclude Include="engine\Utility\Collider\2DCollider\SpriteAABBUtil.h" />
     <ClInclude Include="engine\Utility\Collider\2DCollider\UISpriteColliderManager.h" />
+    <ClInclude Include="engine\Utility\Utils\JSON\JsonManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">

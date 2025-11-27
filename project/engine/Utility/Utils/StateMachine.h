@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <functional>
 #include <optional>
+#include <vector>
 #include <cassert>
 #include <string>
 #include <imgui.h>
@@ -46,8 +47,11 @@ public: // メンバ関数
     template<HasStateTable C>
     void RegisterFromDefaultTable(C* instance) 
     {
+        stateList_.clear();
+
         for (const auto& entry : C::GetStateTable()) 
         {
+            stateList_.push_back(entry.state);
             SetInitFunction(entry.state, [instance, f = entry.init]() { (instance->*f)(); });
             SetUpdateFunction(entry.state, [instance, f = entry.update]() { (instance->*f)(); });
             SetExitFunction(entry.state, [instance, f = entry.exit]() { (instance->*f)(); });
@@ -91,10 +95,52 @@ public: // メンバ関数
     }
 
     // デバッグ用のImGui表示
-    void DebugImGui(const char* labelPrefix = "State") const 
+    void DebugImGui(const char* labelPrefix = "State") 
     {
         ImGui::Text("%s: %s", labelPrefix, GetStateName(currState_).c_str());
+        ImGui::Text("Prev : %s", GetStateName(prevState_).c_str());
         ImGui::Text("Elapsed: %.2f sec", stateTimer_);
+
+        // ステート切り替え用 Combo
+        if (!stateList_.empty())
+        {
+            // 現在のインデックスを探す
+            int currentIndex = 0;
+            for (int i = 0; i < static_cast<int>(stateList_.size()); ++i)
+            {
+                if (stateList_[i] == currState_)
+                {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            const char* currentLabel = GetStateName(stateList_[currentIndex]).c_str();
+            if (ImGui::BeginCombo("State Change", currentLabel))
+            {
+                for (int i = 0; i < static_cast<int>(stateList_.size()); ++i)
+                {
+                    State s = stateList_[i];
+                    std::string name = GetStateName(s);
+                    bool isSelected = (i == currentIndex);
+
+                    if (ImGui::Selectable(name.c_str(), isSelected))
+                    {
+                        // ImGuiからステート変更リクエスト
+                        ChangeState(s);
+                    }
+
+                    if (isSelected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        }
+
+        // ロック状態
+        ImGui::Text("AllowExit: %s", allowExit_ ? "true" : "false");
     }
 
     // 現在のステートを取得
@@ -131,6 +177,9 @@ private: // メンバ変数
     std::unordered_map<State, std::function<void()>> initTable_;
     std::unordered_map<State, std::function<void()>> updateTable_;
     std::unordered_map<State, std::function<void()>> exitTable_;
+
+    // ★ 追加：利用可能なステート一覧（ImGui用）
+    std::vector<State> stateList_;
 };
 
 // StateMachine.h

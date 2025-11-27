@@ -49,15 +49,15 @@ const Vector3 Multiply(const Vector3& v1, const Vector3& v2) {
 	return {v1.x * v2.x, v1.y * v2.y, v1.z * v2.z}; 
 }
 
-const Vector3 Multiply(const Vector3& v, const float& s) { 
+const Vector3 Multiply(const Vector3& v, float s) { 
 	return {v.x * s, v.y * s, v.z * s}; 
 }
 
-const Vector3 Multiply(const float& s, const Vector3& v) { 
+const Vector3 Multiply(float s, const Vector3& v) { 
 	return {v.x * s, v.y * s, v.z * s}; 
 }
 
-float Lerp(const float& a, const float& b, float t) { 
+float Lerp(float a, float b, float t) { 
 	return a + t * (b - a);
 }
 
@@ -67,6 +67,11 @@ Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t)
 }
 
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) { 
+	return v1 + t * (v2 - v1);
+}
+
+Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t)
+{
 	return v1 + t * (v2 - v1);
 }
 
@@ -224,14 +229,14 @@ Vector3 operator*(const Vector3& a, const Vector3& b) {
 	result.z = a.z * b.z;
 	return result;
 }
-Vector3 operator*(const Vector3& v, const float& s) {
+Vector3 operator*(const Vector3& v, float s) {
 	Vector3 result;
 	result.x = v.x * s;
 	result.y = v.y * s;
 	result.z = v.z * s;
 	return result;
 }
-Vector3 operator*(const float& s, const Vector3& v) {
+Vector3 operator*(float s, const Vector3& v) {
 	Vector3 result;
 	result.x = v.x * s;
 	result.y = v.y * s;
@@ -247,7 +252,7 @@ Vector3 operator/(const Vector3& a, const Vector3& b) {
 	result.z = a.z / b.z;
 	return result;
 }
-Vector3 operator/(const Vector3& v, const float& s) {
+Vector3 operator/(const Vector3& v, float s) {
 	Vector3 result;
 	result.x = v.x / s;
 	result.y = v.y / s;
@@ -277,14 +282,14 @@ Vector2 operator*(const Vector2& a, const Vector2& b) {
 	result.y = a.y * b.y;
 	return result;
 }
-Vector2 operator*(const Vector2& v, const float& s)
+Vector2 operator*(const Vector2& v, float s)
 {
 	Vector2 result;
 	result.x = v.x * s;
 	result.y = v.y * s;
 	return result;
 }
-Vector2 operator*(const float& s, const Vector2& v)
+Vector2 operator*(float s, const Vector2& v)
 {
 	Vector2 result;
 	result.x = v.x * s;
@@ -299,10 +304,93 @@ Vector2 operator/(const Vector2& a, const Vector2& b) {
 	result.y = a.y / b.y;
 	return result;
 }
-Vector2 operator/(const Vector2& v, const float& s)
+Vector2 operator/(const Vector2& v, float s)
 {
 	Vector2 result;
 	result.x = v.x / s;
 	result.y = v.y / s;
+	return result;
+}
+
+// --------------------------------------
+// Vector4 operator overloads
+// --------------------------------------
+Vector4 operator+(const Vector4& a, const Vector4& b)
+{
+	Vector4 result;
+	result.x = a.x + b.x;
+	result.y = a.y + b.y;
+	result.z = a.z + b.z;
+	result.w = a.w + b.w;
+	return result;
+}
+
+Vector4 operator-(const Vector4& a, const Vector4& b)
+{
+	Vector4 result;
+	result.x = a.x - b.x;
+	result.y = a.y - b.y;
+	result.z = a.z - b.z;
+	result.w = a.w - b.w;
+	return result;
+}
+
+Vector4 operator-(const Vector4& a)
+{
+	Vector4 result;
+	result.x = -a.x;
+	result.y = -a.y;
+	result.z = -a.z;
+	result.w = -a.w;
+	return result;
+}
+
+Vector4 operator*(const Vector4& a, const Vector4& b)
+{
+	Vector4 result;
+	result.x = a.x * b.x;
+	result.y = a.y * b.y;
+	result.z = a.z * b.z;
+	result.w = a.w * b.w;
+	return result;
+}
+
+Vector4 operator*(const Vector4& v, const float& s)
+{
+	Vector4 result;
+	result.x = v.x * s;
+	result.y = v.y * s;
+	result.z = v.z * s;
+	result.w = v.w * s;
+	return result;
+}
+
+Vector4 operator*(const float& s, const Vector4& v)
+{
+	Vector4 result;
+	result.x = v.x * s;
+	result.y = v.y * s;
+	result.z = v.z * s;
+	result.w = v.w * s;
+	return result;
+}
+
+Vector4 operator/(const Vector4& a, const Vector4& b)
+{
+	Vector4 result;
+	result.x = a.x / b.x;
+	result.y = a.y / b.y;
+	result.z = a.z / b.z;
+	result.w = a.w / b.w;
+	return result;
+}
+
+Vector4 operator/(const Vector4& v, const float& s)
+{
+	Vector4 result;
+	result.x = v.x / s;
+	result.y = v.y / s;
+	result.z = v.z / s;
+	result.w = v.w / s;
 	return result;
 }

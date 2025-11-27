@@ -21,13 +21,13 @@ struct Vector2 {
 		return *this;
 	}
 
-	Vector2& operator*=(const float& a) {
+	Vector2& operator*=(float a) {
 		x = x * a;
 		y = y * a;
 		return *this;
 	}
 
-	Vector2& operator/=(const float& a) {
+	Vector2& operator/=(float a) {
 		x = x / a;
 		y = y / a;
 		return *this;
@@ -58,14 +58,14 @@ struct Vector3 {
 		return *this;
 	}
 
-	Vector3& operator*=(const float& a) {
+	Vector3& operator*=(float a) {
 		x = x * a;
 		y = y * a;
 		z = z * a;
 		return *this;
 	}
 
-	Vector3& operator/=(const float& a) {
+	Vector3& operator/=(float a) {
 		x = x / a;
 		y = y / a;
 		z = z / a;
@@ -103,7 +103,7 @@ struct Vector4 {
 		return *this;
 	}
 
-	Vector4& operator*=(const float& a)
+	Vector4& operator*=(float a)
 	{
 		x = x * a;
 		y = y * a;
@@ -112,7 +112,7 @@ struct Vector4 {
 		return *this;
 	}
 
-	Vector4& operator/=(const float& a)
+	Vector4& operator/=(float a)
 	{
 		x = x / a;
 		y = y / a;

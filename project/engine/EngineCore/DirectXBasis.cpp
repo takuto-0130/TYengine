@@ -40,12 +40,12 @@ void DirectXBasis::Initialize(WindowsApp* windowsApp)
 	InitImGui();
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXBasis::GetSRVCpuDescriptorHandle(const uint32_t& index)
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXBasis::GetSRVCpuDescriptorHandle(uint32_t index)
 {
 	return GetCpuDescriptorHandle(srvDescripterHeap_, descriptorSizeSRV_, index);
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXBasis::GetSRVGpuDescriptorHandle(const uint32_t& index)
+D3D12_GPU_DESCRIPTOR_HANDLE DirectXBasis::GetSRVGpuDescriptorHandle(uint32_t index)
 {
 	return  GetGpuDescriptorHandle(srvDescripterHeap_, descriptorSizeSRV_, index);
 }
@@ -104,7 +104,7 @@ ComPtr<IDxcBlob> DirectXBasis::CompileShader(const std::wstring& filePath, const
 	return shaderBlob;
 }
 
-ComPtr<ID3D12Resource> DirectXBasis::CreateBufferResource(const size_t& sizeInBytes)
+ComPtr<ID3D12Resource> DirectXBasis::CreateBufferResource(size_t sizeInBytes)
 {
 	//バッファリソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
@@ -574,7 +574,7 @@ void DirectXBasis::UpdateFixFPS()
 }
 
 
-ComPtr<ID3D12DescriptorHeap> DirectXBasis::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_TYPE& heapType, const UINT& numDescriptors, const bool& shaderVisible)
+ComPtr<ID3D12DescriptorHeap> DirectXBasis::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible)
 {
 	ComPtr<ID3D12DescriptorHeap> descriptorHeap = nullptr;
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
@@ -611,14 +611,14 @@ void DirectXBasis::CreateSamplerHeap()
 	device_->CreateSampler(&samplerDesc, samplerHeap_->GetCPUDescriptorHandleForHeapStart());
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXBasis::GetCpuDescriptorHandle(const ComPtr<ID3D12DescriptorHeap> descriptorHeap, const uint32_t& descriptorSize, const uint32_t& index)
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXBasis::GetCpuDescriptorHandle(const ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	handleCPU.ptr += (descriptorSize * index);
 	return handleCPU;
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXBasis::GetGpuDescriptorHandle(const ComPtr<ID3D12DescriptorHeap> descriptorHeap, const uint32_t& descriptorSize, const uint32_t& index)
+D3D12_GPU_DESCRIPTOR_HANDLE DirectXBasis::GetGpuDescriptorHandle(const ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index)
 {
 	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	handleGPU.ptr += (descriptorSize * index);

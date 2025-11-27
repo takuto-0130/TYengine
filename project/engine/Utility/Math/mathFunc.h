@@ -50,17 +50,17 @@ const Vector3 Multiply(const Vector3& v1, const Vector3& v2);
 /// <summary>
 /// 3次元ベクトルにスカラーを掛ける
 /// </summary>
-const Vector3 Multiply(const Vector3& v, const float& s);
+const Vector3 Multiply(const Vector3& v, float s);
 
 /// <summary>
 /// スカラーに3次元ベクトルを掛ける
 /// </summary>
-const Vector3 Multiply(const float& s, const Vector3& v);
+const Vector3 Multiply(float s, const Vector3& v);
 
 /// <summary>
 /// スカラー値を線形補間する
 /// </summary>
-float Lerp(const float& a, const float& b, float t);
+float Lerp(float a, float b, float t);
 
 /// <summary>
 /// 2次元ベクトルを線形補間する
@@ -71,6 +71,11 @@ Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
 /// 3次元ベクトルを線形補間する
 /// </summary>
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+
+/// <summary>
+/// 4次元ベクトルを線形補間する
+/// </summary>
+Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t);
 
 /// <summary>
 /// 3次元ベクトルを球面線形補間（Slerp）する
@@ -130,12 +135,12 @@ Vector3 operator*(const Vector3& a, const Vector3& b);
 /// <summary>
 /// 3次元ベクトルにスカラーを掛ける
 /// </summary>
-Vector3 operator*(const Vector3& v, const float& s);
+Vector3 operator*(const Vector3& v, float s);
 
 /// <summary>
 /// スカラーに3次元ベクトルを掛ける
 /// </summary>
-Vector3 operator*(const float& s, const Vector3& v);
+Vector3 operator*(float s, const Vector3& v);
 
 /// <summary>
 /// 3次元ベクトル同士の要素ごとの除算
@@ -145,7 +150,7 @@ Vector3 operator/(const Vector3& a, const Vector3& b);
 /// <summary>
 /// 3次元ベクトルをスカラーで割る
 /// </summary>
-Vector3 operator/(const Vector3& v, const float& s);
+Vector3 operator/(const Vector3& v, float s);
 
 /// <summary>
 /// 2次元ベクトルの減算演算子
@@ -165,12 +170,12 @@ Vector2 operator*(const Vector2& a, const Vector2& b);
 /// <summary>
 /// 2次元ベクトルにスカラーを掛ける
 /// </summary>
-Vector2 operator*(const Vector2& v, const float& s);
+Vector2 operator*(const Vector2& v, float s);
 
 /// <summary>
 /// スカラーに2次元ベクトルを掛ける
 /// </summary>
-Vector2 operator*(const float& s, const Vector2& v);
+Vector2 operator*(float s, const Vector2& v);
 
 /// <summary>
 /// 2次元ベクトル同士の要素ごとの除算
@@ -180,5 +185,21 @@ Vector2 operator/(const Vector2& a, const Vector2& b);
 /// <summary>
 /// 2次元ベクトルをスカラーで割る
 /// </summary>
-Vector2 operator/(const Vector2& v, const float& s);
+Vector2 operator/(const Vector2& v, float s);
+
+Vector4 operator+(const Vector4& a, const Vector4& b);
+
+Vector4 operator-(const Vector4& a, const Vector4& b);
+
+Vector4 operator-(const Vector4& a);
+
+Vector4 operator*(const Vector4& a, const Vector4& b);
+
+Vector4 operator*(const Vector4& v, const float& s);
+
+Vector4 operator*(const float& s, const Vector4& v);
+
+Vector4 operator/(const Vector4& a, const Vector4& b);
+
+Vector4 operator/(const Vector4& v, const float& s);
 

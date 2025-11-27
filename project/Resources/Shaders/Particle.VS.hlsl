@@ -18,10 +18,11 @@ struct VertexShaderInput
 VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID)
 {
     VertexShaderOutput output;
-    output.position = mul(input.position, gParticles[instanceId].WVP);
+    float4 localPos = float4(input.position.xyz, 1.0f);
+    output.position = mul(localPos, gParticles[instanceId].WVP);
     output.texCoord = input.texCoord;
     output.normal = normalize(mul(input.normal, (float3x3) gParticles[instanceId].World));
-    output.worldPosition = mul(input.position, gParticles[instanceId].World).xyz;
+    output.worldPosition = mul(localPos, gParticles[instanceId].World).xyz;
     output.color = gParticles[instanceId].color;
     return output;
 }

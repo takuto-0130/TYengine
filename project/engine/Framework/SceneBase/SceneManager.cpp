@@ -4,13 +4,11 @@
 
 SceneManager::~SceneManager()
 {
-	delete scene_;
 }
 
 void SceneManager::ChangeScene(const std::string& sceneName)
 {
 	assert(sceneFactory_);
-	assert(nextScene_ == nullptr);
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
 }
 
@@ -19,14 +17,8 @@ void SceneManager::Update()
 	// シーン切り替え機構
 	// 次シーンの予約があるなら
 	if (nextScene_) {
-		// 旧シーンの終了
-		if (scene_) {
-			delete scene_;
-		}
-
 		// シーン切り替え
-		scene_ = nextScene_;
-		nextScene_ = nullptr;
+		scene_ = std::move(nextScene_);
 
 		// シーンマネージャーをセット
 		scene_->SetSceneManager(this);
@@ -42,11 +34,11 @@ void SceneManager::Update()
 
 void SceneManager::Draw()
 {
-	scene_->Draw();
+	if (scene_) scene_->Draw();
 }
 
 void SceneManager::UIDraw()
 {
-	scene_->UIDraw();
+	if (scene_) scene_->UIDraw();
 	TransitionManager::GetInstance()->Draw();
 }

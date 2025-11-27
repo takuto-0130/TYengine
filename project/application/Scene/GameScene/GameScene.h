@@ -5,6 +5,8 @@
 #include "ParticleManager.h"
 #include "../../Stage/StageManager.h"
 #include "ObjectCubemap.h"
+#include "Result/ConfettiSystem.h"
+#include "UISpriteColliderManager.h"
 
 #include <memory>
 #include <vector>
@@ -27,6 +29,7 @@ enum class GameSceneState {
 	PLAY,		// 通常のゲーム進行
 	PAUSE,		// 一時停止状態（メニューなど）
 	DEAD,		// プレイヤーが死んだ時
+	CLEAR,		// クリア演出時
 	RESULT,		// リザルト（ゲーム終了後のスコア表示など）
 	RETRY,		// リトライ待機中
 	FADE_OUT,	// シーン遷移時のフェードアウト
@@ -83,6 +86,9 @@ private: // メンバ変数
 	IParticleRenderer::Emitter emitter;
 	IParticleRenderer::Emitter emitterRing;
 
+	UISpriteColliderManager uiCollider_;
+	ConfettiSystem confetti_;
+
 	BulletTimeController* bulletTime_ = nullptr;
 
 	
@@ -116,6 +122,7 @@ private: // シーン内のState関連関数
 		case State::PLAY: return "PLAY";
 		case State::PAUSE: return "PAUSE";
 		case State::DEAD: return "DEAD";
+		case State::CLEAR: return "CLEAR";
 		case State::RESULT: return "RESULT";
 		case State::RETRY: return "RETRY";
 		case State::FADE_OUT: return "FADE_OUT";
@@ -153,6 +160,11 @@ private: // シーン内のState関連関数
 	void InitDead();
 	void UpdateDead();
 	void ExitDead();
+
+	// クリア演出時
+	void InitClear();
+	void UpdateClear();
+	void ExitClear();
 
 	// リザルト
 	void InitResult();

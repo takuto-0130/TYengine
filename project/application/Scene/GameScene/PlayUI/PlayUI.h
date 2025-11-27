@@ -24,9 +24,17 @@ public:
 	void SetComboNum(int comboNum) { comboNumTex_->SetTextureLeftTop({ 64.0f * float(comboNum),0 }); }
 	void SetScoreDraw(ScoreUI* scoreDraw) { scoreDraw_ = scoreDraw; }
 
+	void SetHPNum(int hp = 0) { hpNumTex_->SetTextureLeftTop({ 64.0f * float(hp),0 }); }
+
 private:
 	Input* input_ = nullptr;
 	ScoreUI* scoreDraw_ = nullptr;
+
+
+	std::unique_ptr<Sprite> hpText_;
+	Vector2 offsetHpTextPos_ = { 1160, 545 };
+	std::unique_ptr<Sprite> hpNumTex_;
+	Vector2 offsetHpNum_ = { 1112,526 };
 
 	std::unique_ptr<Sprite> comboNumTex_;
 	Vector2 offsetComboNum_ = { 1060,25 };

@@ -10,11 +10,13 @@ public:
 
 	void Draw();
 
+	void UpdateResult(float currentTime);
+
 	struct ScoreDisp {
 		std::array<int32_t, 4> num;
 	};
 
-	void SetScore(const int32_t& score) 
+	void SetScore(int32_t score) 
 	{ 
 		scoreViewTimer_ = 0;
 		prevScore_ = currentScore_;
@@ -23,6 +25,9 @@ public:
 
 	// 仮対応
 	void SetResult();
+
+
+	std::vector<Sprite*>& GetSprite() { return setSpr_; }
 
 private:
 	void ScoreDisplay();
@@ -37,6 +42,8 @@ private:
 	int32_t currentScore_ = 0;
 	int32_t viewScore_ = 0;
 	ScoreDisp scoreDisp_ = {};
+
+	std::vector<Sprite*> setSpr_;
 
 	float scoreViewTimer_ = 0;
 	float kScoreViewTime_ = 1.0f;

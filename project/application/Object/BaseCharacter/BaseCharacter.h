@@ -23,7 +23,7 @@ public:
 	virtual void SetRotate(const Vector3& rota) { worldTransform_.rotation_ = rota; }
 
 	// ローカル座標をセット
-	virtual void SetTranslation(Vector3 pos) { worldTransform_.translation_ = pos; }
+	virtual void SetTranslation(const Vector3& pos) { worldTransform_.translation_ = pos; }
 
 	// 死んだかどうか
 	virtual bool IsDead() const { return isDead_; }

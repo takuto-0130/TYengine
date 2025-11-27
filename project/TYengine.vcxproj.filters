@@ -331,9 +331,6 @@
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\ShotState.cpp">
       <Filter>application\source</Filter>
     </ClCompile>
-    <ClCompile Include="application\Skydome\Skydome.cpp">
-      <Filter>application\source</Filter>
-    </ClCompile>
     <ClCompile Include="application\Stage\Stage.cpp">
       <Filter>application\source</Filter>
     </ClCompile>
@@ -480,9 +477,6 @@
       <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\ScoreUI\ScoreUI.h">
-      <Filter>application\header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Skydome\Skydome.h">
       <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\Stage\Stage.h">

@@ -34,7 +34,7 @@ public:
 	/// <param name="type"> 発射する弾の種類 </param>
 	/// <param name="pos"> 射出点の座標 </param>
 	/// <param name="direction"> 射出される向き </param>
-	void Fire(PlayerBulletType type, Vector3 pos, Vector3 direction);
+	void Fire(PlayerBulletType type, const Vector3& pos, const Vector3& direction);
 
 private:
 	Player* player_ = nullptr;

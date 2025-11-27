@@ -16,7 +16,7 @@ public:
 		std::array<int32_t, 4> num;
 	};
 
-	void SetScore(const int32_t& score) 
+	void SetScore(int32_t score) 
 	{ 
 		scoreViewTimer_ = 0;
 		prevScore_ = currentScore_;

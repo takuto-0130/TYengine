@@ -44,21 +44,22 @@ public:
 
 
 private:
-	static Input* instance;
-	static std::once_flag initInstanceFlag;
-
 	Input() = default;
-	~Input() = default;
-	Input(Input&) = default;
-	Input& operator=(Input&) = default;
-public: // メンバ関数
-	static Input* GetInstance();
-
-	// 初期化
-	void Initialize(const HWND& hwnd);
+	~Input() { Finalize(); }
+	Input(const Input&) = delete;
+	Input& operator=(const Input&) = delete;
 
 	// 終了
 	void Finalize();
+public: // メンバ関数
+	static Input* GetInstance()
+	{
+		static Input instance;
+		return &instance;
+	}
+
+	// 初期化
+	void Initialize(const HWND& hwnd);
 
 	// 毎フレーム処理
 	void Update();
@@ -149,7 +150,6 @@ private: // メンバ変数
 	std::array<BYTE, 256> keyPre_{};
 	DIMOUSESTATE2 mouse_;
 	DIMOUSESTATE2 mousePre_;
-	HWND hwnd_;
 	HWND clientHwnd_;
 	Vector2 mousePosition_ = {};
 };

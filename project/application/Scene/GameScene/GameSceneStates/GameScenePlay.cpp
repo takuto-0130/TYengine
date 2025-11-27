@@ -16,6 +16,12 @@ void GameScene::UpdatePlay()
 
 	PlayUIUpdate();
 
+	if (input_->TriggerKey(DIK_C))
+	{
+		scoreDraw_->SetScore(1234);
+		ChangeState(GameSceneState::RESULT);
+	}
+
 	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
 
 	if (input_->TriggerKey(DIK_T)) ChangeState(GameSceneState::FADE_OUT);
@@ -57,5 +63,13 @@ void GameScene::ComboUIUpdate()
 	if (combo->GetCurrentComboTimer() == combo->GetStartComboTime())
 	{
 		scoreDraw_->SetScore(stageManager_->GetScoreManager()->GetScore());
+	}
+	if (stageManager_->GetPlayer())
+	{
+		playUI_->SetHPNum(stageManager_->GetPlayer()->GetHP());
+	}
+	else
+	{
+		playUI_->SetHPNum(0);
 	}
 }

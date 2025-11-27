@@ -27,16 +27,38 @@ void PlayUI::Init()
 	comboNumTex_->SetPosition(offsetComboNum_);
 	comboNumTex_->SetSize({ 64,64 });
 
+
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/HpText.png");
+	hpText_ = std::make_unique<Sprite>();
+	hpText_->Initialize("Resources/Texture/HpText.png");
+	hpText_->SetAnchorPoint({ 0.5f,0.5f });
+	hpText_->SetPosition(offsetHpTextPos_);
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
+	hpNumTex_ = std::make_unique<Sprite>();
+	hpNumTex_->Initialize("Resources/Texture/number.png");
+	hpNumTex_->SetTextureSize({ 64,64 });
+	hpNumTex_->SetTextureLeftTop({ 128,0 });
+	hpNumTex_->SetPosition(offsetHpNum_);
+	hpNumTex_->SetSize({ 64,64 });
+
+
+
+
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	operation_ = std::make_unique<Sprite>();
 	operation_->Initialize("Resources/Texture/Operation.png");
+	operation_->SetSize(operation_->GetSize() * 0.8f);
+	operation_->SetPosition({15,145});
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/hightLight.png");
 	hightLight_ = std::make_unique<Sprite>();
 	hightLight_->Initialize("Resources/Texture/hightLight.png");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle2.png");
 	returnTitle_ = std::make_unique<Sprite>();
-	returnTitle_->Initialize("Resources/Texture/ReturnTitle.png");
+	returnTitle_->Initialize("Resources/Texture/ReturnTitle2.png");
+	returnTitle_->SetSize(returnTitle_->GetSize() * 0.8f);
 	
 }
 
@@ -47,6 +69,9 @@ void PlayUI::Update()
 	operation_->Update();
 	hightLight_->Update();
 	returnTitle_->Update();
+
+	hpText_->Update();
+	hpNumTex_->Update();
 }
 
 void PlayUI::Draw()
@@ -55,9 +80,12 @@ void PlayUI::Draw()
 	comboNumTex_->Draw();
 	comboText_->Draw();
 	scoreDraw_->Draw();
-#ifndef _DEBUG
+//#ifndef _DEBUG
 	operation_->Draw();
-#endif // _DEBUG
+//#endif // _DEBUG
+
+	hpText_->Draw();
+	hpNumTex_->Draw();
 
 }
 

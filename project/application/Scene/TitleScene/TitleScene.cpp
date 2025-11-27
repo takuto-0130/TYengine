@@ -69,6 +69,15 @@ void TitleScene::Init()
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
+
+	jm.Load("Title.json", /*create_if_missing=*/true, &err);
+
+	jm.Set("settings.window.width", 1600);
+	jm.Set("settings.window.hieght", 900);
+
+
+	jm.Set("settings.mouse.position.x", 40);
+	jm.Set("settings.mouse.position.y", 90);
 }
 
 void TitleScene::Update() {
@@ -81,6 +90,10 @@ void TitleScene::Update() {
 	/*ImGui::Begin("");
 
 	ImGui::End();*/
+	// ImGui で編集
+	static jx::JsonImGuiEditor inspector(jm);
+	inspector.Draw(jm.Root(), "Title JSON");
+	if (ImGui::Button("Save")) jm.Save();
 #endif // _DEBUG
 	spaceSpr_->Update();
 	text_->Update();

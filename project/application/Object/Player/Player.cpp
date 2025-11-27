@@ -3,6 +3,9 @@
 #include "Input.h"
 #include "Timer.h"
 #include "Quaternion.h"
+#include "Effect/PlaneParticle.h"
+#include "Effect/ContrailBehaviour.h"
+#include "Effect/ParticleManager.h"
 
 #define PLAYER_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Player, stateEnum, funcName)
@@ -41,7 +44,8 @@ void Player::Init()
 	worldTransform_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
 	worldTransform_.useQuaternion_ = true; // プレイヤーではQuaternion使うようにする
 	worldTransform_.TransferMatrix();
-
+	worldTransform_.parentMatrix_ = &camera_->GetWorldMatrix();
+	worldTransform_.translation_.z = 4.0f;
 
 	collider_ = std::make_unique<PlayerCollider>(
 		static_cast<uint32_t>(ColliderTypeID::PLAYER), 
@@ -68,8 +72,22 @@ void Player::Init()
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
 
+	hitpoint_ = 5;
+
 	// test
 	TestReticleInit();
+
+	//auto contrail = std::make_unique<PlaneParticle>();  // 板ポリ形状
+	//contrail->SetBehaviour(std::make_unique<ContrailBehaviour>()); // 挙動を設定
+
+	//contrailIndex_ = ParticleManager::GetInstance()->Add(std::move(contrail));
+
+	//IParticleRenderer::Emitter e;
+	//e.transform.translate = { 0, 0, 0 };
+	//e.count = 1;
+	//e.frequency = 0.01f; // 毎フレーム発生
+
+	//ParticleManager::GetInstance()->SetEmitter(contrailIndex_, e);
 }
 
 void Player::Update()
@@ -80,21 +98,51 @@ void Player::Update()
 
 	UpdateState(deltaTime_);
 
+	Vector3 back = -Normalize(Vector3(worldTransform_.matWorld_.m[2][0], worldTransform_.matWorld_.m[2][1], worldTransform_.matWorld_.m[2][2]));
+	IParticleRenderer::Emitter e;
+	e.transform.translate = GetWorldPosition() + back * 0.3f;
+	e.transform.scale = { 0.1f ,0.1f ,0.1f };
+	e.velocity = back * 3.0f;
+	e.count = 1;
+	e.frequency = 0.01f; // 毎フレーム発生
+
+	ParticleManager::GetInstance()->SetEmitter(3, e);
+	ParticleManager::GetInstance()->TriggerEmit(3, true);
+
 	PostStateUpdate();
 }
 
 void Player::Draw()
 {
-	obj_->Draw(worldTransform_);
-	bulletManager_->Draw();
+	if(!isDead_)
+	{
+		obj_->Draw(worldTransform_);
+		bulletManager_->Draw();
 
-	// test
-	TestReticleDraw();
+		// test
+		TestReticleDraw();
+	}
+}
+
+void Player::OnCollision()
+{
+	isDead_ = true;
+
+
+	IParticleRenderer::Emitter e;
+	e.transform.translate = GetWorldPosition();
+	e.count = 20;
+	e.frequency = 5.0f;
+	e.transform.scale = { 0.3f, 0.3f, 0.3f };
+	ParticleManager::GetInstance()->SetEmitter(4, e);
+
+	ParticleManager::GetInstance()->TriggerEmit(4, true);
 }
 
 void Player::PostStateUpdate()
 {
-	RotationOffset();
+	//RotationOffset();
+	RotationOffsetLocal();
 	worldTransform_.TransferMatrix();
 	collider_->Update(GetWorldPosition());
 	justCollider_->Update(GetWorldPosition());
@@ -128,43 +176,32 @@ void Player::Attack()
 void Player::Move()
 {
 	inputDir_ = {};
-	roll = 0;
-	movePitch = 0;
+	roll = 0.0f;
+	movePitch = 0.0f;
 
-	if (input_->PushKey(DIK_W)) 
-	{
-		inputDir_.y += 1.0f;
-		movePitch = -0.1f;
-	}
-	if (input_->PushKey(DIK_S)) 
-	{
-		inputDir_.y -= 1.0f;
-		movePitch = 0.1f;
-	}
-	if (input_->PushKey(DIK_A)) 
-	{
-		inputDir_.x -= 1.0f;
-		roll = 0.1f;
-		
-	}
-	if (input_->PushKey(DIK_D)) 
-	{
-		inputDir_.x += 1.0f;
-		roll = -0.1f;
-	}
+	if (input_->PushKey(DIK_W)) { inputDir_.y += 1.0f; movePitch = -0.1f; }
+	if (input_->PushKey(DIK_S)) { inputDir_.y -= 1.0f; movePitch = 0.1f; }
+	if (input_->PushKey(DIK_A)) { inputDir_.x -= 1.0f; roll = 0.1f; }
+	if (input_->PushKey(DIK_D)) { inputDir_.x += 1.0f; roll = -0.1f; }
 
-	if (Length(inputDir_) != 0) 
+	if (Length(inputDir_) != 0.0f)
 	{
 		inputDir_ = Normalize(inputDir_);
-
 		speed_.x = defaultSpeed_;
 		speed_.y = defaultSpeed_ * (xRange / yRange);
 		screenOffset_ += inputDir_ * speed_ * deltaTime_;
 	}
 	ClampOffset();
 
-	Vector3 worldPos = ConvertScreenOffsetToWorld(screenOffset_);
-	worldTransform_.translation_ = worldPos;
+	// ===== ここが一番の変更点：ローカル座標で直接指定 =====
+	// 親はカメラなので、+Z がカメラ前方（エンジンによっては -Z）になる
+	worldTransform_.translation_ = {
+		screenOffset_.x * xRange,
+		screenOffset_.y * yRange,
+		playerDepthFromCamera_      // 画面からの奥行き(カメラ前方)
+	};
+
+	RotationOffsetLocal();  // ←下の関数に差し替え
 
 	StartBarrelRoll();
 }
@@ -173,6 +210,21 @@ void Player::ClampOffset()
 {
 	screenOffset_.x = std::clamp(screenOffset_.x, -1.0f, 1.0f);
 	screenOffset_.y = std::clamp(screenOffset_.y, -1.0f, 1.0f);
+}
+
+// ※ もうワールド変換は不要なので削除してOK
+// Vector3 Player::ConvertScreenOffsetToWorld(...) は使わない
+
+void Player::RotationOffsetLocal()
+{
+	// ローカル軸回りに回す（親＝カメラが最終的な向きを与えてくれる）
+	// ロール：ローカル前方(Z)／ピッチ：ローカル右(X)
+	Quaternion qRoll = MakeRotateAxisAngleQuaternion({ 0,0,1 }, roll);
+	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, movePitch);
+
+	// 好みで順序調整（ここでは Roll→Pitch）
+	worldTransform_.rotationQ_ = Multiply(qRoll, qPitch);
+	worldTransform_.TransferMatrix(); // 中で parent * local になること
 }
 
 Vector3 Player::ConvertScreenOffsetToWorld(const Vector2& offset)
@@ -188,35 +240,13 @@ Vector3 Player::ConvertScreenOffsetToWorld(const Vector2& offset)
 		+ camUp * (offset.y * yRange);
 }
 
-void Player::RotationOffset()
-{
-	// カメラの正面方向（ワールド空間）
-	Vector3 camForward = Normalize(camera_->GetForward());
-	Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
-
-	// オイラー角（Yaw → Pitch）
-	yaw = std::atan2(camForward.x, camForward.z);
-	float lenXZ = std::sqrt(camForward.x * camForward.x + camForward.z * camForward.z);
-	pitch = std::atan2(-camForward.y, lenXZ);
-
-	// 回転クォータニオン（Yaw → Pitch）
-	Quaternion qYaw = MakeRotateAxisAngleQuaternion({ 0, 1, 0 }, yaw);
-	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1, 0, 0 }, pitch + movePitch);
-
-	// ロール回転（カメラforward軸に沿って回す）
-	Quaternion qRoll = MakeRotateAxisAngleQuaternion(camForward, roll + camera_->GetRotate().z);
-
-	// 最終合成：Roll * Yaw * Pitch
-	Quaternion qFinal = Multiply(Multiply(qRoll, qYaw), qPitch);
-
-	worldTransform_.rotationQ_ = qFinal;
-	worldTransform_.TransferMatrix();
-}
-
 void Player::DebugGUI()
 {
 #ifdef _DEBUG
 	ImGui::Begin("Player");
+
+	ImGui::Text("hp : %d", hitpoint_);
+
 	ImGui::DragFloat2("ScreenOffset", &screenOffset_.x);
 
 	Vector3 pos = GetWorldPosition();

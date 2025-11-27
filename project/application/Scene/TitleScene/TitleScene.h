@@ -7,6 +7,9 @@
 #include "../../Object/Enemy/TitleEnemy/TitleEnemyManager.h"
 #include "../Transition/Fade2/BlockFadeOverlay.h"
 
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
+
 #include "Sprite.h"
 class TitleScene : public IScene {
 public:
@@ -44,4 +47,7 @@ private:
 	std::unique_ptr<Sprite> reticle_;
 
 	//BlockFadeOverlay fadeOverlay_;
+
+	jx::JsonManager jm;
+	std::string err;
 };

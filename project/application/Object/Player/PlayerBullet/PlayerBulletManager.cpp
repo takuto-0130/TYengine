@@ -30,7 +30,7 @@ void PlayerBulletManager::Draw()
 	}
 }
 
-void PlayerBulletManager::Fire(PlayerBulletType type, Vector3 pos, Vector3 direction)
+void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const Vector3& direction)
 {
 	using enum PlayerBulletType;
 	std::unique_ptr<BaseBullet> bullet;

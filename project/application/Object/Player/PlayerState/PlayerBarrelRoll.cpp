@@ -11,13 +11,15 @@ void Player::InitBarrelRoll()
 {
 	startRollPos_ = screenOffset_;
 	rollEfectTimer_ = 0.0f;
-	if(justRoll_)
+	if (justRoll_)
 	{
-		PostEffectManager::GetInstance()->SetEffectEnabled("Vignette", true);
-		PostEffectManager::GetInstance()->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
-		PostEffectManager::GetInstance()->SetEffectEnabled("RadialBlur", true);
-		PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
-		PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(screenOffset_);
+		auto* pem = PostEffectManager::GetInstance();
+		pem->SetEffectEnabled("Vignette", true);
+		pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
+		pem->SetEffectEnabled("RadialBlur", true);
+		pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
+		// 中心は画面座標系（-1..1）→ [0..1] に変換して渡す想定
+		pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(screenOffset_);
 	}
 }
 
@@ -30,8 +32,9 @@ void Player::ExitBarrelRoll()
 {
 	if (justRoll_)
 	{
-		PostEffectManager::GetInstance()->SetEffectEnabled("Vignette", false);
-		PostEffectManager::GetInstance()->SetEffectEnabled("RadialBlur", false);
+		auto* pem = PostEffectManager::GetInstance();
+		pem->SetEffectEnabled("Vignette", false);
+		pem->SetEffectEnabled("RadialBlur", false);
 	}
 }
 
@@ -55,76 +58,74 @@ void Player::StartBarrelRoll()
 
 void Player::BarrelRoll()
 {
-	if (inputDir_.x != 0)
-	{
-		if (inputDir_.x < 0)
-		{
-			LeftRoll();
-		}
-		if (inputDir_.x > 0)
-		{
-			RightRoll();
-		}
-	}
-	else if (inputDir_.y != 0)
-	{
-		if (inputDir_.y < 0)
-		{
-			LeftRoll();
-		}
-		if (inputDir_.y > 0)
-		{
-			RightRoll();
-		}
-	}
-	if (rollEfectTimer_ <= 2.1f)
-	{
-		rollEfectTimer_ += Timer::GetInstance()->GetRawDeltaTime();
-		float t = 0.0f;
-		if(rollEfectTimer_ <= 1.2f)
-		{
-			t = rollEfectTimer_ / 1.2f;
-		}
-		else
-		{
-			t = 0.9f - (rollEfectTimer_ - 1.2f) / 0.9f;
-			t = EaseFixed::InQuint(t);
-		}
-		if (justRoll_)
-		{
-			PostEffectManager::GetInstance()->GetEffect<VignetteEffect>("Vignette")->SetPower(t);
-			PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((screenOffset_ + Vector2(1.0f, 1.0f)) / 2.0f);
-			PostEffectManager::GetInstance()->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * t);
-		}
-	}
+    // 入力方向に応じて左右（または上下）ロール
+    if (inputDir_.x != 0.0f)
+    {
+        (inputDir_.x < 0.0f) ? LeftRoll() : RightRoll();
+    }
+    else if (inputDir_.y != 0.0f)
+    {
+        (inputDir_.y < 0.0f) ? LeftRoll() : RightRoll();
+    }
 
-	ClampOffset();
+    // エフェクト
+    if (rollEfectTimer_ <= 2.1f)
+    {
+        rollEfectTimer_ += Timer::GetInstance()->GetRawDeltaTime();
 
-	Vector3 worldPos = ConvertScreenOffsetToWorld(screenOffset_);
-	worldTransform_.translation_ = worldPos;
+        float t = (rollEfectTimer_ <= 1.2f)
+            ? (rollEfectTimer_ / 1.2f)
+            : (0.9f - (rollEfectTimer_ - 1.2f) / 0.9f);
 
-	if (GetStateElapsedTime() >= rollTime_ || Length(inputDir_) == 0.0f)
-	{
-		ChangeState(PlayerState::ROOT);
-	}
+        t = (rollEfectTimer_ <= 1.2f) ? t : EaseFixed::InQuint(t);
+
+        if (justRoll_)
+        {
+            auto* pem = PostEffectManager::GetInstance();
+            pem->GetEffect<VignetteEffect>("Vignette")->SetPower(t);
+            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((screenOffset_ + Vector2(1.0f, 1.0f)) * 0.5f);
+            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * t);
+        }
+    }
+
+    // 画面オフセットのクランプ
+    ClampOffset();
+
+    // ===== ここが重要：ローカル平行移動を直接セット =====
+    // 親がカメラなので、+Z(またはエンジン規約の前方)に playerDepthFromCamera_ 分だけ前進
+    worldTransform_.translation_ = {
+        screenOffset_.x * xRange,
+        screenOffset_.y * yRange,
+        playerDepthFromCamera_
+    };
+
+    // 回転はローカル軸で行う（Move() と同様の関数を使う）
+    //   - roll は Z 軸（前方）回り
+    //   - movePitch は X 軸回り
+    // 親の向きは親子合成で自動的に乗るので、ここではローカルだけ。
+    RotationOffsetLocal(); // あなたの前回差し替え版（Roll→Pitch の順など）
+
+    // 終了判定
+    if (GetStateElapsedTime() >= rollTime_ || Length(inputDir_) == 0.0f)
+    {
+        ChangeState(PlayerState::ROOT);
+    }
 }
 
 
 
 void Player::LeftRoll()
 {
-	goalRollPos_ = startRollPos_ + inputDir_ * rollRange_;
-	float t = GetStateElapsedTime() / rollTime_;
-	t = std::clamp(t, 0.0f, 1.0f);
-	screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
-	roll = Lerp(0.0f, leftRoll_, EaseFixed::OutBack(t));
+    goalRollPos_ = startRollPos_ + inputDir_ * rollRange_;
+    float t = std::clamp(GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
+    screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
+    roll = Lerp(0.0f, leftRoll_, EaseFixed::OutBack(t));  // ローカルZ回転
 }
 
 void Player::RightRoll()
 {
-	goalRollPos_ = startRollPos_ + inputDir_ * rollRange_;
-	float t = GetStateElapsedTime() / rollTime_;
-	t = std::clamp(t, 0.0f, 1.0f);
-	screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
-	roll = Lerp(0.0f, rightRoll_, EaseFixed::OutBack(t));
+    goalRollPos_ = startRollPos_ + inputDir_ * rollRange_;
+    float t = std::clamp(GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
+    screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
+    roll = Lerp(0.0f, rightRoll_, EaseFixed::OutBack(t)); // ローカルZ回転
 }

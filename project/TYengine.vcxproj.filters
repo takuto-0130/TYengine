@@ -331,9 +331,6 @@
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\ShotState.cpp">
       <Filter>application\source</Filter>
     </ClCompile>
-    <ClCompile Include="application\Skydome\Skydome.cpp">
-      <Filter>application\source</Filter>
-    </ClCompile>
     <ClCompile Include="application\Stage\Stage.cpp">
       <Filter>application\source</Filter>
     </ClCompile>
@@ -354,6 +351,12 @@
     </ClCompile>
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScene_Clear.cpp" />
+    <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
+    <ClCompile Include="engine\Effect\ContrailBehaviour.cpp" />
+    <ClCompile Include="engine\Effect\ExplosionBehaviour.cpp" />
+    <ClCompile Include="engine\Effect\ExplosionRingBehaviour.cpp" />
+    <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
@@ -474,9 +477,6 @@
       <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\ScoreUI\ScoreUI.h">
-      <Filter>application\header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Skydome\Skydome.h">
       <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\Stage\Stage.h">
@@ -707,6 +707,19 @@
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
     <ClInclude Include="engine\Camera\CameraShake.h" />
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
+    <ClInclude Include="engine\Utility\Utils\Random.h" />
+    <ClInclude Include="application\Scene\GameScene\Result\ConfettiParticle.h" />
+    <ClInclude Include="application\Scene\GameScene\Result\ConfettiSystem.h" />
+    <ClInclude Include="engine\Utility\Collider\2DCollider\Collision2D.h" />
+    <ClInclude Include="engine\Utility\Collider\2DCollider\SpriteAABBUtil.h" />
+    <ClInclude Include="engine\Utility\Collider\2DCollider\UISpriteColliderManager.h" />
+    <ClInclude Include="engine\Utility\Utils\JSON\JsonManager.h" />
+    <ClInclude Include="engine\Effect\IParticleBehaviour.h" />
+    <ClInclude Include="engine\Effect\ContrailBehaviour.h" />
+    <ClInclude Include="engine\Effect\ParticleParam.h" />
+    <ClInclude Include="engine\Effect\ExplosionBehaviour.h" />
+    <ClInclude Include="engine\Effect\ExplosionRingBehaviour.h" />
+    <ClInclude Include="engine\Effect\DebrisBehaviour.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">

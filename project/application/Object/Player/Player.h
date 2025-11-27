@@ -23,7 +23,7 @@ class Input;
 class Camera;
 
 class Player :
-    public BaseCharacter, StateMachine<Player, PlayerState>
+    public BaseCharacter, public StateMachine<Player, PlayerState>
 {
 public: // 関数テーブル
     static const std::vector<StateFunctionSet>& GetStateTable();
@@ -45,6 +45,22 @@ public:
 
 	void SetScreenOffset(const Vector2& offset) { screenOffset_ = offset; }
 
+	void TakeDamage()
+	{
+		if (hitpoint_ > 1)
+		{
+			hitpoint_--;
+		}
+		else
+		{
+			OnCollision();
+		}
+	}
+
+	int GetHP() { return hitpoint_; }
+
+	void OnCollision() override;
+
 private:
 	void PostStateUpdate();
 
@@ -52,8 +68,10 @@ private:
 	void Move();
 	void ClampOffset();
 
+	void RotationOffsetLocal();
+
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
-	void RotationOffset();
+	//void RotationOffset();
 
 
 	// BarrelRoll
@@ -87,6 +105,9 @@ private:
 	Vector2 inputDir_{};
 
 	float deltaTime_ = 1.0f / 60.0f;
+
+	// hp
+	int hitpoint_ = 5;
 
 
 	// 姿勢
@@ -127,6 +148,8 @@ private:
 	// test
 	std::unique_ptr<Object3d> reticleObj_;
 	WorldTransform reticleWT_;
+
+	int contrailIndex_;
 
 
 private: // シーン内のState関連関数

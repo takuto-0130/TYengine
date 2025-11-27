@@ -92,7 +92,7 @@ float Dot(const Quaternion& q0, const Quaternion& q1);
 /// <param name="q">対象のクォータニオン。</param>
 /// <param name="f">スカラー値。</param>
 /// <returns>スケール後のクォータニオン。</returns>
-Quaternion Multiply(const Quaternion& q, const float f);
+Quaternion Multiply(const Quaternion& q, float f);
 
 
 /// <summary>

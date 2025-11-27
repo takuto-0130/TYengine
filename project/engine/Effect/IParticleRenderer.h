@@ -3,6 +3,8 @@
 #include "SrvManager.h"
 #include "Camera.h"
 #include "TextureManager.h"
+#include "ParticleParam.h"
+#include "IParticleBehaviour.h"
 #include <struct.h>
 #include <random>
 #include <list>
@@ -11,7 +13,7 @@
 
 class IParticleRenderer {
 public:
-    virtual ~IParticleRenderer() = default;
+    virtual ~IParticleRenderer();
     virtual void Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam);
     virtual void Update();
     virtual void Draw();
@@ -27,19 +29,28 @@ public:
         float frequency = 0.5f;
         float frequencyTime = 0.0f;
         Vector4 color = { 1,1,1,1 };
+        Vector3 velocity = { 0.0f, 0.0f, 0.0f };
+        bool randomVel = false;
     };
 
     virtual void SetEmitter(Emitter& emitter) { emitter_ = emitter; }
 
     virtual void TriggerEmit();
-protected:
-    struct ParticleP {
+
+    void SetBehaviour(std::unique_ptr<IParticleBehaviour> b)
+    {
+        behaviour_ = std::move(b);
+    }
+
+    struct ParticleP
+    {
         Transform transform;
         Vector3 velocity;
         Vector4 color;
         float lifeTime;
         float currentTime;
     };
+protected:
 
     struct ParticleForGPU {
         Matrix4x4 WVP;
@@ -68,13 +79,13 @@ protected:
     void CreateRootSignature();
     void LoadShader();
     void CreatePipelineState();
-    virtual ParticleP MakeNewParticle(std::mt19937& random, const Emitter& emitter);
-    virtual std::list<ParticleP> Emit(std::mt19937& random);
+    virtual ParticleParam MakeNewParticle(std::mt19937& random, const Emitter& emitter);
+    virtual std::list<ParticleParam> Emit(std::mt19937& random);
 
 protected:
     float kDeltaTime = 1.0f / 60.0f;
     
-    static const uint32_t kMaxInstance = 100;
+    static const uint32_t kMaxInstance = 2048;
 
     bool useBillboard_ = true;
 
@@ -100,7 +111,7 @@ protected:
     CameraForGPUP* cameraData_ = nullptr;
     VertexData* vertexData_ = nullptr;
 
-    std::list<ParticleP> particles_;
+    std::list<ParticleParam> particles_;
     std::random_device seedGene_;
     uint32_t numInstance_ = 0;
 
@@ -115,4 +126,6 @@ protected:
 
     D3D12_BLEND_DESC blendDesc_{};
     D3D12_RASTERIZER_DESC rasterizerDesc_{};
+
+    std::unique_ptr<IParticleBehaviour> behaviour_;
 };

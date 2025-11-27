@@ -71,10 +71,10 @@ public:
 
 private:
     /// <summary>現在アクティブなシーン。</summary>
-    IScene* scene_ = nullptr;
+    std::unique_ptr<IScene> scene_ = nullptr;
 
     /// <summary>次に切り替え予定のシーン。</summary>
-    IScene* nextScene_ = nullptr;
+    std::unique_ptr<IScene> nextScene_ = nullptr;
 
     /// <summary>シーンを生成するためのファクトリ。</summary>
     AbstractSceneFactory* sceneFactory_ = nullptr;

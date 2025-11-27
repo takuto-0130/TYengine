@@ -43,6 +43,10 @@ void WorldTransform::TransferMatrix()
         if (parent_) {
             matWorld_ = matWorld_ * parent_->matWorld_; // 親の行列と自身の行列を合成
         }
+        else if (parentMatrix_ != nullptr)
+        {
+            matWorld_ = matWorld_ * (*parentMatrix_);
+        }
 
         constMap->World = matWorld_; // 定数バッファに行列をコピー
         constMap->WorldInverseTranspose = Inverse(matWorld_);

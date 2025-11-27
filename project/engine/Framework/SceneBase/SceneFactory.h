@@ -11,6 +11,6 @@ public:
      * @param sceneName シーン名
      * @return 生成したシーン
      */
-    IScene* CreateScene(const std::string& sceneName) override;
+    std::unique_ptr<IScene> CreateScene(const std::string& sceneName) override;
 };
 

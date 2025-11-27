@@ -43,7 +43,7 @@ public:
 
 	bool RailTrigger();
 
-	bool IsEndRail() { return cameraForwardT >= 1.0f ? true : false; }
+	bool IsEndRail() { return railFinished_; }
 
 	bool ClearEnemyGroup()
 	{
@@ -148,11 +148,14 @@ private:
 
 	float deltaTime_ = 1.0f / 60.0f;
 
-	float speedMultiply_ = 1.0f;
+	float speedMultiply_ = 0.7f;
 
 
 	bool firstClear_ = false;
 	bool secondClear_ = false;
+
+	bool railFinished_ = false;        // 到達済み
+	bool railFinishedJustNow_ = false; // 今フレーム到達
 
 
 	std::unordered_set<size_t> alreadyTriggeredIndices_;

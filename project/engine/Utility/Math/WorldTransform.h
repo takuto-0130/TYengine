@@ -32,6 +32,8 @@ public:
 	Matrix4x4 matWorld_ = MakeIdentity4x4();
 	// 親となるワールド変換へのポインタ
 	const WorldTransform* parent_ = nullptr;
+	// 親となるワールド変換へのポインタ
+	const Matrix4x4* parentMatrix_ = nullptr;
 
 	// コンストラクタ
 	WorldTransform() = default;

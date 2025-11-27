@@ -43,6 +43,17 @@ Audio::~Audio()
 		masterVoice->DestroyVoice();
 		masterVoice = nullptr;
 	}
+
+	// 読み込んだサウンドデータを全部解放
+	for (auto& [name, soundData] : soundDataMap)
+	{
+		delete[] soundData.pBuffer;
+		soundData.pBuffer = nullptr;
+		soundData.bufferSize = 0;
+		soundData.wfex = {};
+	}
+	soundDataMap.clear();
+
 	xAudio2.Reset();
 }
 
@@ -161,8 +172,10 @@ void Audio::Initialize(const std::string& directoryPath)
 	HRESULT result;
 	// インスタンスの生成
 	result = XAudio2Create(&xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
+	assert(SUCCEEDED(result));
 	// マスターボイスの生成
 	result = xAudio2->CreateMasteringVoice(&masterVoice);
+	assert(SUCCEEDED(result));
 
 }
 void Audio::StopBGM(int resourceNum)
@@ -244,7 +257,7 @@ void Audio::LoadWave(const char* filename)
 		file.read((char*)&data, sizeof(data));
 	}
 	// INFOISFTチャンクを検出した場合
-	if (strncmp(data.id, "INFOISFT", 8) == 0) {
+	if (strncmp(data.id, "INFO", 4) == 0) {
 		// 読み取り位置をINFOISFTチャンクの終わりまで進める
 		file.seekg(data.size, std::ios_base::cur);
 		// 再読み込み
@@ -275,7 +288,14 @@ void Audio::LoadWave(const char* filename)
 
 void Audio::SoundUnload(const char* filename)
 {
-	SoundData* soundData = &soundDataMap[filename];
+	auto it = soundDataMap.find(filename);
+	if (it == soundDataMap.end())
+	{
+		Logger::Log("Sound not loaded.\n");
+		return;
+	}
+	SoundData* soundData = &it->second;
+
 	// バッファのメモリを解放
 	delete[] soundData->pBuffer;
 
@@ -288,7 +308,13 @@ int Audio::PlayWave(const char* filename, const bool isLoop)
 {
 	HRESULT result;
 
-	SoundData& soundData = soundDataMap[filename];
+	auto it = soundDataMap.find(filename);
+	if (it == soundDataMap.end())
+	{
+		Logger::Log("Sound not loaded.\n");
+		return -1;
+	}
+	SoundData& soundData = it->second;
 
 	// 今回使うサウンドデータ
 	int sourceNum = -1;

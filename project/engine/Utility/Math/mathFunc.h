@@ -50,17 +50,17 @@ const Vector3 Multiply(const Vector3& v1, const Vector3& v2);
 /// <summary>
 /// 3次元ベクトルにスカラーを掛ける
 /// </summary>
-const Vector3 Multiply(const Vector3& v, const float& s);
+const Vector3 Multiply(const Vector3& v, float s);
 
 /// <summary>
 /// スカラーに3次元ベクトルを掛ける
 /// </summary>
-const Vector3 Multiply(const float& s, const Vector3& v);
+const Vector3 Multiply(float s, const Vector3& v);
 
 /// <summary>
 /// スカラー値を線形補間する
 /// </summary>
-float Lerp(const float& a, const float& b, float t);
+float Lerp(float a, float b, float t);
 
 /// <summary>
 /// 2次元ベクトルを線形補間する
@@ -130,12 +130,12 @@ Vector3 operator*(const Vector3& a, const Vector3& b);
 /// <summary>
 /// 3次元ベクトルにスカラーを掛ける
 /// </summary>
-Vector3 operator*(const Vector3& v, const float& s);
+Vector3 operator*(const Vector3& v, float s);
 
 /// <summary>
 /// スカラーに3次元ベクトルを掛ける
 /// </summary>
-Vector3 operator*(const float& s, const Vector3& v);
+Vector3 operator*(float s, const Vector3& v);
 
 /// <summary>
 /// 3次元ベクトル同士の要素ごとの除算
@@ -145,7 +145,7 @@ Vector3 operator/(const Vector3& a, const Vector3& b);
 /// <summary>
 /// 3次元ベクトルをスカラーで割る
 /// </summary>
-Vector3 operator/(const Vector3& v, const float& s);
+Vector3 operator/(const Vector3& v, float s);
 
 /// <summary>
 /// 2次元ベクトルの減算演算子
@@ -165,12 +165,12 @@ Vector2 operator*(const Vector2& a, const Vector2& b);
 /// <summary>
 /// 2次元ベクトルにスカラーを掛ける
 /// </summary>
-Vector2 operator*(const Vector2& v, const float& s);
+Vector2 operator*(const Vector2& v, float s);
 
 /// <summary>
 /// スカラーに2次元ベクトルを掛ける
 /// </summary>
-Vector2 operator*(const float& s, const Vector2& v);
+Vector2 operator*(float s, const Vector2& v);
 
 /// <summary>
 /// 2次元ベクトル同士の要素ごとの除算
@@ -180,5 +180,5 @@ Vector2 operator/(const Vector2& a, const Vector2& b);
 /// <summary>
 /// 2次元ベクトルをスカラーで割る
 /// </summary>
-Vector2 operator/(const Vector2& v, const float& s);
+Vector2 operator/(const Vector2& v, float s);
 

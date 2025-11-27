@@ -53,10 +53,10 @@ public: // メンバ関数
 
 	void SetShake(const Vector3& shake) { shake_ = shake; }
 
-	void SetFovY(const float& horizontalFOV) { horizontalFOV_ = horizontalFOV; }
-	void SetAspectRate(const float& aspectRatio) { aspectRatio_ = aspectRatio; }
-	void SetNearClip(const float& nearClip) { nearClip_ = nearClip; }
-	void SetFarClip(const float& farClip) { farClip_ = farClip; }
+	void SetFovY(float horizontalFOV) { horizontalFOV_ = horizontalFOV; }
+	void SetAspectRate(float aspectRatio) { aspectRatio_ = aspectRatio; }
+	void SetNearClip(float nearClip) { nearClip_ = nearClip; }
+	void SetFarClip(float farClip) { farClip_ = farClip; }
 
 	// ========================
 	//        Getter

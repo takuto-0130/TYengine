@@ -34,10 +34,10 @@ public: // メンバ関数
     void Initialize(WindowsApp* windowsApp);
 
     /// <summary>指定インデックスの SRV CPU ディスクリプタハンドルを取得する。</summary>
-    D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCpuDescriptorHandle(const uint32_t& index);
+    D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCpuDescriptorHandle(uint32_t index);
 
     /// <summary>指定インデックスの SRV GPU ディスクリプタハンドルを取得する。</summary>
-    D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGpuDescriptorHandle(const uint32_t& index);
+    D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGpuDescriptorHandle(uint32_t index);
 
     /// <summary>
     /// HLSL シェーダをコンパイルする。  
@@ -48,7 +48,7 @@ public: // メンバ関数
     Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
     /// <summary>任意サイズのバッファリソース（UPLOAD）を作成する。</summary>
-    Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(const size_t& sizeInBytes);
+    Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
     /// <summary>メタデータに基づきテクスチャリソースを作成する（DEFAULT）。</summary>
     Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
@@ -140,16 +140,16 @@ public:
     /// 任意タイプのディスクリプタヒープを生成する。  
     /// shaderVisible = true で GPU 可視ヒープ（CBV/SRV/UAV 等）。
     /// </summary>
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_TYPE& heapType, const UINT& numDescriptors, const bool& shaderVisible);
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
     /// <summary>サンプラ用ディスクリプタヒープを作成する。</summary>
     void CreateSamplerHeap();
 
     /// <summary>指定インデックスの CPU ハンドルを取得（任意ヒープ）。</summary>
-    static D3D12_CPU_DESCRIPTOR_HANDLE GetCpuDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, const uint32_t& descriptorSize, const uint32_t& index);
+    static D3D12_CPU_DESCRIPTOR_HANDLE GetCpuDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
     /// <summary>指定インデックスの GPU ハンドルを取得（任意ヒープ）。</summary>
-    static D3D12_GPU_DESCRIPTOR_HANDLE GetGpuDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, const uint32_t& descriptorSize, const uint32_t& index);
+    static D3D12_GPU_DESCRIPTOR_HANDLE GetGpuDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
     /// <summary>バックバッファ枚数を取得する。</summary>
     size_t GetBackBufferCount() { return backBuffers_.size(); }

@@ -25,7 +25,7 @@ class BlenderLevelLoader
 {
 public:
 	// コンストラクタ
-	BlenderLevelLoader(std::string directoryPath) : kBaseDirectoryName_(directoryPath) {}
+	BlenderLevelLoader(const std::string& directoryPath) : kBaseDirectoryName_(directoryPath) {}
 
 	// ロード
 	LevelData* Load(const std::string& filename);

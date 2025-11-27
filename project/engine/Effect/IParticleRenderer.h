@@ -70,21 +70,20 @@ protected:
         float currentTime;
     };
 
-    struct ParticleForGPU 
+    struct ParticleForGPU
     {
         Matrix4x4 WVP;
         Matrix4x4 World;
         Vector4 color;
 
-        // 追加 (Compute Shader用)
-        Vector3 position;
-        float pad0;
-        Vector3 velocity;
-        float pad1;
+        Vector3 position; float pad0;
+        Vector3 velocity; float pad1;
         float currentTime;
         float lifeTime;
-        uint32_t alive = 0;
+        uint32_t alive;
+        uint32_t pad2; // ← 4 bytes to make sizeof == 192
     };
+
 
     struct CameraForGPUP
     {

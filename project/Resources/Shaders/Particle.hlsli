@@ -13,10 +13,14 @@ struct ParticleForGPU
     float4x4 World;
     float4 color;
 
-    // シミュレーション用に追加
     float3 position;
+    float pad0;
+
     float3 velocity;
+    float pad1;
+
     float currentTime;
     float lifeTime;
-    uint alive; // 0=dead, 1=alive
+    uint alive;
+    float pad2;
 };

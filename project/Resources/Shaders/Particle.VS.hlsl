@@ -10,39 +10,63 @@ ConstantBuffer<Camera> gCamera : register(b1);
 
 struct VertexShaderInput
 {
-    float4 position : POSITION0;
+    float4 position : POSITION0; // ここは quad のローカル座標(-0.5~0.5)
     float2 texCoord : TEXCOORD0;
-    float3 normal : NORMAL0;
+    float3 normal : NORMAL0; // 不使用でもOK、残しておく
 };
 
 VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID)
 {
     VertexShaderOutput output;
 
-    // パーティクル情報を取得
+    // パーティクルを取得
     ParticleForGPU p = gParticles[instanceId];
-    
     if (p.alive == 0)
     {
         output.position = float4(0, 0, 0, 0); // 完全クリップ
         return output;
     }
 
-    // WVPを適用
-    output.position = mul(input.position, p.WVP);
+    //------------------------------------------------------------------
+    // ① カメラ方向のビルボード軸を作る
+    //------------------------------------------------------------------
+    float3 camPos = gCamera.worldPosition;
+    float3 toCamera = normalize(camPos - p.position);
 
-    // World変換後の座標
-    float4 worldPos = mul(input.position, p.World);
-    output.worldPosition = worldPos.xyz;
+    float3 up = float3(0, 1, 0);
+    float3 right = normalize(cross(up, toCamera));
+    float3 realUp = cross(toCamera, right);
 
-    // 法線をWorld行列の回転成分で変換
-    // transpose(inverse(World))を取るのが正しいが、スケールをほぼ使わないので簡易化
-    float3x3 world3x3 = (float3x3) p.World;
-    output.normal = normalize(mul(input.normal, world3x3));
+    //------------------------------------------------------------------
+    // ② Quad のローカル頂点をワールド座標へ変換
+    //------------------------------------------------------------------
+    // input.position.xy が -0.5～0.5 の頂点
+    float2 local = input.position.xy;
 
-    // その他
+    // ここで好きなサイズにできる
+    float size = 0.1; // パーティクル直径（あなたの環境に合わせて調整）
+
+    float3 worldPos =
+        p.position +
+        right * (local.x * size) +
+        realUp * (local.y * size);
+
+    output.worldPosition = worldPos;
+
+    //------------------------------------------------------------------
+    // ③ 最終クリップ座標
+    //------------------------------------------------------------------
+    float4 clip = mul(float4(worldPos, 1.0), p.WVP);
+    output.position = clip;
+
+    //------------------------------------------------------------------
+    // ④ その他（元のコードを維持）
+    //------------------------------------------------------------------
     output.texCoord = input.texCoord;
     output.color = p.color;
+
+    // normal は疑似的に front-facing にしておく（不要なら削除可能）
+    output.normal = toCamera;
 
     return output;
 }

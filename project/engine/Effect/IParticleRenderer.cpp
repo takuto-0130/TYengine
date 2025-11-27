@@ -129,30 +129,56 @@ std::list<IParticleRenderer::ParticleP> IParticleRenderer::Emit(std::mt19937& ra
     return result;
 }
 
-void IParticleRenderer::CreateRootSignature() {
+void IParticleRenderer::CreateRootSignature()
+{
     D3D12_ROOT_SIGNATURE_DESC desc = {};
     desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+    // 4 params:
+    // 0: CBV b0 (e.g. material/transform) - make visible where needed
+    // 1: SRV table t0 (particle StructuredBuffer) - VERTEX
+    // 2: SRV table t1 (texture) - PIXEL
+    // 3: CBV b1 (camera) - VERTEX (required by VS)
     D3D12_ROOT_PARAMETER params[4] = {};
-    params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-    params[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-    params[0].Descriptor.ShaderRegister = 0;
 
-    D3D12_DESCRIPTOR_RANGE range1 = { D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0 };
+    // param 0: CBV b0
+    params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+    params[0].Descriptor.ShaderRegister = 0;
+    params[0].Descriptor.RegisterSpace = 0;
+    // Use ALL visibility if the CBV is accessed from VS and/or PS.
+    params[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+    // param 1: SRV table t0 (particle buffer) - used in VS
+    D3D12_DESCRIPTOR_RANGE range1 = {};
+    range1.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+    range1.NumDescriptors = 1;
+    range1.BaseShaderRegister = 0; // t0
+    range1.RegisterSpace = 0;
+    range1.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
     params[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    params[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
     params[1].DescriptorTable.NumDescriptorRanges = 1;
     params[1].DescriptorTable.pDescriptorRanges = &range1;
+    params[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 
-    D3D12_DESCRIPTOR_RANGE range2 = { D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1 };
+    // param 2: SRV table t1 (texture) - used in PS
+    D3D12_DESCRIPTOR_RANGE range2 = {};
+    range2.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+    range2.NumDescriptors = 1;
+    range2.BaseShaderRegister = 1; // t1
+    range2.RegisterSpace = 0;
+    range2.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
     params[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    params[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
     params[2].DescriptorTable.NumDescriptorRanges = 1;
     params[2].DescriptorTable.pDescriptorRanges = &range2;
+    params[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+    // param 3: CBV b1 (Camera) - required by VS
     params[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-    params[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-    params[3].Descriptor.ShaderRegister = 1;
+    params[3].Descriptor.ShaderRegister = 1; // b1
+    params[3].Descriptor.RegisterSpace = 0;
+    params[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // ← ここがポイント
 
     desc.NumParameters = _countof(params);
     desc.pParameters = params;
@@ -173,12 +199,14 @@ void IParticleRenderer::CreateRootSignature() {
     Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob;
     Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
     HRESULT hr = D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-    if (FAILED(hr)) {
+    if (FAILED(hr))
+    {
         OutputDebugStringA((char*)errorBlob->GetBufferPointer());
         assert(false);
     }
     dxBasis_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
 }
+
 
 void IParticleRenderer::LoadShader() {
     vsBlob_ = dxBasis_->CompileShader(L"Resources/Shaders/Particle.VS.hlsl", L"vs_6_0");
@@ -223,52 +251,46 @@ void IParticleRenderer::CreatePipelineState() {
 }
 
 void IParticleRenderer::CreateComputeRootSignatureAndPSO()
-{
-    // RootParam: UAV(u0), CBV(b0)
-    D3D12_ROOT_PARAMETER params[4] = {};
-
+{ // RootParam: UAV(u0), CBV(b0) 
+    D3D12_ROOT_PARAMETER params[5] = {}; 
     // u0 = gParticles UAV
-    D3D12_DESCRIPTOR_RANGE range0 = { D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0 };
-    params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    params[0].DescriptorTable.NumDescriptorRanges = 1;
-    params[0].DescriptorTable.pDescriptorRanges = &range0;
-    params[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
-    // u1 = gEmitterState UAV
-    D3D12_DESCRIPTOR_RANGE range1 = { D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 1 };
-    params[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    params[1].DescriptorTable.NumDescriptorRanges = 1;
-    params[1].DescriptorTable.pDescriptorRanges = &range1;
-    params[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
-    // b0 = CSParams
-    params[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-    params[2].Descriptor.ShaderRegister = 0;
-    params[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
-    // b2 = EmitterParam
-    params[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-    params[3].Descriptor.ShaderRegister = 2;
-    params[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
-    D3D12_ROOT_SIGNATURE_DESC desc{};
-    desc.NumParameters = _countof(params);
-    desc.pParameters = params;
-    desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;
-
-    Microsoft::WRL::ComPtr<ID3DBlob> sigBlob, errBlob;
-    HRESULT hr = D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &sigBlob, &errBlob);
-    assert(SUCCEEDED(hr));
-
-    dxBasis_->GetDevice()->CreateRootSignature(0, sigBlob->GetBufferPointer(), sigBlob->GetBufferSize(), IID_PPV_ARGS(&computeRootSignature_));
-
-    // PSO
-    Microsoft::WRL::ComPtr<IDxcBlob> csBlob = dxBasis_->CompileShader(L"Resources/Shaders/Particle.CS.hlsl", L"cs_6_0");
-
-    D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc{};
-    psoDesc.pRootSignature = computeRootSignature_.Get();
-    psoDesc.CS = { csBlob->GetBufferPointer(), csBlob->GetBufferSize() };
-
-    hr = dxBasis_->GetDevice()->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(&computePipelineState_));
-    assert(SUCCEEDED(hr));
+    D3D12_DESCRIPTOR_RANGE range0 = { D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0 }; 
+    params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; 
+    params[0].DescriptorTable.NumDescriptorRanges = 1; 
+    params[0].DescriptorTable.pDescriptorRanges = &range0; 
+    params[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; 
+    // u1 = gEmitterState UAV 
+    D3D12_DESCRIPTOR_RANGE range1 = { D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 1 }; 
+    params[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; 
+    params[1].DescriptorTable.NumDescriptorRanges = 1; 
+    params[1].DescriptorTable.pDescriptorRanges = &range1; 
+    params[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; 
+    // b0 = CSParams 
+    params[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; 
+    params[2].Descriptor.ShaderRegister = 0; 
+    params[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; 
+    // b1 = Camera 
+    params[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; 
+    params[3].Descriptor.ShaderRegister = 1; 
+    params[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; 
+    // b2 = EmitterParam 
+    params[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; 
+    params[4].Descriptor.ShaderRegister = 2; 
+    params[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; 
+    D3D12_ROOT_SIGNATURE_DESC desc{}; 
+    desc.NumParameters = _countof(params); 
+    desc.pParameters = params; 
+    desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE; 
+    Microsoft::WRL::ComPtr<ID3DBlob> sigBlob, errBlob; 
+    HRESULT hr = D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &sigBlob, &errBlob); 
+    assert(SUCCEEDED(hr)); dxBasis_->GetDevice()->CreateRootSignature(
+        0, sigBlob->GetBufferPointer(), sigBlob->GetBufferSize(), 
+        IID_PPV_ARGS(&computeRootSignature_)); 
+    // PSO 
+    Microsoft::WRL::ComPtr<IDxcBlob> csBlob = dxBasis_->CompileShader(L"Resources/Shaders/Particle.CS.hlsl", L"cs_6_0"); 
+    D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc{}; 
+    psoDesc.pRootSignature = computeRootSignature_.Get(); 
+    psoDesc.CS = { csBlob->GetBufferPointer(), csBlob->GetBufferSize() }; 
+    hr = dxBasis_->GetDevice()->CreateComputePipelineState(
+        &psoDesc, IID_PPV_ARGS(&computePipelineState_)); assert(SUCCEEDED(hr)); 
 }

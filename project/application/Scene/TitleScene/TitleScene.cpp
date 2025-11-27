@@ -153,7 +153,7 @@ void TitleScene::LoadLevel()
 
 void TitleScene::Transition()
 {
-	if (input_->TriggerKey(DIK_P)) 
+	if (input_->TriggerKey(DIK_RETURN)) 
 	{
 		BlockFadeConfig cfg;
 		auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);

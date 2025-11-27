@@ -1,8 +1,9 @@
 #pragma once
 #include "IParticleRenderer.h"
+#include "ParticleParam.h"
 
 class CylinderParticle : public IParticleRenderer {
 protected:
     void CreateResources() override;
-    IParticleRenderer::ParticleP MakeNewParticle(std::mt19937& random, const Emitter& emitter);
+    ParticleParam MakeNewParticle(std::mt19937& random, const Emitter& emitter);
 };

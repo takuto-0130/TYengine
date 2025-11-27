@@ -8,6 +8,10 @@
 #include "PlaneParticle.h"
 #include "RingParticle.h"
 #include "CylinderParticle.h"
+#include "Effect/ContrailBehaviour.h"
+#include "Effect/ExplosionBehaviour.h"
+#include "Effect/ExplosionRingBehaviour.h"
+#include "Effect/DebrisBehaviour.h"
 
 #include "GrayscaleEffect.h"
 #include "VignetteEffect.h"
@@ -55,9 +59,24 @@ void GameCore::Initialize()
 	auto ring = std::make_unique<RingParticle>();
 	auto cylinder = std::make_unique<CylinderParticle>();
 
-	int index = particleManager->Add(std::move(plane));
-	int indexRing = particleManager->Add(std::move(ring));
-	particleManager->Add(std::move(cylinder));
+
+	ring->SetBehaviour(std::make_unique<ExplosionRingBehaviour>());//
+
+	auto contrail = std::make_unique<PlaneParticle>();  // 板ポリ形状
+	contrail->SetBehaviour(std::make_unique<ContrailBehaviour>()); // 挙動を設定
+
+	auto explosion = std::make_unique<PlaneParticle>(); // 爆発
+	explosion->SetBehaviour(std::make_unique<ExplosionBehaviour>());
+
+	auto debris = std::make_unique<PlaneParticle>(); // 破片
+	debris->SetBehaviour(std::make_unique<DebrisBehaviour>());
+
+	int index = particleManager->Add(std::move(plane));		// 0
+	int indexRing = particleManager->Add(std::move(ring));	// 1
+	particleManager->Add(std::move(cylinder));				// 2
+	particleManager->Add(std::move(contrail));				// 3
+	particleManager->Add(std::move(explosion));				// 4
+	particleManager->Add(std::move(debris));				// 5
 
 	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
 	IParticleRenderer::Emitter emitter{};
@@ -65,6 +84,7 @@ void GameCore::Initialize()
 
 	IParticleRenderer::Emitter emitterRing{};
 	particleManager->SetEmitter(indexRing, emitterRing);
+
 
 	ColliderManager::GetInstance();
 

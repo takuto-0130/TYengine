@@ -5,6 +5,7 @@
 #include "ColliderManager.h"
 #include "ParticleManager.h"
 #include "EnemyBullet/Liner/Liner.h"
+#include "Random.h"
 
 #define ENEMY_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Enemy, stateEnum, funcName)
@@ -101,6 +102,34 @@ void Enemy::Pop()
 void Enemy::OnCollision()
 {
 	isDead_ = true;
+
+	IParticleRenderer::Emitter e;
+	e.transform.translate = GetWorldPosition();
+	e.count = 20;
+	e.frequency = 5.0f;
+	e.transform.scale = { 0.3f, 0.3f, 0.3f };
+	ParticleManager::GetInstance()->SetEmitter(4, e);
+	ParticleManager::GetInstance()->TriggerEmit(4, true);
+
+
+	IParticleRenderer::Emitter eR;
+	eR.transform.translate = GetWorldPosition();
+	eR.count = 1; 
+	eR.frequency = 5.0f;
+	eR.transform.scale = { 0.5f, 0.5f, 0.5f };
+	ParticleManager::GetInstance()->SetEmitter(1, eR);
+	ParticleManager::GetInstance()->TriggerEmit(1, true);
+
+
+	IParticleRenderer::Emitter eD;
+	eD.velocity = { 0.0f, 2.0f, 0.0f };
+	eD.transform.translate = GetWorldPosition();
+	eD.count = 15;
+	eD.frequency = 5.0f;
+	eD.transform.scale = { 0.1f, 0.1f, 0.1f };
+	eD.randomVel = true;
+	ParticleManager::GetInstance()->SetEmitter(5, eD);
+	ParticleManager::GetInstance()->TriggerEmit(5, true);
 
 	if (listener_ && isInGame_) {
 		listener_->OnEnemyDied(this);

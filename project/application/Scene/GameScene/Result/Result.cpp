@@ -32,9 +32,9 @@ void ResultClass::Initialze()
 	spaceSpr_->SetPosition({ 1200,700 });
 	spaceSpr_->SetAlpha(0.0f);
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle2.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
 	returnTitle_ = std::make_unique<Sprite>();
-	returnTitle_->Initialize("Resources/Texture/ReturnTitle2.png");
+	returnTitle_->Initialize("Resources/Texture/ReturnTitle.png");
 	returnTitle_->SetSize(returnTitle_->GetSize() * 0.8f);
 	returnTitle_->SetPosition({ 0,-70 });
 

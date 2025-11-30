@@ -55,9 +55,9 @@ void PlayUI::Init()
 	hightLight_ = std::make_unique<Sprite>();
 	hightLight_->Initialize("Resources/Texture/hightLight.png");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle2.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
 	returnTitle_ = std::make_unique<Sprite>();
-	returnTitle_->Initialize("Resources/Texture/ReturnTitle2.png");
+	returnTitle_->Initialize("Resources/Texture/ReturnTitle.png");
 	returnTitle_->SetSize(returnTitle_->GetSize() * 0.8f);
 	
 }

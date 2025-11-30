@@ -16,12 +16,6 @@ void GameScene::UpdatePlay()
 
 	PlayUIUpdate();
 
-	if (input_->TriggerKey(DIK_C))
-	{
-		scoreDraw_->SetScore(1234);
-		ChangeState(GameSceneState::RESULT);
-	}
-
 	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
 
 	if (input_->TriggerKey(DIK_T)) ChangeState(GameSceneState::FADE_OUT);
@@ -36,12 +30,6 @@ void GameScene::UpdatePlay()
 		camera_->StartShake(params);
 		ChangeState(GameSceneState::RETRY);
 	}
-
-	/*if(isReady_ && GetStateElapsedTime() >= 0.3f) 
-	{
-		isReady_ = false;
-		ChangeState(GameSceneState::FADE_IN);
-	}*/
 }
 void GameScene::ExitPlay()
 {

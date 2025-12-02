@@ -357,6 +357,8 @@
     <ClCompile Include="engine\Effect\ExplosionBehaviour.cpp" />
     <ClCompile Include="engine\Effect\ExplosionRingBehaviour.cpp" />
     <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />
+    <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
+    <ClCompile Include="engine\Audio\xapobase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
@@ -720,6 +722,7 @@
     <ClInclude Include="engine\Effect\ExplosionBehaviour.h" />
     <ClInclude Include="engine\Effect\ExplosionRingBehaviour.h" />
     <ClInclude Include="engine\Effect\DebrisBehaviour.h" />
+    <ClInclude Include="engine\Audio\MyAnalyzerXAPO.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">

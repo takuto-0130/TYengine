@@ -14,6 +14,7 @@
 #include <Logger.h>
 #include <xaudio2fx.h>
 
+#include "MyAnalyzerXAPO.h"
 #include "StreamingAudio.h"
 
 
@@ -263,6 +264,8 @@ public:
 	 */
 	int PlayWave(const char* filename, const bool isLoop = false);
 
+	MyAnalyzerXAPO* GetAnalyzerXAPO() { return analyzerXAPO; }
+
 private:
 	// 利用可能なソースボイスを検索
 	int SearchSourceVoice(IXAudio2SourceVoice** sourceVoices);
@@ -292,4 +295,9 @@ private:
 
 	// サウンド格納ディレクトリ
 	std::string directoryPath_;
+
+	// XAPO のインスタンス
+	MyAnalyzerXAPO* analyzerXAPO = nullptr;
+
+	IXAudio2SubmixVoice* analyzerSubmix = nullptr;
 };

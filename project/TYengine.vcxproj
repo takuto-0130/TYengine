@@ -75,6 +75,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>XInput.lib;dinput8.lib;dxguid.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies);XInput.lib;dinput8.lib;dxguid.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>:: プロジェクトディレクトリを基準に移動
@@ -120,6 +121,7 @@ if exist "externals\dxil.dll" (
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>XInput.lib;dinput8.lib;dxguid.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);assimp-vc143-mt.lib;XInput.lib;dinput8.lib;dxguid.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>:: プロジェクトディレクトリを基準に移動
@@ -175,6 +177,8 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp" />
+    <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
+    <ClCompile Include="engine\Audio\xapobase.cpp" />
     <ClCompile Include="engine\Effect\ContrailBehaviour.cpp" />
     <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />
     <ClCompile Include="engine\Effect\ExplosionBehaviour.cpp" />
@@ -285,6 +289,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h" />
+    <ClInclude Include="engine\Audio\MyAnalyzerXAPO.h" />
     <ClInclude Include="engine\Effect\ContrailBehaviour.h" />
     <ClInclude Include="engine\Camera\CameraShake.h" />
     <ClInclude Include="engine\Effect\DebrisBehaviour.h" />

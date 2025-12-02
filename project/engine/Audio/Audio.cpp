@@ -38,6 +38,11 @@ Audio::~Audio()
 		streamVoice->DestroyVoice();
 		streamVoice = nullptr;
 	}
+	if (analyzerXAPO)
+	{
+		analyzerXAPO->Release();
+		analyzerXAPO = nullptr;
+	}
 	if (masterVoice != nullptr)
 	{
 		masterVoice->DestroyVoice();
@@ -177,7 +182,55 @@ void Audio::Initialize(const std::string& directoryPath)
 	result = xAudio2->CreateMasteringVoice(&masterVoice);
 	assert(SUCCEEDED(result));
 
+	// ============================================
+	//   ★ SubmixVoice を作り、ここに XAPO を付ける
+	// ============================================
+
+	// MasterVoice と同じフォーマットで作る
+	XAUDIO2_VOICE_DETAILS details = {};
+	masterVoice->GetVoiceDetails(&details);
+
+	result = xAudio2->CreateSubmixVoice(
+		&analyzerSubmix,
+		details.InputChannels,
+		details.InputSampleRate
+	);
+	assert(SUCCEEDED(result));
+
+	// XAPO インスタンス
+	analyzerXAPO = new MyAnalyzerXAPO();
+
+	// Effect desc
+	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
+	effectDesc.InitialState = TRUE;
+	effectDesc.OutputChannels = details.InputChannels;
+	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO);
+
+	// Effect chain
+	XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
+	effectChainXAPO.EffectCount = 1;
+	effectChainXAPO.pEffectDescriptors = &effectDesc;
+
+	// SubmixVoice に XAPO をセット
+	result = analyzerSubmix->SetEffectChain(&effectChainXAPO);
+	assert(SUCCEEDED(result));
+
+	// Submix → MasteringVoice へ音を送る
+	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
+	sendDesc.Flags = 0;
+	sendDesc.pOutputVoice = masterVoice;
+
+	XAUDIO2_VOICE_SENDS sends = {};
+	sends.SendCount = 1;
+	sends.pSends = &sendDesc;
+
+	result = analyzerSubmix->SetOutputVoices(&sends);
+	assert(SUCCEEDED(result));
+
+	xAudio2->StartEngine();
+
 }
+
 void Audio::StopBGM(int resourceNum)
 {
 	pSourceVoices_[resourceNum]->Stop();
@@ -335,8 +388,22 @@ int Audio::PlayWave(const char* filename, const bool isLoop)
 		pSourceVoices_[sourceNum]->FlushSourceBuffers();
 	}
 
+	// 出力先を SubmixVoice にする
+	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
+	sendDesc.Flags = 0;
+	sendDesc.pOutputVoice = analyzerSubmix;
+
+	XAUDIO2_VOICE_SENDS sends = {};
+	sends.SendCount = 1;
+	sends.pSends = &sendDesc;
+
 	// 波形フォーマットをもとにSourceVoiceの生成
-	if (FAILED(xAudio2->CreateSourceVoice(&pSourceVoices_[sourceNum], &soundData.wfex))) {
+	if (FAILED(xAudio2->CreateSourceVoice(&pSourceVoices_[sourceNum],
+		&soundData.wfex, 0,
+		XAUDIO2_DEFAULT_FREQ_RATIO,
+		nullptr,
+		&sends)))
+	{
 		Logger::Log("Failed to create source voice.\n");
 		return -1;
 	}

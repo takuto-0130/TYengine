@@ -266,6 +266,14 @@ public:
 
 	MyAnalyzerXAPO* GetAnalyzerXAPO() { return analyzerXAPO; }
 
+	int GetAnalyzerSampleRate()
+	{ 
+		XAUDIO2_VOICE_DETAILS submixDetails = {};
+		analyzerSubmix->GetVoiceDetails(&submixDetails);
+
+		return submixDetails.InputSampleRate;
+	}
+
 private:
 	// 利用可能なソースボイスを検索
 	int SearchSourceVoice(IXAudio2SourceVoice** sourceVoices);

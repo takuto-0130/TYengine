@@ -2,81 +2,63 @@
 #include <cmath>
 #include <cstring>
 
-// ---------------------------------------------------------
-//  XAPO の登録プロパティ
-// ---------------------------------------------------------
+// -----------------------------------------
+// XAPO の登録プロパティ
+// -----------------------------------------
 static XAPO_REGISTRATION_PROPERTIES regProps =
 {
-    __uuidof(MyAnalyzerXAPO),      // CLSID
-    L"MyAnalyzerXAPO",             // FriendlyName
+    __uuidof(MyAnalyzerXAPO),
+    L"MyAnalyzerXAPO",
     L"Copyright (C) 2025",
-    1,                             // MajorVersion
-    0,                             // MinorVersion
-
-    // フラグ構成（入力/出力フォーマットの整合性を厳格にする）
+    1, 0,    // major / minor version
     XAPO_FLAG_CHANNELS_MUST_MATCH |
     XAPO_FLAG_FRAMERATE_MUST_MATCH |
     XAPO_FLAG_BITSPERSAMPLE_MUST_MATCH |
     XAPO_FLAG_BUFFERCOUNT_MUST_MATCH |
     XAPO_FLAG_INPLACE_SUPPORTED,
-
-    1, 1,  // Input buffer count MIN/MAX
-    1, 1   // Output buffer count MIN/MAX
+    1, 1,    // min / max input
+    1, 1     // min / max output
 };
 
-// ---------------------------------------------------------
-//  コンストラクタ
-//  - 本 XAPO はパラメータ無しのため pParameterBlocks=nullptr
-// ---------------------------------------------------------
+// -----------------------------------------
+// コンストラクタ
+// -----------------------------------------
 MyAnalyzerXAPO::MyAnalyzerXAPO()
-    : CXAPOParametersBase(&regProps, nullptr, 0, TRUE)
+    : CXAPOParametersBase(&regProps, nullptr, 0, TRUE)   // fProducer = TRUE
 {}
 
 MyAnalyzerXAPO::~MyAnalyzerXAPO()
 {}
 
-// ---------------------------------------------------------
-//  LockForProcess
-//  - XAudio2 が XAPO を使用する直前に呼ばれる
-//  - 入力フォーマット(チャンネル数/bit深度等) を記録
-// ---------------------------------------------------------
+// -----------------------------------------
+// LockForProcess（フォーマット情報を受け取る）
+// -----------------------------------------
 HRESULT __stdcall MyAnalyzerXAPO::LockForProcess(
     UINT32 inputLockedParameterCount,
     const XAPO_LOCKFORPROCESS_BUFFER_PARAMETERS* inputLockedParameters,
     UINT32 outputLockedParameterCount,
     const XAPO_LOCKFORPROCESS_BUFFER_PARAMETERS* outputLockedParameters)
 {
-    // ベースクラスによる基本チェック
-    HRESULT hr = CXAPOParametersBase::LockForProcess(
-        inputLockedParameterCount,
-        inputLockedParameters,
-        outputLockedParameterCount,
-        outputLockedParameters
-    );
-    if (FAILED(hr))
-        return hr;
+    UNREFERENCED_PARAMETER(inputLockedParameterCount);
+    UNREFERENCED_PARAMETER(outputLockedParameterCount);
 
     const WAVEFORMATEX* fmt = inputLockedParameters[0].pFormat;
 
     channels = fmt->nChannels;
     bytesPerSample = fmt->wBitsPerSample / 8;
 
-    // この XAPO は 32bit float 専用
-    if (fmt->wFormatTag != WAVE_FORMAT_IEEE_FLOAT || fmt->wBitsPerSample != 32)
-    {
-        // XAudio2の自動変換に依存しない場合はエラーにしてもよい
-        // return E_INVALIDARG;
-    }
-
-    return S_OK;
+    return CXAPOParametersBase::LockForProcess(
+        inputLockedParameterCount,
+        inputLockedParameters,
+        outputLockedParameterCount,
+        outputLockedParameters
+    );
 }
 
-// ---------------------------------------------------------
-//  Process
-//  - 毎フレーム呼ばれる音声処理
-//  - 入力バッファから RMS を計算
-//  - 出力バッファはインプレース（またはコピー）で処理
-// ---------------------------------------------------------
+// -----------------------------------------
+// Process（生 IXAPO 形式）
+// ここで PCM を処理・コピーして解析する
+// -----------------------------------------
 void __stdcall MyAnalyzerXAPO::Process(
     UINT32 InputProcessParameterCount,
     const XAPO_PROCESS_BUFFER_PARAMETERS* pInputProcessParameters,
@@ -87,42 +69,38 @@ void __stdcall MyAnalyzerXAPO::Process(
     UNREFERENCED_PARAMETER(InputProcessParameterCount);
     UNREFERENCED_PARAMETER(OutputProcessParameterCount);
 
-    // XAPO が無効化されている場合
     if (!IsEnabled)
         return;
 
-    const void* pIn = pInputProcessParameters[0].pBuffer;
-    void* pOut = pOutputProcessParameters[0].pBuffer;
-    UINT32 frameCount = pInputProcessParameters[0].ValidFrameCount;
+    const void* pInBuffer = pInputProcessParameters->pBuffer;
+    void* pOutBuffer = pOutputProcessParameters->pBuffer;
+    UINT32      frameCount = pInputProcessParameters->ValidFrameCount;
 
-    UINT32 totalSamples = frameCount * channels;
-    UINT32 bufferBytes = totalSamples * bytesPerSample;
-
-    // インプレース or コピー
-    if (pIn != pOut)
+    // --------------------------------------------------
+    // スルー処理（in-place 対応）
+    // --------------------------------------------------
+    if (pInBuffer != pOutBuffer)
     {
-        memcpy(pOut, pIn, bufferBytes);
+        memcpy(
+            pOutBuffer,
+            pInBuffer,
+            frameCount * channels * sizeof(float)
+        );
     }
 
-    // 32-bit float 前提
-    if (bytesPerSample != sizeof(float))
-    {
-        latestRMS = 0.0f;
-        return;
-    }
+    // --------------------------------------------------
+    // ★解析処理：RMS（音量）を計算
+    // --------------------------------------------------
+    const float* samples = reinterpret_cast<const float*>(pInBuffer);
 
-    // RMS 計算
-    const float* samples = reinterpret_cast<const float*>(pIn);
-
-    double sumSq = 0.0;
-    for (UINT32 i = 0; i < totalSamples; i++)
+    double sum = 0.0;
+    for (UINT32 i = 0; i < frameCount * channels; i++)
     {
         float s = samples[i];
-        sumSq += s * s;
+        sum += s * s;
     }
 
-    latestRMS = (totalSamples > 0)
-        ? static_cast<float>(std::sqrt(sumSq / totalSamples))
-        : 0.0f;
+    latestRMS = static_cast<float>(
+        sqrt(sum / (frameCount * channels))
+        );
 }
-

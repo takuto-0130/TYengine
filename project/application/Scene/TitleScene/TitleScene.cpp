@@ -78,18 +78,57 @@ void TitleScene::Init()
 
 	jm.Set("settings.mouse.position.x", 40);
 	jm.Set("settings.mouse.position.y", 90);
+
+
+	Audio::GetInstance()->LoadWave("BGM_2");
+	//Audio::GetInstance()->PlayWave("BGM_2", true);
+
+	Audio::GetInstance()->LoadWave("fanfare");
+	Audio::GetInstance()->PlayWave("fanfare");
 }
 
 void TitleScene::Update() {
 	Transition();
 #ifdef _DEBUG
-	/*if (input_->TriggerKey(DIK_RETURN))
-	{
-		LoadLevel();
-	}*/
-	/*ImGui::Begin("");
+	static const int RMS_HISTORY_SIZE = 120; // 2秒分(60FPS)
+	static float rmsHistory[RMS_HISTORY_SIZE] = {};
+	static int rmsIndex = 0;
 
-	ImGui::End();*/
+	float rms = Audio::GetInstance()->GetAnalyzerXAPO()->latestRMS;
+
+	rmsHistory[rmsIndex] = rms;
+	rmsIndex = (rmsIndex + 1) % RMS_HISTORY_SIZE;
+
+	ImGui::Begin("Audio Analyzer");
+
+	rms = Audio::GetInstance()->GetAnalyzerXAPO()->latestRMS;
+
+	// 数値を表示
+	ImGui::Text("RMS: %.3f", rms);
+
+	// バー（0.0 ～ 1.0）
+	ImGui::ProgressBar(rms, ImVec2(200, 20));
+
+	// 履歴グラフ（折れ線）
+	ImGui::PlotLines(
+		"RMS History",
+		rmsHistory,
+		RMS_HISTORY_SIZE,
+		rmsIndex,      // オフセット
+		nullptr,
+		0.0f,
+		1.0f,
+		ImVec2(300, 80)
+	);
+
+	ImGui::End();
+
+	if (input_->TriggerKey(DIK_M))
+	{
+		Audio::GetInstance()->PlayWave("fanfare");
+	}
+
+
 	// ImGui で編集
 	static jx::JsonImGuiEditor inspector(jm);
 	inspector.Draw(jm.Root(), "Title JSON");

@@ -22,6 +22,55 @@ TitleScene::~TitleScene()
 {
 }
 
+// Nバンドにリサンプルしたスペクトラムを作る
+std::vector<float> MakeLogSpectrum(
+	const std::vector<float>& fft,
+	int sampleRate,
+	int fftSize,
+	int bands)
+{
+	std::vector<float> out(bands, 0.0f);
+
+	float minF = 20.0f;              // 人間の可聴最低周波数
+	float maxF = sampleRate / 2.0f;  // ナイキスト
+
+	float minLog = log10f(minF);
+	float maxLog = log10f(maxF);
+
+	float freqPerBin = (float)sampleRate / fftSize;
+
+	for (int b = 0; b < bands; b++)
+	{
+		float logStart = minLog + (maxLog - minLog) * (float)b / bands;
+		float logEnd = minLog + (maxLog - minLog) * (float)(b + 1) / bands;
+
+		float fStart = powf(10.0f, logStart);
+		float fEnd = powf(10.0f, logEnd);
+
+		int binStart = (int)(fStart / freqPerBin);
+		int binEnd = (int)(fEnd / freqPerBin);
+
+		if (binStart < 0) binStart = 0;
+		if (binEnd >= fftSize / 2) binEnd = fftSize / 2;
+
+		float sum = 0;
+		int count = 0;
+
+		for (int i = binStart; i <= binEnd; i++)
+		{
+			float v = fft[i];
+			v = log10f(1.0f + v * 5.0f);
+			sum += v;
+			count++;
+		}
+
+		out[b] = (count > 0) ? sum / count : 0.0f;
+	}
+
+	return out;
+}
+
+
 void TitleScene::Init()
 { 
 	input_ = Input::GetInstance();
@@ -85,7 +134,7 @@ void TitleScene::Init()
 
 
 	Audio::GetInstance()->LoadWave("BGM_2");
-	Audio::GetInstance()->PlayWave("BGM_2", true);
+	//Audio::GetInstance()->PlayWave("BGM_2", true);
 
 	Audio::GetInstance()->LoadWave("fanfare");
 
@@ -151,6 +200,40 @@ void TitleScene::Update() {
 	auto* pem = PostEffectManager::GetInstance();
 	//pem->GetEffect<VignetteEffect>("Vignette")->SetPower(rms);
 	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * syncedRMS);
+
+	const auto& fft = Audio::GetInstance()->GetAnalyzerXAPO()->latestFFT; // FFT_SIZE = 1024
+	//const int bands = 32;
+
+	auto spectrum = MakeLogSpectrum(
+		fft,
+		Audio::GetInstance()->GetAnalyzerSampleRate(),
+		1024,
+		32
+	);
+
+	ImGui::Begin("Spectrum Analyzer");
+
+	//float width = ImGui::GetContentRegionAvail().x / 32;
+
+	for (int i = 0; i < 32; i++)
+	{
+		float v = spectrum[i];
+
+		// ★ 値を0〜1に正規化
+		float normalized = v / 2.0f;  // 適度に強調
+		if (normalized > 1.0f) normalized = 1.0f;
+
+		float height = normalized * 200.0f; // 200px 高のグラフ
+
+		ImGui::ProgressBar(
+			normalized,
+			ImVec2(10.0f, height),
+			""
+		);
+
+		if (i < 31) ImGui::SameLine();
+	}
+	ImGui::End();
 
 
 	// ImGui で編集

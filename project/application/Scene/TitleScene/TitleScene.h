@@ -7,6 +7,8 @@
 #include "../../Object/Enemy/TitleEnemy/TitleEnemyManager.h"
 #include "../Transition/Fade2/BlockFadeOverlay.h"
 
+#include "Audio/AudioAnalyzer.h"
+
 #define JSONMGR_WITH_IMGUI
 #include "Utils/Json/JsonManager.h"
 
@@ -50,4 +52,6 @@ private:
 
 	jx::JsonManager jm;
 	std::string err;
+
+	AudioAnalyzer audioAnalyzer_;
 };

@@ -22,6 +22,7 @@ TitleScene::~TitleScene()
 {
 }
 
+static std::vector<float> spectrumSmoothed(32, 0.0f);
 // Nバンドにリサンプルしたスペクトラムを作る
 std::vector<float> MakeLogSpectrum(
 	const std::vector<float>& fft,
@@ -133,8 +134,9 @@ void TitleScene::Init()
 	jm.Set("settings.mouse.position.y", 90);
 
 
-	Audio::GetInstance()->LoadWave("BGM_2");
-	//Audio::GetInstance()->PlayWave("BGM_2", true);
+	Audio::GetInstance()->LoadWave("gameBGM");
+	/*int a = Audio::GetInstance()->PlayWave("gameBGM", true);
+	Audio::GetInstance()->SetBGMVolume(a, 1.0f);*/
 
 	Audio::GetInstance()->LoadWave("fanfare");
 
@@ -143,128 +145,29 @@ void TitleScene::Init()
 	pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
 	pem->SetEffectEnabled("RadialBlur", true);
 	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
+
 }
 
 void TitleScene::Update() {
 	Transition();
 #ifdef _DEBUG
-	static const int RMS_HISTORY_SIZE = 120; // 2秒分(60FPS)
-	static float rmsHistory[RMS_HISTORY_SIZE] = {};
-	static int rmsIndex = 0;
 
-	float rms = Audio::GetInstance()->GetAnalyzerXAPO()->latestRMS;
-
-	rmsHistory[rmsIndex] = rms;
-	rmsIndex = (rmsIndex + 1) % RMS_HISTORY_SIZE;
-
-
-	static float rmsDelay[6] = {};
-	static int delayIndex = 0;
-
-	ImGui::Begin("Audio Analyzer");
-
-	rms = Audio::GetInstance()->GetAnalyzerXAPO()->latestRMS;
-
-	// 遅延バッファに入れる
-	rmsDelay[delayIndex] = rms;
-	delayIndex = (delayIndex + 1) % 6;
-
-	// 実際に使う値（5フレーム遅らせた値）
-	float syncedRMS = rmsDelay[delayIndex];
-
-	// 数値を表示
-	ImGui::Text("RMS: %.3f", syncedRMS);
-
-	// バー（0.0 ～ 1.0）
-	ImGui::ProgressBar(syncedRMS, ImVec2(200, 20));
-
-	// 履歴グラフ（折れ線）
-	ImGui::PlotLines(
-		"RMS History",
-		rmsHistory,
-		RMS_HISTORY_SIZE,
-		rmsIndex,      // オフセット
-		nullptr,
-		0.0f,
-		1.0f,
-		ImVec2(300, 80)
-	);
-
-	ImGui::End();
+	audioAnalyzer_.Update();
+	audioAnalyzer_.Draw();
 
 	if (input_->TriggerKey(DIK_M))
 	{
 		Audio::GetInstance()->PlayWave("fanfare");
 	}
 
-	auto* pem = PostEffectManager::GetInstance();
-	//pem->GetEffect<VignetteEffect>("Vignette")->SetPower(rms);
-	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * syncedRMS);
-
-	const auto& fft = Audio::GetInstance()->GetAnalyzerXAPO()->latestFFT; // FFT_SIZE = 1024
-	//const int bands = 32;
-
-	auto spectrum = MakeLogSpectrum(
-		fft,
-		Audio::GetInstance()->GetAnalyzerSampleRate(),
-		1024,
-		32
-	);
-
-	ImGui::Begin("Spectrum Analyzer");
-
-	//float width = ImGui::GetContentRegionAvail().x / 32;
-
-	for (int i = 0; i < 32; i++)
-	{
-		float v = spectrum[i];
-
-		// ★ 値を0〜1に正規化
-		float normalized = v / 2.0f;  // 適度に強調
-		if (normalized > 1.0f) normalized = 1.0f;
-
-		float height = normalized * 200.0f; // 200px 高のグラフ
-
-		ImGui::ProgressBar(
-			normalized,
-			ImVec2(10.0f, height),
-			""
-		);
-
-		if (i < 31) ImGui::SameLine();
-	}
-	ImGui::End();
-
+	/*auto* pem = PostEffectManager::GetInstance();
+	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.25f * audioAnalyzer_.GetSyncedRMS());*/
 
 	// ImGui で編集
 	static jx::JsonImGuiEditor inspector(jm);
 	inspector.Draw(jm.Root(), "Title JSON");
 	if (ImGui::Button("Save")) jm.Save();
-#else
-	static const int RMS_HISTORY_SIZE = 120; // 2秒分(60FPS)
-	static float rmsHistory[RMS_HISTORY_SIZE] = {};
-	static int rmsIndex = 0;
-
-	float rms = Audio::GetInstance()->GetAnalyzerXAPO()->latestRMS;
-
-	rmsHistory[rmsIndex] = rms;
-	rmsIndex = (rmsIndex + 1) % RMS_HISTORY_SIZE;
-
-
-	static float rmsDelay[6] = {};
-	static int delayIndex = 0;
-
-	rms = Audio::GetInstance()->GetAnalyzerXAPO()->latestRMS;
-
-	// 遅延バッファに入れる
-	rmsDelay[delayIndex] = rms;
-	delayIndex = (delayIndex + 1) % 6;
-
-	// 実際に使う値（5フレーム遅らせた値）
-	float syncedRMS = rmsDelay[delayIndex];
-	auto* pem = PostEffectManager::GetInstance();
-	//pem->GetEffect<VignetteEffect>("Vignette")->SetPower(rms);
-	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * syncedRMS);
+#else // Release
 
 #endif // _DEBUG
 	spaceSpr_->Update();

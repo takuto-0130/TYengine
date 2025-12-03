@@ -229,6 +229,61 @@ void Audio::Initialize(const std::string& directoryPath)
 
 	xAudio2->StartEngine();
 
+	// ---- ★無音バッファ用 Voice を作成 ----
+	silentFormat_.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
+	silentFormat_.nChannels = 1;
+	silentFormat_.nSamplesPerSec = 48000;
+	silentFormat_.wBitsPerSample = 32;
+	silentFormat_.nBlockAlign = 4;
+	silentFormat_.nAvgBytesPerSec = 48000 * 4;
+	silentFormat_.cbSize = 0;
+
+	// 無音バッファ（50ms程度）
+	int silentSamples = int(48000 * 0.05f);
+	silentBuffer_.assign(silentSamples, 0.0f);
+
+	sendDesc = {};
+	sendDesc.Flags = 0;
+	sendDesc.pOutputVoice = analyzerSubmix;
+
+	sends = {};
+	sends.SendCount = 1;
+	sends.pSends = &sendDesc;
+
+	xAudio2->CreateSourceVoice(
+		&silentVoice_,
+		&silentFormat_,
+		0, 2.0f,
+		nullptr, &sends, nullptr
+	);
+
+	silentVoice_->Start(0);
+	EnableSilentFeed(true);
+}
+
+void Audio::Update()
+{
+	if (!silentFeedEnabled_) return;
+
+	XAUDIO2_VOICE_STATE st{};
+	silentVoice_->GetState(&st);
+
+	if (st.BuffersQueued < 3)
+	{
+		XAUDIO2_BUFFER buf{};
+		buf.AudioBytes = static_cast<UINT32>(silentBuffer_.size() * sizeof(float));
+		buf.pAudioData = reinterpret_cast<const BYTE*>(silentBuffer_.data());
+
+		silentVoice_->SubmitSourceBuffer(&buf);
+	}
+}
+
+void Audio::EnableSilentFeed(bool enable)
+{
+	silentFeedEnabled_ = enable;
+
+	if (enable) silentVoice_->Start();
+	else silentVoice_->Stop();
 }
 
 void Audio::StopBGM(int resourceNum)

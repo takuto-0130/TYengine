@@ -8,7 +8,7 @@ class __declspec(uuid("2dde0a3b-45d5-4a48-a9e6-a3a8129ef91a"))
 public:
     static const UINT32 FFT_SIZE = 1024;
     static const UINT32 DELAY_FRAMES = 5;
-
+    static const UINT32 WAVEFORM_SIZE = 441; // Analyzer側のサイズに合わせる
 public:
     MyAnalyzerXAPO();
     ~MyAnalyzerXAPO();
@@ -30,9 +30,10 @@ public:
 
     float latestRMS = 0.0f;
     std::vector<float> latestFFT;
+    std::vector<float> latestWaveform;  // タイムドメイン用
 
 private:
-    void computeFFT();
+    void ComputeFFT();
 
 private:
     UINT32 channels = 0;
@@ -43,4 +44,5 @@ private:
     std::vector<float> fftInput;
     std::vector<float> fftReal;
     std::vector<float> fftImag;
+
 };

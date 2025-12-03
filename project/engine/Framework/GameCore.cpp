@@ -135,6 +135,7 @@ void GameCore::Update()
 	else { //ゲーム処理
 		imgui->Begin();
 		Timer::GetInstance()->Update();
+		Audio::GetInstance()->Update();
 		TYFrameWork::Update();
 		particleManager->UpdateAll();
 		camera->Update();

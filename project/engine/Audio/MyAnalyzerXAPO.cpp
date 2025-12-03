@@ -7,7 +7,7 @@ static XAPO_REGISTRATION_PROPERTIES regProps =
 {
     __uuidof(MyAnalyzerXAPO),
     L"MyAnalyzerXAPO",
-    L"Copyright (C) 2025",
+    L"TYengine",
     1, 0,
     XAPO_FLAG_CHANNELS_MUST_MATCH |
     XAPO_FLAG_FRAMERATE_MUST_MATCH |
@@ -22,6 +22,7 @@ MyAnalyzerXAPO::MyAnalyzerXAPO()
     : CXAPOParametersBase(&regProps, nullptr, 0, TRUE)
 {
     latestFFT.resize(FFT_SIZE, 0.0f);
+    latestWaveform.resize(WAVEFORM_SIZE, 0.0f);
 
     delayBuffer.resize(DELAY_FRAMES);
     for (auto& v : delayBuffer)
@@ -51,7 +52,7 @@ HRESULT __stdcall MyAnalyzerXAPO::LockForProcess(
 // --------------------------------------------------------------
 // FFT (Cooley–Tukey)
 // --------------------------------------------------------------
-void MyAnalyzerXAPO::computeFFT()
+void MyAnalyzerXAPO::ComputeFFT()
 {
     for (UINT32 i = 0; i < FFT_SIZE; i++)
     {
@@ -122,18 +123,34 @@ void __stdcall MyAnalyzerXAPO::Process(
     float* pOut = (float*)out->pBuffer;
     UINT32 frameCount = in->ValidFrameCount;
 
+    int copyCount = min(frameCount, (UINT32)latestWaveform.size());
+    memcpy(latestWaveform.data(), pIn, sizeof(float) * copyCount);
+
     // ---- スルー処理 ----
-    if (pIn != pOut)
-        memcpy(pOut, pIn, frameCount * channels * sizeof(float));
+    if (pIn != pOut) memcpy(pOut, pIn, frameCount * channels * sizeof(float));
 
     if (frameCount == 0) return;
 
     // ---- RMS ----
     double sum = 0.0;
-    for (UINT32 i = 0; i < frameCount * channels; i++)
-        sum += pIn[i] * pIn[i];
+    for (UINT32 i = 0; i < frameCount * channels; i++) sum += pIn[i] * pIn[i];
 
     latestRMS = (float)sqrt(sum / (frameCount * channels));
+
+    // ---- 無音判定 ----
+    // frameCount * channels 分の平均をとる
+    if (latestRMS < 0.00001f)   // しきい値
+    {
+        // 無音なら FFT と delayBuffer をクリア
+        std::fill(latestFFT.begin(), latestFFT.end(), 0.0f);
+
+        for (auto& buf : delayBuffer) std::fill(buf.begin(), buf.end(), 0.0f);
+
+        // 次のフレームのため fftInput もクリア
+        std::fill(fftInput.begin(), fftInput.end(), 0.0f);
+
+        return;   // これ以上処理しない
+    }
 
     // ---- 遅延バッファ ----
     UINT32 copy = (frameCount < FFT_SIZE) ? frameCount : FFT_SIZE;
@@ -146,5 +163,5 @@ void __stdcall MyAnalyzerXAPO::Process(
 
     memcpy(fftInput.data(), delayBuffer[readIndex].data(), FFT_SIZE * sizeof(float));
 
-    computeFFT();
+    ComputeFFT();
 }

@@ -232,6 +232,10 @@ public:
 	 */
 	void StopBGM(int resourceNum);
 
+
+	void Update();                  // ★ 無音バッファ供給
+	void EnableSilentFeed(bool enable);
+
 	/**
 	 * @brief 音源のポーズ
 	 * @param resourceNum BGMのリソース番号
@@ -308,4 +312,10 @@ private:
 	MyAnalyzerXAPO* analyzerXAPO = nullptr;
 
 	IXAudio2SubmixVoice* analyzerSubmix = nullptr;
+
+	// ---- ★無音バッファ用 Voice ----
+	IXAudio2SourceVoice* silentVoice_ = nullptr;
+	WAVEFORMATEX silentFormat_{};
+	std::vector<float> silentBuffer_;
+	bool silentFeedEnabled_ = false;
 };

@@ -7,7 +7,7 @@ class AudioAnalyzer
 {
 public:
     static const int FFT_SIZE = 1024;
-    static const int BANDS = 16;
+    static const int BANDS = 8;
     static const int RMS_HISTORY_SIZE = 120; // 2秒
     static const int DELAY_FRAMES = 5;
 

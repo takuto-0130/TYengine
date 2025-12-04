@@ -162,6 +162,10 @@ void TitleScene::Update() {
 
 	/*auto* pem = PostEffectManager::GetInstance();
 	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.25f * audioAnalyzer_.GetSyncedRMS());*/
+	Vector2 posM = { jm.Get<float>("settings.mouse.position.x"),jm.Get<float>("settings.mouse.position.y") };
+	ImGui::Begin("pos");
+	ImGui::DragFloat2("pos", &posM.x);
+	ImGui::End();
 
 	// ImGui で編集
 	static jx::JsonImGuiEditor inspector(jm);

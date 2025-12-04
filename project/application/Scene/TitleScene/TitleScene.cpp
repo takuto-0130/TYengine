@@ -135,8 +135,8 @@ void TitleScene::Init()
 
 
 	Audio::GetInstance()->LoadWave("gameBGM");
-	/*int a = Audio::GetInstance()->PlayWave("gameBGM", true);
-	Audio::GetInstance()->SetBGMVolume(a, 1.0f);*/
+	int a = Audio::GetInstance()->PlayWave("gameBGM", true);
+	Audio::GetInstance()->SetBGMVolume(a, 1.0f);
 
 	Audio::GetInstance()->LoadWave("fanfare");
 

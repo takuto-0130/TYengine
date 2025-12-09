@@ -85,7 +85,7 @@ protected:
 protected:
     float kDeltaTime = 1.0f / 60.0f;
     
-    static const uint32_t kMaxInstance = 2048;
+    static const uint32_t kMaxInstance = 32767;
 
     bool useBillboard_ = true;
 

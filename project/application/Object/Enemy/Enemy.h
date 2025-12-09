@@ -16,11 +16,12 @@ enum class EnemyState
 	ENTERING,	// 画面外→画面内へ（イージングで移動、（もしかしたら透明→不透明？））
 	ACTIVE,		// 敵アクティブ
 	EXITING,	// 画面内→画面外へ（一定距離 / 時間で発火）
+	DAMAGED,	// 被弾（エフェクトやモーション）
 	DESPAWNED,	// 破棄（スコア扱いは設定で切替）
 };
 
 class Enemy :
-    public BaseCharacter, StateMachine<Enemy, EnemyState>
+    public BaseCharacter, public StateMachine<Enemy, EnemyState>
 {
 public: // 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
@@ -94,6 +95,10 @@ private:
 
 	float lifeTime_ = 6.5f;
 
+	int32_t hitpoint_ = 5;
+
+	float roll_ = 0.0f;
+
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
@@ -106,6 +111,7 @@ private: // シーン内のState関連関数
 		case State::ENTERING: return "ENTERING";
 		case State::ACTIVE: return "ACTIVE";
 		case State::EXITING: return "EXITING";
+		case State::DAMAGED: return "DAMAGED";
 		case State::DESPAWNED: return "DESPAWNED";
 		default: return "Unknown";
 		}
@@ -116,7 +122,7 @@ private: // シーン内のState関連関数
 	void UpdatePreEnter() {};
 	void ExitPreEnter() {};
 
-	// 通常行動
+	// スポーン
 	void InitEntering() {};
 	void UpdateEntering() 
 	{
@@ -132,7 +138,7 @@ private: // シーン内のState関連関数
 	};
 	void ExitEntering() { worldTransform_.colliderScale_ = defaultScale_; }
 
-	// 加速
+	// 通常行動
 	void InitActive() {}
 	void UpdateActive() 
 	{
@@ -156,14 +162,47 @@ private: // シーン内のState関連関数
 	}
 	void ExitActive() {}
 
-	// 回避
+	// 退場演出
 	void InitExiting() {}
 	void UpdateExiting() {}
 	void ExitExiting() {}
 
 	// 被弾
-	void InitDespawned() {}
-	void UpdateDespawned() {}
-	void ExitDespawned() {}
+	void InitDamaged() 
+	{
+		obj_->SetAddColor({ 1,1,1,1 });
+		roll_ = 0.1f;
+	}
+	void UpdateDamaged() 
+	{
+		if(GetStateElapsedTime() > 0.05f)
+		ChangeState(EnemyState::ACTIVE);
+	}
+	void ExitDamaged() 
+	{
+		obj_->SetAddColor({ 0,0,0,0 });
+		roll_ = 0.0f;
+	}
+
+	// 死亡
+	void InitDespawned();
+	void UpdateDespawned() 
+	{
+		if (GetStateElapsedTime() < 2.0f)
+		{
+			roll_ += 0.02f;
+			worldTransform_.translation_.y -= 0.02f;
+			float t = 1.0f - (GetStateElapsedTime() / 2.0f);
+			obj_->SetAlpha(t / 2.0f);
+		}
+		else
+		{
+			ChangeState(EnemyState::EXITING);
+		}
+	}
+	void ExitDespawned()
+	{
+		isDead_ = true;
+	}
 #pragma endregion
 };

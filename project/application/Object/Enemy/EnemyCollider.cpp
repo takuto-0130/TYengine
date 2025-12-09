@@ -4,7 +4,7 @@
 
 void EnemyCollider::OnCollisionEnter([[maybe_unused]] Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
-	if (other.GetTypeID() == static_cast<uint32_t>(ColliderTypeID::P_BULLET) && !enemy_->IsDead())
+	if (other.GetTypeID() == static_cast<uint32_t>(ColliderTypeID::P_BULLET) && !enemy_->IsDead() && enemy_->GetCurrentState() == EnemyState::ACTIVE)
 	{
 		enemy_->OnCollision();
 	}

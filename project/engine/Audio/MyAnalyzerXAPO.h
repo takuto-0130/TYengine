@@ -2,6 +2,8 @@
 #include <xapobase.h>
 #include <vector>
 
+class Audio;
+
 class __declspec(uuid("2dde0a3b-45d5-4a48-a9e6-a3a8129ef91a"))
     MyAnalyzerXAPO : public CXAPOParametersBase
 {
@@ -9,10 +11,13 @@ public:
     static const UINT32 FFT_SIZE = 1024;
     static const UINT32 DELAY_FRAMES = 5;
     static const UINT32 WAVEFORM_SIZE = 441; // Analyzer側のサイズに合わせる
-public:
+private:
     MyAnalyzerXAPO();
     ~MyAnalyzerXAPO();
 
+    friend class Audio;
+
+public:
     HRESULT __stdcall LockForProcess(
         UINT32 inputLockedParameterCount,
         const XAPO_LOCKFORPROCESS_BUFFER_PARAMETERS* inputLockedParameters,

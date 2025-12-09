@@ -51,6 +51,14 @@ void PlayUI::Init()
 	operation_->Initialize("Resources/Texture/Operation.png");
 	operation_->SetSize(operation_->GetSize() * 0.8f);
 	operation_->SetPosition({15,145});
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/outline.png");
+	outline_ = std::make_unique<Sprite>();
+	outline_->Initialize("Resources/Texture/outline.png");
+	outline_->SetSize(outline_->GetSize() * 0.8f);
+	outline_->SetPosition({ 15,145 });
+
+
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/hightLight.png");
 	hightLight_ = std::make_unique<Sprite>();
 	hightLight_->Initialize("Resources/Texture/hightLight.png");
@@ -67,6 +75,7 @@ void PlayUI::Update()
 	comboText_->Update();
 	comboNumTex_->Update();
 	operation_->Update();
+	outline_->Update();
 	hightLight_->Update();
 	returnTitle_->Update();
 
@@ -80,9 +89,13 @@ void PlayUI::Draw()
 	comboNumTex_->Draw();
 	comboText_->Draw();
 	scoreDraw_->Draw();
-//#ifndef _DEBUG
+
 	operation_->Draw();
-//#endif // _DEBUG
+	if (isJust_)
+	{
+		// ハイライト描画
+		outline_->Draw();
+	}
 
 	hpText_->Draw();
 	hpNumTex_->Draw();

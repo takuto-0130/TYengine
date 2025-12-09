@@ -56,6 +56,8 @@ public:
 
 	void SetIsInGame(bool is) { isInGame_ = is; }
 
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
 private:
 	void IsShot();
 
@@ -95,9 +97,11 @@ private:
 
 	float lifeTime_ = 6.5f;
 
-	int32_t hitpoint_ = 5;
+	int32_t hitpoint_ = 3;
 
 	float roll_ = 0.0f;
+
+	Camera* camera_ = nullptr;
 
 
 private: // シーン内のState関連関数
@@ -194,6 +198,7 @@ private: // シーン内のState関連関数
 			worldTransform_.translation_.y -= 0.02f;
 			float t = 1.0f - (GetStateElapsedTime() / 2.0f);
 			obj_->SetAlpha(t / 2.0f);
+			worldTransform_.colliderScale_ = defaultScale_ * t;
 		}
 		else
 		{

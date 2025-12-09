@@ -38,6 +38,16 @@ void GameScene::ExitPlay()
 void GameScene::PlayUIUpdate()
 {
 	scoreDraw_->Update();
+
+	if(stageManager_->GetPlayer()->GetCurrentState() != PlayerState::BARREL_ROLL) 
+	{
+		playUI_->SetJust(stageManager_->GetPlayer()->IsJust());
+	}
+	else
+	{
+		playUI_->SetJust(false);
+	}
+
 	playUI_->Update();
 }
 

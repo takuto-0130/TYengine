@@ -97,7 +97,7 @@ private:
 	float deltaTime_ = 1.0f / 60.0f;
 
 	// hp
-	int hitpoint_ = 5;
+	int hitpoint_ = 9;
 
 
 	// 姿勢

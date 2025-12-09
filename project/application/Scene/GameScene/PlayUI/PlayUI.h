@@ -26,6 +26,8 @@ public:
 
 	void SetHPNum(int hp = 0) { hpNumTex_->SetTextureLeftTop({ 64.0f * float(hp),0 }); }
 
+	void SetJust(bool just) { isJust_ = just; }
+
 private:
 	Input* input_ = nullptr;
 	ScoreUI* scoreDraw_ = nullptr;
@@ -44,11 +46,14 @@ private:
 	std::unique_ptr<Sprite> reticle_;
 
 	std::unique_ptr<Sprite> operation_;
+	std::unique_ptr<Sprite> outline_;
 	std::unique_ptr<Sprite> hightLight_;
 	std::unique_ptr<Sprite> returnTitle_;
 
 	float comboTimer_ = 0;
 	float kComboTime_ = 0;
+
+	bool isJust_ = false;
 
 	std::random_device seedGene_;
 	float shakeTime_ = 0.4f;

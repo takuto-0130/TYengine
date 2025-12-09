@@ -31,6 +31,8 @@ public:
 
 	void SetTargetPos(Vector3* pos);
 
+	void SetCamera(Camera* camera);
+
 private:
 	std::list<std::list<std::unique_ptr<Enemy>>> DeepCopyEnemyGroups(const std::list<std::list<std::unique_ptr<Enemy>>>& src);
 

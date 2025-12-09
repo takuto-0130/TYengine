@@ -72,7 +72,7 @@ void Player::Init()
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
 
-	hitpoint_ = 15;
+	hitpoint_ = 9;
 
 	// test
 	TestReticleInit();
@@ -112,17 +112,14 @@ void Player::Draw()
 	}
 }
 
+
+////////////////////// ちょっとおかしいので後に修正 //////////////////////
 void Player::TakeDamage()
 {
-	if (hitpoint_ > 1)
+	--hitpoint_;
+	if (hitpoint_ > 0)
 	{
-		hitpoint_--;
-		CameraShake::ShakeParams params;
-		params.duration = 0.1f;
-		params.amplitude = 0.1f;
-		params.frequency = 20.0f;
-
-		camera_->StartShake(params);
+		ChangeState(PlayerState::TAKE_DAMAGE);
 	}
 	else
 	{
@@ -144,6 +141,8 @@ void Player::OnCollision()
 
 	ParticleManager::GetInstance()->TriggerEmit(4, true);
 }
+////////////////////// ちょっとおかしいので後に修正 //////////////////////
+
 
 void Player::PostStateUpdate()
 {
@@ -208,8 +207,6 @@ void Player::Move()
 	};
 
 	RotationOffsetLocal();  // ←下の関数に差し替え
-
-	StartBarrelRoll();
 }
 
 void Player::ClampOffset()

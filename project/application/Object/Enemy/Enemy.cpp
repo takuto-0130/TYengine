@@ -169,6 +169,11 @@ void Enemy::InitDespawned()
 	{
 		listener_->OnEnemyDied(this);
 	}
+	CameraShake::ShakeParams params;
+	params.duration = 0.1f;
+	params.amplitude = 0.1f;
+	params.frequency = 20.0f;
+	camera_->StartShake(params);
 
 	// 爆発エフェクト
 	IParticleRenderer::Emitter e;
@@ -192,7 +197,7 @@ void Enemy::InitDespawned()
 	IParticleRenderer::Emitter eD;
 	eD.velocity = { 0.0f, 2.0f, 0.0f };
 	eD.transform.translate = GetWorldPosition();
-	eD.count = 15;
+	eD.count = 30;
 	eD.frequency = 5.0f;
 	eD.transform.scale = { 0.1f, 0.1f, 0.1f };
 	eD.randomVel = true;

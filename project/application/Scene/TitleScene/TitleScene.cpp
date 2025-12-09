@@ -124,14 +124,10 @@ void TitleScene::Init()
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 
-	jm.Load("Title.json", /*create_if_missing=*/true, &err);
+	jm.Load("Title.json", true, &err);
 
 	jm.Set("settings.window.width", 1600);
 	jm.Set("settings.window.hieght", 900);
-
-
-	jm.Set("settings.mouse.position.x", 40);
-	jm.Set("settings.mouse.position.y", 90);
 
 
 	Audio::GetInstance()->LoadWave("gameBGM");
@@ -162,15 +158,18 @@ void TitleScene::Update() {
 
 	/*auto* pem = PostEffectManager::GetInstance();
 	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.25f * audioAnalyzer_.GetSyncedRMS());*/
-	Vector2 posM = { jm.Get<float>("settings.mouse.position.x"),jm.Get<float>("settings.mouse.position.y") };
+	Vector2 posM = jm.Get<Vector2>("settings.mouse.pos");
 	ImGui::Begin("pos");
 	ImGui::DragFloat2("pos", &posM.x);
 	ImGui::End();
 
 	// ImGui で編集
+	ImGui::Begin("JSON Editor");
 	static jx::JsonImGuiEditor inspector(jm);
-	inspector.Draw(jm.Root(), "Title JSON");
+	inspector.Draw(jm.Root(), "Title_JSON");
 	if (ImGui::Button("Save")) jm.Save();
+	ImGui::End();
+
 #else // Release
 
 #endif // _DEBUG

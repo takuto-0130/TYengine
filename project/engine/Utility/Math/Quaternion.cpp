@@ -136,20 +136,25 @@ Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t)
 
 Quaternion MakeLookRotation(const Vector3& forward, const Vector3& up)
 {
+	// --- 軸計算（left-handed） ---
 	Vector3 f = Normalize(forward);
-	Vector3 r = Normalize(Cross(up, f));
+	Vector3 r = Normalize(Cross(up, f)); // LH: up × forward
 	Vector3 u = Cross(f, r);
 
+	// --- 行ベース回転行列（DirectX）---
+	//  X行 = right
+	//  Y行 = up
+	//  Z行 = forward
 	Matrix4x4 rot = MakeIdentity4x4();
-
 	rot.m[0][0] = r.x; rot.m[0][1] = r.y; rot.m[0][2] = r.z;
 	rot.m[1][0] = u.x; rot.m[1][1] = u.y; rot.m[1][2] = u.z;
 	rot.m[2][0] = f.x; rot.m[2][1] = f.y; rot.m[2][2] = f.z;
 
-	// 回転行列 → クォータニオン変換
+	// --- Quaternion 化（行ベース専用アルゴリズム） ---
 	Quaternion q{};
 	float trace = rot.m[0][0] + rot.m[1][1] + rot.m[2][2];
-	if (trace > 0.0f) 
+
+	if (trace > 0.0f)
 	{
 		float s = std::sqrt(trace + 1.0f) * 2.0f;
 		q.w = 0.25f * s;
@@ -159,7 +164,7 @@ Quaternion MakeLookRotation(const Vector3& forward, const Vector3& up)
 	}
 	else
 	{
-		if (rot.m[0][0] > rot.m[1][1] && rot.m[0][0] > rot.m[2][2]) 
+		if (rot.m[0][0] > rot.m[1][1] && rot.m[0][0] > rot.m[2][2])
 		{
 			float s = std::sqrt(1.0f + rot.m[0][0] - rot.m[1][1] - rot.m[2][2]) * 2.0f;
 			q.w = (rot.m[2][1] - rot.m[1][2]) / s;
@@ -167,7 +172,7 @@ Quaternion MakeLookRotation(const Vector3& forward, const Vector3& up)
 			q.y = (rot.m[0][1] + rot.m[1][0]) / s;
 			q.z = (rot.m[0][2] + rot.m[2][0]) / s;
 		}
-		else if (rot.m[1][1] > rot.m[2][2]) 
+		else if (rot.m[1][1] > rot.m[2][2])
 		{
 			float s = std::sqrt(1.0f + rot.m[1][1] - rot.m[0][0] - rot.m[2][2]) * 2.0f;
 			q.w = (rot.m[0][2] - rot.m[2][0]) / s;
@@ -175,7 +180,7 @@ Quaternion MakeLookRotation(const Vector3& forward, const Vector3& up)
 			q.y = 0.25f * s;
 			q.z = (rot.m[1][2] + rot.m[2][1]) / s;
 		}
-		else 
+		else
 		{
 			float s = std::sqrt(1.0f + rot.m[2][2] - rot.m[0][0] - rot.m[1][1]) * 2.0f;
 			q.w = (rot.m[1][0] - rot.m[0][1]) / s;
@@ -187,3 +192,4 @@ Quaternion MakeLookRotation(const Vector3& forward, const Vector3& up)
 
 	return Normalize(q);
 }
+

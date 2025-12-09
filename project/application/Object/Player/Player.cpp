@@ -72,22 +72,10 @@ void Player::Init()
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
 
-	hitpoint_ = 5;
+	hitpoint_ = 15;
 
 	// test
 	TestReticleInit();
-
-	//auto contrail = std::make_unique<PlaneParticle>();  // 板ポリ形状
-	//contrail->SetBehaviour(std::make_unique<ContrailBehaviour>()); // 挙動を設定
-
-	//contrailIndex_ = ParticleManager::GetInstance()->Add(std::move(contrail));
-
-	//IParticleRenderer::Emitter e;
-	//e.transform.translate = { 0, 0, 0 };
-	//e.count = 1;
-	//e.frequency = 0.01f; // 毎フレーム発生
-
-	//ParticleManager::GetInstance()->SetEmitter(contrailIndex_, e);
 }
 
 void Player::Update()
@@ -121,6 +109,24 @@ void Player::Draw()
 
 		// test
 		TestReticleDraw();
+	}
+}
+
+void Player::TakeDamage()
+{
+	if (hitpoint_ > 1)
+	{
+		hitpoint_--;
+		CameraShake::ShakeParams params;
+		params.duration = 0.1f;
+		params.amplitude = 0.1f;
+		params.frequency = 20.0f;
+
+		camera_->StartShake(params);
+	}
+	else
+	{
+		OnCollision();
 	}
 }
 
@@ -211,9 +217,6 @@ void Player::ClampOffset()
 	screenOffset_.x = std::clamp(screenOffset_.x, -1.0f, 1.0f);
 	screenOffset_.y = std::clamp(screenOffset_.y, -1.0f, 1.0f);
 }
-
-// ※ もうワールド変換は不要なので削除してOK
-// Vector3 Player::ConvertScreenOffsetToWorld(...) は使わない
 
 void Player::RotationOffsetLocal()
 {

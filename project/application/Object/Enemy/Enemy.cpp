@@ -19,6 +19,7 @@ const std::vector<StateMachine<Enemy, EnemyState>::StateFunctionSet>& Enemy::Get
 		ENEMY_STATE_ENTRY(ENTERING, Entering),
 		ENEMY_STATE_ENTRY(ACTIVE, Active),
 		ENEMY_STATE_ENTRY(EXITING, Exiting),
+		ENEMY_STATE_ENTRY(DAMAGED, Damaged),
 		ENEMY_STATE_ENTRY(DESPAWNED, Despawned),
 	};
 	return stateTable;
@@ -40,6 +41,7 @@ void Enemy::Init()
 	worldTransform_.Initialize();
 	worldTransform_.colliderScale_ = defaultScale_;
 	worldTransform_.TransferMatrix();
+	worldTransform_.useQuaternion_ = true;
 
 	collider_ = std::make_unique<EnemyCollider>(
 		static_cast<uint32_t>(ColliderTypeID::ENEMY),
@@ -101,38 +103,16 @@ void Enemy::Pop()
 
 void Enemy::OnCollision()
 {
-	isDead_ = true;
+	// HP減少
+	--hitpoint_;
 
-	IParticleRenderer::Emitter e;
-	e.transform.translate = GetWorldPosition();
-	e.count = 20;
-	e.frequency = 5.0f;
-	e.transform.scale = { 0.3f, 0.3f, 0.3f };
-	ParticleManager::GetInstance()->SetEmitter(4, e);
-	ParticleManager::GetInstance()->TriggerEmit(4, true);
-
-
-	IParticleRenderer::Emitter eR;
-	eR.transform.translate = GetWorldPosition();
-	eR.count = 1; 
-	eR.frequency = 5.0f;
-	eR.transform.scale = { 0.5f, 0.5f, 0.5f };
-	ParticleManager::GetInstance()->SetEmitter(1, eR);
-	ParticleManager::GetInstance()->TriggerEmit(1, true);
-
-
-	IParticleRenderer::Emitter eD;
-	eD.velocity = { 0.0f, 2.0f, 0.0f };
-	eD.transform.translate = GetWorldPosition();
-	eD.count = 15;
-	eD.frequency = 5.0f;
-	eD.transform.scale = { 0.1f, 0.1f, 0.1f };
-	eD.randomVel = true;
-	ParticleManager::GetInstance()->SetEmitter(5, eD);
-	ParticleManager::GetInstance()->TriggerEmit(5, true);
-
-	if (listener_ && isInGame_) {
-		listener_->OnEnemyDied(this);
+	if (hitpoint_ > 0) // 0より大きいなら
+	{
+		ChangeState(EnemyState::DAMAGED);
+	}
+	else // 0以下の時
+	{
+		ChangeState(EnemyState::DESPAWNED);
 	}
 }
 
@@ -155,26 +135,67 @@ void Enemy::Rotate()
 	Vector3 playerPos = targetPos_;
 	Vector3 enemyPos = worldTransform_.translation_;
 
-	// プレイヤー方向へのベクトル
 	Vector3 toPlayer = playerPos - enemyPos;
+	if (Length(toPlayer) < 1e-6f) return;
 
-	// ゼロベクトル付近なら何もしない
-	const float eps = 1e-6f;
-	if (Length(toPlayer) < eps) return;
+	toPlayer = Normalize(toPlayer);
 
-	toPlayer = Normalize(playerPos - enemyPos);
-
-	// --- Euler角の計算 ---
-	// Yaw (水平回転) : XZ平面上の向き
+	// --- Yaw（左右） ---
 	float yaw = std::atan2(toPlayer.x, toPlayer.z);
 
-	// Pitch (上下回転) : 前方向とY軸成分から算出
+	// --- Pitch（上下） ---
 	float lenXZ = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.z * toPlayer.z);
 	float pitch = std::atan2(-toPlayer.y, lenXZ);
 
-	// Rollは不要（0でOK）
-	float roll = 0.0f;
+	// --- Roll（必要なら） ---
+	float roll = 0.0f;   // プレイヤーと同じならこれは 0
 
-	// 回転に格納
-	worldTransform_.rotation_ = { pitch, yaw, roll };
+	// --- Euler → Quaternion（LH / Row-major / DirectX用） ---
+	Quaternion qYaw = MakeRotateAxisAngleQuaternion({ 0,1,0 }, yaw);
+	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, pitch);
+	Quaternion qRoll = MakeRotateAxisAngleQuaternion({ 0,0,1 }, roll + roll_);
+
+	Quaternion q = Multiply(qYaw, Multiply(qPitch, qRoll));
+
+	worldTransform_.rotationQ_ = Normalize(q);
+}
+
+void Enemy::InitDespawned()
+{
+	collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
+
+	// 死亡通知
+	if (listener_ && isInGame_)
+	{
+		listener_->OnEnemyDied(this);
+	}
+
+	// 爆発エフェクト
+	IParticleRenderer::Emitter e;
+	e.transform.translate = GetWorldPosition();
+	e.count = 20;
+	e.frequency = 5.0f;
+	e.transform.scale = { 0.3f, 0.3f, 0.3f };
+	ParticleManager::GetInstance()->SetEmitter(4, e);
+	ParticleManager::GetInstance()->TriggerEmit(4, true);
+
+	// リング
+	IParticleRenderer::Emitter eR;
+	eR.transform.translate = GetWorldPosition();
+	eR.count = 1;
+	eR.frequency = 5.0f;
+	eR.transform.scale = { 0.5f, 0.5f, 0.5f };
+	ParticleManager::GetInstance()->SetEmitter(1, eR);
+	ParticleManager::GetInstance()->TriggerEmit(1, true);
+
+	// 破片
+	IParticleRenderer::Emitter eD;
+	eD.velocity = { 0.0f, 2.0f, 0.0f };
+	eD.transform.translate = GetWorldPosition();
+	eD.count = 15;
+	eD.frequency = 5.0f;
+	eD.transform.scale = { 0.1f, 0.1f, 0.1f };
+	eD.randomVel = true;
+	ParticleManager::GetInstance()->SetEmitter(5, eD);
+	ParticleManager::GetInstance()->TriggerEmit(5, true);
 }

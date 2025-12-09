@@ -34,6 +34,7 @@ void Object3d::CreateMaterialResource()
 	// 書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白を入れる
+	materialData_->addColor = { 0.0f, 0.0f, 0.0f, 0.0f }; // 黒を入れる
 	materialData_->enableLighting = 1;
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->environmentCoefficient = 0.0f; // 映りこみなし

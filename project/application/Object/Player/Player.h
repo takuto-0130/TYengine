@@ -45,17 +45,7 @@ public:
 
 	void SetScreenOffset(const Vector2& offset) { screenOffset_ = offset; }
 
-	void TakeDamage()
-	{
-		if (hitpoint_ > 1)
-		{
-			hitpoint_--;
-		}
-		else
-		{
-			OnCollision();
-		}
-	}
+	void TakeDamage();
 
 	int GetHP() { return hitpoint_; }
 
@@ -139,7 +129,7 @@ private:
 	// 弾関連
 	std::unique_ptr<PlayerBulletManager> bulletManager_;
 	PlayerBulletType currentBulletType_ = PlayerBulletType::NORMAL;
-	float bulletCoolTime_ = 0.3f;
+	float bulletCoolTime_ = 0.1f;
 	float bulletTimer_ = 0.0f;
 
 	std::unique_ptr<Reticle> reticle_;

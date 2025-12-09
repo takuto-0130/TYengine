@@ -5,7 +5,6 @@
 #include "ObjectCubemap.h"
 #include "Object/Player/Player.h"
 #include "../../Object/Enemy/TitleEnemy/TitleEnemyManager.h"
-#include "../Transition/Fade2/BlockFadeOverlay.h"
 
 #include "Audio/AudioAnalyzer.h"
 
@@ -47,8 +46,6 @@ private:
 	std::unique_ptr<Sprite> operation_;
 
 	std::unique_ptr<Sprite> reticle_;
-
-	//BlockFadeOverlay fadeOverlay_;
 
 	jx::JsonManager jm;
 	std::string err;

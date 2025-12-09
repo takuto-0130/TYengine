@@ -282,7 +282,6 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiParticle.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiSystem.h" />
-    <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeOverlay.h" />
     <ClInclude Include="application\Scene\Transition\ITransition.h" />
     <ClInclude Include="application\Scene\Transition\StateMachineTransition.h" />
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />

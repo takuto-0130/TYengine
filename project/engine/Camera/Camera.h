@@ -15,6 +15,8 @@ public: // メンバ関数
 	// フォローカメラ
 	void FollowCamera(const Vector3& target);
 
+	bool ShakeActive() { return shakeController_.IsActive(); }
+
 private: // メンバ変数
 	Transform transform_;
 	Matrix4x4 worldMatrix_;
@@ -68,6 +70,9 @@ public: // メンバ関数
 	const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
 	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return worldViewProjectionMatrix_; }
+
+
+	const Vector3& GetShake() { return shake_; }
 
 	Vector3 GetPosition() const { return transform_.translate; }
 	Vector3 GetForward() const {

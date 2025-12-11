@@ -31,7 +31,6 @@ void Stage::Init()
 
 void Stage::Reset()
 {
-    enemyManager_->SetCamera(camera_);
     enemyManager_->Reset();
     railManager_->Reset();
 }
@@ -39,6 +38,7 @@ void Stage::Reset()
 void Stage::Update()
 {
     isEdit_ = false;
+    enemyManager_->SetCamera(camera_);
     enemyManager_->Update();
 
     railManager_->Update();

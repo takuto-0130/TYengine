@@ -121,11 +121,8 @@ std::list<std::list<std::unique_ptr<Enemy>>> EnemyManager::DeepCopyEnemyGroups(c
 
 void EnemyManager::SetCamera(Camera* camera)
 {
-	for (auto& enemyList : enemyGroups_)
+	for (auto& enemy : activeEnemies_)
 	{
-		for (auto& enemy : enemyList) 
-		{
-			enemy->SetCamera(camera);
-		}
+		enemy->SetCamera(camera);
 	}
 }

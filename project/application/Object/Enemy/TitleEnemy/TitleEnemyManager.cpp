@@ -81,3 +81,11 @@ void TitleEnemyManager::Pop()
 	enemy->SetIsInGame(false);
 	enemies_.push_back(std::move(enemy));
 }
+
+void TitleEnemyManager::SetCamera(Camera* camera)
+{
+	for (auto& enemy : enemies_)
+	{
+		enemy->SetCamera(camera);
+	}
+}

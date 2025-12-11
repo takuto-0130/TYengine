@@ -20,6 +20,8 @@ public:
 public:
 	void SetTargetPos(Vector3* pos);
 
+	void SetCamera(Camera* camera);
+
 private:
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
 	

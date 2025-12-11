@@ -148,6 +148,7 @@ void Player::PostStateUpdate()
 {
 	//RotationOffset();
 	RotationOffsetLocal();
+	if(camera_->ShakeActive()) worldTransform_.translation_ -= camera_->GetShake();
 	worldTransform_.TransferMatrix();
 	collider_->Update(GetWorldPosition());
 	justCollider_->Update(GetWorldPosition());

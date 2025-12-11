@@ -80,11 +80,11 @@ void TitleScene::Init()
 	jm.Set("settings.window.hieght", 900);
 
 
-	Audio::GetInstance()->LoadWave("gameBGM");
+	/*Audio::GetInstance()->LoadWave("gameBGM");
 	int a = Audio::GetInstance()->PlayWave("gameBGM", true);
 	Audio::GetInstance()->SetBGMVolume(a, 1.0f);
 
-	Audio::GetInstance()->LoadWave("fanfare");
+	Audio::GetInstance()->LoadWave("fanfare");*/
 
 	auto* pem = PostEffectManager::GetInstance();
 	pem->SetEffectEnabled("Vignette", true);
@@ -96,6 +96,7 @@ void TitleScene::Init()
 
 void TitleScene::Update() {
 	Transition();
+	enemyMgr_.SetCamera(camera_);
 #ifdef _DEBUG
 
 	audioAnalyzer_.Update();

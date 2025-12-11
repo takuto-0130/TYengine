@@ -168,11 +168,11 @@ void PlaneParticle::Update()
         emitterState_.emitMode = 3;
     }
     int a = emitterParam_.emitCount;
-    ImGui::DragInt("1frame/count", &a, 1.0f, 1, 256);
+    ImGui::DragInt("1frame/count", &a, 1.0f, 1, 1000000);
     emitterParam_.emitCount = a;
 
     int b = emitterState_.emitRemaining;
-    ImGui::DragInt("SEQUENTIAL/MaxCount", &b, 1.0f, 1, 256);
+    ImGui::DragInt("SEQUENTIAL/MaxCount", &b, 1.0f, 1, 1000000);
     emitterState_.emitRemaining = b;
 
     ImGui::DragFloat("Interval", &emitterParam_.emitInterval, 0.1f, 0.1f, 5.0f);

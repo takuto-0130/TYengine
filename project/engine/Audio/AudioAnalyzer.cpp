@@ -114,6 +114,87 @@ void AudioAnalyzer::UpdateSpectrumSmoothing()
         if (spectrumSmoothed_[i] < 0.0001f)
             spectrumSmoothed_[i] = 0.0f;
     }
+
+    UpdateBandGrayscale();
+}
+
+void AudioAnalyzer::UpdateBandGrayscale()
+{
+    // 無音なら全部 0
+    if (syncedRMS_ < 0.00001f)
+    {
+        lowGray_ = 0.0f;
+        midGray_ = 0.0f;
+        highGray_ = 0.0f;
+        return;
+    }
+
+    // 各バンドの周波数情報を取得
+    auto bandsInfo = CalcLogBands(
+        BANDS,
+        static_cast<float>(Audio::GetInstance()->GetAnalyzerSampleRate())
+    );
+
+    // 低域 / 中域 / 高域の集計
+    float lowSum = 0.0f; int lowCount = 0;
+    float midSum = 0.0f; int midCount = 0;
+    float highSum = 0.0f; int highCount = 0;
+
+    // 正規化用。DrawSpectrum では v/2.0f で 0〜1 にしていたので、それに合わせる
+    auto normalize = [](float v) -> float
+        {
+            float n = v / 2.0f;
+            if (n < 0.0f) n = 0.0f;
+            if (n > 1.0f) n = 1.0f;
+            return n;
+        };
+
+    const float LOW_MAX = 250.0f;   // 低域上限
+    const float MID_MAX = 4000.0f;  // 中域上限
+
+    for (int i = 0; i < BANDS; i++)
+    {
+        float center = bandsInfo[i].center;
+        float v = spectrumSmoothed_[i];
+
+        float n = normalize(v);
+
+        if (center < LOW_MAX)
+        {
+            lowSum += n;
+            lowCount++;
+        }
+        else if (center < MID_MAX)
+        {
+            midSum += n;
+            midCount++;
+        }
+        else
+        {
+            highSum += n;
+            highCount++;
+        }
+    }
+
+    float lowTarget = (lowCount > 0) ? (lowSum / lowCount) : 0.0f;
+    float midTarget = (midCount > 0) ? (midSum / midCount) : 0.0f;
+    float highTarget = (highCount > 0) ? (highSum / highCount) : 0.0f;
+
+    // 簡易スムージング（攻撃早め / 減衰遅め）
+    auto smooth = [](float current, float target) -> float
+        {
+            const float attack = 0.7f;  // 値が上がるときの追従度
+            const float decay = 0.9f;  // 値が下がるときの残り具合
+
+            if (target > current)
+                return current * (1.0f - attack) + target * attack;
+            else
+                return current * decay;
+        };
+
+    lowGray_ = smooth(lowGray_, lowTarget);
+    midGray_ = smooth(midGray_, midTarget);
+    highGray_ = smooth(highGray_, highTarget);
 }
 
 std::vector<float> AudioAnalyzer::MakeLogSpectrum(
@@ -356,6 +437,9 @@ void AudioAnalyzer::Draw()
     DrawRSM(width);
 
     DrawSpectrum(width);
+    ImGui::Text("Low : %.2f", lowGray_);
+    ImGui::Text("Mid : %.2f", midGray_);
+    ImGui::Text("High : %.2f", highGray_);
     
     DrawWaveform(width);
 

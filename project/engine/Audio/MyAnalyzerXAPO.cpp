@@ -1,6 +1,7 @@
 #include "MyAnalyzerXAPO.h"
 #include <cmath>
 #include <cstring>
+#include <numbers>
 
 // XAPO registration
 static XAPO_REGISTRATION_PROPERTIES regProps =
@@ -75,7 +76,7 @@ void MyAnalyzerXAPO::ComputeFFT()
 
     for (UINT32 len = 2; len <= FFT_SIZE; len <<= 1)
     {
-        float ang = -2.0f * 3.14159265f / len;
+        float ang = -2.0f * std::numbers::pi_v<float> / len;
         float wcos = cosf(ang);
         float wsin = sinf(ang);
 

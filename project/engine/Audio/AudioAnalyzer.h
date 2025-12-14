@@ -20,12 +20,20 @@ public:
     float GetSyncedRMS() const { return syncedRMS_; }
     const std::vector<float>& GetSmoothedSpectrum() const { return spectrumSmoothed_; }
 
+    // 低域・中域・高域のグレースケール値（0〜1）
+    float GetLowGray()  const { return lowGray_; }
+    float GetMidGray()  const { return midGray_; }
+    float GetHighGray() const { return highGray_; }
+
 private:
     // 内部処理
     void UpdateRMS();
     void UpdateFFT();
     void UpdateWaveform();
     void UpdateSpectrumSmoothing();
+
+    // Low/Mid/High グレースケール更新
+    void UpdateBandGrayscale();
 
     std::vector<float> MakeLogSpectrum(
         const std::vector<float>& fft,
@@ -64,4 +72,9 @@ private:
 
     // ---- スペクトラム ----
     std::vector<float> spectrumSmoothed_;
+
+    // グレースケール値（0〜1）
+    float lowGray_ = 0.0f;
+    float midGray_ = 0.0f;
+    float highGray_ = 0.0f;
 };

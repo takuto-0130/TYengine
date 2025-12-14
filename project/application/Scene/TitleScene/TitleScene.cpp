@@ -16,6 +16,7 @@
 #include "PostEffectManager.h"
 #include "VignetteEffect.h"
 #include "RadialBlurEffect.h"
+#include "GrayscaleEffect.h"
 
 
 TitleScene::~TitleScene()
@@ -80,17 +81,17 @@ void TitleScene::Init()
 	jm.Set("settings.window.hieght", 900);
 
 
-	/*Audio::GetInstance()->LoadWave("gameBGM");
-	int a = Audio::GetInstance()->PlayWave("gameBGM", true);
-	Audio::GetInstance()->SetBGMVolume(a, 1.0f);
+	Audio::GetInstance()->LoadWave("gameBGM");
 
-	Audio::GetInstance()->LoadWave("fanfare");*/
+	Audio::GetInstance()->LoadWave("fanfare");
 
-	auto* pem = PostEffectManager::GetInstance();
+	/*auto* pem = PostEffectManager::GetInstance();
 	pem->SetEffectEnabled("Vignette", true);
 	pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
 	pem->SetEffectEnabled("RadialBlur", true);
 	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
+	pem->SetEffectEnabled("Grayscale", true);
+	pem->GetEffect<GrayscaleEffect>("Grayscale")->SetTintColor({1,1,1});*/
 
 }
 
@@ -104,11 +105,15 @@ void TitleScene::Update() {
 
 	if (input_->TriggerKey(DIK_M))
 	{
-		Audio::GetInstance()->PlayWave("fanfare");
+		//Audio::GetInstance()->PlayWave("fanfare");
+		int a = Audio::GetInstance()->PlayWave("gameBGM", true);
+		Audio::GetInstance()->SetBGMVolume(a, 1.0f);
 	}
 
 	/*auto* pem = PostEffectManager::GetInstance();
-	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.25f * audioAnalyzer_.GetSyncedRMS());*/
+	pem->GetEffect<GrayscaleEffect>("Grayscale")->SetTintColor({ audioAnalyzer_.GetLowGray(),audioAnalyzer_.GetMidGray() * 4.0f,audioAnalyzer_.GetHighGray() * 5.0f });*/
+
+
 	Vector2 posM = jm.Get<Vector2>("settings.mouse.pos");
 	ImGui::Begin("pos");
 	ImGui::DragFloat2("pos", &posM.x);

@@ -18,6 +18,7 @@ void TitleEnemyManager::Update()
 
 	for (auto& enemy : enemies_)
 	{
+		enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
 		enemy->Update();
 	}
 
@@ -63,7 +64,7 @@ Vector3 TitleEnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 	std::uniform_real_distribution<float> dist(enemyPopDepthMin_, enemyPopDepthMax_);
 
 	return camPos
-		+ camForward * dist(gen)
+		+ camForward * /*dist(gen)*/14.0f
 		+ camRight * (offset.x * xRange)
 		+ camUp * (offset.y * yRange);
 }
@@ -76,7 +77,8 @@ void TitleEnemyManager::Pop()
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
-	enemy->SetAndApplyPos(ConvertScreenOffsetToWorld({ dist(gen), dist(gen) }));
+	enemy->SetScreenPos({ dist(gen), dist(gen) });
+	enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
 	enemy->Pop();
 	enemy->SetIsInGame(false);
 	enemies_.push_back(std::move(enemy));

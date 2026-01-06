@@ -13,6 +13,7 @@ public: // メンバ関数
 	void Update();
 
 	// フォローカメラ
+	// Update前での呼び出し推奨
 	void FollowCamera(const Vector3& target);
 
 	bool ShakeActive() { return shakeController_.IsActive(); }
@@ -29,6 +30,12 @@ private: // メンバ変数
 	float nearClip_;
 	// ファークリップ距離
 	float farClip_;
+
+	// 前フレームのカメラ位置（ワールド）
+	Vector3 prevTranslate_ = {};
+
+	// 今フレームのカメラ移動量（ワールド差分）
+	Vector3 deltaTranslate_ = {};
 
 	Vector3 followCameraOffsetPosition_ = Vector3(0.0f, 20.0f, -35.0f);
 
@@ -70,6 +77,7 @@ public: // メンバ関数
 	const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
 	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return worldViewProjectionMatrix_; }
+	const Vector3& GetDeltaTranslate() const { return deltaTranslate_; }
 
 
 	const Vector3& GetShake() { return shake_; }

@@ -16,6 +16,8 @@ void Stage::Init()
     enemyManager_->MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
     enemyManager_->Init();
 
+    enemyMgr_.Init(camera_);
+
     railManager_ = std::make_unique<RailManager>();
     railManager_->SetCamera(camera_);
     railManager_->Init();
@@ -31,30 +33,36 @@ void Stage::Init()
 
 void Stage::Reset()
 {
-    enemyManager_->Reset();
+    //enemyManager_->Reset();
     railManager_->Reset();
 }
 
 void Stage::Update()
 {
     isEdit_ = false;
-    enemyManager_->SetCamera(camera_);
-    enemyManager_->Update();
+    //enemyManager_->SetCamera(camera_);
+    //enemyManager_->Update();
+
+    enemyMgr_.SetCamera(camera_);
 
     railManager_->Update();
 
-    if (railManager_->RailTrigger()) enemyManager_->TriggerNextEnemyGroup();
+    if (railManager_->RailTrigger()) //enemyManager_->TriggerNextEnemyGroup();
 
     if (railManager_->ClearEnemyGroup())
     {
-        enemyManager_->GetActiveEnemies().clear();
+        //enemyManager_->GetActiveEnemies().clear();
         railManager_->ClearAccept();
     }
 
     player_->Update();
 
     Vector3 pos = player_->GetWorldPosition();
-    enemyManager_->SetTargetPos(&pos);
+    //enemyManager_->SetTargetPos(&pos);
+
+    enemyMgr_.SetTargetPos(&pos);
+
+    enemyMgr_.Update();
 
     comboManager_->Update();
 }
@@ -63,16 +71,16 @@ void Stage::Draw()
 {
     ground_->Draw(groundWT_);
 
-    //railManager_->Draw();
-
+    railManager_->Draw();
+    enemyMgr_.Draw();
     if (isEdit_) {
 #ifdef _DEBUG
-        enemyManager_->DrawEditorEnemies();
+        //enemyManager_->DrawEditorEnemies();
 #endif // _DEBUG
     }
     else
     {
-        enemyManager_->Draw();
+        //enemyManager_->Draw();
     }
 
     player_->Draw();
@@ -82,8 +90,8 @@ void Stage::EditUpdate()
 {
     isEdit_ = true;
     railManager_->UpdateEdit();
-    enemyManager_->DrawEditorUI();
-    enemyManager_->UpdateEditorEnemies();
+    //enemyManager_->DrawEditorUI();
+    //enemyManager_->UpdateEditorEnemies();
 
     player_->Update();
 }

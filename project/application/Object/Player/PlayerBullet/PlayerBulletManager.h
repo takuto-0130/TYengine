@@ -6,6 +6,8 @@
 #include "struct.h"
 #include "../../BaseBullet/BaseBullet.h"
 
+#include "Camera.h"
+
 class Player;
 class PlayerBulletManager
 {
@@ -36,8 +38,12 @@ public:
 	/// <param name="direction"> 射出される向き </param>
 	void Fire(PlayerBulletType type, const Vector3& pos, const Vector3& direction);
 
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
 private:
 	Player* player_ = nullptr;
 	std::list<std::unique_ptr<BaseBullet>> bullets_;
+
+	Camera* camera_ = nullptr;
 };
 

@@ -66,8 +66,8 @@ void Enemy::Update()
 	lifeTime_ -= deltaTime_;
 	if(lifeTime_ > 0)
 	{
+		worldTransform_.translation_ -= camera_->GetDeltaTranslate();
 		UpdateState(deltaTime_);
-
 
 		UpdateTransform();
 		Rotate();

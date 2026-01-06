@@ -1,5 +1,6 @@
 #pragma once
 #include "../Enemy.h"
+#include "../EnemyBullet/EnemyBulletManager.h"
 #include <random>
 
 class Camera;
@@ -30,6 +31,8 @@ private:
 
 	std::list<std::unique_ptr<Enemy>> enemies_;
 
+	EnemyBulletManager bulletManager_;
+
 	float enemyPopDepthMin_ = 12.0f;
 	float enemyPopDepthMax_ = 17.0f;
 	float xRange = 16.0f * 0.09f * 2.0f; // 横移動の最大幅（画面内の物理スケール）
@@ -40,6 +43,6 @@ private:
 	float timer_ = 0.0f;
 	const float spawnReadyTimer_ = 2.0f;
 
-	const int spawnNum_ = 3;
+	const int spawnNum_ = 5;
 };
 

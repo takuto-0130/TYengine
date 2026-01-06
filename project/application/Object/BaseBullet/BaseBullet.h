@@ -32,6 +32,8 @@ public:
 	// 衝突時処理
 	virtual void OnCollision() { isDead_ = true; }
 
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
 protected:
 	// 死亡判定フラグ
 	bool isDead_ = false;
@@ -52,5 +54,8 @@ protected:
 
 	// 弾の寿命
 	float lifeTime_ = 5.0f;
+
+	// カメラのポインタ
+	Camera* camera_ = nullptr;
 };
 

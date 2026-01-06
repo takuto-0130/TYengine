@@ -67,6 +67,7 @@ void Player::Init()
 	ChangeState(PlayerState::ROOT);
 
 	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
+	bulletManager_->SetCamera(camera_);
 	bulletManager_->Init();
 	
 	reticle_ = std::make_unique<Reticle>(camera_);

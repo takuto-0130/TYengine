@@ -101,7 +101,7 @@ private:
 
 	bool isInGame_ = true;
 
-	float lifeTime_ = 6.5f;
+	float lifeTime_ = 4.0f;
 
 	int32_t hitpoint_ = 3;
 

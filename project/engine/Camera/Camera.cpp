@@ -15,7 +15,10 @@ Camera::Camera()
 	, viewMatrix_(Inverse(worldMatrix_))
 	, projectionMatrix_(MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_))
 	, worldViewProjectionMatrix_(viewMatrix_ * projectionMatrix_)
-{}
+{
+	prevTranslate_ = transform_.translate;
+	deltaTranslate_ = Vector3{};
+}
 
 void Camera::Update()
 {
@@ -27,9 +30,15 @@ void Camera::Update()
 	ImGui::End();
 #endif // _DEBUG
 
+	// --- カメラ移動量の算出（ワールド基準） ---
+	deltaTranslate_ = transform_.translate - prevTranslate_;
+	prevTranslate_ = transform_.translate;
+
+	// --- シェイク ---
 	shakeController_.Update(Timer::GetInstance()->GetDeltaTime());
 	shake_ = shakeController_.GetOffset();
-
+	
+	// --- 行列更新（※差分計算には shake を含めない） ---
 	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate + shake_);
 	viewMatrix_ = Inverse(worldMatrix_);
 	projectionMatrix_ = MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_);

@@ -46,12 +46,13 @@ void PlayerBulletNormal::Init()
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 	ChangeState(NormalBulletState::LINER);
 
-	defaultSpeed_ = 12.0f;
+	defaultSpeed_ = 25.0f;
 }
 
 void PlayerBulletNormal::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+	worldTransform_.translation_ -= camera_->GetDeltaTranslate();
 	UpdateState(deltaTime_);
 	collider_->Update(GetWorldPosition());
 }

@@ -66,7 +66,7 @@ void PlayUI::Init()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
 	returnTitle_ = std::make_unique<Sprite>();
 	returnTitle_->Initialize("Resources/Texture/ReturnTitle.png");
-	returnTitle_->SetSize(returnTitle_->GetSize() * 0.8f);
+	returnTitle_->SetSize(returnTitle_->GetSize() * 0.5f);
 	
 }
 

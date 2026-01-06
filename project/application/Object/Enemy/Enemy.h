@@ -74,6 +74,8 @@ private:
 
 	const float kPopTime_ = 1.0f;
 
+	int enemyType_ = 0;
+
 
 	float kBulletCoolTime_ = 2.0f;
 	float bulletTimer_ = 0.0f;
@@ -90,6 +92,11 @@ private:
 	Vector3 targetPos_ = {};
 
 	Vector2 screenPos = {};
+
+	// 発射予兆
+	float shotYaw_ = 0;
+	float shotPitch_ = 0;
+	float shotRoll_ = 0;
 
 
 	IEnemyEventListener* listener_ = nullptr;
@@ -164,9 +171,32 @@ private: // シーン内のState関連関数
 				}
 				worldTransform_.colliderScale_ = Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f));
 			}
+
+			if (bulletTimer_ <= 0.5f)
+			{
+				float t = 1.0f - (bulletTimer_ / 0.5f);
+				if (enemyType_ == 1)
+				{
+					// 垂直2点
+					shotPitch_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
+				}
+				else if (enemyType_ == 2)
+				{
+					// 水平4点
+					shotYaw_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
+				}
+				else if (enemyType_ == 3)
+				{
+					// 3角形
+					shotRoll_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
+				}
+			}
 		}
 		else if (bulletTimer_ <= 0.0f)
 		{
+			shotYaw_ = 0;
+			shotPitch_ = 0;
+			shotRoll_ = 0;
 			IsShot();
 		}
 	}

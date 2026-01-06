@@ -71,7 +71,7 @@ void Stage::Draw()
 {
     ground_->Draw(groundWT_);
 
-    railManager_->Draw();
+    //railManager_->Draw();
     enemyMgr_.Draw();
     if (isEdit_) {
 #ifdef _DEBUG

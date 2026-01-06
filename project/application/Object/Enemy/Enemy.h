@@ -58,6 +58,10 @@ public:
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
+	void SetScreenPos(Vector2 pos) { screenPos = pos; }
+
+	const Vector2& GetScreenPos() { return screenPos; }
+
 private:
 	void IsShot();
 
@@ -84,6 +88,8 @@ private:
 	const Vector3 ZeroScale = {};
 
 	Vector3 targetPos_ = {};
+
+	Vector2 screenPos = {};
 
 
 	IEnemyEventListener* listener_ = nullptr;

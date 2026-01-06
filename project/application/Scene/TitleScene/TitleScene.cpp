@@ -76,6 +76,10 @@ void TitleScene::Init()
 	reticle_->SetAnchorPoint({ 0.5f,0.5f });
 
 	jm.Load("Title.json", true, &err);
+#ifdef _DEBUG
+	Logger::Log(err);
+#endif // _DEBUG
+
 
 	jm.Set("settings.window.width", 1600);
 	jm.Set("settings.window.hieght", 900);

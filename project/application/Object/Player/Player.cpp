@@ -117,7 +117,14 @@ void Player::Draw()
 ////////////////////// ちょっとおかしいので後に修正 //////////////////////
 void Player::TakeDamage()
 {
+#ifdef _DEBUG
+	// デバッグ時ダメージ処理
+
+#else
+	// 通常ダメージ処理
 	--hitpoint_;
+#endif // _DEBUG
+
 	if (hitpoint_ > 0)
 	{
 		ChangeState(PlayerState::TAKE_DAMAGE);

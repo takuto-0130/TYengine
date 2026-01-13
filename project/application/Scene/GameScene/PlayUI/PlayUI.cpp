@@ -11,106 +11,116 @@ void PlayUI::Init()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
-	reticle_->SetAnchorPoint({ 0.5f,0.5f });
+	reticle_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ComboText.png");
-	comboText_ = std::make_unique<Sprite>();
-	comboText_->Initialize("Resources/Texture/ComboText.png");
-	comboText_->SetAnchorPoint({ 0.5f,0.5f });
-	comboText_->SetPosition(offsetComboTextPos_);
+	sprites_[COMBO_TEXT] = std::make_unique<Sprite>();
+	sprites_[COMBO_TEXT]->Initialize("Resources/Texture/ComboText.png");
+	sprites_[COMBO_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.ComboText.AnchorPoint"));
+	sprites_[COMBO_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.ComboText.tPosition"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
-	comboNumTex_ = std::make_unique<Sprite>();
-	comboNumTex_->Initialize("Resources/Texture/number.png");
-	comboNumTex_->SetTextureSize({ 64,64 });
-	comboNumTex_->SetTextureLeftTop({ 128,0 });
-	comboNumTex_->SetPosition(offsetComboNum_);
-	comboNumTex_->SetSize({ 64,64 });
-
-
+	sprites_[COMBO_NUM_TEXT] = std::make_unique<Sprite>();
+	sprites_[COMBO_NUM_TEXT]->Initialize("Resources/Texture/number.png");
+	sprites_[COMBO_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
+	sprites_[COMBO_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
+	sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/HpText.png");
-	hpText_ = std::make_unique<Sprite>();
-	hpText_->Initialize("Resources/Texture/HpText.png");
-	hpText_->SetAnchorPoint({ 0.5f,0.5f });
-	hpText_->SetPosition(offsetHpTextPos_);
+	sprites_[HP_TEXT] = std::make_unique<Sprite>();
+	sprites_[HP_TEXT]->Initialize("Resources/Texture/HpText.png");
+	sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
+	sprites_[HP_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.HpText.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
-	hpNumTex_ = std::make_unique<Sprite>();
-	hpNumTex_->Initialize("Resources/Texture/number.png");
-	hpNumTex_->SetTextureSize({ 64,64 });
-	hpNumTex_->SetTextureLeftTop({ 128,0 });
-	hpNumTex_->SetPosition(offsetHpNum_);
-	hpNumTex_->SetSize({ 64,64 });
-
-
-
+	sprites_[HP_NUM_TEXT] = std::make_unique<Sprite>();
+	sprites_[HP_NUM_TEXT]->Initialize("Resources/Texture/number.png");
+	sprites_[HP_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
+	sprites_[HP_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
+	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
-	operation_ = std::make_unique<Sprite>();
-	operation_->Initialize("Resources/Texture/Operation.png");
-	operation_->SetSize(operation_->GetSize() * 0.8f);
-	operation_->SetPosition({15,145});
+	sprites_[OPERATION] = std::make_unique<Sprite>();
+	sprites_[OPERATION]->Initialize("Resources/Texture/Operation.png");
+	sprites_[OPERATION]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.Operation.Size"));
+	sprites_[OPERATION]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/outline.png");
-	outline_ = std::make_unique<Sprite>();
-	outline_->Initialize("Resources/Texture/outline.png");
-	outline_->SetSize(outline_->GetSize() * 0.8f);
-	outline_->SetPosition({ 15,145 });
-
-
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/hightLight.png");
-	hightLight_ = std::make_unique<Sprite>();
-	hightLight_->Initialize("Resources/Texture/hightLight.png");
+	sprites_[OUTLINE] = std::make_unique<Sprite>();
+	sprites_[OUTLINE]->Initialize("Resources/Texture/outline.png");
+	sprites_[OUTLINE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.Operation.Size"));
+	sprites_[OUTLINE]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
-	returnTitle_ = std::make_unique<Sprite>();
-	returnTitle_->Initialize("Resources/Texture/ReturnTitle.png");
-	returnTitle_->SetSize(returnTitle_->GetSize() * 0.5f);
-	
+	sprites_[RETURN_TITLE] = std::make_unique<Sprite>();
+	sprites_[RETURN_TITLE]->Initialize("Resources/Texture/ReturnTitle.png");
+	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
+}
+
+void PlayUI::DebugJMApply()
+{
+	reticle_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
+
+	sprites_[COMBO_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.ComboText.AnchorPoint"));
+	sprites_[COMBO_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.ComboText.tPosition"));
+
+	sprites_[COMBO_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
+	sprites_[COMBO_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
+	sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo"));
+
+	sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
+	sprites_[HP_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.HpText.Position"));
+
+	sprites_[HP_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
+	sprites_[HP_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
+	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));
+
+	sprites_[OPERATION]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.Operation.Size"));
+	sprites_[OPERATION]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
+
+	sprites_[OUTLINE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.Operation.Size"));
+	sprites_[OUTLINE]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
+
+	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
 }
 
 void PlayUI::Update()
 {
-	comboText_->Update();
-	comboNumTex_->Update();
-	operation_->Update();
-	outline_->Update();
-	hightLight_->Update();
-	returnTitle_->Update();
+#ifdef _DEBUG
+	DebugJMApply();
+#endif // _DEBUG
 
-	hpText_->Update();
-	hpNumTex_->Update();
+	for (auto& sprite : sprites_)
+	{
+		sprite->Update();
+	}
 }
 
 void PlayUI::Draw()
 {
 	reticle_->Draw();
-	comboNumTex_->Draw();
-	comboText_->Draw();
-	scoreDraw_->Draw();
 
-	operation_->Draw();
-	if (isJust_)
+	for (int i = 0; i < SpriteNum; ++i)
 	{
-		// ハイライト描画
-		outline_->Draw();
+		if (i != OUTLINE)
+		{
+			sprites_[i]->Draw();
+		}
+		else
+		{
+			if (isJust_)
+			{
+				// アウトライン描画
+				sprites_[i]->Draw();
+			}
+		}
 	}
-
-	hpText_->Draw();
-	hpNumTex_->Draw();
-
-}
-
-void PlayUI::DrawHightLight()
-{
-	hightLight_->Draw();
+	scoreDraw_->Draw();
 }
 
 void PlayUI::DrawRT()
 {
 	reticle_->Update();
-	returnTitle_->Draw();
 }
 
 void PlayUI::ComboTexUpdate()
@@ -120,8 +130,8 @@ void PlayUI::ComboTexUpdate()
 
 	float t = comboTimer_ / kComboTime_;
 	t = 1.0f - powf(1.0f - t, 4.0f);
-	comboText_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
-	comboNumTex_->SetColor(Vector4(1.0f, 1.0f, 1.0f, t));
+	sprites_[COMBO_TEXT]->SetAlpha(t);
+	sprites_[COMBO_NUM_TEXT]->SetAlpha(t);
 
 	t = (comboTimer_ - (kComboTime_ - shakeTime_)) / (kComboTime_ - (kComboTime_ - shakeTime_));
 	if (t > 0)
@@ -129,12 +139,12 @@ void PlayUI::ComboTexUpdate()
 		std::mt19937 random(seedGene_());
 		std::uniform_real_distribution<float> dist(-15.0f, 15.0f);
 		Vector2 pos = { dist(random),dist(random) };
-		comboText_->SetPosition(offsetComboTextPos_ + pos * t);
-		comboNumTex_->SetPosition(offsetComboNum_ + pos * t);
+		sprites_[COMBO_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.ComboText.tPosition") + pos * t);
+		sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo") + pos * t);
 	}
 	else
 	{
-		comboText_->SetPosition(offsetComboTextPos_);
-		comboNumTex_->SetPosition(offsetComboNum_);
+		sprites_[COMBO_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.ComboText.tPosition"));
+		sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo"));
 	}
 }

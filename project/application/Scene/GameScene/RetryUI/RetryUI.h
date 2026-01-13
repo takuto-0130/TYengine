@@ -1,11 +1,13 @@
 #pragma once
 #include <memory>
 
+#include "Utils/Json/JsonManager.h"
+
 class Sprite;
 class RetryUI
 {
 public:
-	void Initialze();
+	void Init();
 
 	void Update();
 
@@ -17,6 +19,8 @@ public:
 
 	void Reset();
 
+	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
+
 private:
 	std::unique_ptr<Sprite> ready_;
 	std::unique_ptr<Sprite> scoretext_;
@@ -25,5 +29,7 @@ private:
 	float timer_ = -1.0f;
 
 	float maxTime_ = 3.0f;
+
+	jx::JsonManager* jm_;
 };
 

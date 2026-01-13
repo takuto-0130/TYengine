@@ -5,70 +5,82 @@
 #include "mathFunc.h"
 #include "Ease.h"
 
-void ResultClass::Initialze()
+void ResultClass::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/blackScreen.png");
-	back_ = std::make_unique<Sprite>();
-	back_->Initialize("Resources/Texture/blackScreen.png");
-	back_->SetSize(Vector2{ 1280.0f,720.0f });
-	back_->SetTextureSize(Vector2{ 1280,720 });
-	back_->SetColor(Vector4(1, 1, 1, 0.7f));
+	sprites_[BLACK] = std::make_unique<Sprite>();
+	sprites_[BLACK]->Initialize("Resources/Texture/blackScreen.png");
+	sprites_[BLACK]->SetTextureSize(jm_->Get<Vector2>("Result.Texture.blackScreen.TextureSize"));
+	sprites_[BLACK]->SetSize(jm_->Get<Vector2>("Result.Texture.blackScreen.Size"));
+	sprites_[BLACK]->SetColor(jm_->Get<Vector4>("Result.Texture.blackScreen.Color"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ResultText.png");
-	text_ = std::make_unique<Sprite>();
-	text_->Initialize("Resources/Texture/ResultText.png");
+	sprites_[RESULT] = std::make_unique<Sprite>();
+	sprites_[RESULT]->Initialize("Resources/Texture/ResultText.png");
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ScoreText.png");
-	scoretext_ = std::make_unique<Sprite>();
-	scoretext_->Initialize("Resources/Texture/ScoreText.png");
-	scoretext_->SetPosition({ 400, 360 });
-	scoretext_->SetAlpha(0.0f);
+	sprites_[SCORE] = std::make_unique<Sprite>();
+	sprites_[SCORE]->Initialize("Resources/Texture/ScoreText.png");
+	sprites_[SCORE]->SetPosition(jm_->Get<Vector2>("Result.Texture.ScoreText.Position"));
+	sprites_[SCORE]->SetAlpha(jm_->Get<float>("Result.Texture.ScoreText.Alpha"));
 
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/TitleSpace.png");
-	spaceSpr_ = std::make_unique<Sprite>();
-	spaceSpr_->Initialize("Resources/Texture/TitleSpace.png");
-	spaceSpr_->SetAnchorPoint({ 1,1 });
-	spaceSpr_->SetPosition({ 1200,700 });
-	spaceSpr_->SetAlpha(0.0f);
+	sprites_[SPACE] = std::make_unique<Sprite>();
+	sprites_[SPACE]->Initialize("Resources/Texture/TitleSpace.png");
+	sprites_[SPACE]->SetAnchorPoint(jm_->Get<Vector2>("Result.Texture.TitleSpace.AnchorPoint"));
+	sprites_[SPACE]->SetPosition(jm_->Get<Vector2>("Result.Texture.TitleSpace.Position"));
+	sprites_[SPACE]->SetAlpha(jm_->Get<float>("Result.Texture.TitleSpace.Alpha"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
-	returnTitle_ = std::make_unique<Sprite>();
-	returnTitle_->Initialize("Resources/Texture/ReturnTitle.png");
-	returnTitle_->SetSize(returnTitle_->GetSize() * 0.8f);
-	returnTitle_->SetPosition({ 0,-70 });
+	sprites_[RETURN_TITLE] = std::make_unique<Sprite>();
+	sprites_[RETURN_TITLE]->Initialize("Resources/Texture/ReturnTitle.png");
+	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("Result.Texture.ReturnTitle.Size"));
+	sprites_[RETURN_TITLE]->SetPosition(jm_->Get<Vector2>("Result.Texture.ReturnTitle.Position"));
 
 
-	timer_ = -1.0f;
-	maxTime_ = 2.5f;
+	timer_ = jm_->Get<float>("Result.timer.reset");
+	maxTime_ = jm_->Get<float>("Result.timer.max");
 
-	setSpr_.push_back(text_.get());
-	setSpr_.push_back(scoretext_.get());
-	setSpr_.push_back(spaceSpr_.get());
+	setColliderSpr_.push_back(sprites_[RESULT].get());
+	setColliderSpr_.push_back(sprites_[SCORE].get());
+	setColliderSpr_.push_back(sprites_[SPACE].get());
+}
+
+void ResultClass::DebugJMApply()
+{
+	sprites_[BLACK]->SetTextureSize(jm_->Get<Vector2>("Result.Texture.blackScreen.TextureSize"));
+	sprites_[BLACK]->SetSize(jm_->Get<Vector2>("Result.Texture.blackScreen.Size"));
+	sprites_[BLACK]->SetColor(jm_->Get<Vector4>("Result.Texture.blackScreen.Color"));
+
+	sprites_[SCORE]->SetPosition(jm_->Get<Vector2>("Result.Texture.ScoreText.Position"));
+
+	sprites_[SPACE]->SetAnchorPoint(jm_->Get<Vector2>("Result.Texture.TitleSpace.AnchorPoint"));
+	sprites_[SPACE]->SetPosition(jm_->Get<Vector2>("Result.Texture.TitleSpace.Position"));
+
+	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("Result.Texture.ReturnTitle.Size"));
 }
 
 void ResultClass::Reset()
 {
-	timer_ = -1.0f;
+	timer_ = jm_->Get<float>("Result.timer.reset");
 }
 
 void ResultClass::Update()
 {
-	//back_->Update();
 	Move();
-	text_->Update();
-	scoretext_->Update();
-	spaceSpr_->Update();
-	returnTitle_->Update();
+	for (auto& sprite : sprites_)
+	{
+		sprite->Update();
+	}
 }
 
 void ResultClass::Draw()
 {
-	back_->Draw();
-	text_->Draw();
-	scoretext_->Draw();
-	spaceSpr_->Draw();
-	returnTitle_->Draw();
+	for (auto& sprite : sprites_)
+	{
+		sprite->Draw();
+	}
 }
 
 void ResultClass::Start()
@@ -83,10 +95,10 @@ void ResultClass::Move()
 		timer_ += Timer::GetInstance()->GetDeltaTime();
 
 		float t = timer_ / maxTime_;
-		float y = Lerp(-300.0f, 0.0f, EaseFixed::InBounce(t));
-		text_->SetPosition({ 510, y + 230 });
-		scoretext_->SetAlpha(t);
-		spaceSpr_->SetAlpha(t);
+		float y = Lerp(jm_->Get<float>("Result.startY"), 0.0f, EaseFixed::InBounce(t));
+		sprites_[RESULT]->SetPosition(jm_->Get<Vector2>("Result.offset") + Vector2{ 0, y });
+		sprites_[SCORE]->SetAlpha(t);
+		sprites_[SPACE]->SetAlpha(t);
 	}
 	else
 	{

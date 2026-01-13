@@ -10,7 +10,7 @@
 void Player::InitBarrelRoll()
 {
 	startRollPos_ = screenOffset_;
-	rollEfectTimer_ = 0.0f;
+	rollEffectTimer_ = 0.0f;
     auto* pem = PostEffectManager::GetInstance();
     pem->SetEffectEnabled("RadialBlur", true);
     pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
@@ -69,15 +69,15 @@ void Player::BarrelRoll()
     }
 
     // エフェクト
-    if (rollEfectTimer_ <= 2.1f)
+    if (rollEffectTimer_ <= 2.1f)
     {
-        rollEfectTimer_ += Timer::GetInstance()->GetRawDeltaTime();
+        rollEffectTimer_ += Timer::GetInstance()->GetRawDeltaTime();
 
-        float t = (rollEfectTimer_ <= 1.2f)
-            ? (rollEfectTimer_ / 1.2f)
-            : (0.9f - (rollEfectTimer_ - 1.2f) / 0.9f);
+        float t = (rollEffectTimer_ <= 1.2f)
+            ? (rollEffectTimer_ / 1.2f)
+            : (0.9f - (rollEffectTimer_ - 1.2f) / 0.9f);
 
-        t = (rollEfectTimer_ <= 1.2f) ? t : EaseFixed::InQuint(t);
+        t = (rollEffectTimer_ <= 1.2f) ? t : EaseFixed::InQuint(t);
 
         auto* pem = PostEffectManager::GetInstance();
         if (justRoll_)
@@ -88,11 +88,11 @@ void Player::BarrelRoll()
         }
         else
         {
-            t = (rollEfectTimer_ <= 0.9f)
-                ? (rollEfectTimer_ / 0.9f)
-                : (0.9f - (rollEfectTimer_ - 0.9f) / 0.9f);
+            t = (rollEffectTimer_ <= 0.9f)
+                ? (rollEffectTimer_ / 0.9f)
+                : (0.9f - (rollEffectTimer_ - 0.9f) / 0.9f);
 
-            t = (rollEfectTimer_ <= 0.9f) ? t : EaseFixed::InQuint(t);
+            t = (rollEffectTimer_ <= 0.9f) ? t : EaseFixed::InQuint(t);
 
             pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((Vector2(screenOffset_.x, -screenOffset_.y) + Vector2(1.0f, 1.0f)) * 0.5f);
             pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * t);

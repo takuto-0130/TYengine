@@ -1,0 +1,152 @@
+{
+  "Pause": {
+    "PauseText": {
+      "Position": {
+        "x": 0.0,
+        "y": 0.0
+      }
+    },
+    "blackScreen": {
+      "Color": {
+        "w": 0.699999988079071,
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "Size": {
+        "x": 1280.0,
+        "y": 720.0
+      },
+      "TextureSize": {
+        "x": 1280.0,
+        "y": 720.0
+      }
+    }
+  },
+  "PlayUI": {
+    "Texture": {
+      "ComboText": {
+        "AnchorPoint": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "Position": {
+          "x": 1245.0,
+          "y": 60.0
+        }
+      },
+      "HpText": {
+        "AnchorPoint": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "Position": {
+          "x": 1156.0,
+          "y": 560.0
+        }
+      },
+      "Operation": {
+        "Position": {
+          "x": 15.0,
+          "y": 145.0
+        },
+        "Size": {
+          "x": 1024.0,
+          "y": 576.0
+        }
+      },
+      "ReturnTitle": {
+        "Size": {
+          "x": 640.0,
+          "y": 360.0
+        }
+      },
+      "number": {
+        "PositionCombo": {
+          "x": 1060.0,
+          "y": 25.0
+        },
+        "PositionHp": {
+          "x": 1112.0,
+          "y": 526.0
+        },
+        "Size": {
+          "x": 64.0,
+          "y": 64.0
+        },
+        "TextureLeftTop": {
+          "x": 128.0,
+          "y": 0.0
+        },
+        "TextureSize": {
+          "x": 64.0,
+          "y": 64.0
+        }
+      },
+      "reticle": {
+        "AnchorPoint": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      }
+    }
+  },
+  "Result": {
+    "Texture": {
+      "ResultText": {},
+      "ReturnTitle": {
+        "Position": {
+          "x": 0.0,
+          "y": -70.0
+        },
+        "Size": {
+          "x": 1024.0,
+          "y": 576.0
+        }
+      },
+      "ScoreText": {
+        "Alpha": 0.0,
+        "Position": {
+          "x": 400.0,
+          "y": 360.0
+        }
+      },
+      "TitleSpace": {
+        "Alpha": 0.0,
+        "AnchorPoint": {
+          "x": 1.0,
+          "y": 1.0
+        },
+        "Position": {
+          "x": 1200.0,
+          "y": 700.0
+        }
+      },
+      "blackScreen": {
+        "Color": {
+          "w": 0.699999988079071,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "Size": {
+          "x": 1280.0,
+          "y": 720.0
+        },
+        "TextureSize": {
+          "x": 1280.0,
+          "y": 720.0
+        }
+      }
+    },
+    "offset": {
+      "x": 510.0,
+      "y": 230.0
+    },
+    "startY": -300.0,
+    "timer": {
+      "max": 2.5,
+      "reset": -1.0
+    }
+  }
+}

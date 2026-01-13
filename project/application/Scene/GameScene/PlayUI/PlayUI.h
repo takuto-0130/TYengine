@@ -1,6 +1,8 @@
 #pragma once
 #include "Sprite.h"
 
+#include "Utils/Json/JsonManager.h"
+
 #include <memory>
 #include <random>
 
@@ -12,7 +14,6 @@ public:
 	void Init();
 	void Update();
 	void Draw();
-	void DrawHightLight();
 
 	void DrawRT();
 
@@ -21,34 +22,37 @@ public:
 public:
 	void SetComboTimer(float timer) { comboTimer_ = timer; }
 	void SetComboTime(float time) { kComboTime_ = time; }
-	void SetComboNum(int comboNum) { comboNumTex_->SetTextureLeftTop({ 64.0f * float(comboNum),0 }); }
+	void SetComboNum(int comboNum) { sprites_[COMBO_NUM_TEXT]->SetTextureLeftTop({ 64.0f * float(comboNum),0 }); }
 	void SetScoreDraw(ScoreUI* scoreDraw) { scoreDraw_ = scoreDraw; }
 
-	void SetHPNum(int hp = 0) { hpNumTex_->SetTextureLeftTop({ 64.0f * float(hp),0 }); }
+	void SetHPNum(int hp = 0) { sprites_[HP_NUM_TEXT]->SetTextureLeftTop({ 64.0f * float(hp),0 }); }
 
 	void SetJust(bool just) { isJust_ = just; }
+
+	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
+
+private:
+	void DebugJMApply();
 
 private:
 	Input* input_ = nullptr;
 	ScoreUI* scoreDraw_ = nullptr;
 
+	enum PlayUISprites
+	{
+		COMBO_TEXT,
+		COMBO_NUM_TEXT,
+		HP_TEXT,
+		HP_NUM_TEXT,
+		OPERATION,
+		OUTLINE,
+		RETURN_TITLE,
+		SpriteNum
+	};
 
-	std::unique_ptr<Sprite> hpText_;
-	Vector2 offsetHpTextPos_ = { 1160, 545 };
-	std::unique_ptr<Sprite> hpNumTex_;
-	Vector2 offsetHpNum_ = { 1112,526 };
-
-	std::unique_ptr<Sprite> comboNumTex_;
-	Vector2 offsetComboNum_ = { 1060,25 };
-	std::unique_ptr<Sprite> comboText_;
-	Vector2 offsetComboTextPos_ = { 1245, 60 };
+	std::array<std::unique_ptr<Sprite>, SpriteNum> sprites_;
 
 	std::unique_ptr<Sprite> reticle_;
-
-	std::unique_ptr<Sprite> operation_;
-	std::unique_ptr<Sprite> outline_;
-	std::unique_ptr<Sprite> hightLight_;
-	std::unique_ptr<Sprite> returnTitle_;
 
 	float comboTimer_ = 0;
 	float kComboTime_ = 0;
@@ -57,5 +61,7 @@ private:
 
 	std::random_device seedGene_;
 	float shakeTime_ = 0.4f;
+
+	jx::JsonManager* jm_;
 };
 

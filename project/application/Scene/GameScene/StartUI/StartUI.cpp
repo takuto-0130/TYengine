@@ -4,7 +4,7 @@
 #include "Timer.h"
 #include "mathFunc.h"
 
-void StartUI::Initialze()
+void StartUI::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Ready.png");
 	ready_ = std::make_unique<Sprite>();

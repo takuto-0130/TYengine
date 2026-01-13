@@ -171,7 +171,13 @@ void TitleScene::UIDraw()
 
 void TitleScene::Transition()
 {
-	if (input_->TriggerKey(DIK_RETURN)) 
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_RETURN))
+	{
+		sceneManager_->ChangeScene("GAME");
+	}
+#else
+	if (input_->TriggerKey(DIK_RETURN))
 	{
 		BlockFadeConfig cfg;
 		auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
@@ -183,4 +189,5 @@ void TitleScene::Transition()
 			});
 		TransitionManager::GetInstance()->Start(std::move(transition));
 	}
+#endif // _DEBUG
 }

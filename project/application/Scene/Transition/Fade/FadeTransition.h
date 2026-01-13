@@ -41,7 +41,7 @@ private:
 	virtual void ExitExiting();
 
 private:
-	std::unique_ptr<Sprite> sprite_;
+	std::unique_ptr<Sprite> sprites_;
 	float duration_ = 0.0f;
 	bool finished_ = false;
 };

@@ -5,7 +5,7 @@
 #include "mathFunc.h"
 #include "Ease.h"
 
-void RetryUI::Initialze()
+void RetryUI::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Gameover.png");
 	ready_ = std::make_unique<Sprite>();

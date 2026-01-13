@@ -47,12 +47,9 @@ void Stage::Update()
 
     railManager_->Update();
 
-    if (railManager_->RailTrigger()) //enemyManager_->TriggerNextEnemyGroup();
-
-    if (railManager_->ClearEnemyGroup())
+    if (railManager_->RailTrigger())
     {
-        //enemyManager_->GetActiveEnemies().clear();
-        railManager_->ClearAccept();
+
     }
 
     player_->Update();
@@ -71,7 +68,7 @@ void Stage::Draw()
 {
     ground_->Draw(groundWT_);
 
-    //railManager_->Draw();
+    railManager_->Draw();
     enemyMgr_.Draw();
     if (isEdit_) {
 #ifdef _DEBUG

@@ -1,11 +1,13 @@
 #pragma once
 #include <memory>
 #include "Sprite/Sprite.h"
-//class Sprite;
+
+#include "Utils/Json/JsonManager.h"
+
 class ResultClass
 {
 public:
-	void Initialze();
+	void Init();
 
 	void Update();
 
@@ -17,19 +19,32 @@ public:
 
 	void Reset();
 
-	std::vector<Sprite*>& GetSprite() { return setSpr_; }
+	std::vector<Sprite*>& GetSprite() { return setColliderSpr_; }
+
+	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
 
 private:
-	std::unique_ptr<Sprite> back_;
-	std::unique_ptr<Sprite> text_;
-	std::unique_ptr<Sprite> scoretext_;
-	std::unique_ptr<Sprite> spaceSpr_;
-	std::unique_ptr<Sprite> returnTitle_;
+	void DebugJMApply();
 
-	std::vector<Sprite*> setSpr_;
+private:
+	enum ResultUISprites
+	{
+		BLACK,
+		RESULT,
+		SCORE,
+		SPACE,
+		RETURN_TITLE,
+		SpriteNum
+	};
+
+	std::array<std::unique_ptr<Sprite>, SpriteNum> sprites_;
+
+	std::vector<Sprite*> setColliderSpr_;
 
 	float timer_ = -1.0f;
 
 	float maxTime_ = 3.0f;
+
+	jx::JsonManager* jm_;
 };
 

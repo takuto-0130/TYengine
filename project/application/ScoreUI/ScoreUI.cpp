@@ -6,7 +6,7 @@
 #include "Timer.h"
 #include "Random.h"
 
-void ScoreUI::Initialze()
+void ScoreUI::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
@@ -54,10 +54,10 @@ void ScoreUI::Initialze()
 	four_->SetPosition({ 135.0f + X,Y });
 
 
-	setSpr_.push_back(one_.get());
-	setSpr_.push_back(two_.get());
-	setSpr_.push_back(three_.get());
-	setSpr_.push_back(four_.get());
+	setColliderSpr_.push_back(one_.get());
+	setColliderSpr_.push_back(two_.get());
+	setColliderSpr_.push_back(three_.get());
+	setColliderSpr_.push_back(four_.get());
 }
 
 void ScoreUI::Update()

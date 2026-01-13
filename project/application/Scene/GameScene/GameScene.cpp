@@ -52,6 +52,13 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
+	//========== ロード ==========//
+
+	gameUIJM_.Load("GameUI.json", true, &err_);
+#ifdef _DEBUG
+	Logger::Log(err_);
+#endif // _DEBUG
+
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 
@@ -86,6 +93,13 @@ void GameScene::Update()
 	}
 	ImGui::Begin("GameScene State Debug");
 	DebugImGui("GameScene");
+	ImGui::End();
+
+	// ImGui で編集
+	ImGui::Begin("JSON Editor");
+	static jx::JsonImGuiEditor inspector(gameUIJM_);
+	inspector.Draw(gameUIJM_.Root(), "GameUI.json");
+	if (ImGui::Button("Save")) gameUIJM_.Save();
 	ImGui::End();
 #endif // _DEBUG
 

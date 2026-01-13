@@ -97,7 +97,7 @@ private:
 	float deltaTime_ = 1.0f / 60.0f;
 
 	// hp
-	int hitpoint_ = 9;
+	int hitpoint_ = 30;
 
 
 	// 姿勢
@@ -119,7 +119,7 @@ private:
 	Vector2 startRollPos_{};
 	Vector2 goalRollPos_{};
 
-	float rollEfectTimer_ = 0.0f;
+	float rollEffectTimer_ = 0.0f;
 
 	bool isJust_ = false;
 	bool justRoll_ = false;

@@ -13,13 +13,17 @@ void TitleEnemyManager::Reset()
 	enemies_.clear();
 }
 
+void TitleEnemyManager::MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score)
+{
+	comboAndScoreHandler_ = std::make_unique<ComboAndScoreHandler>(combo, score);
+}
+
 void TitleEnemyManager::Update()
 {
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& e) { return e->IsDead(); });
 
 	for (auto& enemy : enemies_)
 	{
-		//enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
 		enemy->Update();
 	}
 
@@ -83,6 +87,7 @@ void TitleEnemyManager::Pop()
 	enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
 	enemy->Pop();
 	enemy->SetEnemyBulletManager(&bulletManager_);
+	enemy->SetEventListener(comboAndScoreHandler_.get());
 	enemy->SetIsInGame(true);
 	enemies_.push_back(std::move(enemy));
 }

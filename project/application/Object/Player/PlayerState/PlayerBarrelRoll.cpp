@@ -2,6 +2,7 @@
 #include "input.h"
 #include "Timer.h"
 #include "Ease.h"
+#include "Random.h"
 #include "BulletTimeController.h"
 #include "PostEffectManager.h"
 #include "VignetteEffect.h"
@@ -21,6 +22,15 @@ void Player::InitBarrelRoll()
 		pem->SetEffectEnabled("Vignette", true);
 		pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
 	}
+    if (Length(inputDir_) != 0)
+    {
+        rollDir_ = inputDir_;
+    }
+    else
+    {
+        rollDir_ = Normalize(Vector2(Random::GetInstance()->Float(-1,1), Random::GetInstance()->Float(-1, 1)));
+    }
+    collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
 }
 
 void Player::UpdateBarrelRoll()
@@ -36,6 +46,7 @@ void Player::ExitBarrelRoll()
 	{
 		pem->SetEffectEnabled("Vignette", false);
 	}
+    collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::PLAYER));
 }
 
 
@@ -59,13 +70,13 @@ void Player::StartBarrelRoll()
 void Player::BarrelRoll()
 {
     // 入力方向に応じて左右（または上下）ロール
-    if (inputDir_.x != 0.0f)
+    if (rollDir_.x != 0.0f)
     {
-        (inputDir_.x < 0.0f) ? LeftRoll() : RightRoll();
+        (rollDir_.x < 0.0f) ? LeftRoll(rollDir_) : RightRoll(rollDir_);
     }
-    else if (inputDir_.y != 0.0f)
+    else if (rollDir_.y != 0.0f)
     {
-        (inputDir_.y < 0.0f) ? LeftRoll() : RightRoll();
+        (rollDir_.y < 0.0f) ? LeftRoll(rollDir_) : RightRoll(rollDir_);
     }
 
     // エフェクト
@@ -112,7 +123,7 @@ void Player::BarrelRoll()
     RotationOffsetLocal();
 
     // 終了判定
-    if (GetStateElapsedTime() >= rollTime_ || Length(inputDir_) == 0.0f)
+    if (GetStateElapsedTime() >= rollTime_)
     {
         ChangeState(PlayerState::ROOT);
     }
@@ -120,17 +131,17 @@ void Player::BarrelRoll()
 
 
 
-void Player::LeftRoll()
+void Player::LeftRoll(const Vector2& dir)
 {
-    goalRollPos_ = startRollPos_ + inputDir_ * rollRange_;
+    goalRollPos_ = startRollPos_ + dir * rollRange_;
     float t = std::clamp(GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
     screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
     roll = Lerp(0.0f, leftRoll_, EaseFixed::OutBack(t));  // ローカルZ回転
 }
 
-void Player::RightRoll()
+void Player::RightRoll(const Vector2& dir)
 {
-    goalRollPos_ = startRollPos_ + inputDir_ * rollRange_;
+    goalRollPos_ = startRollPos_ + dir * rollRange_;
     float t = std::clamp(GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
     screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
     roll = Lerp(0.0f, rightRoll_, EaseFixed::OutBack(t)); // ローカルZ回転

@@ -49,6 +49,8 @@ public:
 
 	int GetHP() { return hitpoint_; }
 
+	Vector2 GetScreenOffset() { return screenOffset_; }
+
 	void OnCollision() override;
 
 private:
@@ -67,8 +69,8 @@ private:
 	// BarrelRoll
 	void StartBarrelRoll();
 	void BarrelRoll();
-	void LeftRoll();
-	void RightRoll();
+	void LeftRoll(const Vector2& dir);
+	void RightRoll(const Vector2& dir);
 
 
 	// Debug
@@ -93,6 +95,8 @@ private:
 	float defaultSpeed_ = 0.3f;
 	Vector2 speed_{ defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
 	Vector2 inputDir_{};
+
+	Vector2 rollDir_{};
 
 	float deltaTime_ = 1.0f / 60.0f;
 

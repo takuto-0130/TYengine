@@ -151,12 +151,6 @@
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp">
       <Filter>application\source</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Enemy\EnemyEditor.cpp">
-      <Filter>application\source</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Enemy\EnemyManager.cpp">
-      <Filter>application\source</Filter>
-    </ClCompile>
     <ClCompile Include="application\Scene\Transition\Fade\FadeTransition.cpp">
       <Filter>application\source</Filter>
     </ClCompile>
@@ -414,12 +408,6 @@
       <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h">
-      <Filter>application\header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Enemy\EnemyEditor.h">
-      <Filter>application\header</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Enemy\EnemyManager.h">
       <Filter>application\header</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\Transition\Fade\FadeTransition.h">

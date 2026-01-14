@@ -42,6 +42,8 @@ void GameScene::PlayUIUpdate()
 	if(stageManager_->GetPlayer()->GetCurrentState() != PlayerState::BARREL_ROLL) 
 	{
 		playUI_->SetJust(stageManager_->GetPlayer()->IsJust());
+		stageManager_->GetPlayer()->OffJust();
+		playUI_->SetShiftPos(stageManager_->GetPlayer()->GetScreenOffset());
 	}
 	else
 	{
@@ -58,10 +60,7 @@ void GameScene::ComboUIUpdate()
 	playUI_->SetComboTimer(combo->GetCurrentComboTimer());
 	playUI_->SetComboNum(combo->GetComboCount());
 	playUI_->ComboTexUpdate();
-	if (combo->GetCurrentComboTimer() == combo->GetStartComboTime())
-	{
-		scoreDraw_->SetScore(stageManager_->GetScoreManager()->GetScore());
-	}
+	scoreDraw_->SetScore(stageManager_->GetScoreManager()->GetScore());
 	if (stageManager_->GetPlayer())
 	{
 		playUI_->SetHPNum(stageManager_->GetPlayer()->GetHP());

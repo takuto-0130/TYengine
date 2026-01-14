@@ -19,8 +19,11 @@ public:
 		std::array<int32_t, 4> num;
 	};
 
-	void SetScore(int32_t score) 
-	{ 
+	void SetScore(int32_t score)
+	{
+		// 追加：現在の目標スコアと同じなら何もしない
+		if (currentScore_ == score) return;
+
 		scoreViewTimer_ = 0;
 		prevScore_ = currentScore_;
 		currentScore_ = score;

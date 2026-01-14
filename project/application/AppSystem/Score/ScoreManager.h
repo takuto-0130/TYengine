@@ -8,7 +8,7 @@ public:
 	void Init();
 	void Update();
 
-	void AddScore(float Multiplyer);
+	void AddScore(float multiplier);
 
 public:
 	int32_t GetScore() const { return score_; }
@@ -16,6 +16,6 @@ public:
 
 private:
 	int32_t score_ = 0;
-	const int32_t kBasicScore_ = 200;
+	const int32_t kBasicScore_ = 20;
 };
 

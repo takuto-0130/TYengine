@@ -1,6 +1,7 @@
 #pragma once
 #include "../Enemy.h"
 #include "../EnemyBullet/EnemyBulletManager.h"
+#include "../../../AppSystem/EventListener/EnemyEvent/ComboAndScoreHandler.h"
 #include <random>
 
 class Camera;
@@ -9,6 +10,8 @@ class TitleEnemyManager
 {
 public:
 	void Init(Camera* camera);
+
+	void MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score);
 
 	void Reset();
 
@@ -44,5 +47,7 @@ private:
 	const float spawnReadyTimer_ = 2.0f;
 
 	const int spawnNum_ = 5;
+
+	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;
 };
 

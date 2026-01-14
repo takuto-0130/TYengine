@@ -172,8 +172,6 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyEditor.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp" />
@@ -279,7 +277,6 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiParticle.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiSystem.h" />
     <ClInclude Include="application\Scene\Transition\ITransition.h" />
@@ -319,7 +316,6 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Graphics\Cubemap\CubemapBasis.h" />
     <ClInclude Include="engine\Utility\ObjectBasis\BaseObject.h" />
     <ClInclude Include="application\Object\Enemy\Enemy.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyEditor.h" />
     <ClInclude Include="engine\Utility\Loader\BlenderLevelLoader.h" />
     <ClInclude Include="engine\Effect\CylinderParticle.h" />
     <ClInclude Include="engine\OffScreen\CopyPass.h" />

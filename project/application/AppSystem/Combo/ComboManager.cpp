@@ -25,6 +25,9 @@ void ComboManager::Update()
 
 void ComboManager::OnEnemyDefeated()
 {
-	comboCount_++;
+	if(comboCount_ < 9)
+	{
+		comboCount_++;
+	}
 	comboTimer_ = kComboTime_;
 }

@@ -41,9 +41,9 @@ private:
 
 	std::vector<Sprite*> setColliderSpr_;
 
-	float timer_ = -1.0f;
+	float timer_ = 0.0f;
 
-	float maxTime_ = 3.0f;
+	float maxTime_ = 0.0f;
 
 	jx::JsonManager* jm_;
 };

@@ -9,83 +9,70 @@
 void ScoreUI::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
-	one_ = std::make_unique<Sprite>();
-	one_->Initialize("Resources/Texture/number.png");
-	one_->SetTextureSize({ 64,64 });
-	one_->SetTextureLeftTop({ 128,0 });
-	one_->SetPosition({ 1000,550 });
-	one_->SetSize({ 64,64 });
 
-	two_ = std::make_unique<Sprite>();
-	two_->Initialize("Resources/Texture/number.png");
-	two_->SetTextureSize({ 64,64 });
-	two_->SetTextureLeftTop({ 64,0 });
-	two_->SetPosition({ 45 + 1000,550 });
-	two_->SetSize({ 64,64 });
+	for (auto&& sprite : sprites_)
+	{
+		sprite = std::make_unique<Sprite>();
+		sprite->Initialize("Resources/Texture/number.png");
+		sprite->SetTextureSize(jm_->Get<Vector2>("ScoreUI.Texture.number.TextureSize"));
+		sprite->SetSize(jm_->Get<Vector2>("ScoreUI.Texture.number.Size"));
+		setColliderSpr_.push_back(sprite.get());
+	}
+	// オフセット
+	OffsetPos(jm_->Get<Vector2>("ScoreUI.Texture.number.offsetPlayPos"));
 
-	three_ = std::make_unique<Sprite>();
-	three_->Initialize("Resources/Texture/number.png");
-	three_->SetTextureSize({ 64,64 });
-	three_->SetTextureLeftTop({ 192,0 });
-	three_->SetPosition({ 90 + 1000,550 });
-	three_->SetSize({ 64,64 });
+	scoreViewTime_ = jm_->Get<float>("ScoreUI.ScoreViewTime");
+}
 
-	four_ = std::make_unique<Sprite>();
-	four_->Initialize("Resources/Texture/number.png");
-	four_->SetTextureSize({ 64,64 });
-	four_->SetTextureLeftTop({ 0,0 });
-	four_->SetPosition({ 135 + 1000,550 });
-	four_->SetSize({ 64,64 });
+void ScoreUI::DebugJMApply()
+{
+	for (auto&& sprite : sprites_)
+	{
+		sprite->SetSize(jm_->Get<Vector2>("ScoreUI.Texture.number.Size"));
+	}
+	OffsetPos(jm_->Get<Vector2>("ScoreUI.Texture.number.offsetPlayPos"));
+}
 
-	back_ = std::make_unique<Sprite>();
-	back_->Initialize("Resources/Texture/white2x2.png");
-	back_->SetSize({ 215,80 });
-	back_->SetPosition({ 990,542 });
-	back_->SetColor({ 100.0f/256.0f, 160.0f/256.0f, 7.0f/256.0f, 1.0f });
+void ScoreUI::OffsetPos(const Vector2& pos)
+{
+	Vector2 offsetPos = pos;
+	float offsetWidth = sprites_[THOUSANDS]->GetSize().x * jm_->Get<float>("ScoreUI.Texture.number.offsetWidthScale");
 
-
-	// 一旦オフセット
-	float X = 1020.0f;
-	float Y = 620.0f;
-	one_->SetPosition({ X,Y });
-	two_->SetPosition({ 45.0f + X,Y });
-	three_->SetPosition({ 90.0f + X,Y });
-	four_->SetPosition({ 135.0f + X,Y });
-
-
-	setColliderSpr_.push_back(one_.get());
-	setColliderSpr_.push_back(two_.get());
-	setColliderSpr_.push_back(three_.get());
-	setColliderSpr_.push_back(four_.get());
+	for (int i = 0; i < SpriteNum; ++i)
+	{
+		sprites_[i]->SetPosition({ offsetWidth * i + offsetPos.x, offsetPos.y });
+	}
 }
 
 void ScoreUI::Update()
 {
+#ifdef _DEBUG
+	DebugJMApply();
+#endif // _DEBUG
+
+
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
-	ScoreDisplay();
-	one_->Update();
-	two_->Update();
-	three_->Update();
-	four_->Update();
-	back_->Update();
-	if (scoreViewTimer_ < kScoreViewTime_)
+	ScoreViewSetting();
+	for (auto&& sprite : sprites_)
+	{
+		sprite->Update();
+	}
+	if (scoreViewTimer_ < scoreViewTime_)
 	{
 		scoreViewTimer_ += deltaTime_;
-		if (scoreViewTimer_ > kScoreViewTime_)
+		if (scoreViewTimer_ > scoreViewTime_)
 		{
-			scoreViewTimer_ = kScoreViewTime_;
+			scoreViewTimer_ = scoreViewTime_;
 		}
 	}
 }
 
 void ScoreUI::Draw()
 {
-	//back_->Draw();
-	one_->Draw();
-	two_->Draw();
-	three_->Draw();
-	four_->Draw();
+	for (auto&& sprite : sprites_)
+	{
+		sprite->Draw();
+	}
 }
 
 void ScoreUI::UpdateResult(float currentTime)
@@ -93,90 +80,83 @@ void ScoreUI::UpdateResult(float currentTime)
 	(void)currentTime;
 
 	int32_t view = currentScore_;
-	scoreDisp_.num[0] = view / 1000;
+	scoreDisplay_.num[THOUSANDS] = view / 1000;
 	view = view % 1000;
 
-	scoreDisp_.num[1] = view / 100;
+	scoreDisplay_.num[HUNDREDS] = view / 100;
 	view = view % 100;
 
-	scoreDisp_.num[2] = view / 10;
+	scoreDisplay_.num[TENS] = view / 10;
 	view = view % 10;
 
-	scoreDisp_.num[3] = view;
+	scoreDisplay_.num[ONES] = view;
 
-	if (currentTime < 2.5f)
+	if (currentTime < jm_->Get<float>("ScoreUI.ResultTimer.AlphaTimer"))
 	{
 		currentTime += Timer::GetInstance()->GetDeltaTime();
 
-		float t = currentTime / 2.5f;
+		float t = currentTime / jm_->Get<float>("ScoreUI.ResultTimer.AlphaTimer");
 
-		one_->SetAlpha(t);
-		two_->SetAlpha(t);
-		three_->SetAlpha(t);
-		four_->SetAlpha(t);
+		for (auto&& sprite : sprites_)
+		{
+			sprite->SetAlpha(t);
+		}
 	}
 
-	if (currentTime < 1.5f)
+	// タイマーに到達するまで0~9のランダムな数字を描画
+	if (currentTime < jm_->Get<float>("ScoreUI.ResultTimer.ConfirmedTimer0"))
 	{
-		scoreDisp_.num[0] = Random::GetInstance()->Int(0, 9);
+		scoreDisplay_.num[THOUSANDS] = Random::GetInstance()->Int09();
 	}
-
-	if (currentTime < 2.5f)
+	if (currentTime < jm_->Get<float>("ScoreUI.ResultTimer.ConfirmedTimer1"))
 	{
-		scoreDisp_.num[1] = Random::GetInstance()->Int(0, 9);
+		scoreDisplay_.num[HUNDREDS] = Random::GetInstance()->Int09();
 	}
-
-	if (currentTime < 3.5f)
+	if (currentTime < jm_->Get<float>("ScoreUI.ResultTimer.ConfirmedTimer2"))
 	{
-		scoreDisp_.num[2] = Random::GetInstance()->Int(0, 9);
+		scoreDisplay_.num[TENS] = Random::GetInstance()->Int09();
 	}
-
-	if (currentTime < 4.5f)
+	if (currentTime < jm_->Get<float>("ScoreUI.ResultTimer.ConfirmedTimer3"))
 	{
-		scoreDisp_.num[3] = Random::GetInstance()->Int(0, 9);
+		scoreDisplay_.num[ONES] = Random::GetInstance()->Int09();
 	}
 
+	for (int i = 0; i < SpriteNum; ++i)
+	{
+		sprites_[i]->SetTextureLeftTop({ sprites_[i]->GetTextureSize().x * scoreDisplay_.num[i],0 });
+	}
 
-	one_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[0],0 });
-	two_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[1],0 });
-	three_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[2],0 });
-	four_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[3],0 });
-
-	one_->Update();
-	two_->Update();
-	three_->Update();
-	four_->Update();
+	for (auto&& sprite : sprites_)
+	{
+		sprite->Update();
+	}
 }
 
 void ScoreUI::SetResult()
 {
-	float X = 650.0f;
-	float Y = 360.0f;
-	one_->SetPosition({ X,Y });
-	two_->SetPosition({ 45.0f + X,Y });
-	three_->SetPosition({ 90.0f + X,Y });
-	four_->SetPosition({ 135.0f + X,Y });
+	// オフセット
+	OffsetPos(jm_->Get<Vector2>("ScoreUI.Texture.number.offsetResultPos"));
 }
 
-void ScoreUI::ScoreDisplay()
+void ScoreUI::ScoreViewSetting()
 {
-	float t = scoreViewTimer_ / kScoreViewTime_;
+	float t = scoreViewTimer_ / scoreViewTime_;
 	viewScore_ = int(Lerp(float(prevScore_), float(currentScore_), t));
 
 	int32_t view = viewScore_;
-	scoreDisp_.num[0] = view / 1000;
+	scoreDisplay_.num[THOUSANDS] = view / 1000;
 	view = view % 1000;
 
-	scoreDisp_.num[1] = view / 100;
+	scoreDisplay_.num[HUNDREDS] = view / 100;
 	view = view % 100;
 
-	scoreDisp_.num[2] = view / 10;
+	scoreDisplay_.num[TENS] = view / 10;
 	view = view % 10;
 
-	scoreDisp_.num[3] = view;
+	scoreDisplay_.num[ONES] = view;
 
-	one_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[0],0 });
-	two_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[1],0 });
-	three_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[2],0 });
-	four_->SetTextureLeftTop({ 64.0f * scoreDisp_.num[3],0 });
+	for (int i = 0; i < SpriteNum; ++i)
+	{
+		sprites_[i]->SetTextureLeftTop({ sprites_[i]->GetTextureSize().x * scoreDisplay_.num[i],0 });
+	}
 }

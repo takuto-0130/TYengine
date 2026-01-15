@@ -68,6 +68,10 @@ void ResultClass::Reset()
 
 void ResultClass::Update()
 {
+#ifdef _DEBUG
+	DebugJMApply();
+#endif // _DEBUG
+
 	Move();
 	for (auto& sprite : sprites_)
 	{
@@ -102,6 +106,6 @@ void ResultClass::Move()
 	}
 	else
 	{
-		timer_ = -1.0f;
+		timer_ = jm_->Get<float>("Result.timer.reset");
 	}
 }

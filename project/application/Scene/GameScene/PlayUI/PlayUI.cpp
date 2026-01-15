@@ -90,6 +90,18 @@ void PlayUI::DebugJMApply()
 	sprites_[SHIFT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
 }
 
+void PlayUI::SetShiftPos(const Vector2& pos)
+{
+	float windowWidth = 1280.0f;
+	float windowHeight = 720.0f;
+
+	Vector2 pixelPos;
+	pixelPos.x = (pos.x + 1.0f) * 0.5f * windowWidth;
+
+	pixelPos.y = ((1.0f - pos.y) * 0.5f * windowHeight) + 30.0f;
+	sprites_[SHIFT]->SetPosition(pixelPos);
+}
+
 void PlayUI::Update()
 {
 #ifdef _DEBUG

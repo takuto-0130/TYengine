@@ -180,7 +180,14 @@ void Audio::Initialize(const std::string& directoryPath)
 	assert(SUCCEEDED(result));
 	// マスターボイスの生成
 	result = xAudio2->CreateMasteringVoice(&masterVoice);
-	assert(SUCCEEDED(result));
+
+	if (FAILED(result))
+	{
+		// ログに警告を出す（デバッグ用）
+		Logger::Log("Audio Warning: Failed to initialize audio client.\n");
+
+		assert(SUCCEEDED(result));
+	}
 
 	// ============================================
 	//   ★ SubmixVoice を作り、ここに XAPO を付ける

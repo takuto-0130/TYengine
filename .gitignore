@@ -376,6 +376,9 @@ x86/
 generated/
 outputs/
 
+# Assimp lib
+!externals/assimp/lib/
+
 *.obj
 *.pdb
 *.idb
@@ -389,13 +392,12 @@ outputs/
 *.lib
 *.exe
 *.dll
+*.bak
+imgui.ini
 
 # 例外ルール：externals内のDLLは追跡
 !externals/dxcompiler.dll
 !externals/dxil.dll
-
-# Assimp lib
-!externals/assimp/lib/
 
 # 例外：Resourcesフォルダのモデル用 .obj は追跡
 !project/Resources/**/*.obj

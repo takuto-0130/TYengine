@@ -352,7 +352,7 @@
     <ClCompile Include="engine\Effect\ExplosionRingBehaviour.cpp" />
     <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />
     <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
-    <ClCompile Include="engine\Audio\xapobase.cpp" />
+    <ClCompile Include="externals\xapobase.cpp" />
     <ClCompile Include="engine\Audio\AudioAnalyzer.cpp" />
   </ItemGroup>
   <ItemGroup>

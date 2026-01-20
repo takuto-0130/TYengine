@@ -157,9 +157,6 @@
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp">
       <Filter>application\source</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneCollision.cpp">
-      <Filter>application\source</Filter>
-    </ClCompile>
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp">
       <Filter>application\source</Filter>
     </ClCompile>

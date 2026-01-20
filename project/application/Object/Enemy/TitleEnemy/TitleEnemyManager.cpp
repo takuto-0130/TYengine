@@ -70,7 +70,7 @@ Vector3 TitleEnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 	std::uniform_real_distribution<float> dist(enemyPopDepthMin_, enemyPopDepthMax_);
 
 	return camPos
-		+ camForward * /*dist(gen)*/20.0f
+		+ camForward * 25.0f
 		+ camRight * (offset.x * xRange)
 		+ camUp * (offset.y * yRange);
 }

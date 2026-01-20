@@ -37,7 +37,6 @@ void DirectXBasis::Initialize(WindowsApp* windowsApp)
 	InitViewportRect();
 	InitScissorRect();
 	CreateDXCCompiler();
-	InitImGui();
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXBasis::GetSRVCpuDescriptorHandle(uint32_t index)
@@ -225,10 +224,6 @@ void DirectXBasis::DrawBegin()
 
 	float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };//RGBA
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
-
-	//描画用のDiscriptorHeapの設定
-	/*ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescripterHeap_.Get() };
-	commandList_->SetDescriptorHeaps(1, descriptorHeaps);*/
 
 	ClearDepthStencilView();
 
@@ -529,18 +524,6 @@ void DirectXBasis::CreateDXCCompiler()
 
 	hr = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
 	assert(SUCCEEDED(hr));
-}
-
-void DirectXBasis::InitImGui()
-{
-	/*IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(windowsApp_->GetHwnd());
-	ImGui_ImplDX12_Init(device_.Get(),
-		swapChainDesc_.BufferCount, rtvDesc_.Format, srvDescripterHeap_.Get(),
-		srvDescripterHeap_->GetCPUDescriptorHandleForHeapStart(),
-		srvDescripterHeap_->GetGPUDescriptorHandleForHeapStart());*/
 }
 
 void DirectXBasis::InitFixFPS()

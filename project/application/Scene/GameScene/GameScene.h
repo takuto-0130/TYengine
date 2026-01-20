@@ -66,9 +66,6 @@ private:
 	void PlayUIUpdate();
 	void ComboUIUpdate();
 
-	// GameSceneCollision
-	void Collision();
-
 	// EmitterInit
 	void EmitterInit();
 

@@ -156,7 +156,6 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\emitterInit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="application\Object\Rail\Rail.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneCollision.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp" />

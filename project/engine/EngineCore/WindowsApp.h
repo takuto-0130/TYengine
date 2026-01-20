@@ -15,10 +15,10 @@ public:// 動的メンバ関数
 	// メッセージ処理
 	bool ProcessMessage();
 
-	// ウィンドウハンドルのgetter
+	// ウィンドウハンドルの getter
 	HWND GetHwnd() const { return hwnd; }
 
-	// ウィンドウクラスのgetter
+	// ウィンドウクラスの getter
 	HINSTANCE GetHInstance() const { return wc.hInstance; }
 
 	// 終了処理

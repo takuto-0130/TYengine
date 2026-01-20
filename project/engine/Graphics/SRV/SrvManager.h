@@ -40,7 +40,7 @@ public:
     /// <param name="resource">対象リソース（ID3D12Resource）。</param>
     /// <param name="format">フォーマット。</param>
     /// <param name="mipLevels">ミップレベル数。</param>
-    void CreateSRVforTexture2D(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels);
+    void CreateSRVForTexture2D(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels);
 
     /// <summary>
     /// 構造化バッファ用の SRV を作成する。
@@ -49,7 +49,7 @@ public:
     /// <param name="resource">対象リソース。</param>
     /// <param name="elementCount">要素数。</param>
     /// <param name="elementSize">1 要素のサイズ（バイト）。</param>
-    void CreateSRVforStructuredBuffer(uint32_t index, ID3D12Resource* resource, UINT elementCount, UINT elementSize);
+    void CreateSRVForStructuredBuffer(uint32_t index, ID3D12Resource* resource, UINT elementCount, UINT elementSize);
 
     /// <summary>
     /// グラフィックスパイプラインのルートパラメータに SRV テーブルをセットする。
@@ -100,7 +100,7 @@ public:
     /// <param name="resource">対象リソース。</param>
     /// <param name="format">フォーマット。</param>
     /// <param name="mipLevels">ミップレベル数。</param>
-    void CreateSRVforTextureCube(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels);
+    void CreateSRVForTextureCube(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels);
 
 private:
     DirectXBasis* dxBasis_ = nullptr;                                   ///< DirectX 基盤。

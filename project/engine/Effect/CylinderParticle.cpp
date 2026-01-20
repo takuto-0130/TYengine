@@ -41,7 +41,7 @@ void CylinderParticle::CreateResources() {
     instancingResource_ = dxBasis_->CreateBufferResource(sizeof(ParticleForGPU) * kMaxInstance);
     instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
     srvIndex_ = srvManager_->Allocate();
-    srvManager_->CreateSRVforStructuredBuffer(srvIndex_, instancingResource_.Get(), kMaxInstance, sizeof(ParticleForGPU));
+    srvManager_->CreateSRVForStructuredBuffer(srvIndex_, instancingResource_.Get(), kMaxInstance, sizeof(ParticleForGPU));
 
     materialResource_ = dxBasis_->CreateBufferResource(256);
     materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));

@@ -20,7 +20,7 @@ void ModelManager::Initialize(DirectXBasis* dxManager, SrvManager* srvManager)
 void ModelManager::LoadModel(const std::string& directoryPath, const std::string& fileName)
 {
 	if (models_.contains(fileName)) {
-		return;// 読み込み済みなら早期return
+		return;// 読み込み済みなら早期 return
 	}
 
 	std::unique_ptr<Model> model = std::make_unique<Model>();
@@ -32,10 +32,10 @@ void ModelManager::LoadModel(const std::string& directoryPath, const std::string
 Model* ModelManager::FindModel(const std::string& filePath)
 {
 	if (models_.contains(filePath)) {
-		// 読み込みモデルを戻り値としてreturn
+		// 読み込みモデルを戻り値として return
 		return models_.at(filePath).get();
 	}
 
-	// ファイル名が一致しなければnull
+	// ファイル名が一致しなければ null
 	return nullptr;
 }

@@ -189,7 +189,7 @@ private: // メンバ変数
     Microsoft::WRL::ComPtr<ID3D12Resource> depthBuffer_;
 
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescripterHeap_;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> samplerHeap_;
 

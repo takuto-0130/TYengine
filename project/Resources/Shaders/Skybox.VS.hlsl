@@ -1,12 +1,12 @@
 #include "Skybox.hlsli"
 
-struct TransfomationMatrix
+struct TransformationMatrix
 {
     float4x4 WVP;
     float4x4 World;
     float4x4 WorldInverseTranspose;
 };
-ConstantBuffer<TransfomationMatrix> gTransformationMatrix : register(b1);
+ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b1);
 
 struct VertexShaderInput
 {

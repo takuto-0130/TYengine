@@ -26,7 +26,7 @@ void GameScene::InitResult()
 		400,
 		"Resources/Texture/white2x2.png",
 		WindowsApp::kClientWidth,
-		WindowsApp::kClientHieght
+		WindowsApp::kClientHeight
 	);
 
 	confetti_.SetUIColliders(uiCollider_.GetAABBs());

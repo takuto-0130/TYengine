@@ -39,7 +39,7 @@ private: // メンバ変数
 
 	Vector3 followCameraOffsetPosition_ = Vector3(0.0f, 20.0f, -35.0f);
 
-	Vector3 followCameraOffsetRotare_ = Vector3(0.51f, 0.0f, 0.0f);
+	Vector3 followCameraOffsetRotate_ = Vector3(0.51f, 0.0f, 0.0f);
 
 	Vector3 shake_ = {};
 
@@ -57,7 +57,7 @@ public: // メンバ関数
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
-	void SetOffsetRotate(const Vector3& rotate) { followCameraOffsetRotare_ = rotate; }
+	void SetOffsetRotate(const Vector3& rotate) { followCameraOffsetRotate_ = rotate; }
 	void SetOffsetTranslate(const Vector3& translate) { followCameraOffsetPosition_ = translate; }
 
 	void SetShake(const Vector3& shake) { shake_ = shake; }

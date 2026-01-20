@@ -396,7 +396,7 @@ void DirectXBasis::CreateSwapChain()
 	HRESULT hr = S_FALSE;
 	//スワップチェーン
 	swapChainDesc_.Width = WindowsApp::kClientWidth;
-	swapChainDesc_.Height = WindowsApp::kClientHieght;
+	swapChainDesc_.Height = WindowsApp::kClientHeight;
 	swapChainDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc_.SampleDesc.Count = 1;
 	swapChainDesc_.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -418,7 +418,7 @@ void DirectXBasis::CreateDepthBuffer()
 	//生成するResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
 	resourceDesc.Width = WindowsApp::kClientWidth;
-	resourceDesc.Height = WindowsApp::kClientHieght;
+	resourceDesc.Height = WindowsApp::kClientHeight;
 	resourceDesc.MipLevels = 1;
 	resourceDesc.DepthOrArraySize = 1;
 	resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//DepthStencilとして利用可能なフォーマット
@@ -501,7 +501,7 @@ void DirectXBasis::InitViewportRect()
 {
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewportRect_.Width = WindowsApp::kClientWidth;
-	viewportRect_.Height = WindowsApp::kClientHieght;
+	viewportRect_.Height = WindowsApp::kClientHeight;
 	viewportRect_.TopLeftX = 0;
 	viewportRect_.TopLeftY = 0;
 	viewportRect_.MinDepth = 0.0f;
@@ -514,7 +514,7 @@ void DirectXBasis::InitScissorRect()
 	scissorRect_.left = 0;
 	scissorRect_.right = WindowsApp::kClientWidth;
 	scissorRect_.top = 0;
-	scissorRect_.bottom = WindowsApp::kClientHieght;
+	scissorRect_.bottom = WindowsApp::kClientHeight;
 }
 
 void DirectXBasis::CreateDXCCompiler()

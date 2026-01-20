@@ -7,7 +7,7 @@ void GameScene::Collision()
 	/*int i = 0;
 	for (auto& enemy : stageManager_->GetActiveEnemies()) {
 		Vector3 pos = enemy->GetWorldPosition();
-		Matrix4x4 matView = MakeViewportMatrix(0, 0, WindowsApp::kClientWidth, WindowsApp::kClientHieght, 0, 1);
+		Matrix4x4 matView = MakeViewportMatrix(0, 0, WindowsApp::kClientWidth, WindowsApp::kClientHeight, 0, 1);
 		Matrix4x4 matVPV = camera_->GetViewMatrix() * camera_->GetProjectionMatrix() * matView;
 		pos = TransformM(pos, matVPV);
 		Vector2 mouse = input_->GetMousePosition();

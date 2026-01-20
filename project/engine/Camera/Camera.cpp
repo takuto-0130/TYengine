@@ -8,7 +8,7 @@
 Camera::Camera()
 	: transform_({ {1.0f,1.0f,1.0f},{0.3f,0.0f,0.0f},{0.0f,4.0f,-10.0f} })
 	, horizontalFOV_(0.45f)
-	, aspectRatio_(float(WindowsApp::kClientWidth) / float(WindowsApp::kClientHieght))
+	, aspectRatio_(float(WindowsApp::kClientWidth) / float(WindowsApp::kClientHeight))
 	, nearClip_(2.0f)
 	, farClip_(500.0f)
 	, worldMatrix_(MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate))
@@ -48,7 +48,7 @@ void Camera::Update()
 void Camera::FollowCamera(const Vector3& target)
 {
 	// カメラの位置を対象の後方に設定
-	transform_.rotate = followCameraOffsetRotare_;
+	transform_.rotate = followCameraOffsetRotate_;
 	transform_.translate = target + followCameraOffsetPosition_;
 	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	viewMatrix_ = Inverse(worldMatrix_);

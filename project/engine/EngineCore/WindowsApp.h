@@ -27,7 +27,7 @@ public:// 動的メンバ関数
 public:// 定数
 	// クライアント領域 縦横幅
 	static const int32_t kClientWidth = 1280;
-	static const int32_t kClientHieght = 720;
+	static const int32_t kClientHeight = 720;
 private:
 	// ウィンドウハンドル
 	HWND hwnd = nullptr;

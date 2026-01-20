@@ -120,14 +120,14 @@ private:
     /// World：ワールド行列  
     /// WorldInverseTranspose：法線変換用
     /// </summary>
-    struct CubeTransfomationMatrix
+    struct CubeTransformationMatrix
     {
         Matrix4x4 WVP;
         Matrix4x4 World;
         Matrix4x4 WorldInverseTranspose;
     };
     Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_; ///< 行列 CB リソース。
-    CubeTransfomationMatrix* transformationMatrixData_ = nullptr;         ///< 行列 CB マップ先。
+    CubeTransformationMatrix* transformationMatrixData_ = nullptr;         ///< 行列 CB マップ先。
 
     // ========================
     //       Buffer Views

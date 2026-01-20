@@ -1,5 +1,5 @@
 
-$projectDir = "c:\Users\k023g\source\repos\TYengine\project"
+$projectDir = Get-Item "$PSScriptRoot\.." | Select-Object -ExpandProperty FullName
 $vcxprojPath = Join-Path $projectDir "TYengine.vcxproj"
 $filtersPath = Join-Path $projectDir "TYengine.vcxproj.filters"
 

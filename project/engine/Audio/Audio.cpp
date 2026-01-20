@@ -304,7 +304,7 @@ void Audio::ReStartBGM(int resourceNum)
 
 void Audio::SetBGMVolume(int resourceNum, float volume)
 {
-	pSourceVoices_[resourceNum]->SetVolume(/*std::clamp(*/volume/*, 0.0f, 1.0f)*/);
+	pSourceVoices_[resourceNum]->SetVolume(volume);
 }
 
 void Audio::LoadWave(const char* filename)

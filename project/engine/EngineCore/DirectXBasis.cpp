@@ -41,12 +41,12 @@ void DirectXBasis::Initialize(WindowsApp* windowsApp)
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXBasis::GetSRVCpuDescriptorHandle(uint32_t index)
 {
-	return GetCpuDescriptorHandle(srvDescripterHeap_, descriptorSizeSRV_, index);
+	return GetCpuDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV_, index);
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE DirectXBasis::GetSRVGpuDescriptorHandle(uint32_t index)
 {
-	return  GetGpuDescriptorHandle(srvDescripterHeap_, descriptorSizeSRV_, index);
+	return  GetGpuDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV_, index);
 }
 
 ComPtr<IDxcBlob> DirectXBasis::CompileShader(const std::wstring& filePath, const wchar_t* profile)
@@ -72,7 +72,7 @@ ComPtr<IDxcBlob> DirectXBasis::CompileShader(const std::wstring& filePath, const
 		L"-Od",
 		L"-Zpr",
 	};
-	//実際にshaderをコンパイルする
+	//実際に shader をコンパイルする
 	IDxcResult* shaderResult = nullptr;
 	hr = dxcCompiler_->Compile(
 		&shaderSourceBuffer,

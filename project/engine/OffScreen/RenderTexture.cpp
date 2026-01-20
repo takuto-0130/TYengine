@@ -48,7 +48,7 @@ void RenderTexture::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager, ui
     dxBasis_->GetDevice()->CreateRenderTargetView(texture_.Get(), nullptr, rtvHandle_);
 
     srvIndex_ = srvManager_->Allocate();
-    srvManager_->CreateSRVforTexture2D(srvIndex_, texture_.Get(), format, 1);
+    srvManager_->CreateSRVForTexture2D(srvIndex_, texture_.Get(), format, 1);
 
     currentState_ = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
@@ -189,7 +189,7 @@ void RenderTexture::CreateDepthStencil()
 
     // SRV作成（HLSLから読み取り用）
     depthSRVIndex_ = srvManager_->Allocate();
-    srvManager_->CreateSRVforTexture2D(
+    srvManager_->CreateSRVForTexture2D(
         depthSRVIndex_,
         depthBuffer_.Get(),
         DXGI_FORMAT_R24_UNORM_X8_TYPELESS,

@@ -315,7 +315,7 @@ void Audio::LoadWave(const char* filename)
 		return;
 	}
 
-	// ファイル入力streamのインスタンス
+	// ファイル入力 stream のインスタンス
 	std::ifstream file;
 	std::string filePath = directoryPath_;
 	filePath += filename;

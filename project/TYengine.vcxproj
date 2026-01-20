@@ -199,7 +199,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\Effect\IParticleRenderer.cpp" />
     <ClCompile Include="engine\EngineCore\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\EngineCore\DirectXBasis.cpp" />
-    <ClCompile Include="engine\EngineCore\Logger.cpp" />
+    <ClCompile Include="engine\Debugger\Logger.cpp" />
     <ClCompile Include="engine\EngineCore\WindowsApp.cpp" />
     <ClCompile Include="engine\Framework\GameCore.cpp" />
     <ClCompile Include="engine\Framework\SceneBase\SceneManager.cpp" />
@@ -324,7 +324,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Effect\IParticleRenderer.h" />
     <ClInclude Include="engine\EngineCore\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\EngineCore\DirectXBasis.h" />
-    <ClInclude Include="engine\EngineCore\Logger.h" />
+    <ClInclude Include="engine\Debugger\Logger.h" />
     <ClInclude Include="engine\EngineCore\WindowsApp.h" />
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h" />
     <ClInclude Include="engine\Framework\GameCore.h" />

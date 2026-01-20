@@ -21,6 +21,11 @@ void ImGuiManager::Initialize(WindowsApp* winApp, DirectXBasis* dxBasis)
 
 	// ImGuiのコンテキストを生成
 	ImGui::CreateContext();
+	// リリースビルド時は設定ファイル(imgui.ini)を出力しない
+	ImGuiIO& io = ImGui::GetIO();
+#ifndef _DEBUG
+	io.IniFilename = nullptr;
+#endif
 	// ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
 

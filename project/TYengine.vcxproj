@@ -177,7 +177,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp" />
     <ClCompile Include="engine\Audio\AudioAnalyzer.cpp" />
     <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
-    <ClCompile Include="engine\Audio\xapobase.cpp" />
+    <ClCompile Include="externals\xapobase.cpp" />
     <ClCompile Include="engine\Effect\ContrailBehaviour.cpp" />
     <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />
     <ClCompile Include="engine\Effect\ExplosionBehaviour.cpp" />

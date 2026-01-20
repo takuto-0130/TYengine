@@ -86,11 +86,6 @@ void GameScene::Init()
 void GameScene::Update()
 {
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_3))
-	{
-		bulletTime_->Trigger(0.05f, 0.5f, 2.0f, 0.8f,
-			EaseFixed::InQuart, EaseFixed::OutQuart);
-	}
 	ImGui::Begin("GameScene State Debug");
 	DebugImGui("GameScene");
 	ImGui::End();

@@ -135,7 +135,7 @@ void ObjectCubemap::CreateMaterialResource()
 
 void ObjectCubemap::CreateTransformationMatrixResource()
 {
-    transformationMatrixResource_ = CubemapBasis::GetInstance()->GetDirectXBasis()->CreateBufferResource(sizeof(CubeTransfomationMatrix));
+    transformationMatrixResource_ = CubemapBasis::GetInstance()->GetDirectXBasis()->CreateBufferResource(sizeof(CubeTransformationMatrix));
     transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
     // 単位行列を書き込んでおく
     transformationMatrixData_->WVP = MakeIdentity4x4();

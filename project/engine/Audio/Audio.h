@@ -143,7 +143,7 @@ public:
 			}
 		}
 		else {
-			Logger::Log("UnInitialized streamVoice.");
+			Logger::Log("Uninitialized streamVoice.");
 		}
 	}
 
@@ -182,7 +182,7 @@ private:
 			Logger::Log("Failed to create reverb effect.");
 		}
 		else {
-			Logger::Log("succece to create reverb effect.");
+			Logger::Log("succeeded to create reverb effect.");
 		}
 		// エフェクトチェーンの設定
 		effect[0].pEffect = reverbEffect;  // リバーブエフェクトのインターフェース

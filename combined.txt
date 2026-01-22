@@ -9353,39 +9353,6 @@ void Audio::Initialize(const std::string& directoryPath)
 	result = analyzerSubmix->SetOutputVoices(&sends);
 	assert(SUCCEEDED(result));
 
-	// ============================================
-	//   ★ SubmixVoice を作り、ここに XAPO を付ける
-	// ============================================
-
-	// MasterVoice と同じフォーマットで作る
-	XAUDIO2_VOICE_DETAILS details = {};
-	masterVoice->GetVoiceDetails(&details);
-
-	result = xAudio2->CreateSubmixVoice(
-		&analyzerSubmix,
-		details.InputChannels,
-		details.InputSampleRate
-	);
-	assert(SUCCEEDED(result));
-
-	// XAPO インスタンス
-	analyzerXAPO = new MyAnalyzerXAPO();
-
-	// Effect desc
-	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
-	effectDesc.InitialState = TRUE;
-	effectDesc.OutputChannels = details.InputChannels;
-	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO);
-
-	// Effect chain
-	XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
-	effectChainXAPO.EffectCount = 1;
-	effectChainXAPO.pEffectDescriptors = &effectDesc;
-
-	// SubmixVoice に XAPO をセット
-	result = analyzerSubmix->SetEffectChain(&effectChainXAPO);
-	assert(SUCCEEDED(result));
-
 	xAudio2->StartEngine();
 
 	// ---- ★無音バッファ用 Voice を作成 ----

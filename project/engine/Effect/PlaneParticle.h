@@ -3,13 +3,7 @@
 
 class PlaneParticle : public IParticleRenderer {
 public:
-    /*void Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam) override;
-    void Update() override;
-    void Draw() override;*/
-
 private:
-
     void CreateResources() override;
     ParticleParam MakeNewParticle(std::mt19937& random, const Emitter& emitter) override;
-    //void Update() override;
 };

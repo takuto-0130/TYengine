@@ -42,16 +42,16 @@ FadeTransition::FadeTransition(FadeTransition::Type type, float duration)
 void FadeTransition::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/blackScreen.png");
-	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize("Resources/Texture/blackScreen.png");
-	sprite_->SetSize(Vector2{ 1280.0f,720.0f });
-	sprite_->SetTextureSize(Vector2{ 1280,720 });
+	sprites_ = std::make_unique<Sprite>();
+	sprites_->Initialize("Resources/Texture/blackScreen.png");
+	sprites_->SetSize(Vector2{ 1280.0f,720.0f });
+	sprites_->SetTextureSize(Vector2{ 1280,720 });
 }
 
 void FadeTransition::Draw()
 {
 	SpriteBasis::GetInstance()->BasisDrawSetting();
-	sprite_->Draw();
+	sprites_->Draw();
 }
 
 bool FadeTransition::IsFinished() const
@@ -62,14 +62,14 @@ bool FadeTransition::IsFinished() const
 
 void FadeTransition::InitIdle()
 {
-	sprite_->SetColor(Vector4{ 1,1,1,1 });
-	sprite_->Update();
+	sprites_->SetColor(Vector4{ 1,1,1,1 });
+	sprites_->Update();
 }
 
 void FadeTransition::UpdateIdle()
 {
-	sprite_->SetColor(Vector4{ 1,1,1,1 });
-	sprite_->Update();
+	sprites_->SetColor(Vector4{ 1,1,1,1 });
+	sprites_->Update();
 }
 
 void FadeTransition::ExitIdle()
@@ -78,18 +78,18 @@ void FadeTransition::ExitIdle()
 
 void FadeTransition::InitEntering()
 {
-	sprite_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
+	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
 void FadeTransition::UpdateEntering()
 {
-	sprite_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f - std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
+	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f - std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
 	if (GetStateElapsedTime() >= duration_)
 	{
 		finished_ = true;
-		sprite_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
+		sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
 	}
-	sprite_->Update();
+	sprites_->Update();
 }
 
 void FadeTransition::ExitEntering()
@@ -98,18 +98,18 @@ void FadeTransition::ExitEntering()
 
 void FadeTransition::InitExiting()
 {
-	sprite_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
+	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
 }
 
 void FadeTransition::UpdateExiting()
 {
-	sprite_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
+	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
 	if (GetStateElapsedTime() >= duration_)
 	{
 		finished_ = true;
-		sprite_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
+		sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
 	}
-	sprite_->Update();
+	sprites_->Update();
 }
 
 void FadeTransition::ExitExiting()

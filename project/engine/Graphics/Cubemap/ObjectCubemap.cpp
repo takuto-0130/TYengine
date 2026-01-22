@@ -73,7 +73,7 @@ void ObjectCubemap::CreateVertexData()
 
     indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
     indexBufferView_.SizeInBytes = sizeof(uint32_t) * 36; // 使用するリソースのサイズはインデックス36個分のサイズ
-    indexBufferView_.Format = DXGI_FORMAT_R32_UINT; // インデックスはuint32_tとする
+    indexBufferView_.Format = DXGI_FORMAT_R32_UINT; // インデックスは uint32_t とする
 
     vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
     // 手前
@@ -135,7 +135,7 @@ void ObjectCubemap::CreateMaterialResource()
 
 void ObjectCubemap::CreateTransformationMatrixResource()
 {
-    transformationMatrixResource_ = CubemapBasis::GetInstance()->GetDirectXBasis()->CreateBufferResource(sizeof(CubeTransfomationMatrix));
+    transformationMatrixResource_ = CubemapBasis::GetInstance()->GetDirectXBasis()->CreateBufferResource(sizeof(CubeTransformationMatrix));
     transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
     // 単位行列を書き込んでおく
     transformationMatrixData_->WVP = MakeIdentity4x4();

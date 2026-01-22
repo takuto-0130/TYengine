@@ -100,7 +100,7 @@ private:
     DirectXBasis* dxBasis_ = nullptr;   ///< DirectX 基盤。
     SrvManager* srvManager_ = nullptr;  ///< SRV 管理クラス。
 
-    std::unordered_map<std::string, TextureData> textureDatas_; ///< ファイルパスをキーにしたテクスチャデータ管理。
+    std::unordered_map<std::string, TextureData> textureData_; ///< ファイルパスをキーにしたテクスチャデータ管理。
 
     std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> temporaryBuffers_; ///< 一時アップロード用バッファ。
 

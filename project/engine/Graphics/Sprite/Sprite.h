@@ -123,7 +123,7 @@ private: // メンバ変数
     };
 
     /// <summary>座標変換行列データ構造体。</summary>
-    struct TransfomationMatrix
+    struct TransformationMatrix
     {
         Matrix4x4 WVP; ///< ワールド × ビュー × プロジェクション行列。
     };
@@ -140,7 +140,7 @@ private: // メンバ変数
     uint32_t* indexData_ = nullptr;                 ///< インデックスデータのマップポインタ。
     VertexData* vertexData_ = nullptr;              ///< 頂点データのマップポインタ。
     Material* materialData_ = nullptr;              ///< マテリアルデータのマップポインタ。
-    TransfomationMatrix* transformationMatrixData_ = nullptr; ///< 行列データのマップポインタ。
+    TransformationMatrix* transformationMatrixData_ = nullptr; ///< 行列データのマップポインタ。
 
     D3D12_INDEX_BUFFER_VIEW indexBufferView_;       ///< インデックスバッファビュー。
     D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;     ///< 頂点バッファビュー。

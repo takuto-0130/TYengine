@@ -15,7 +15,7 @@ void TextureManager::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager) {
 }
 
 void TextureManager::LoadTexture(const std::string& filePath) {
-    if (textureDatas_.contains(filePath)) return;
+    if (textureData_.contains(filePath)) return;
 
     assert(srvManager_ != nullptr);
     assert(dxBasis_ != nullptr);
@@ -84,26 +84,26 @@ void TextureManager::LoadTexture(const std::string& filePath) {
     dxBasis_->GetDevice()->CreateShaderResourceView(
         textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 
-    textureDatas_[filePath] = textureData;
+    textureData_[filePath] = textureData;
     OutputDebugStringA(("Already loaded: " + filePath + "\n").c_str());
 }
 
 uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath) {
-    assert(textureDatas_.contains(filePath));
-    return textureDatas_.at(filePath).srvIndex;
+    assert(textureData_.contains(filePath));
+    return textureData_.at(filePath).srvIndex;
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath)
 {
 	assert(srvManager_->CanAllocate());
 
-	TextureData& textureData = textureDatas_[filePath];
+	TextureData& textureData = textureData_[filePath];
 	return textureData.srvHandleGPU;
 }
 
 const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& filePath) {
-    assert(textureDatas_.contains(filePath));
-    return textureDatas_.at(filePath).metadata;
+    assert(textureData_.contains(filePath));
+    return textureData_.at(filePath).metadata;
 }
 
 void TextureManager::NextFrame()
@@ -170,5 +170,5 @@ void TextureManager::CreateDummyCubemap() {
         D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
     commandList->ResourceBarrier(1, &barrier);
 
-    srvManager_->CreateSRVforTextureCube(dummyCubemapIndex_, dummyCubemap_.Get(), DXGI_FORMAT_R8G8B8A8_UNORM, 1);
+    srvManager_->CreateSRVForTextureCube(dummyCubemapIndex_, dummyCubemap_.Get(), DXGI_FORMAT_R8G8B8A8_UNORM, 1);
 }

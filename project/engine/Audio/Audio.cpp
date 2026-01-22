@@ -180,7 +180,14 @@ void Audio::Initialize(const std::string& directoryPath)
 	assert(SUCCEEDED(result));
 	// マスターボイスの生成
 	result = xAudio2->CreateMasteringVoice(&masterVoice);
-	assert(SUCCEEDED(result));
+
+	if (FAILED(result))
+	{
+		// ログに警告を出す（デバッグ用）
+		Logger::Log("Audio Warning: Failed to initialize audio client.\n");
+
+		assert(SUCCEEDED(result));
+	}
 
 	// ============================================
 	//   ★ SubmixVoice を作り、ここに XAPO を付ける
@@ -225,6 +232,39 @@ void Audio::Initialize(const std::string& directoryPath)
 	sends.pSends = &sendDesc;
 
 	result = analyzerSubmix->SetOutputVoices(&sends);
+	assert(SUCCEEDED(result));
+
+	// ============================================
+	//   ★ SubmixVoice を作り、ここに XAPO を付ける
+	// ============================================
+
+	// MasterVoice と同じフォーマットで作る
+	XAUDIO2_VOICE_DETAILS details = {};
+	masterVoice->GetVoiceDetails(&details);
+
+	result = xAudio2->CreateSubmixVoice(
+		&analyzerSubmix,
+		details.InputChannels,
+		details.InputSampleRate
+	);
+	assert(SUCCEEDED(result));
+
+	// XAPO インスタンス
+	analyzerXAPO = new MyAnalyzerXAPO();
+
+	// Effect desc
+	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
+	effectDesc.InitialState = TRUE;
+	effectDesc.OutputChannels = details.InputChannels;
+	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO);
+
+	// Effect chain
+	XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
+	effectChainXAPO.EffectCount = 1;
+	effectChainXAPO.pEffectDescriptors = &effectDesc;
+
+	// SubmixVoice に XAPO をセット
+	result = analyzerSubmix->SetEffectChain(&effectChainXAPO);
 	assert(SUCCEEDED(result));
 
 	xAudio2->StartEngine();
@@ -304,7 +344,7 @@ void Audio::ReStartBGM(int resourceNum)
 
 void Audio::SetBGMVolume(int resourceNum, float volume)
 {
-	pSourceVoices_[resourceNum]->SetVolume(/*std::clamp(*/volume/*, 0.0f, 1.0f)*/);
+	pSourceVoices_[resourceNum]->SetVolume(volume);
 }
 
 void Audio::LoadWave(const char* filename)
@@ -315,7 +355,7 @@ void Audio::LoadWave(const char* filename)
 		return;
 	}
 
-	// ファイル入力streamのインスタンス
+	// ファイル入力 stream のインスタンス
 	std::ifstream file;
 	std::string filePath = directoryPath_;
 	filePath += filename;

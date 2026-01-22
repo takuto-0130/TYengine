@@ -67,27 +67,16 @@ void Player::Init()
 	ChangeState(PlayerState::ROOT);
 
 	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
+	bulletManager_->SetCamera(camera_);
 	bulletManager_->Init();
 	
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
 
-	hitpoint_ = 5;
+	hitpoint_ = 9;
 
 	// test
 	TestReticleInit();
-
-	//auto contrail = std::make_unique<PlaneParticle>();  // 板ポリ形状
-	//contrail->SetBehaviour(std::make_unique<ContrailBehaviour>()); // 挙動を設定
-
-	//contrailIndex_ = ParticleManager::GetInstance()->Add(std::move(contrail));
-
-	//IParticleRenderer::Emitter e;
-	//e.transform.translate = { 0, 0, 0 };
-	//e.count = 1;
-	//e.frequency = 0.01f; // 毎フレーム発生
-
-	//ParticleManager::GetInstance()->SetEmitter(contrailIndex_, e);
 }
 
 void Player::Update()
@@ -124,6 +113,28 @@ void Player::Draw()
 	}
 }
 
+
+////////////////////// ちょっとおかしいので後に修正 //////////////////////
+void Player::TakeDamage()
+{
+#ifdef _DEBUG
+	// デバッグ時ダメージ処理
+
+#else
+	// 通常ダメージ処理
+	--hitpoint_;
+#endif // _DEBUG
+
+	if (hitpoint_ > 0)
+	{
+		ChangeState(PlayerState::TAKE_DAMAGE);
+	}
+	else
+	{
+		OnCollision();
+	}
+}
+
 void Player::OnCollision()
 {
 	isDead_ = true;
@@ -138,11 +149,14 @@ void Player::OnCollision()
 
 	ParticleManager::GetInstance()->TriggerEmit(4, true);
 }
+////////////////////// ちょっとおかしいので後に修正 //////////////////////
+
 
 void Player::PostStateUpdate()
 {
 	//RotationOffset();
 	RotationOffsetLocal();
+	if(camera_->ShakeActive()) worldTransform_.translation_ -= camera_->GetShake();
 	worldTransform_.TransferMatrix();
 	collider_->Update(GetWorldPosition());
 	justCollider_->Update(GetWorldPosition());
@@ -202,8 +216,6 @@ void Player::Move()
 	};
 
 	RotationOffsetLocal();  // ←下の関数に差し替え
-
-	StartBarrelRoll();
 }
 
 void Player::ClampOffset()
@@ -211,9 +223,6 @@ void Player::ClampOffset()
 	screenOffset_.x = std::clamp(screenOffset_.x, -1.0f, 1.0f);
 	screenOffset_.y = std::clamp(screenOffset_.y, -1.0f, 1.0f);
 }
-
-// ※ もうワールド変換は不要なので削除してOK
-// Vector3 Player::ConvertScreenOffsetToWorld(...) は使わない
 
 void Player::RotationOffsetLocal()
 {

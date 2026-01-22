@@ -28,7 +28,7 @@ void Sprite::Update()
 	// Transform情報を作る
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
-	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsApp::kClientWidth), float(WindowsApp::kClientHieght), 0.0f, 100.0f);
+	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsApp::kClientWidth), float(WindowsApp::kClientHeight), 0.0f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 	transformationMatrixData_->WVP = worldViewProjectionMatrix;
 }
@@ -71,7 +71,7 @@ void Sprite::DrawRect(const Vector2& lt, const Vector2& rt, const Vector2& lb, c
 	// Transform情報を作る
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
-	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsApp::kClientWidth), float(WindowsApp::kClientHieght), 0.0f, 100.0f);
+	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsApp::kClientWidth), float(WindowsApp::kClientHeight), 0.0f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 	transformationMatrixData_->WVP = worldViewProjectionMatrix;
 
@@ -97,7 +97,7 @@ void Sprite::CreateVertexData()
 
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6; // 使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT; // インデックスはuint32_tとする
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT; // インデックスは uint32_t とする
 }
 
 void Sprite::CreateMaterialResource()
@@ -110,7 +110,7 @@ void Sprite::CreateMaterialResource()
 
 void Sprite::CreateTransformationMatrixResource()
 {
-	transformationMatrixResource_ = spriteBasis_->GetDirectXBasis()->CreateBufferResource(sizeof(TransfomationMatrix));
+	transformationMatrixResource_ = spriteBasis_->GetDirectXBasis()->CreateBufferResource(sizeof(TransformationMatrix));
 	transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
 	// 単位行列を書き込んでおく
 	transformationMatrixData_->WVP = MakeIdentity4x4();

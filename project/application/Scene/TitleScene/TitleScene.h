@@ -1,11 +1,10 @@
 #pragma once
 #include "IScene.h"
-#include "LevelObject.h"
-#include "BlenderLevelLoader.h"
 #include "ObjectCubemap.h"
 #include "Object/Player/Player.h"
 #include "../../Object/Enemy/TitleEnemy/TitleEnemyManager.h"
-#include "../Transition/Fade2/BlockFadeOverlay.h"
+
+#include "Audio/AudioAnalyzer.h"
 
 #include "Audio/AudioAnalyzer.h"
 
@@ -23,16 +22,15 @@ public:
 	void UIDraw() override;
 
 private:
-	void LoadLevel();
-
 	void Transition();
 
-private:
-	std::vector<std::unique_ptr<LevelObject>> objects_;
-	std::unique_ptr<BlenderLevelLoader> loader_;
+	void DebugJMApply();
 
+private:
 	std::unique_ptr<Sprite> spaceSpr_;
 	std::unique_ptr<Sprite> text_;
+	std::unique_ptr<Sprite> operation_;
+	std::unique_ptr<Sprite> reticle_;
 
 	std::unique_ptr<ObjectCubemap> skybox_;
 
@@ -43,14 +41,9 @@ private:
 
 	std::unique_ptr<Object3d> ground_;
 	WorldTransform groundWT_;
+	float rotateSpeed_ = 0.0f;
 
-	std::unique_ptr<Sprite> operation_;
-
-	std::unique_ptr<Sprite> reticle_;
-
-	//BlockFadeOverlay fadeOverlay_;
-
-	jx::JsonManager jm;
+	jx::JsonManager titleJM;
 	std::string err;
 
 	AudioAnalyzer audioAnalyzer_;

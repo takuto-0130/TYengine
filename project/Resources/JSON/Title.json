@@ -1,0 +1,63 @@
+{
+  "config": {
+    "Camera": {
+      "Position": {
+        "x": -18.0,
+        "y": 6.0,
+        "z": -34.0
+      },
+      "Rotate": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      }
+    },
+    "Player": {
+      "ScreenOffset": {
+        "x": 0.0,
+        "y": -0.8500000238418579
+      }
+    },
+    "ground": {
+      "rotateSpeed": 0.15000000596046448
+    },
+    "texture": {
+      "Enter": {
+        "AnchorPoint": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "Position": {
+          "x": 1040.0,
+          "y": 640.0
+        }
+      },
+      "Operation": {
+        "AnchorPoint": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "Position": {
+          "x": 0.0,
+          "y": 180.0
+        }
+      },
+      "Title": {
+        "AnchorPoint": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "Position": {
+          "x": -240.0,
+          "y": -200.0
+        }
+      },
+      "reticle": {
+        "AnchorPoint": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      }
+    }
+  }
+}

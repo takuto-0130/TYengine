@@ -45,19 +45,11 @@ public:
 
 	void SetScreenOffset(const Vector2& offset) { screenOffset_ = offset; }
 
-	void TakeDamage()
-	{
-		if (hitpoint_ > 1)
-		{
-			hitpoint_--;
-		}
-		else
-		{
-			OnCollision();
-		}
-	}
+	void TakeDamage();
 
 	int GetHP() { return hitpoint_; }
+
+	Vector2 GetScreenOffset() { return screenOffset_; }
 
 	void OnCollision() override;
 
@@ -77,8 +69,8 @@ private:
 	// BarrelRoll
 	void StartBarrelRoll();
 	void BarrelRoll();
-	void LeftRoll();
-	void RightRoll();
+	void LeftRoll(const Vector2& dir);
+	void RightRoll(const Vector2& dir);
 
 
 	// Debug
@@ -104,10 +96,12 @@ private:
 	Vector2 speed_{ defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
 	Vector2 inputDir_{};
 
+	Vector2 rollDir_{};
+
 	float deltaTime_ = 1.0f / 60.0f;
 
 	// hp
-	int hitpoint_ = 5;
+	int hitpoint_ = 30;
 
 
 	// 姿勢
@@ -129,7 +123,7 @@ private:
 	Vector2 startRollPos_{};
 	Vector2 goalRollPos_{};
 
-	float rollEfectTimer_ = 0.0f;
+	float rollEffectTimer_ = 0.0f;
 
 	bool isJust_ = false;
 	bool justRoll_ = false;
@@ -139,7 +133,7 @@ private:
 	// 弾関連
 	std::unique_ptr<PlayerBulletManager> bulletManager_;
 	PlayerBulletType currentBulletType_ = PlayerBulletType::NORMAL;
-	float bulletCoolTime_ = 0.3f;
+	float bulletCoolTime_ = 0.1f;
 	float bulletTimer_ = 0.0f;
 
 	std::unique_ptr<Reticle> reticle_;

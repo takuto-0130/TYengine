@@ -97,11 +97,11 @@ Model::ModelData Model::LoadModelFile(const std::string& directoryPath, const st
 				uint32_t vertexIndex = face.mIndices[element];
 				aiVector3D& position = mesh->mVertices[vertexIndex];
 				aiVector3D& normal = mesh->mNormals[vertexIndex];
-				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+				aiVector3D& texCoord = mesh->mTextureCoords[0][vertexIndex];
 				Model::VertexData vertex;
 				vertex.position = { position.x, position.y, position.z, 1.0f };
 				vertex.normal = { normal.x, normal.y, normal.z };
-				vertex.texcoord = { texcoord.x, texcoord.y };
+				vertex.texCoord = { texCoord.x, texCoord.y };
 				// aiProcess_MakeLeftHandedは z*=-1 で、右手->左手に変換されるので手動で修正
 				vertex.position.x *= -1.0f;
 				vertex.normal.x *= -1.0f;
@@ -126,7 +126,7 @@ Model::ModelData Model::LoadModelFile(const std::string& directoryPath, const st
 Model::Node Model::ReadNode(aiNode* node)
 {
 	Node result;
-	aiMatrix4x4 aiLocalMatrix = node->mTransformation; // nodeのlocalMatrixを取得
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation; // node の localMatrix を取得
 	aiLocalMatrix.Transpose();
 	result.localMatrix.m[0][0] = aiLocalMatrix[0][0];
 	result.localMatrix.m[0][1] = aiLocalMatrix[0][1];

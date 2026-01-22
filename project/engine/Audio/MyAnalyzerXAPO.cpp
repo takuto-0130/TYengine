@@ -1,6 +1,7 @@
 #include "MyAnalyzerXAPO.h"
 #include <cmath>
 #include <cstring>
+#include <numbers>
 
 // XAPO registration
 static XAPO_REGISTRATION_PROPERTIES regProps =
@@ -75,22 +76,22 @@ void MyAnalyzerXAPO::ComputeFFT()
 
     for (UINT32 len = 2; len <= FFT_SIZE; len <<= 1)
     {
-        float ang = -2.0f * 3.14159265f / len;
-        float wcos = cosf(ang);
-        float wsin = sinf(ang);
+        float ang = -2.0f * std::numbers::pi_v<float> / len;
+        float wCos = cosf(ang);
+        float wSin = sinf(ang);
 
         for (UINT32 i = 0; i < FFT_SIZE; i += len)
         {
-            float ucos = 1.0f;
-            float usin = 0.0f;
+            float uCos = 1.0f;
+            float uSin = 0.0f;
 
             for (UINT32 k = 0; k < len / 2; k++)
             {
                 UINT32 a = i + k;
                 UINT32 b = i + k + len / 2;
 
-                float xr = fftReal[b] * ucos - fftImag[b] * usin;
-                float xi = fftReal[b] * usin + fftImag[b] * ucos;
+                float xr = fftReal[b] * uCos - fftImag[b] * uSin;
+                float xi = fftReal[b] * uSin + fftImag[b] * uCos;
 
                 fftReal[b] = fftReal[a] - xr;
                 fftImag[b] = fftImag[a] - xi;
@@ -98,9 +99,9 @@ void MyAnalyzerXAPO::ComputeFFT()
                 fftReal[a] += xr;
                 fftImag[a] += xi;
 
-                float ucos2 = ucos * wcos - usin * wsin;
-                usin = ucos * wsin + usin * wcos;
-                ucos = ucos2;
+                float ucos2 = uCos * wCos - uSin * wSin;
+                uSin = uCos * wSin + uSin * wCos;
+                uCos = ucos2;
             }
         }
     }

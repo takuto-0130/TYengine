@@ -3,6 +3,7 @@
 struct Material
 {
     float4 color;
+    float4 addColor;
     int enableLighting;
     float4x4 uvTransform;
     float environmentCoefficient;
@@ -63,6 +64,10 @@ PixelShaderOutput main(VertexShaderOutput input)
         float4 environmentColor = gEnvironmentTexture.Sample(gSampler, refVector);
         output.color.rgb += environmentColor.rgb;
     }
+    
+    output.color.rgb += gMaterial.addColor.rgb;
+    output.color.a = output.color.a + gMaterial.addColor.a;
+    output.color = saturate(output.color);
     
     return output;
 }

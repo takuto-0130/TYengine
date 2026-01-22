@@ -52,14 +52,19 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
+	//========== ロード ==========//
+
+	gameUIJM_.Load("GameUI.json", true, &err_);
+#ifdef _DEBUG
+	Logger::Log(err_);
+#endif // _DEBUG
+
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 
 	Object3dBasis::GetInstance()->SetSkyboxFilePath("Resources/Texture/output_skybox.dds");
 	skybox_ = std::make_unique<ObjectCubemap>();
 	skybox_->Initialize("Resources/Texture/output_skybox.dds");
-
-	Audio::GetInstance()->LoadWave("fanfare");
 
 	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
@@ -79,13 +84,15 @@ void GameScene::Init()
 void GameScene::Update()
 {
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_3))
-	{
-		bulletTime_->Trigger(0.05f, 0.5f, 2.0f, 0.8f,
-			EaseFixed::InQuart, EaseFixed::OutQuart);
-	}
 	ImGui::Begin("GameScene State Debug");
 	DebugImGui("GameScene");
+	ImGui::End();
+
+	// ImGui で編集
+	ImGui::Begin("JSON Editor");
+	static jx::JsonImGuiEditor inspector(gameUIJM_);
+	inspector.Draw(gameUIJM_.Root(), "GameUI.json");
+	if (ImGui::Button("Save")) gameUIJM_.Save();
 	ImGui::End();
 #endif // _DEBUG
 

@@ -8,7 +8,6 @@
 #include "CubemapBasis.h"
 #include "Timer.h"
 #include "Audio/Audio.h"
-//#include "Sprite.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
@@ -73,83 +72,90 @@ std::vector<float> MakeLogSpectrum(
 
 
 void TitleScene::Init()
-{ 
+{
+	//========== ロード ==========//
+
+	titleJM.Load("Title.json", true, &err);
+#ifdef _DEBUG
+	Logger::Log(err);
+	Audio::GetInstance()->LoadWave("gameBGM");
+#endif // _DEBUG
+
+
+	//========== カメラ、入力取得 ==========//
+
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
-	loader_ = std::make_unique<BlenderLevelLoader>("Resources/JSON/");
-	
+
+
+	//========== テクスチャ初期化 ==========//
+
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Enter.png");
 	spaceSpr_ = std::make_unique<Sprite>();
 	spaceSpr_->Initialize("Resources/Texture/Enter.png");
-	spaceSpr_->SetAnchorPoint({ 0.5f,0.5f });
-	spaceSpr_->SetPosition({ 1040,640 }); // 640,440
-
+	spaceSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
+	spaceSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Title.png");
 	text_ = std::make_unique<Sprite>();
 	text_->Initialize("Resources/Texture/Title.png");
-	text_->SetPosition({ -240,-200 }); // 40,0
+	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
 
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
+	operation_ = std::make_unique<Sprite>();
+	operation_->Initialize("Resources/Texture/Operation.png");
+	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
+	reticle_ = std::make_unique<Sprite>();
+	reticle_->Initialize("Resources/Texture/reticle.png");
+	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
+
+
+	//========== フィールド初期化 ==========//
 
 	skybox_ = std::make_unique<ObjectCubemap>();
 	skybox_->Initialize("Resources/Texture/output_skybox.dds");
-
-	camera_->SetRotate({ 0.0f, 0.0f, 0.0f });
-	camera_->SetTranslate({ -18.0f, 6.0f, -34.0f });
-
-	player_ = std::make_unique<Player>();
-	player_->SetCamera(camera_);
-	player_->Init();
-	player_->SetScreenOffset({ 0, -0.85f });
-
-	enemyMgr_.Init(camera_);
-
-
 
 	ground_ = std::make_unique<Object3d>();
 	ground_->Initialize();
 	ground_->SetModel("titleground.obj");
 	groundWT_.Initialize();
 	groundWT_.TransferMatrix();
+	rotateSpeed_ = titleJM.Get<float>("config.ground.rotateSpeed");
 
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
-	operation_ = std::make_unique<Sprite>();
-	operation_->Initialize("Resources/Texture/Operation.png");
-	operation_->SetPosition({ 0.0f, 180.0f });
+	//========== カメラ初期化 ==========//
+
+	camera_->SetRotate(titleJM.Get<Vector3>("config.Camera.Rotate"));
+	camera_->SetTranslate(titleJM.Get<Vector3>("config.Camera.Position"));
 
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
-	reticle_ = std::make_unique<Sprite>();
-	reticle_->Initialize("Resources/Texture/reticle.png");
-	reticle_->SetAnchorPoint({ 0.5f,0.5f });
+	//========== キャラクター初期化 ==========//
 
-	jm.Load("Title.json", /*create_if_missing=*/true, &err);
+	player_ = std::make_unique<Player>();
+	player_->SetCamera(camera_);
+	player_->Init();
+	player_->SetScreenOffset(titleJM.Get<Vector2>("config.Player.ScreenOffset"));
 
-	jm.Set("settings.window.width", 1600);
-	jm.Set("settings.window.hieght", 900);
+	enemyMgr_.Init(camera_);
+}
 
-
-	jm.Set("settings.mouse.position.x", 40);
-	jm.Set("settings.mouse.position.y", 90);
-
-
-	Audio::GetInstance()->LoadWave("gameBGM");
-	int a = Audio::GetInstance()->PlayWave("gameBGM", true);
-	Audio::GetInstance()->SetBGMVolume(a, 1.0f);
-
-	Audio::GetInstance()->LoadWave("fanfare");
-
-	auto* pem = PostEffectManager::GetInstance();
-	pem->SetEffectEnabled("Vignette", true);
-	pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
-	pem->SetEffectEnabled("RadialBlur", true);
-	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
-
+void TitleScene::DebugJMApply()
+{
+	spaceSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
+	spaceSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
+	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
+	camera_->SetRotate(titleJM.Get<Vector3>("config.Camera.Rotate"));
+	camera_->SetTranslate(titleJM.Get<Vector3>("config.Camera.Position"));
+	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
+	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
+	rotateSpeed_ = titleJM.Get<float>("config.ground.rotateSpeed");
 }
 
 void TitleScene::Update() {
 	Transition();
+	enemyMgr_.SetCamera(camera_);
 #ifdef _DEBUG
 
 	audioAnalyzer_.Update();
@@ -157,16 +163,19 @@ void TitleScene::Update() {
 
 	if (input_->TriggerKey(DIK_M))
 	{
-		Audio::GetInstance()->PlayWave("fanfare");
+		int a = Audio::GetInstance()->PlayWave("gameBGM", true);
+		Audio::GetInstance()->SetBGMVolume(a, 1.0f);
 	}
 
-	/*auto* pem = PostEffectManager::GetInstance();
-	pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.25f * audioAnalyzer_.GetSyncedRMS());*/
-
 	// ImGui で編集
-	static jx::JsonImGuiEditor inspector(jm);
-	inspector.Draw(jm.Root(), "Title JSON");
-	if (ImGui::Button("Save")) jm.Save();
+	ImGui::Begin("JSON Editor");
+	static jx::JsonImGuiEditor inspector(titleJM);
+	inspector.Draw(titleJM.Root(), "Title.json");
+	if (ImGui::Button("Save")) titleJM.Save();
+	ImGui::End();
+
+	DebugJMApply();
+
 #else // Release
 
 #endif // _DEBUG
@@ -174,11 +183,9 @@ void TitleScene::Update() {
 	text_->Update();
 	operation_->Update();
 	reticle_->Update();
-	for (auto&& obj : objects_)
-	{
-		obj->Update();
-	}
+
 	player_->Update();
+
 	skybox_->Update();
 
 	Vector3 pos = player_->GetWorldPosition();
@@ -186,7 +193,7 @@ void TitleScene::Update() {
 
 	enemyMgr_.Update();
 
-	groundWT_.rotation_.y -= 0.1f * Timer::GetInstance()->GetDeltaTime();
+	groundWT_.rotation_.y -= rotateSpeed_ * Timer::GetInstance()->GetDeltaTime();
 	groundWT_.TransferMatrix();
 
 	Vector2 mouse = input_->GetMousePosition();
@@ -199,15 +206,12 @@ void TitleScene::Draw()
 	skybox_->Draw();
 
 	Object3dBasis::GetInstance()->BasisDrawSetting();
-	for (auto& obj : objects_)
-	{
-		obj->Draw();
-	}
-	player_->Draw();
+
+	ground_->Draw(groundWT_);
 
 	enemyMgr_.Draw();
 
-	ground_->Draw(groundWT_);
+	player_->Draw();
 }
 
 void TitleScene::UIDraw()
@@ -219,16 +223,15 @@ void TitleScene::UIDraw()
 	reticle_->Draw();
 }
 
-void TitleScene::LoadLevel()
-{
-	LevelData* levelData = loader_->Load("level.json");
-
-	loader_->DataToObject(levelData, objects_);
-}
-
 void TitleScene::Transition()
 {
-	if (input_->TriggerKey(DIK_RETURN)) 
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_RETURN))
+	{
+		sceneManager_->ChangeScene("GAME");
+	}
+#else
+	if (input_->TriggerKey(DIK_RETURN))
 	{
 		BlockFadeConfig cfg;
 		auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
@@ -240,4 +243,5 @@ void TitleScene::Transition()
 			});
 		TransitionManager::GetInstance()->Start(std::move(transition));
 	}
+#endif // _DEBUG
 }

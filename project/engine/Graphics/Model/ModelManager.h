@@ -50,24 +50,22 @@ public:
     /// <param name="filePath">検索するモデルのファイルパス（キー）。</param>
     /// <returns>該当する Model。存在しない場合は nullptr。</returns>
     Model* FindModel(const std::string& filePath);
-
-    /// <summary>
-    /// 読み込まれたモデルの辞書。キーはファイルパス。
-    /// </summary>
-    std::map<std::string, std::unique_ptr<Model>> models_;
-
-private:
-    /// <summary>
-    /// 実際の読み込み処理を担うローダ。
-    /// </summary>
-    std::unique_ptr<ModelLoader> modelLoader_ = nullptr;
-
-public:
     /// <summary>
     /// 使用中の ModelLoader を取得する。
     /// </summary>
     /// <returns>ModelLoader インスタンス。</returns>
     ModelLoader* GetModelLoader() { return modelLoader_.get(); }
+
+private:
+    /// <summary>
+    /// 読み込まれたモデルの辞書。キーはファイルパス。
+    /// </summary>
+    std::map<std::string, std::unique_ptr<Model>> models_;
+
+    /// <summary>
+    /// 実際の読み込み処理を担うローダ。
+    /// </summary>
+    std::unique_ptr<ModelLoader> modelLoader_ = nullptr;
 
 private:
     /// <summary>シングルトン本体。</summary>
@@ -77,8 +75,8 @@ private:
     static std::once_flag initInstanceFlag;
 
     /// <summary>コピーコンストラクタ（非公開／未使用）。</summary>
-    ModelManager(ModelManager&) = default;
+    ModelManager(ModelManager&) = delete;
 
     /// <summary>代入演算子（非公開／未使用）。</summary>
-    ModelManager& operator=(ModelManager&) = default;
+    ModelManager& operator=(ModelManager&) = delete;
 };

@@ -1,6 +1,8 @@
 #pragma once
 #include "BaseObject.h"
-class Rail : public BaseObject {
+
+class Rail : public BaseObject
+{
 public:
 
 	~Rail();

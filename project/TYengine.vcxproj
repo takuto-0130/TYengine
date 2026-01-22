@@ -156,7 +156,6 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\emitterInit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="application\Object\Rail\Rail.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneCollision.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDebugEdit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneFadeIn.cpp" />
@@ -172,14 +171,12 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyEditor.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyManager.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp" />
     <ClCompile Include="engine\Audio\AudioAnalyzer.cpp" />
     <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
-    <ClCompile Include="engine\Audio\xapobase.cpp" />
+    <ClCompile Include="externals\xapobase.cpp" />
     <ClCompile Include="engine\Effect\ContrailBehaviour.cpp" />
     <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />
     <ClCompile Include="engine\Effect\ExplosionBehaviour.cpp" />
@@ -202,7 +199,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\Effect\IParticleRenderer.cpp" />
     <ClCompile Include="engine\EngineCore\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\EngineCore\DirectXBasis.cpp" />
-    <ClCompile Include="engine\EngineCore\Logger.cpp" />
+    <ClCompile Include="engine\Debugger\Logger.cpp" />
     <ClCompile Include="engine\EngineCore\WindowsApp.cpp" />
     <ClCompile Include="engine\Framework\GameCore.cpp" />
     <ClCompile Include="engine\Framework\SceneBase\SceneManager.cpp" />
@@ -279,10 +276,8 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiParticle.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiSystem.h" />
-    <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeOverlay.h" />
     <ClInclude Include="application\Scene\Transition\ITransition.h" />
     <ClInclude Include="application\Scene\Transition\StateMachineTransition.h" />
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
@@ -320,7 +315,6 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Graphics\Cubemap\CubemapBasis.h" />
     <ClInclude Include="engine\Utility\ObjectBasis\BaseObject.h" />
     <ClInclude Include="application\Object\Enemy\Enemy.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyEditor.h" />
     <ClInclude Include="engine\Utility\Loader\BlenderLevelLoader.h" />
     <ClInclude Include="engine\Effect\CylinderParticle.h" />
     <ClInclude Include="engine\OffScreen\CopyPass.h" />
@@ -330,7 +324,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Effect\IParticleRenderer.h" />
     <ClInclude Include="engine\EngineCore\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\EngineCore\DirectXBasis.h" />
-    <ClInclude Include="engine\EngineCore\Logger.h" />
+    <ClInclude Include="engine\Debugger\Logger.h" />
     <ClInclude Include="engine\EngineCore\WindowsApp.h" />
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h" />
     <ClInclude Include="engine\Framework\GameCore.h" />

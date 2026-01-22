@@ -126,9 +126,6 @@ private: // メンバ関数
     /// <summary>DXC コンパイラ（Utils / Compiler / IncludeHandler）を生成する。</summary>
     void CreateDXCCompiler();
 
-    /// <summary>ImGui を初期化する。</summary>
-    void InitImGui();
-
     /// <summary>固定 FPS の初期化を行う。</summary>
     void InitFixFPS();
 
@@ -192,7 +189,7 @@ private: // メンバ変数
     Microsoft::WRL::ComPtr<ID3D12Resource> depthBuffer_;
 
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescripterHeap_;
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> samplerHeap_;
 

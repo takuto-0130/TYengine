@@ -38,6 +38,7 @@ void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const 
 	{
 	case NORMAL:
 		bullet = std::make_unique<PlayerBulletNormal>();
+		bullet->SetCamera(camera_);
 		bullet->Init();
 		bullet->SetTranslation(pos);
 		bullet->SetShotDirection(direction);

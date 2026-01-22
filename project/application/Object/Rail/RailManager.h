@@ -45,23 +45,6 @@ public:
 
 	bool IsEndRail() { return railFinished_; }
 
-	bool ClearEnemyGroup()
-	{
-		return (cameraEyeT >= 0.25f && !firstClear_) || (cameraEyeT >= 0.83f && !secondClear_);
-	}
-
-	void ClearAccept()
-	{
-		if (!firstClear_)
-		{
-			firstClear_ = true;
-		}
-		else
-		{
-			secondClear_ = true;
-		}
-	}
-
 private:
 	void PopRail(Vector3 position, Vector3 rota);
 
@@ -140,15 +123,11 @@ private:
 	size_t oneSegmentCount = 20;
 	size_t segmentCount = oneSegmentCount;
 
-	const float kDivisionSpan = 200.0f;
-	float cameraSegmentCount = 0;
-	float cameraEyeT = 0;
-	float cameraForwardT = 0;
 	bool isRailCameraMove_ = false;
 
-	float deltaTime_ = 1.0f / 60.0f;
+	float deltaTime_ = 0.0f;
 
-	float speedMultiply_ = 0.7f;
+	float speedMultiply_ = 0.35f;
 
 
 	bool firstClear_ = false;
@@ -157,8 +136,6 @@ private:
 	bool railFinished_ = false;        // 到達済み
 	bool railFinishedJustNow_ = false; // 今フレーム到達
 
-
-	std::unordered_set<size_t> alreadyTriggeredIndices_;
 	struct TriggerObject
 	{
 		WorldTransform world;
@@ -168,8 +145,9 @@ private:
 		{
 			world.Initialize();
 			world.translation_ = pos;
-			world.colliderScale_ = { 0.5f, 0.5f, 0.5f };
+			world.colliderScale_ = { 0.1f, 0.1f, 0.1f };
 			object.Initialize();
+			object.SetColor({ 1,0,0,1 });
 			object.SetModel("unitSphere.obj");
 		}
 

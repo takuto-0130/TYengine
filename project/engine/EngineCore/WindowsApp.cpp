@@ -41,7 +41,7 @@ void WindowsApp::Initialize()
 
 	RegisterClass(&wc);
 
-	RECT wrc = { 0, 0, kClientWidth, kClientHieght };
+	RECT wrc = { 0, 0, kClientWidth, kClientHeight };
 
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 

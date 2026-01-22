@@ -2,13 +2,14 @@
 
 #include "Audio/Audio.h"
 #include "Object/Player/Player.h"
-#include "Object/Enemy/EnemyManager.h"
+#include "Object/Enemy/TitleEnemy/TitleEnemyManager.h"
 #include "Object/Rail/RailManager.h"
 #include "ParticleManager.h"
 #include "../AppSystem/Combo/ComboManager.h"
 #include "../AppSystem/Score/ScoreManager.h"
 #include <memory>
 #include <list>
+#include <json.hpp>
 
 class Stage
 {
@@ -28,8 +29,6 @@ public:
 	void FromJson(const nlohmann::json& j);
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
-
-	std::list<std::unique_ptr<Enemy>>& GetActiveEnemies() { return enemyManager_->GetActiveEnemies(); }
 
 	bool EndRail() { return railManager_->IsEndRail(); }
 
@@ -55,7 +54,7 @@ public:
 private:
 	Camera* camera_ = nullptr;
 	std::unique_ptr<Player> player_;
-	std::unique_ptr<EnemyManager> enemyManager_;
+	TitleEnemyManager enemyMgr_;
 	std::unique_ptr<RailManager> railManager_;
 
 

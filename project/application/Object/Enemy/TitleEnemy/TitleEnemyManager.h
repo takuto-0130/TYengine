@@ -1,5 +1,7 @@
 #pragma once
 #include "../Enemy.h"
+#include "../EnemyBullet/EnemyBulletManager.h"
+#include "../../../AppSystem/EventListener/EnemyEvent/ComboAndScoreHandler.h"
 #include <random>
 
 class Camera;
@@ -8,6 +10,8 @@ class TitleEnemyManager
 {
 public:
 	void Init(Camera* camera);
+
+	void MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score);
 
 	void Reset();
 
@@ -20,6 +24,8 @@ public:
 public:
 	void SetTargetPos(Vector3* pos);
 
+	void SetCamera(Camera* camera);
+
 private:
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
 	
@@ -27,6 +33,8 @@ private:
 	Camera* camera_ = nullptr;
 
 	std::list<std::unique_ptr<Enemy>> enemies_;
+
+	EnemyBulletManager bulletManager_;
 
 	float enemyPopDepthMin_ = 12.0f;
 	float enemyPopDepthMax_ = 17.0f;
@@ -38,6 +46,8 @@ private:
 	float timer_ = 0.0f;
 	const float spawnReadyTimer_ = 2.0f;
 
-	const int spawnNum_ = 3;
+	const int spawnNum_ = 5;
+
+	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;
 };
 

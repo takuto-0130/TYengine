@@ -1,0 +1,248 @@
+{
+  "Pause": {
+    "PauseText": {
+      "Position": {
+        "x": 0.0,
+        "y": 0.0
+      }
+    },
+    "blackScreen": {
+      "Color": {
+        "w": 0.699999988079071,
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "Size": {
+        "x": 1280.0,
+        "y": 720.0
+      },
+      "TextureSize": {
+        "x": 1280.0,
+        "y": 720.0
+      }
+    }
+  },
+  "PlayUI": {
+    "Texture": {
+      "ComboText": {
+        "AnchorPoint": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "Position": {
+          "x": 1245.0,
+          "y": 60.0
+        }
+      },
+      "HpText": {
+        "AnchorPoint": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "Position": {
+          "x": 1156.0,
+          "y": 560.0
+        }
+      },
+      "Operation": {
+        "Position": {
+          "x": 15.0,
+          "y": 145.0
+        },
+        "Size": {
+          "x": 1024.0,
+          "y": 576.0
+        }
+      },
+      "ReturnTitle": {
+        "Size": {
+          "x": 640.0,
+          "y": 360.0
+        }
+      },
+      "number": {
+        "PositionCombo": {
+          "x": 1060.0,
+          "y": 25.0
+        },
+        "PositionHp": {
+          "x": 1112.0,
+          "y": 526.0
+        },
+        "Size": {
+          "x": 64.0,
+          "y": 64.0
+        },
+        "TextureLeftTop": {
+          "x": 128.0,
+          "y": 0.0
+        },
+        "TextureSize": {
+          "x": 64.0,
+          "y": 64.0
+        }
+      },
+      "reticle": {
+        "AnchorPoint": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      }
+    }
+  },
+  "Result": {
+    "Texture": {
+      "ResultText": {},
+      "ReturnTitle": {
+        "Position": {
+          "x": 0.0,
+          "y": -70.0
+        },
+        "Size": {
+          "x": 1024.0,
+          "y": 576.0
+        }
+      },
+      "ScoreText": {
+        "Alpha": 0.0,
+        "Position": {
+          "x": 400.0,
+          "y": 360.0
+        }
+      },
+      "TitleSpace": {
+        "Alpha": 0.0,
+        "AnchorPoint": {
+          "x": 1.0,
+          "y": 1.0
+        },
+        "Position": {
+          "x": 1200.0,
+          "y": 700.0
+        }
+      },
+      "blackScreen": {
+        "Color": {
+          "w": 0.699999988079071,
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "Size": {
+          "x": 1280.0,
+          "y": 720.0
+        },
+        "TextureSize": {
+          "x": 1280.0,
+          "y": 720.0
+        }
+      }
+    },
+    "offset": {
+      "x": 510.0,
+      "y": 230.0
+    },
+    "startY": -300.0,
+    "timer": {
+      "max": 2.5,
+      "reset": -1.0
+    }
+  },
+  "RetryUI": {
+    "Texture": {
+      "Gameover": {},
+      "ScoreText": {
+        "Alpha": 0.0,
+        "Position": {
+          "x": 400.0,
+          "y": 360.0
+        }
+      },
+      "TitleSpace": {
+        "Alpha": 0.0,
+        "AnchorPoint": {
+          "x": 1.0,
+          "y": 1.0
+        },
+        "Position": {
+          "x": 1200.0,
+          "y": 700.0
+        }
+      }
+    },
+    "ease": {
+      "goalY": 0.0,
+      "startY": -300.0
+    },
+    "timer": {
+      "max": 2.5,
+      "reset": -1.0
+    }
+  },
+  "ScoreUI": {
+    "ResultTimer": {
+      "AlphaTimer": 2.5,
+      "ConfirmedTimer0": 1.5,
+      "ConfirmedTimer1": 2.5,
+      "ConfirmedTimer2": 3.5,
+      "ConfirmedTimer3": 4.5
+    },
+    "ScoreViewTime": 1.0,
+    "Texture": {
+      "number": {
+        "Size": {
+          "x": 64.0,
+          "y": 64.0
+        },
+        "TextureSize": {
+          "x": 64.0,
+          "y": 64.0
+        },
+        "offsetPlayPos": {
+          "x": 1020.0,
+          "y": 620.0
+        },
+        "offsetResultPos": {
+          "x": 650.0,
+          "y": 360.0
+        },
+        "offsetWidthScale": 0.699999988079071
+      }
+    }
+  },
+  "StartUI": {
+    "Texture": {
+      "Go": {
+        "Position": {
+          "x": 1280.0,
+          "y": 0.0
+        }
+      },
+      "Ready": {
+        "Position": {
+          "x": 1280.0,
+          "y": 0.0
+        }
+      }
+    },
+    "ease": {
+      "ease1-1": {
+        "goalX": 0.0,
+        "startX": 1280.0
+      },
+      "ease1-2": {
+        "goalX": -1280.0,
+        "startX": 0.0
+      },
+      "ease2-1": {
+        "goalX": 0.0,
+        "startX": 1280.0
+      }
+    },
+    "timer": {
+      "max": 3.0,
+      "reset": -1.0
+    }
+  }
+}

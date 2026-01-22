@@ -17,6 +17,13 @@ public:
         return dist(mt_);
     }
 
+    // 整数 0 ~ 9
+    int Int09()
+    {
+        std::uniform_int_distribution<int> dist(0, 9);
+        return dist(mt_);
+    }
+
     // 浮動小数乱数
     float Float(float min, float max)
     {

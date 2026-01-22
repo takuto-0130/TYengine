@@ -8,6 +8,9 @@
 #include "Result/ConfettiSystem.h"
 #include "UISpriteColliderManager.h"
 
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
+
 #include <memory>
 #include <vector>
 
@@ -63,9 +66,6 @@ private:
 	void PlayUIUpdate();
 	void ComboUIUpdate();
 
-	// GameSceneCollision
-	void Collision();
-
 	// EmitterInit
 	void EmitterInit();
 
@@ -108,6 +108,10 @@ private: // メンバ変数
 	Vector3 startCameraRot_{};
 	float startCameraTimer_ = 0;
 	float prevStateElapsed_ = 0.0f;
+
+
+	jx::JsonManager gameUIJM_;
+	std::string err_;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数

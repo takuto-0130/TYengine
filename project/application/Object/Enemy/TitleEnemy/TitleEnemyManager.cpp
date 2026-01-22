@@ -5,11 +5,17 @@
 void TitleEnemyManager::Init(Camera* camera)
 {
 	camera_ = camera;
+	bulletManager_.Init();
 }
 
 void TitleEnemyManager::Reset()
 {
 	enemies_.clear();
+}
+
+void TitleEnemyManager::MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score)
+{
+	comboAndScoreHandler_ = std::make_unique<ComboAndScoreHandler>(combo, score);
 }
 
 void TitleEnemyManager::Update()
@@ -30,7 +36,7 @@ void TitleEnemyManager::Update()
 			Pop();
 		}
 	}
-
+	bulletManager_.Update();
 }
 
 void TitleEnemyManager::Draw()
@@ -39,6 +45,7 @@ void TitleEnemyManager::Draw()
 	{
 		enemy->Draw();
 	}
+	bulletManager_.Draw();
 }
 
 void TitleEnemyManager::SetTargetPos(Vector3* pos)
@@ -63,7 +70,7 @@ Vector3 TitleEnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 	std::uniform_real_distribution<float> dist(enemyPopDepthMin_, enemyPopDepthMax_);
 
 	return camPos
-		+ camForward * dist(gen)
+		+ camForward * 25.0f
 		+ camRight * (offset.x * xRange)
 		+ camUp * (offset.y * yRange);
 }
@@ -76,8 +83,19 @@ void TitleEnemyManager::Pop()
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
-	enemy->SetAndApplyPos(ConvertScreenOffsetToWorld({ dist(gen), dist(gen) }));
+	enemy->SetScreenPos({ dist(gen), dist(gen) });
+	enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
 	enemy->Pop();
-	enemy->SetIsInGame(false);
+	enemy->SetEnemyBulletManager(&bulletManager_);
+	enemy->SetEventListener(comboAndScoreHandler_.get());
+	enemy->SetIsInGame(true);
 	enemies_.push_back(std::move(enemy));
+}
+
+void TitleEnemyManager::SetCamera(Camera* camera)
+{
+	for (auto& enemy : enemies_)
+	{
+		enemy->SetCamera(camera);
+	}
 }

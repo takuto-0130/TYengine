@@ -62,6 +62,7 @@ private: // 構造体
     struct Material
     {
         Vector4 color;             ///< マテリアルカラー（RGBA）
+        Vector4 addColor;          ///< 加算合成カラー（RGBA）
         bool   enableLighting;     ///< ライティングの有効フラグ
         float  padding[3];         ///< アライメント用パディング
         Matrix4x4 uvTransform;     ///< UV 変換行列
@@ -115,6 +116,22 @@ public: // プロパティ操作
     /// <summary>マテリアルカラーを設定する。</summary>
     /// <param name="color">RGBA カラー。</param>
     void SetColor(const Vector4& color) { materialData_->color = color; }
+
+    /// <summary>現在の透明度を取得する。</summary>
+    /// <returns>alpha 透明度。</returns>
+    const float& GetAlpha() const { return materialData_->color.w; }
+
+    /// <summary>透明度を設定する。</summary>
+    /// <param name="alpha">alpha 透明度。</param>
+    void SetAlpha(float alpha) { materialData_->color.w = alpha; }
+
+    /// <summary>現在の加算合成カラーを取得する。</summary>
+    /// <returns>RGBA カラー。</returns>
+    const Vector4& GetAddColor() const { return materialData_->addColor; }
+
+    /// <summary>加算合成カラーを設定する。</summary>
+    /// <param name="color">RGBA カラー。</param>
+    void SetAddColor(const Vector4& color) { materialData_->addColor = color; }
 
     /// <summary>ライティング有効フラグを取得する。</summary>
     /// <returns>true でライティング有効。</returns>

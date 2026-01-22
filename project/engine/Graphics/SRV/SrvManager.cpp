@@ -27,7 +27,7 @@ bool SrvManager::CanAllocate() const {
     return currentIndex_ < maxIndex_;
 }
 
-void SrvManager::CreateSRVforTexture2D(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels) {
+void SrvManager::CreateSRVForTexture2D(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels) {
     assert(index < maxIndex_);
 
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -42,7 +42,7 @@ void SrvManager::CreateSRVforTexture2D(uint32_t index, ID3D12Resource* resource,
     dxBasis_->GetDevice()->CreateShaderResourceView(resource, &srvDesc, handle);
 }
 
-void SrvManager::CreateSRVforStructuredBuffer(uint32_t index, ID3D12Resource* resource, UINT elementCount, UINT elementSize) {
+void SrvManager::CreateSRVForStructuredBuffer(uint32_t index, ID3D12Resource* resource, UINT elementCount, UINT elementSize) {
     assert(index < maxIndex_);
 
     D3D12_SHADER_RESOURCE_VIEW_DESC desc{};
@@ -85,7 +85,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandleFromGpu(D3D12_GPU_
     return GetCPUDescriptorHandle(static_cast<uint32_t>(index));
 }
 
-void SrvManager::CreateSRVforTextureCube(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels) {
+void SrvManager::CreateSRVForTextureCube(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels) {
     assert(index < maxIndex_);
 
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};

@@ -115,7 +115,8 @@ public: // メンバ関数
                 }
             }
 
-            const char* currentLabel = GetStateName(stateList_[currentIndex]).c_str();
+            std::string labelStr = GetStateName(stateList_[currentIndex]);
+            const char* currentLabel = labelStr.c_str();
             if (ImGui::BeginCombo("State Change", currentLabel))
             {
                 for (int i = 0; i < static_cast<int>(stateList_.size()); ++i)

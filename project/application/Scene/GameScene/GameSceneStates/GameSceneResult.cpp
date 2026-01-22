@@ -20,11 +20,13 @@ void GameScene::InitResult()
 
 	uiCollider_.SetSprites(setSpr);
 
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
+
 	confetti_.Init(
 		400,
 		"Resources/Texture/white2x2.png",
 		WindowsApp::kClientWidth,
-		WindowsApp::kClientHieght
+		WindowsApp::kClientHeight
 	);
 
 	confetti_.SetUIColliders(uiCollider_.GetAABBs());

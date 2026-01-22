@@ -37,15 +37,11 @@ void RailManager::Reset()
 		}
 	}
 
-	segmentCount = oneSegmentCount * controlPoints_.size();
 	SetSegment();
 	RailReDraw();
 
 	// 距離トリガーを再構築
 	RebuildTriggerSFromSegments();
-
-	// 発火履歴をクリア
-	alreadyTriggeredIndices_.clear();
 
 	// 弧長の初期値
 	eyeS_ = 0.0f;
@@ -66,10 +62,17 @@ void RailManager::Update()
 
 void RailManager::Draw()
 {
+#ifdef _DEBUG
 	for (const auto& rail : rails_)
 	{
 		rail->Draw();
 	}
+
+	for (auto& triggerObj : triggerObjects_)
+	{
+		triggerObj->object.Draw(triggerObj->world);
+	}
+#endif // _DEBUG
 }
 
 void RailManager::UpdateEdit()
@@ -110,7 +113,6 @@ void RailManager::StageEdit()
 			}
 		}
 
-		segmentCount = oneSegmentCount * controlPoints_.size();
 		SetSegment();
 		RailReDraw();
 		RailEditor::Instance()->ResetPreviewFlag();
@@ -249,46 +251,51 @@ void RailManager::RailCameraDebug()
 	{
 		RailCameraMove();
 	}
-	ImGui::Text("eye%.03f", cameraEyeT);
-	ImGui::Text("forward%.03f", cameraForwardT);
-	ImGui::SliderFloat("SpeedMultiply", &speedMultiply_, 0.0f, 3.0f);
+	ImGui::DragFloat("SpeedMultiply", &speedMultiply_, 0.1f);
 	ImGui::End();
 #endif
 }
 
 void RailManager::SetSegment()
 {
-	float denom = kDivisionSpan * controlPoints_.size();
-	cameraSegmentCount = 1.0f / denom;
+	segmentCount = oneSegmentCount * controlPoints_.size();
 }
 
 void RailManager::ResetRailCamera()
 {
-	float denom = kDivisionSpan * controlPoints_.size();
-	cameraEyeT = 0;
-	cameraForwardT = 60.0f / denom;
+	// 距離を初期化
+	eyeS_ = 0.0f;
+	forwardS_ = std::min(lookAhead_, arcMap_.total);
 
-	// 初期位置と向きを強制的に設定
-	Vector3 eye = CatmullRomPosition(controlPoints_, cameraEyeT);
-	Vector3 target = CatmullRomPosition(controlPoints_, cameraForwardT);
+	// 距離から t を計算
+	float eyeT = DistanceToT_Hybrid(arcMap_, eyeS_);
+	float forwardT = DistanceToT_Hybrid(arcMap_, forwardS_);
+
+	// Catmull-Rom曲線上の座標を取得
+	Vector3 eye = CatmullRomPosition(controlPoints_, eyeT);
+	Vector3 target = CatmullRomPosition(controlPoints_, forwardT);
 	Vector3 forward = target - eye;
 
+	// 回転角の計算
 	Vector3 rot{};
 	rot.y = std::atan2(forward.x, forward.z);
 	float lenXZ = Length({ forward.x, 0.0f, forward.z });
 	rot.x = std::atan2(-forward.y, lenXZ);
 
+	// カメラオフセットの適用（回転行列を使用）
 	Matrix4x4 rotMat = MakeRotateXYZMatrix(rot);
 	Vector3 upOffset = TransformNormal(offsetCameraPos_, rotMat);
 	eye += upOffset;
 
-	if (camera_) {
+	// カメラへ反映
+	if (camera_)
+	{
 		camera_->SetRotate(rot);
 		camera_->SetTranslate(eye);
 	}
 
-	eyeS_ = 0.0f;
-	forwardS_ = std::min(lookAhead_, arcMap_.total);
+	// 前フレームの距離リセット
+	prevEyeS_ = eyeS_;
 }
 
 void RailManager::RebuildTriggerSFromSegments()

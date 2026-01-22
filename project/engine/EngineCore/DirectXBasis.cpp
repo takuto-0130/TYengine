@@ -37,17 +37,16 @@ void DirectXBasis::Initialize(WindowsApp* windowsApp)
 	InitViewportRect();
 	InitScissorRect();
 	CreateDXCCompiler();
-	InitImGui();
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXBasis::GetSRVCpuDescriptorHandle(uint32_t index)
 {
-	return GetCpuDescriptorHandle(srvDescripterHeap_, descriptorSizeSRV_, index);
+	return GetCpuDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV_, index);
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE DirectXBasis::GetSRVGpuDescriptorHandle(uint32_t index)
 {
-	return  GetGpuDescriptorHandle(srvDescripterHeap_, descriptorSizeSRV_, index);
+	return  GetGpuDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV_, index);
 }
 
 ComPtr<IDxcBlob> DirectXBasis::CompileShader(const std::wstring& filePath, const wchar_t* profile)
@@ -73,7 +72,7 @@ ComPtr<IDxcBlob> DirectXBasis::CompileShader(const std::wstring& filePath, const
 		L"-Od",
 		L"-Zpr",
 	};
-	//実際にshaderをコンパイルする
+	//実際に shader をコンパイルする
 	IDxcResult* shaderResult = nullptr;
 	hr = dxcCompiler_->Compile(
 		&shaderSourceBuffer,
@@ -225,10 +224,6 @@ void DirectXBasis::DrawBegin()
 
 	float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };//RGBA
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
-
-	//描画用のDiscriptorHeapの設定
-	/*ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescripterHeap_.Get() };
-	commandList_->SetDescriptorHeaps(1, descriptorHeaps);*/
 
 	ClearDepthStencilView();
 
@@ -396,7 +391,7 @@ void DirectXBasis::CreateSwapChain()
 	HRESULT hr = S_FALSE;
 	//スワップチェーン
 	swapChainDesc_.Width = WindowsApp::kClientWidth;
-	swapChainDesc_.Height = WindowsApp::kClientHieght;
+	swapChainDesc_.Height = WindowsApp::kClientHeight;
 	swapChainDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc_.SampleDesc.Count = 1;
 	swapChainDesc_.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -418,7 +413,7 @@ void DirectXBasis::CreateDepthBuffer()
 	//生成するResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
 	resourceDesc.Width = WindowsApp::kClientWidth;
-	resourceDesc.Height = WindowsApp::kClientHieght;
+	resourceDesc.Height = WindowsApp::kClientHeight;
 	resourceDesc.MipLevels = 1;
 	resourceDesc.DepthOrArraySize = 1;
 	resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//DepthStencilとして利用可能なフォーマット
@@ -501,7 +496,7 @@ void DirectXBasis::InitViewportRect()
 {
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewportRect_.Width = WindowsApp::kClientWidth;
-	viewportRect_.Height = WindowsApp::kClientHieght;
+	viewportRect_.Height = WindowsApp::kClientHeight;
 	viewportRect_.TopLeftX = 0;
 	viewportRect_.TopLeftY = 0;
 	viewportRect_.MinDepth = 0.0f;
@@ -514,7 +509,7 @@ void DirectXBasis::InitScissorRect()
 	scissorRect_.left = 0;
 	scissorRect_.right = WindowsApp::kClientWidth;
 	scissorRect_.top = 0;
-	scissorRect_.bottom = WindowsApp::kClientHieght;
+	scissorRect_.bottom = WindowsApp::kClientHeight;
 }
 
 void DirectXBasis::CreateDXCCompiler()
@@ -529,18 +524,6 @@ void DirectXBasis::CreateDXCCompiler()
 
 	hr = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
 	assert(SUCCEEDED(hr));
-}
-
-void DirectXBasis::InitImGui()
-{
-	/*IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(windowsApp_->GetHwnd());
-	ImGui_ImplDX12_Init(device_.Get(),
-		swapChainDesc_.BufferCount, rtvDesc_.Format, srvDescripterHeap_.Get(),
-		srvDescripterHeap_->GetCPUDescriptorHandleForHeapStart(),
-		srvDescripterHeap_->GetGPUDescriptorHandleForHeapStart());*/
 }
 
 void DirectXBasis::InitFixFPS()

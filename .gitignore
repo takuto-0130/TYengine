@@ -389,6 +389,8 @@ outputs/
 *.lib
 *.exe
 *.dll
+*.bak
+imgui.ini
 
 # 例外ルール：externals内のDLLは追跡
 !externals/dxcompiler.dll
@@ -396,6 +398,9 @@ outputs/
 
 # Assimp lib
 !externals/assimp/lib/
+
+# Assimp .pdb を除くため
+*.pdb
 
 # 例外：Resourcesフォルダのモデル用 .obj は追跡
 !project/Resources/**/*.obj

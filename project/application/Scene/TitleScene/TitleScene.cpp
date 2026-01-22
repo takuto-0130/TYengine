@@ -12,64 +12,10 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-#include "PostEffectManager.h"
-#include "VignetteEffect.h"
-#include "RadialBlurEffect.h"
-
 
 TitleScene::~TitleScene()
 {
 }
-
-static std::vector<float> spectrumSmoothed(32, 0.0f);
-// Nバンドにリサンプルしたスペクトラムを作る
-std::vector<float> MakeLogSpectrum(
-	const std::vector<float>& fft,
-	int sampleRate,
-	int fftSize,
-	int bands)
-{
-	std::vector<float> out(bands, 0.0f);
-
-	float minF = 20.0f;              // 人間の可聴最低周波数
-	float maxF = sampleRate / 2.0f;  // ナイキスト
-
-	float minLog = log10f(minF);
-	float maxLog = log10f(maxF);
-
-	float freqPerBin = (float)sampleRate / fftSize;
-
-	for (int b = 0; b < bands; b++)
-	{
-		float logStart = minLog + (maxLog - minLog) * (float)b / bands;
-		float logEnd = minLog + (maxLog - minLog) * (float)(b + 1) / bands;
-
-		float fStart = powf(10.0f, logStart);
-		float fEnd = powf(10.0f, logEnd);
-
-		int binStart = (int)(fStart / freqPerBin);
-		int binEnd = (int)(fEnd / freqPerBin);
-
-		if (binStart < 0) binStart = 0;
-		if (binEnd >= fftSize / 2) binEnd = fftSize / 2;
-
-		float sum = 0;
-		int count = 0;
-
-		for (int i = binStart; i <= binEnd; i++)
-		{
-			float v = fft[i];
-			v = log10f(1.0f + v * 5.0f);
-			sum += v;
-			count++;
-		}
-
-		out[b] = (count > 0) ? sum / count : 0.0f;
-	}
-
-	return out;
-}
-
 
 void TitleScene::Init()
 {

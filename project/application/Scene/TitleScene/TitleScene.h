@@ -6,8 +6,6 @@
 
 #include "Audio/AudioAnalyzer.h"
 
-#include "Audio/AudioAnalyzer.h"
-
 #define JSONMGR_WITH_IMGUI
 #include "Utils/Json/JsonManager.h"
 

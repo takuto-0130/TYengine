@@ -66,8 +66,6 @@ void GameScene::Init()
 	skybox_ = std::make_unique<ObjectCubemap>();
 	skybox_->Initialize("Resources/Texture/output_skybox.dds");
 
-	Audio::GetInstance()->LoadWave("fanfare");
-
 	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
 

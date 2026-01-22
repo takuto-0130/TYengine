@@ -116,3 +116,5 @@ imgui
 cubemap
 assimp
 gltf
+typeparam
+typeless

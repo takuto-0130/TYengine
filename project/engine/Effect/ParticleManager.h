@@ -1,16 +1,23 @@
 #pragma once
 #include "IParticleRenderer.h"
+#include "SingletonObject.h"
 #include <vector>
 #include <memory>
 
 
 
-class ParticleManager {
+class ParticleManager :
+    public SingletonObject<ParticleManager>
+{
+    friend class SingletonObject<ParticleManager>;
+    friend struct std::default_delete<ParticleManager>;
+
+private:
+    // 外部からの new/delete を禁止
+    ParticleManager() = default;
+    ~ParticleManager() = default;
+
 public:
-    static ParticleManager* GetInstance() {
-        static ParticleManager instance;
-        return &instance;
-    }
     int Add(std::unique_ptr<IParticleRenderer> particle);
     void InitializeAll(DirectXBasis* dx, SrvManager* srv, Camera* cam);
     void UpdateAll();

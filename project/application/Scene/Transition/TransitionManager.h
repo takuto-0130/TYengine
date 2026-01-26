@@ -1,21 +1,19 @@
 #pragma once
 #include "ITransition.h"
+#include "SingletonObject.h"
 #include <queue>
 #include <memory>
 
-class TransitionManager {
-public:
-	static TransitionManager* GetInstance()
-	{
-		static TransitionManager instance;
-		return &instance;
-	}
+class TransitionManager :
+	public SingletonObject<TransitionManager>
+{
+	friend class SingletonObject<TransitionManager>;
+	friend struct std::default_delete<TransitionManager>;
 
-	~TransitionManager();
 private:
+	// 外部からの new/delete を禁止
 	TransitionManager() = default;
-	TransitionManager(TransitionManager&) = delete;
-	TransitionManager& operator=(TransitionManager&) = delete;
+	~TransitionManager();
 
 public:
 	// 単発トランジションの開始（現在のを上書き）

@@ -3,17 +3,6 @@
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
 
-std::unique_ptr<ImGuiManager> ImGuiManager::instance = nullptr;
-std::once_flag ImGuiManager::initInstanceFlag;
-
-ImGuiManager* ImGuiManager::GetInstance()
-{
-	std::call_once(initInstanceFlag, []() {
-		instance = std::make_unique<ImGuiManager>();
-		});
-	return instance.get();
-}
-
 void ImGuiManager::Initialize(WindowsApp* winApp, DirectXBasis* dxBasis)
 {
 	winApp_ = winApp;

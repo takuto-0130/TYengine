@@ -3,17 +3,6 @@
 
 using namespace Logger;
 
-std::unique_ptr<SpriteBasis> SpriteBasis::instance = nullptr;
-std::once_flag SpriteBasis::initInstanceFlag;
-
-SpriteBasis* SpriteBasis::GetInstance()
-{
-	std::call_once(initInstanceFlag, []() {
-		instance = std::make_unique<SpriteBasis>();
-		});
-	return instance.get();
-}
-
 void SpriteBasis::Initialize(DirectXBasis* directXBasis)
 {
 	directXBasis_ = directXBasis;

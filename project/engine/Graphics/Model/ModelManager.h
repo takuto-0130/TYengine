@@ -7,26 +7,25 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <TextureManager.h>
+#include "TextureManager.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// 3D モデルの読み込み・管理を一元化するシングルトンクラス。  
 /// ファイルパスをキーに Model をキャッシュし、重複読み込みを防ぐ。
 /// </summary>
-class ModelManager
+class ModelManager :
+    public SingletonObject<ModelManager>
 {
-public:
-    /// <summary>デフォルトコンストラクタ。</summary>
-    ModelManager() = default;
+    friend class SingletonObject<ModelManager>;
+    friend struct std::default_delete<ModelManager>;
 
-    /// <summary>デストラクタ。</summary>
+private:
+    // 外部からの new/delete を禁止
+    ModelManager() = default;
     ~ModelManager() = default;
 
-    /// <summary>
-    /// シングルトンインスタンスの取得。
-    /// </summary>
-    /// <returns>ModelManager の唯一のインスタンス。</returns>
-    static ModelManager* GetInstance();
+public:
 
     /// <summary>
     /// 初期化処理。モデル読み込みに必要な DirectX 基盤と SRV 管理を登録する。
@@ -34,8 +33,6 @@ public:
     /// <param name="dxManager">DirectX 基盤（デバイス・コマンド関連）。</param>
     /// <param name="srvManager">SRV 管理クラス。</param>
     void Initialize(DirectXBasis* dxManager, SrvManager* srvManager);
-
-public:
     /// <summary>
     /// モデルファイルを読み込み、管理下に追加する。  
     /// 同じファイルは再読み込みせずキャッシュを使用する。
@@ -66,17 +63,4 @@ private:
     /// 実際の読み込み処理を担うローダ。
     /// </summary>
     std::unique_ptr<ModelLoader> modelLoader_ = nullptr;
-
-private:
-    /// <summary>シングルトン本体。</summary>
-    static std::unique_ptr<ModelManager> instance;
-
-    /// <summary>スレッドセーフな一度きりの初期化用フラグ。</summary>
-    static std::once_flag initInstanceFlag;
-
-    /// <summary>コピーコンストラクタ（非公開／未使用）。</summary>
-    ModelManager(ModelManager&) = delete;
-
-    /// <summary>代入演算子（非公開／未使用）。</summary>
-    ModelManager& operator=(ModelManager&) = delete;
 };

@@ -7,6 +7,7 @@
 #include "DirectXTex/DirectXTex.h"
 #include "DirectXBasis.h"
 #include "SrvManager.h"
+#include "SingletonObject.h"
 
 static constexpr size_t FrameCount = 3;
 
@@ -14,15 +15,18 @@ static constexpr size_t FrameCount = 3;
 /// テクスチャの読み込み・管理を一元化するクラス。  
 /// ファイルパスをキーにテクスチャをロード・キャッシュし、SRV を自動生成して扱いやすくする。
 /// </summary>
-class TextureManager
+class TextureManager :
+    public SingletonObject<TextureManager>
 {
-public:
-    /// <summary>
-    /// シングルトンインスタンスを取得する。
-    /// </summary>
-    /// <returns>TextureManager の唯一のインスタンス。</returns>
-    static TextureManager* GetInstance();
+    friend class SingletonObject<TextureManager>;
+    friend struct std::default_delete<TextureManager>;
 
+private:
+    // 外部からの new/delete を禁止
+    TextureManager() = default;
+    ~TextureManager() = default;
+
+public:
     /// <summary>
     /// 初期化処理。DirectX 基盤および SRV 管理クラスを登録する。
     /// </summary>
@@ -83,6 +87,7 @@ private:
     /// </summary>
     void CreateDummyCubemap();
 
+private:
     /// <summary>
     /// テクスチャ情報構造体。  
     /// メタデータ・リソース・ディスクリプタ情報を保持する。
@@ -95,8 +100,6 @@ private:
         D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU{};       ///< CPU SRV ハンドル。
         D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU{};       ///< GPU SRV ハンドル。
     };
-
-private:
     DirectXBasis* dxBasis_ = nullptr;   ///< DirectX 基盤。
     SrvManager* srvManager_ = nullptr;  ///< SRV 管理クラス。
 

@@ -8,6 +8,7 @@
 #include <chrono>
 #include "Logger.h"
 #include "StringUtility.h"
+#include "SingletonObject.h"
 #include "DirectXTex/DirectXTex.h"
 #include "DirectXTex/d3dx12.h"
 
@@ -16,15 +17,18 @@
 /// デバイス／コマンド／スワップチェーン／各ディスクリプタヒープや、  
 /// シェーダコンパイル・テクスチャロードなどの共通ユーティリティを提供する。
 /// </summary>
-class DirectXBasis
+class DirectXBasis :
+    public SingletonObject<DirectXBasis>
 {
+    friend class SingletonObject<DirectXBasis>;
+    friend struct std::default_delete<DirectXBasis>;
+
+private:
+    // 外部からの new/delete を禁止
+    DirectXBasis() = default;
+    ~DirectXBasis() = default;
+
 public: // メンバ関数
-    /// <summary>シングルトンインスタンスを取得する。</summary>
-    static DirectXBasis* GetInstance()
-    {
-        static DirectXBasis instance;
-        return &instance;
-    }
 
     /// <summary>
     /// 初期化処理。  

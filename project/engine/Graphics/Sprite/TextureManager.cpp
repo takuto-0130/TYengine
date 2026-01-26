@@ -3,11 +3,6 @@
 #include <cassert>
 #include <filesystem>
 
-TextureManager* TextureManager::GetInstance() {
-    static TextureManager instance;
-    return &instance;
-}
-
 void TextureManager::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager) {
     dxBasis_ = dxBasis;
     srvManager_ = srvManager;

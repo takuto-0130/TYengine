@@ -126,9 +126,9 @@ bool Input::IsTriggerMouse(int32_t buttonNumber) const
     return (mouse_.rgbButtons[buttonNumber] & 0x80) && !(mousePre_.rgbButtons[buttonNumber] & 0x80);
 }
 
-Input::MouseMove Input::GetMouseMove()
+Vector3 Input::GetMouseMove()
 {
-    MouseMove move = { mouse_.lX, mouse_.lY, mouse_.lZ };
+    Vector3 move = { static_cast<float>(mouse_.lX), static_cast<float>(mouse_.lY), static_cast<float>(mouse_.lZ) };
     return move;
 }
 

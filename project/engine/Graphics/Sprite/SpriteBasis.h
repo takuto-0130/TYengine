@@ -1,18 +1,23 @@
 #pragma once
 #include "DirectXBasis.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// スプライト描画の共通設定（ルートシグネチャ／グラフィックスパイプライン等）を一元管理するクラス。  
 /// シングルトンとして提供し、スプライト描画時の共通セットアップを行う。
 /// </summary>
-class SpriteBasis
+class SpriteBasis :
+    public SingletonObject<SpriteBasis>
 {
-public: // メンバ関数
-    /// <summary>
-    /// シングルトンインスタンスの取得。
-    /// </summary>
-    /// <returns>SpriteBasis の唯一のインスタンス。</returns>
-    static SpriteBasis* GetInstance();
+    friend class SingletonObject<SpriteBasis>;
+    friend struct std::default_delete<SpriteBasis>;
+
+private:
+    // 外部からの new/delete を禁止
+    SpriteBasis() = default;
+    ~SpriteBasis() = default;
+
+public:
 
     /// <summary>
     /// 初期化処理。DirectX 基盤を登録し、必要なリソース/状態を構築する。
@@ -77,24 +82,4 @@ private: // メンバ変数
 
     /// <summary>ルートシグネチャ生成時のエラーメッセージ出力。</summary>
     Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-
-private:
-    /// <summary>シングルトン本体。</summary>
-    static std::unique_ptr<SpriteBasis> instance;
-
-    /// <summary>スレッドセーフな一度きりの初期化用フラグ。</summary>
-    static std::once_flag initInstanceFlag;
-
-    /// <summary>コピーコンストラクタ（非公開／未使用）。</summary>
-    SpriteBasis(SpriteBasis&) = default;
-
-    /// <summary>代入演算子（非公開／未使用）。</summary>
-    SpriteBasis& operator=(SpriteBasis&) = default;
-
-public:
-    /// <summary>デフォルトコンストラクタ。</summary>
-    SpriteBasis() = default;
-
-    /// <summary>デストラクタ。</summary>
-    ~SpriteBasis() = default;
 };

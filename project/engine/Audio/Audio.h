@@ -16,6 +16,7 @@
 
 #include "MyAnalyzerXAPO.h"
 #include "StreamingAudio.h"
+#include "SingletonObject.h"
 
 
 // WAVヘッダーの定義
@@ -66,14 +67,11 @@ private:
 // 音源の同時再生数
 static const size_t kMaxPlayWave = 100;
 
-class Audio
+class Audio :
+	public SingletonObject<Audio>
 {
-public:
-	static Audio* GetInstance()
-	{
-		static Audio instance; // 静的ローカル変数（寿命がプログラム全体に渡る）
-		return &instance;
-	}
+	friend class SingletonObject<Audio>;
+	friend struct std::default_delete<Audio>;
 
 private:
 	Audio()
@@ -84,8 +82,6 @@ private:
 		, BUFFER_SIZE(0)
 	{}
 	~Audio();
-	Audio(Audio&) = delete;
-	Audio& operator=(Audio&) = delete;
 
 #pragma region
 public:

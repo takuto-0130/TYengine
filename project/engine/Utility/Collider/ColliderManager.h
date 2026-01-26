@@ -1,5 +1,6 @@
 #pragma once
 #include "Collider.h"
+#include "SingletonObject.h"
 #include <vector>
 #include <unordered_set>
 
@@ -18,18 +19,18 @@ class SphereCollider;
 /// <summary>
 /// 当たり判定の管理クラス
 /// </summary>
-class ColliderManager 
+class ColliderManager :
+    public SingletonObject<ColliderManager>
 {
-public: // メンバ関数
-    // シングルトンインスタンス
-    static ColliderManager* GetInstance()
-    {
-        static ColliderManager instance;
-        return &instance;
-    }
-    // デストラクタ
+    friend class SingletonObject<ColliderManager>;
+    friend struct std::default_delete<ColliderManager>;
+
+private:
+    // 外部からの new/delete を禁止
+    ColliderManager() = default;
     ~ColliderManager() = default;
 
+public:
     /// <summary>
     /// コライダーを追加
     /// </summary>
@@ -56,15 +57,6 @@ public: // メンバ関数
     void Update();
 
 private: // メンバ関数
-    // コンストラクタ
-    ColliderManager() = default;
-
-    // コピー・ムーブの禁止
-    ColliderManager(const ColliderManager&) = delete;
-    ColliderManager& operator=(const ColliderManager&) = delete;
-    ColliderManager(ColliderManager&&) = delete;
-    ColliderManager& operator=(ColliderManager&&) = delete;
-
     /// <summary>
     /// 2つのコライダーIDをソートしてペアを作成する  
     /// （順序に依存しない衝突ペア判定のため）

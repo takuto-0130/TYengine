@@ -9,54 +9,25 @@
 #include <mutex>
 
 #include "struct.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// 入力
 /// </summary>
-class Input {
-
-public:
-	struct MouseMove {
-		LONG lX;
-		LONG lY;
-		LONG lZ;
-	};
-
-public:
-	enum class PadType {
-		DirectInput,
-		XInput,
-	};
-
-	union State {
-		XINPUT_STATE xInput_;
-		DIJOYSTATE2 directInput_;
-	};
-
-	struct Joystick {
-		Microsoft::WRL::ComPtr<IDirectInputDevice8> device_;
-		int32_t deadZoneL_;
-		int32_t deadZoneR_;
-		PadType type_;
-		State state_;
-		State statePre_;
-	};
-
+class Input :
+	public SingletonObject<Input>
+{
+	friend class SingletonObject<Input>;
+	friend struct std::default_delete<Input>;
 
 private:
+	// 外部からの new/delete を禁止
 	Input() = default;
-	~Input() { Finalize(); }
-	Input(const Input&) = delete;
-	Input& operator=(const Input&) = delete;
+	~Input() = default;
 
+public: // メンバ関数
 	// 終了
 	void Finalize();
-public: // メンバ関数
-	static Input* GetInstance()
-	{
-		static Input instance;
-		return &instance;
-	}
 
 	// 初期化
 	void Initialize(const HWND& hwnd);
@@ -89,7 +60,7 @@ public: // メンバ関数
 	bool IsTriggerMouse(int32_t buttonNumber) const;
 
 	/// マウス移動量
-	MouseMove GetMouseMove();
+	Vector3 GetMouseMove();
 
 	/// ホイールスクロール量
 	int32_t GetWheel() const;
@@ -140,7 +111,29 @@ public: // メンバ関数
 private:
 	static BOOL CALLBACK
 		EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) noexcept;
-	
+
+public:
+	enum class PadType
+	{
+		DirectInput,
+		XInput,
+	};
+
+	union State
+	{
+		XINPUT_STATE xInput_;
+		DIJOYSTATE2 directInput_;
+	};
+
+	struct Joystick
+	{
+		Microsoft::WRL::ComPtr<IDirectInputDevice8> device_;
+		int32_t deadZoneL_;
+		int32_t deadZoneR_;
+		PadType type_;
+		State state_;
+		State statePre_;
+	};
 private: // メンバ変数
 	Microsoft::WRL::ComPtr<IDirectInput8> dInput_;
 	Microsoft::WRL::ComPtr<IDirectInputDevice8> devKeyboard_;

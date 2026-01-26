@@ -3,15 +3,21 @@
 #include "DirectXBasis.h"
 #include <memory>
 #include <mutex>
+#include "SingletonObject.h"
 
 // ImGui管理クラス
-class ImGuiManager
+class ImGuiManager :
+	public SingletonObject<ImGuiManager>
 {
-public:
+	friend class SingletonObject<ImGuiManager>;
+	friend struct std::default_delete<ImGuiManager>;
+
+private:
+	// 外部からの new/delete を禁止
 	ImGuiManager() = default;
 	~ImGuiManager() = default;
-	// シングルトンインスタンスの取得
-	static ImGuiManager* GetInstance();
+
+public:
 	// 初期化
 	void Initialize(WindowsApp* winApp, DirectXBasis* dxBasis);
 	// ImGui受付開始
@@ -27,12 +33,5 @@ private:
 	DirectXBasis* dxBasis_ = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
-
-private: // シングルトンインスタンス
-	static std::unique_ptr<ImGuiManager> instance;
-	static std::once_flag initInstanceFlag;
-
-	ImGuiManager(ImGuiManager&) = default;
-	ImGuiManager& operator=(ImGuiManager&) = default;
 };
 

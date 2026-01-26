@@ -1,20 +1,24 @@
 #pragma once
 #include "Camera.h"
 #include "DirectXBasis.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// 3D オブジェクト描画の共通設定（ルートシグネチャ／グラフィックスパイプライン／ライト等）を一元管理するクラス。  
 /// シングルトンとして提供し、3D 描画時の共通セットアップやデフォルトカメラ・スカイボックスの管理を行う。
 /// </summary>
-class Object3dBasis
+class Object3dBasis :
+    public SingletonObject<Object3dBasis>
 {
-public: // メンバ関数
-    /// <summary>
-    /// シングルトンインスタンスの取得。
-    /// </summary>
-    /// <returns>Object3dBasis の唯一のインスタンス。</returns>
-    static Object3dBasis* GetInstance();
+    friend class SingletonObject<Object3dBasis>;
+    friend struct std::default_delete<Object3dBasis>;
 
+private:
+    // 外部からの new/delete を禁止
+    Object3dBasis() = default;
+    ~Object3dBasis() = default;
+
+public:
     /// <summary>
     /// 初期化処理。DirectX 基盤を登録し、必要なリソース／状態を構築する。
     /// </summary>
@@ -95,24 +99,4 @@ private: // メンバ変数
     DirectionalLight* directionalLightData = nullptr;                 ///< ライト定数バッファのマップ先。
 
     std::string skyboxTextureFilePath_ = ""; ///< スカイボックス用テクスチャパス。
-
-private:
-    /// <summary>シングルトン本体。</summary>
-    static std::unique_ptr<Object3dBasis> instance;
-
-    /// <summary>スレッドセーフな一度きりの初期化用フラグ。</summary>
-    static std::once_flag initInstanceFlag;
-
-    /// <summary>コピーコンストラクタ（非公開／未使用）。</summary>
-    Object3dBasis(Object3dBasis&) = default;
-
-    /// <summary>代入演算子（非公開／未使用）。</summary>
-    Object3dBasis& operator=(Object3dBasis&) = default;
-
-public:
-    /// <summary>デフォルトコンストラクタ。</summary>
-    Object3dBasis() = default;
-
-    /// <summary>デストラクタ。</summary>
-    ~Object3dBasis() = default;
 };

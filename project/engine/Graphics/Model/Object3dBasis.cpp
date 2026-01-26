@@ -2,17 +2,6 @@
 
 using namespace Logger;
 
-std::unique_ptr<Object3dBasis> Object3dBasis::instance = nullptr;
-std::once_flag Object3dBasis::initInstanceFlag;
-
-Object3dBasis* Object3dBasis::GetInstance()
-{
-	std::call_once(initInstanceFlag, []() {
-		instance = std::make_unique<Object3dBasis>();
-		});
-	return instance.get();
-}
-
 void Object3dBasis::Initialize(DirectXBasis* directXBasis)
 {
 	directXBasis_ = directXBasis;

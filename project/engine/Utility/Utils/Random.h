@@ -1,15 +1,23 @@
 #pragma once
 #include <random>
+#include "SingletonObject.h"
 
-class Random
+class Random :
+    public SingletonObject<Random>
 {
-public:
-    static Random* GetInstance()
-    {
-        static Random instance;
-        return &instance;
-    }
+    friend class SingletonObject<Random>;
+    friend struct std::default_delete<Random>;
 
+private:
+    // 外部からの new/delete を禁止
+    Random()
+    {
+        std::random_device rd;
+        mt_.seed(rd());
+    }
+    ~Random() = default;
+
+public:
     // 整数乱数
     int Int(int min, int max)
     {
@@ -37,18 +45,6 @@ public:
         std::uniform_real_distribution<float> dist(0.0f, 1.0f);
         return dist(mt_);
     }
-
-private:
-    Random()
-    {
-        std::random_device rd;
-        mt_.seed(rd());
-    }
-
-    ~Random() = default;
-
-    Random(const Random&) = delete;
-    Random& operator=(const Random&) = delete;
 
 private:
     std::mt19937 mt_;

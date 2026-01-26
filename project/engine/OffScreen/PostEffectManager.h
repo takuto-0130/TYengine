@@ -3,6 +3,7 @@
 #include "OutlinePass.h"
 #include "DoFPass.h"
 #include "CopyImage.h"
+#include "SingletonObject.h"
 #include <vector>
 #include <memory>
 
@@ -15,30 +16,16 @@ class IPostEffect;
 /// ポストエフェクト全体を統括管理するマネージャークラス。
 /// 複数のポストエフェクト（Outline, DoF, Copy など）を登録・適用・制御する。
 /// </summary>
-class PostEffectManager
+class PostEffectManager :
+    public SingletonObject<PostEffectManager>
 {
-public:
-    /// <summary>
-    /// シングルトンインスタンスを取得する。
-    /// </summary>
-    /// <returns>PostEffectManager の唯一のインスタンス。</returns>
-    static PostEffectManager* GetInstance()
-    {
-        static PostEffectManager instance;
-        return &instance;
-    }
-
-    // コピー・ムーブ禁止
-    PostEffectManager(const PostEffectManager&) = delete;
-    PostEffectManager& operator=(const PostEffectManager&) = delete;
-    PostEffectManager(PostEffectManager&&) = delete;
-    PostEffectManager& operator=(PostEffectManager&&) = delete;
+    friend class SingletonObject<PostEffectManager>;
+    friend struct std::default_delete<PostEffectManager>;
 
 private:
-    /// <summary>
-    /// コンストラクタ（外部からの生成禁止）。
-    /// </summary>
+    // 外部からの new/delete を禁止
     PostEffectManager() = default;
+    ~PostEffectManager() = default;
 
 public:
     /// <summary>

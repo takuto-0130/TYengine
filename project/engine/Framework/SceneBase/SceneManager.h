@@ -1,40 +1,23 @@
 #pragma once
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// ゲームシーンの管理を行うクラス。  
 /// 現在のシーンの更新・描画・切り替えを制御し、  
 /// シーン遷移時のメモリ管理や初期化を自動で行うシングルトンクラス。
 /// </summary>
-class SceneManager
+class SceneManager :
+    public SingletonObject<SceneManager>
 {
-public:
-    /// <summary>
-    /// シングルトンインスタンスを取得する。
-    /// </summary>
-    /// <returns>SceneManager の唯一のインスタンス。</returns>
-    static SceneManager* GetInstance()
-    {
-        static SceneManager instance; ///< 静的ローカル変数（寿命はプログラム全体に渡る）。
-        return &instance;
-    }
-
-    /// <summary>
-    /// デストラクタ。  
-    /// 現在保持しているシーンのリソースを解放する。
-    /// </summary>
-    ~SceneManager();
+    friend class SingletonObject<SceneManager>;
+    friend struct std::default_delete<SceneManager>;
 
 private:
-    /// <summary>コンストラクタ（外部からの生成を禁止）。</summary>
+    // 外部からの new/delete を禁止
     SceneManager() = default;
-
-    /// <summary>コピーコンストラクタ（禁止）。</summary>
-    SceneManager(SceneManager&) = delete;
-
-    /// <summary>代入演算子（禁止）。</summary>
-    SceneManager& operator=(SceneManager&) = delete;
+    ~SceneManager();
 
 public:
     /// <summary>

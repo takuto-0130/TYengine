@@ -1,37 +1,23 @@
 #pragma once
 #include "Camera.h"
 #include "DirectXBasis.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// キューブマップ（スカイボックス）描画の基盤クラス。  
 /// DirectX のルートシグネチャ・パイプライン・カメラを管理し、  
 /// スカイボックスの描画を簡単に実行できるようにするシングルトンクラス。
 /// </summary>
-class CubemapBasis
+class CubemapBasis :
+    public SingletonObject<CubemapBasis>
 {
-public:
-    /// <summary>
-    /// シングルトンインスタンスを取得する。
-    /// </summary>
-    /// <returns>CubemapBasis の唯一のインスタンス。</returns>
-    static CubemapBasis* GetInstance()
-    {
-        static CubemapBasis instance; ///< 静的ローカル変数として一度だけ生成される。
-        return &instance;
-    }
-
-    /// <summary>デストラクタ。</summary>
-    ~CubemapBasis() = default;
+    friend class SingletonObject<CubemapBasis>;
+    friend struct std::default_delete<CubemapBasis>;
 
 private:
-    /// <summary>コンストラクタ（外部からの生成を禁止）。</summary>
+    // 外部からの new/delete を禁止
     CubemapBasis() = default;
-
-    /// <summary>コピーコンストラクタ（禁止）。</summary>
-    CubemapBasis(CubemapBasis&) = delete;
-
-    /// <summary>代入演算子（禁止）。</summary>
-    CubemapBasis& operator=(CubemapBasis&) = delete;
+    ~CubemapBasis() = default;
 
 public:
     /// <summary>

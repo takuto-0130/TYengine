@@ -33,7 +33,7 @@ public:
 
 		// Audioエンジン本体にカテゴリーを作成
 		audio_->AddSoundCategory(name);
-		audio_->SetVolume(name, defaultVolume);
+		audio_->SetCategoryVolume(name, defaultVolume);
 	}
 
 	/**

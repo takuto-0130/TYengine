@@ -1,5 +1,6 @@
 #pragma once
 #include "StateMachine.h"
+#include "SingletonObject.h"
 #include <functional>
 
 using EaseFunc = std::function<float(float)>;
@@ -15,28 +16,19 @@ enum class BulletTimeState
 class Timer;
 // バレットタイム制御用クラス
 class BulletTimeController
-	: public StateMachine<BulletTimeController, BulletTimeState>
+	: public StateMachine<BulletTimeController, BulletTimeState>,
+	public SingletonObject<BulletTimeController>
 {
-public: // 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
-
-public:
-	// シングルトンインスタンス
-	static BulletTimeController* GetInstance() 
-	{
-		static BulletTimeController instance;
-		return &instance;
-	}
-
-	// コピー・ムーブの禁止
-	BulletTimeController(const BulletTimeController&) = delete;
-	BulletTimeController& operator=(const BulletTimeController&) = delete;
-	BulletTimeController(BulletTimeController&&) = delete;
-	BulletTimeController& operator=(BulletTimeController&&) = delete;
+	friend class SingletonObject<BulletTimeController>;
+	friend struct std::default_delete<BulletTimeController>;
 
 private:
-	// コンストラクタ
+	// 外部からの new/delete を禁止
 	BulletTimeController();
+	~BulletTimeController() = default;
+
+public: // 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public: // メンバ関数
 	// 更新

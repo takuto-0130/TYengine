@@ -1,16 +1,20 @@
 #pragma once
 #include <Windows.h>
+#include "SingletonObject.h"
 
 // 時間管理クラス
-class Timer {
-public: // メンバ関数
-    // シングルトンインスタンス
-    static Timer* GetInstance()
-    {
-        static Timer instance;
-        return &instance;
-    }
+class Timer :
+    public SingletonObject<Timer>
+{
+    friend class SingletonObject<Timer>;
+    friend struct std::default_delete<Timer>;
 
+private:
+    // 外部からの new/delete を禁止
+    Timer() = default;
+    ~Timer() = default;
+
+public:
     // タイマー開始（初期化時に1度だけ呼ぶ）
     void Start();
     // 更新
@@ -26,18 +30,6 @@ public: // メンバ関数
     // setter / getter
     void SetTimeScale(float scale) { timeScale_ = scale; }
     float GetTimeScale() const { return timeScale_; }
-
-    // コピー・ムーブ禁止
-    Timer(const Timer&) = delete;
-    Timer& operator=(const Timer&) = delete;
-    Timer(Timer&&) = delete;
-    Timer& operator=(Timer&&) = delete;
-
-private: // メンバ関数
-    // コンストラクタ
-    Timer() = default;
-    // デストラクタ
-    ~Timer() = default;
 
 private: // メンバ変数
     LARGE_INTEGER frequency_{};

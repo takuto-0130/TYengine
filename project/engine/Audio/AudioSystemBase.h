@@ -1,20 +1,24 @@
 #pragma once
-#include "../Audio.h"
+#include "Audio.h"
 #include <string>
 #include <unordered_map>
 #include <cassert>
 
 // Template引数でユーザー定義のEnumを受け取る
 template<typename CategoryEnum>
-class IAudioSystem
+class AudioSystemBase
 {
-public:
-	IAudioSystem()
+protected:
+	AudioSystemBase()
 	{
 		audio_ = Audio::GetInstance();
 	}
 
-	virtual ~IAudioSystem() = default;
+	// Audioクラスへの生アクセスが必要な場合
+	Audio* GetAudio() { return audio_; }
+
+public:
+	virtual ~AudioSystemBase() = default;
 
 	/**
 	 * @brief カテゴリーの登録（初期化時に呼ぶ）
@@ -74,15 +78,9 @@ public:
 		audio_->SetMasterVolume(volume);
 	}
 
-
-
-	// Audioクラスへの生アクセスが必要な場合
-	Audio* GetAudio() { return audio_; }
-
 private:
 	Audio* audio_ = nullptr;
 
-
-	std::unordered_map<std::string, CategoryEnum> categoryMap_;
+	std::unordered_map<CategoryEnum, std::string> categoryMap_;
 };
 

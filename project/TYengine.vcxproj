@@ -201,7 +201,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\EngineCore\DirectXBasis.cpp" />
     <ClCompile Include="engine\Debugger\Logger.cpp" />
     <ClCompile Include="engine\EngineCore\WindowsApp.cpp" />
-    <ClCompile Include="engine\Framework\GameCore.cpp" />
+    <ClCompile Include="application\GameCore.cpp" />
     <ClCompile Include="engine\Framework\SceneBase\SceneManager.cpp" />
     <ClCompile Include="engine\Framework\TYFrameWork.cpp" />
     <ClCompile Include="engine\Graphics\Model\Model.cpp" />
@@ -228,7 +228,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\main.cpp" />
     <ClCompile Include="application\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="engine\Audio\StreamingAudio.cpp" />
-    <ClCompile Include="engine\Framework\SceneBase\SceneFactory.cpp" />
+    <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp" />
     <ClCompile Include="engine\Effect\ParticleManager.cpp" />
     <ClCompile Include="engine\Effect\PlaneParticle.cpp" />
     <ClCompile Include="engine\Effect\RingParticle.cpp" />
@@ -266,6 +266,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
+    <ClCompile Include="engine\Audio\AudioSystemInterface\IAudioSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
@@ -327,7 +328,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Debugger\Logger.h" />
     <ClInclude Include="engine\EngineCore\WindowsApp.h" />
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h" />
-    <ClInclude Include="engine\Framework\GameCore.h" />
+    <ClInclude Include="application\GameCore.h" />
     <ClInclude Include="engine\Framework\SceneBase\SceneManager.h" />
     <ClInclude Include="engine\Framework\TYFrameWork.h" />
     <ClInclude Include="engine\Graphics\Model\Model.h" />
@@ -357,7 +358,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Framework\SceneBase\IScene.h" />
     <ClInclude Include="application\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="engine\Audio\StreamingAudio.h" />
-    <ClInclude Include="engine\Framework\SceneBase\SceneFactory.h" />
+    <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h" />
     <ClInclude Include="engine\Effect\ParticleManager.h" />
     <ClInclude Include="engine\Effect\PlaneParticle.h" />
     <ClInclude Include="engine\Effect\RingParticle.h" />
@@ -398,6 +399,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
+    <ClInclude Include="engine\Audio\AudioSystemInterface\IAudioSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

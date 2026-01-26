@@ -238,35 +238,50 @@ public:
 
 	/**
 	 * @brief 音源のポーズ
-	 * @param resourceNum BGMのリソース番号
+	 * @param resourceNum サウンドのリソース番号
 	 */
-	void PauseBGM(int resourceNum);
+	void Pause(int resourceNum);
 
 	/**
 	 * @brief 音源の再開
-	 * @param resourceNum BGMのリソース番号
+	 * @param resourceNum サウンドのリソース番号
 	 */
-	void ReStartBGM(int resourceNum);
+	void ReStart(int resourceNum);
 
 	/**
-	 * @brief 音量調整
-	 * @param resourceNum BGMのリソース番号
+	 * @brief 全体音量調整
 	 */
-	void SetBGMVolume(int resourceNum, float volume);
+	void SetMasterVolume(float volume);
+
+	/**
+	 * @brief カテゴリー別音量調整
+	 * @param soundCategory サウンドのカテゴリー
+	 */
+	void SetCategoryVolume(const std::string& soundCategory, float volume);
+
+	/**
+	 * @brief 個別音量調整
+	 * @param resourceNum サウンドのリソース番号
+	 */
+	void SetSoundVolume(int resourceNum, float volume);
 
 	// 音声読み込み
-	void LoadWave(const char* filename);
+	void LoadWave(const std::string& filename);
 
 	// 音声データ解放
-	void SoundUnload(const char* filename);
+	void SoundUnload(const std::string& filename);
+
+	// サウンドカテゴリー追加
+	void AddSoundCategory(const std::string& soundCategory);
 
 	/**
 	 * @brief 音源の再生
 	 * @param soundData 音源データ
 	 * @param isLoop ループするか　default : false
+	 * @param soundCategory サウンドのカテゴリー
 	 * @return int BGMのリソース番号
 	 */
-	int PlayWave(const char* filename, const bool isLoop = false);
+	int Play(const std::string& filename, const bool isLoop = false, std::string soundCategory = "");
 
 	MyAnalyzerXAPO* GetAnalyzerXAPO() { return analyzerXAPO; }
 
@@ -288,12 +303,33 @@ private:
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2;
 	IXAudio2MasteringVoice* masterVoice;
 
+	std::unordered_map<std::string, IXAudio2SubmixVoice*> pSoundCategorySubmixVoices_;
+
 	// サウンドデータ格納コンテナ
 	std::unordered_map<std::string, Audio::SoundData> soundDataMap;
 
 	// 再生中データコンテナ
 	std::array<IXAudio2SourceVoice*, kMaxPlayWave> pSourceVoices_ = { nullptr };
 
+
+
+
+	// サウンド格納ディレクトリ
+	std::string directoryPath_;
+
+	// XAPO のインスタンス
+	MyAnalyzerXAPO* analyzerXAPO = nullptr;
+
+	// 全体解析用 Submix
+	IXAudio2SubmixVoice* analyzerSubmix = nullptr;
+
+	// ---- 無音バッファ用 Voice ----
+	IXAudio2SourceVoice* silentVoice_ = nullptr;
+	WAVEFORMATEX silentFormat_{};
+	std::vector<float> silentBuffer_;
+	bool silentFeedEnabled_ = false;
+
+private: // 削除予定
 	// ストリーミング再生
 	std::atomic<bool> isStreaming;
 	std::atomic<bool> isLoopStreaming;
@@ -304,18 +340,4 @@ private:
 	XAUDIO2FX_REVERB_PARAMETERS reverbParameters = {};
 	XAUDIO2_EFFECT_CHAIN effectChain = {};
 	XAUDIO2_EFFECT_DESCRIPTOR effect[1] = {};
-
-	// サウンド格納ディレクトリ
-	std::string directoryPath_;
-
-	// XAPO のインスタンス
-	MyAnalyzerXAPO* analyzerXAPO = nullptr;
-
-	IXAudio2SubmixVoice* analyzerSubmix = nullptr;
-
-	// ---- ★無音バッファ用 Voice ----
-	IXAudio2SourceVoice* silentVoice_ = nullptr;
-	WAVEFORMATEX silentFormat_{};
-	std::vector<float> silentBuffer_;
-	bool silentFeedEnabled_ = false;
 };

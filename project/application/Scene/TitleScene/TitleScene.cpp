@@ -109,8 +109,8 @@ void TitleScene::Update() {
 
 	if (input_->TriggerKey(DIK_M))
 	{
-		int a = Audio::GetInstance()->PlayWave("gameBGM", true);
-		Audio::GetInstance()->SetBGMVolume(a, 1.0f);
+		int a = Audio::GetInstance()->Play("gameBGM", true);
+		Audio::GetInstance()->SetSoundVolume(a, 1.0f);
 	}
 
 	// ImGui で編集

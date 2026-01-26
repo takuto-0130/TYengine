@@ -372,7 +372,7 @@
     <ClCompile Include="engine\EngineCore\WindowsApp.cpp">
       <Filter>engine\EngineCore</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Framework\GameCore.cpp">
+    <ClCompile Include="application\GameCore.cpp">
       <Filter>engine\Framework</Filter>
     </ClCompile>
     <ClCompile Include="engine\Framework\SceneBase\SceneManager.cpp">
@@ -453,7 +453,7 @@
     <ClCompile Include="engine\Audio\StreamingAudio.cpp">
       <Filter>engine\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Framework\SceneBase\SceneFactory.cpp">
+    <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp">
       <Filter>engine\Framework\SceneBase</Filter>
     </ClCompile>
     <ClCompile Include="engine\Effect\ParticleManager.cpp">
@@ -567,6 +567,7 @@
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp">
       <Filter>application\Scene\GameScene\RetryUI</Filter>
     </ClCompile>
+    <ClCompile Include="engine\Audio\AudioSystemInterface\IAudioSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
@@ -746,7 +747,7 @@
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
       <Filter>engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Framework\GameCore.h">
+    <ClInclude Include="application\GameCore.h">
       <Filter>engine\Framework</Filter>
     </ClInclude>
     <ClInclude Include="engine\Framework\SceneBase\SceneManager.h">
@@ -836,7 +837,7 @@
     <ClInclude Include="engine\Audio\StreamingAudio.h">
       <Filter>engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Framework\SceneBase\SceneFactory.h">
+    <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h">
       <Filter>engine\Framework\SceneBase</Filter>
     </ClInclude>
     <ClInclude Include="engine\Effect\ParticleManager.h">
@@ -959,6 +960,7 @@
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h">
       <Filter>application\Scene\GameScene\RetryUI</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Audio\AudioSystemInterface\IAudioSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

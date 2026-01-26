@@ -1,0 +1,88 @@
+#pragma once
+#include "../Audio.h"
+#include <string>
+#include <unordered_map>
+#include <cassert>
+
+// Template引数でユーザー定義のEnumを受け取る
+template<typename CategoryEnum>
+class IAudioSystem
+{
+public:
+	IAudioSystem()
+	{
+		audio_ = Audio::GetInstance();
+	}
+
+	virtual ~IAudioSystem() = default;
+
+	/**
+	 * @brief カテゴリーの登録（初期化時に呼ぶ）
+	 * @param type アプリ側で使うEnum
+	 * @param name Audioクラスに登録する文字列
+	 * @param defaultVolume 初期音量
+	 */
+	void CreateCategory(CategoryEnum type, const std::string& name, float defaultVolume = 1.0f)
+	{
+		// マップに登録
+		categoryMap_[type] = name;
+
+		// Audioエンジン本体にカテゴリーを作成
+		audio_->AddSoundCategory(name);
+		audio_->SetVolume(name, defaultVolume);
+	}
+
+	/**
+	 * @brief Enum指定で再生
+	 */
+	int Play(const std::string& filename, bool isLoop, CategoryEnum category)
+	{
+		// 登録されていないカテゴリーならエラー（またはデフォルト扱い）
+		if (categoryMap_.find(category) == categoryMap_.end())
+		{
+			// 登録忘れを防ぐため assert を入れるか、デフォルト文字列で再生
+			assert(false && "Category not registered!");
+			return audio_->Play(filename, isLoop);
+		}
+
+		// Enum -> string に変換して再生
+		return audio_->Play(filename, isLoop, categoryMap_[category]);
+	}
+
+	/**
+	 * @brief リソース番号指定で音量設定
+	 */
+	void SetVolume(int resourceNum, float volume)
+	{
+		audio_->SetSoundVolume(resourceNum, volume);
+	}
+
+	/**
+	 * @brief Enum指定で音量設定
+	 */
+	void SetVolume(CategoryEnum category, float volume)
+	{
+		if (categoryMap_.find(category) != categoryMap_.end())
+		{
+			audio_->SetCategoryVolume(categoryMap_[category], volume);
+		}
+	}
+
+	// 全体音量（Master）
+	void SetMasterVolume(float volume)
+	{
+		audio_->SetMasterVolume(volume);
+	}
+
+
+
+	// Audioクラスへの生アクセスが必要な場合
+	Audio* GetAudio() { return audio_; }
+
+private:
+	Audio* audio_ = nullptr;
+
+
+	std::unordered_map<std::string, CategoryEnum> categoryMap_;
+};
+

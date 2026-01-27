@@ -23,7 +23,11 @@ void GameScene::UpdateRetry()
 	}
 	else
 	{
-		if (input_->TriggerKey(DIK_SPACE)) ChangeState(GameSceneState::FADE_OUT);
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			gameAudio_->Play("enter", false, SoundCategory::UI);
+			ChangeState(GameSceneState::FADE_OUT);
+		}
 	}
 }
 

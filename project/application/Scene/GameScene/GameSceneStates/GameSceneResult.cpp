@@ -7,6 +7,8 @@
 
 void GameScene::InitResult()
 {
+	gameAudio_->Play("fanfare", false, SoundCategory::BGM);
+
 	PostEffectManager::GetInstance()->SetEffectEnabled("Gaussian", true);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetKernelSize(13);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(0.0f);
@@ -34,8 +36,6 @@ void GameScene::InitResult()
 }
 void GameScene::UpdateResult()
 {
-	if (input_->TriggerKey(DIK_C)) ChangeState(GameSceneState::RESULT);
-
 	resultMenu_->Update();
 	scoreDraw_->UpdateResult(GetStateElapsedTime());
 
@@ -54,7 +54,11 @@ void GameScene::UpdateResult()
 	}
 	else if (GetStateElapsedTime() > 4.5f)
 	{
-		if (input_->TriggerKey(DIK_SPACE)) ChangeState(GameSceneState::FADE_OUT);
+		if (input_->TriggerKey(DIK_SPACE)) 
+		{
+			gameAudio_->Play("enter", false, SoundCategory::UI);
+			ChangeState(GameSceneState::FADE_OUT);
+		}
 	}
 }
 void GameScene::ExitResult()

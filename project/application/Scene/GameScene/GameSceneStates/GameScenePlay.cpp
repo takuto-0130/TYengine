@@ -16,7 +16,11 @@ void GameScene::UpdatePlay()
 
 	PlayUIUpdate();
 
-	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
+	if (input_->TriggerKey(DIK_ESCAPE)) 
+	{
+		gameAudio_->Play("open", false, SoundCategory::UI);
+		ChangeState(GameSceneState::PAUSE);
+	}
 
 	if (stageManager_->GetPlayer()->IsDead())
 	{

@@ -6,6 +6,7 @@
 #include "Effect/PlaneParticle.h"
 #include "Effect/ContrailBehaviour.h"
 #include "Effect/ParticleManager.h"
+#include "../../AppSystem/Audio/GameAudio.h"
 
 #define PLAYER_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Player, stateEnum, funcName)
@@ -127,6 +128,7 @@ void Player::TakeDamage()
 
 	if (hitpoint_ > 0)
 	{
+		GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
 		ChangeState(PlayerState::TAKE_DAMAGE);
 	}
 	else
@@ -139,6 +141,7 @@ void Player::OnCollision()
 {
 	isDead_ = true;
 
+	GameAudio::GetInstance()->Play("gekiha", false, SoundCategory::SE);
 
 	IParticleRenderer::Emitter e;
 	e.transform.translate = GetWorldPosition();
@@ -183,6 +186,7 @@ void Player::Attack()
 		currentBulletType_ = PlayerBulletType::NORMAL;
 		Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
 		bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+		GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 		bulletTimer_ = bulletCoolTime_;
 	}
 }

@@ -5,6 +5,7 @@
 
 void GameScene::InitFadeOut()
 {
+	Audio::GetInstance()->StopBGM(BGMHandle_);
 	auto transition = std::make_unique<FadeTransition>(FadeTransition::Type::FADE_OUT, 1.0f);
 	transition->SetOnFinishCallback([this]() {
 		sceneManager_->ChangeScene("TITLE");

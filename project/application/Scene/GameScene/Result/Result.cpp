@@ -32,12 +32,6 @@ void ResultClass::Init()
 	sprites_[SPACE]->SetPosition(jm_->Get<Vector2>("Result.Texture.TitleSpace.Position"));
 	sprites_[SPACE]->SetAlpha(jm_->Get<float>("Result.Texture.TitleSpace.Alpha"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
-	sprites_[RETURN_TITLE] = std::make_unique<Sprite>();
-	sprites_[RETURN_TITLE]->Initialize("Resources/Texture/ReturnTitle.png");
-	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("Result.Texture.ReturnTitle.Size"));
-	sprites_[RETURN_TITLE]->SetPosition(jm_->Get<Vector2>("Result.Texture.ReturnTitle.Position"));
-
 
 	timer_ = jm_->Get<float>("Result.timer.reset");
 	maxTime_ = jm_->Get<float>("Result.timer.max");
@@ -57,8 +51,6 @@ void ResultClass::DebugJMApply()
 
 	sprites_[SPACE]->SetAnchorPoint(jm_->Get<Vector2>("Result.Texture.TitleSpace.AnchorPoint"));
 	sprites_[SPACE]->SetPosition(jm_->Get<Vector2>("Result.Texture.TitleSpace.Position"));
-
-	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("Result.Texture.ReturnTitle.Size"));
 }
 
 void ResultClass::Reset()

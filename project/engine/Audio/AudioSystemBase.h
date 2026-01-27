@@ -20,6 +20,11 @@ protected:
 public:
 	virtual ~AudioSystemBase() = default;
 
+	void LoadSound(const std::string& filename)
+	{
+		audio_->LoadWave(filename);
+	}
+
 	/**
 	 * @brief カテゴリーの登録（初期化時に呼ぶ）
 	 * @param type アプリ側で使うEnum

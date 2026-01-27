@@ -52,9 +52,9 @@ void PlayUI::Init()
 	sprites_[OUTLINE]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
-	sprites_[RETURN_TITLE] = std::make_unique<Sprite>();
-	sprites_[RETURN_TITLE]->Initialize("Resources/Texture/ReturnTitle.png");
-	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
+	sprites_[PAUSE] = std::make_unique<Sprite>();
+	sprites_[PAUSE]->Initialize("Resources/Texture/ReturnTitle.png");
+	sprites_[PAUSE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
 
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Shift.png");
@@ -85,7 +85,7 @@ void PlayUI::DebugJMApply()
 	sprites_[OUTLINE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.Operation.Size"));
 	sprites_[OUTLINE]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
 
-	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
+	sprites_[PAUSE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
 
 	sprites_[SHIFT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
 }

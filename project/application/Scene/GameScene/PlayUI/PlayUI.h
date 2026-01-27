@@ -48,7 +48,7 @@ private:
 		HP_NUM_TEXT,
 		OPERATION,
 		OUTLINE,
-		RETURN_TITLE,
+		PAUSE,
 		SHIFT,
 		SpriteNum
 	};

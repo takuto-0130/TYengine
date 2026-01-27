@@ -28,6 +28,18 @@ void TitleScene::Init()
 	Audio::GetInstance()->LoadWave("gameBGM");
 #endif // _DEBUG
 
+	GameAudio::GetInstance()->LoadSound("open");
+	GameAudio::GetInstance()->LoadSound("close");
+	GameAudio::GetInstance()->LoadSound("slide");
+	GameAudio::GetInstance()->LoadSound("enter");
+	GameAudio::GetInstance()->LoadSound("fanfare");
+	GameAudio::GetInstance()->LoadSound("gameBGM");
+	GameAudio::GetInstance()->LoadSound("gekiha");
+	GameAudio::GetInstance()->LoadSound("damageE");
+	GameAudio::GetInstance()->LoadSound("damageP");
+	GameAudio::GetInstance()->LoadSound("roll");
+	GameAudio::GetInstance()->LoadSound("attack");
+
 
 	//========== カメラ、入力取得 ==========//
 
@@ -180,6 +192,7 @@ void TitleScene::Transition()
 #else
 	if (input_->TriggerKey(DIK_RETURN))
 	{
+		GameAudio::GetInstance()->Play("enter", false, SoundCategory::UI);
 		BlockFadeConfig cfg;
 		auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
 		transition->SetOnFinishCallback([this]()

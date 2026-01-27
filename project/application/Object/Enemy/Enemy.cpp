@@ -6,6 +6,7 @@
 #include "ParticleManager.h"
 #include "EnemyBullet/Liner/Liner.h"
 #include "Random.h"
+#include "../../AppSystem/Audio/GameAudio.h"
 
 #define ENEMY_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Enemy, stateEnum, funcName)
@@ -129,10 +130,12 @@ void Enemy::OnCollision()
 
 	if (hitpoint_ > 0) // 0より大きいなら
 	{
+		GameAudio::GetInstance()->Play("damageE", false, SoundCategory::SE);
 		ChangeState(EnemyState::DAMAGED);
 	}
 	else // 0以下の時
 	{
+		GameAudio::GetInstance()->Play("gekiha", false, SoundCategory::SE);
 		ChangeState(EnemyState::DESPAWNED);
 	}
 }
@@ -141,6 +144,8 @@ void Enemy::IsShot()
 {
 	bulletTimer_ = kBulletCoolTime_;
 	if (!isInGame_) return;
+
+	GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
 	// 1. 基本となる方向（正面）を計算
 	Vector3 enemyPos = GetWorldPosition();

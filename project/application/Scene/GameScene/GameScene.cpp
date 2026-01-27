@@ -59,6 +59,9 @@ void GameScene::Init()
 	Logger::Log(errUI_);
 	Logger::Log(errConfig_);
 #endif // _DEBUG
+
+	gameAudio_ = GameAudio::GetInstance();
+
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 
 	input_ = Input::GetInstance();
@@ -97,7 +100,7 @@ void GameScene::Update()
 	if (ImGui::Button("Save")) gameUIJM_.Save();
 	static jx::JsonImGuiEditor inspectorConfig(configJM_);
 	inspectorConfig.Draw(configJM_.Root(), "Config.json");
-	if (ImGui::Button("Save")) configJM_.Save();
+	if (ImGui::Button("SaveConfig")) configJM_.Save();
 	ImGui::End();
 #endif // _DEBUG
 

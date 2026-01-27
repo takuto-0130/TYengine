@@ -7,6 +7,7 @@
 #include "ObjectCubemap.h"
 #include "Result/ConfettiSystem.h"
 #include "UISpriteColliderManager.h"
+#include "../../AppSystem/Audio/GameAudio.h"
 
 #define JSONMGR_WITH_IMGUI
 #include "Utils/Json/JsonManager.h"
@@ -76,6 +77,9 @@ private: // メンバ変数
 
 	float pitch_ = 1.0f;
 	Vector3 cameraOffset_ = {};
+
+	int BGMHandle_ = -1;
+	GameAudio* gameAudio_ = nullptr;
 
 
 	std::unique_ptr<StageManager> stageManager_;

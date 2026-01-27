@@ -33,7 +33,6 @@ private:
 		RESULT,
 		SCORE,
 		SPACE,
-		RETURN_TITLE,
 		SpriteNum
 	};
 

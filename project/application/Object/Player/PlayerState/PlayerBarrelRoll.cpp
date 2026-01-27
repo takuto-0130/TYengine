@@ -7,9 +7,11 @@
 #include "PostEffectManager.h"
 #include "VignetteEffect.h"
 #include "RadialBlurEffect.h"
+#include "../../../AppSystem/Audio/GameAudio.h"
 
 void Player::InitBarrelRoll()
 {
+    GameAudio::GetInstance()->Play("roll", false, SoundCategory::SE);
 	startRollPos_ = screenOffset_;
 	rollEffectTimer_ = 0.0f;
     auto* pem = PostEffectManager::GetInstance();

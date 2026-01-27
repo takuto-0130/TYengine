@@ -3,11 +3,26 @@
 
 void GameScene::InitPause()
 {
+	pauseMenu_->Reset();
 }
 void GameScene::UpdatePause()
 {
 	pauseMenu_->Update();
-	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PLAY);
+	if (input_->TriggerKey(DIK_ESCAPE)) 
+	{
+		ChangeState(GameSceneState::PLAY);
+		gameAudio_->Play("close", false, SoundCategory::UI);
+	}
+	if (pauseMenu_->GetElements() == ButtonElements::RESUME) 
+	{
+		ChangeState(GameSceneState::PLAY);
+		gameAudio_->Play("close", false, SoundCategory::UI);
+	}
+	if (pauseMenu_->GetElements() == ButtonElements::RETURN_TITLE)
+	{
+		ChangeState(GameSceneState::FADE_OUT);
+		gameAudio_->Play("enter", false, SoundCategory::UI);
+	}
 }
 void GameScene::ExitPause()
 {

@@ -24,6 +24,7 @@ void GameScene::UIInit()
 
 	pauseMenu_ = std::make_unique<PauseClass>();
 	pauseMenu_->SetJsonManager(&gameUIJM_);
+	pauseMenu_->SetConfigJsonManager(&configJM_);
 	pauseMenu_->Init();
 
 	resultMenu_ = std::make_unique<ResultClass>();

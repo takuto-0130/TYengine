@@ -18,8 +18,6 @@ void GameScene::UpdatePlay()
 
 	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
 
-	if (input_->TriggerKey(DIK_T)) ChangeState(GameSceneState::FADE_OUT);
-
 	if (stageManager_->GetPlayer()->IsDead())
 	{
 		CameraShake::ShakeParams params;

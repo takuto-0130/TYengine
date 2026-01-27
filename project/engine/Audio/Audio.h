@@ -83,6 +83,44 @@ private:
 	{}
 	~Audio();
 
+private: // 構造体
+	// submixのプロセスステージ（上から順に下層）
+	enum mixStage
+	{
+		kCategory,
+		kAnalyzer
+	};
+
+	// チャンクヘッダー
+	struct ChunkHeader
+	{
+		char id[4]; // チャンクごとのID
+		int32_t size; // チャンクサイズ
+	};
+
+	// RIFFヘッダチャンク
+	struct RiffHeader
+	{
+		ChunkHeader chunk; // "RIFF"
+		char type[4]; // "WAVE"
+	};
+
+	// FMTチャンク
+	struct FormatChunk
+	{
+		ChunkHeader chunk; // "fmt"
+		WAVEFORMATEX fmt; // 波形フォーマット
+	};
+
+	// 音声データ
+	struct SoundData
+	{
+		WAVEFORMATEX wfex; // 波形フォーマット
+		BYTE* pBuffer; // バッファの先頭アドレス
+		unsigned int bufferSize; // バッファのサイズ
+		int playSoundLength;
+	};
+
 #pragma region
 public:
 	void StartStreaming(const char* filename, bool isLoop = false) {
@@ -191,36 +229,11 @@ private:
 	}
 #pragma endregion
 
-private: // 構造体
-	// チャンクヘッダー
-	struct ChunkHeader {
-		char id[4]; // チャンクごとのID
-		int32_t size; // チャンクサイズ
-	};
-
-	// RIFFヘッダチャンク
-	struct RiffHeader {
-		ChunkHeader chunk; // "RIFF"
-		char type[4]; // "WAVE"
-	};
-
-	// FMTチャンク
-	struct FormatChunk {
-		ChunkHeader chunk; // "fmt"
-		WAVEFORMATEX fmt; // 波形フォーマット
-	};
-
-	// 音声データ
-	struct SoundData {
-		WAVEFORMATEX wfex; // 波形フォーマット
-		BYTE* pBuffer; // バッファの先頭アドレス
-		unsigned int bufferSize; // バッファのサイズ
-		int playSoundLength;
-	};
-
 public:
 	// 初期化
 	void Initialize(const std::string& directoryPath = "Resources/Sound/");
+	
+	void Start();
 
 	/**
 	 * @brief 音源の停止
@@ -261,6 +274,23 @@ public:
 	 */
 	void SetSoundVolume(int resourceNum, float volume);
 
+	/**
+	 * @brief 全体音量
+	 */
+	float GetMasterVolume();
+
+	/**
+	 * @brief カテゴリー別音量
+	 * @param soundCategory サウンドのカテゴリー
+	 */
+	float GetCategoryVolume(const std::string& soundCategory);
+
+	/**
+	 * @brief 個別音量
+	 * @param resourceNum サウンドのリソース番号
+	 */
+	float GetSoundVolume(int resourceNum);
+
 	// 音声読み込み
 	void LoadWave(const std::string& filename);
 
@@ -289,11 +319,14 @@ public:
 		return submixDetails.InputSampleRate;
 	}
 
+
 private:
 	// 利用可能なソースボイスを検索
 	int SearchSourceVoice(IXAudio2SourceVoice** sourceVoices);
 
 	XAUDIO2_BUFFER SetBuffer(bool loop, const SoundData& sound);
+
+	void CreateAnalyzerSubmix();
 
 private:
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2;

@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <queue>
 
+constexpr UINT kSubmixChannels = 8;
+constexpr UINT kSubmixSampleRate = 48000;
+
 // ファイルからデータを読み込む関数
 bool ReadAudioData(std::ifstream& file, std::vector<BYTE>& buffer) {
 	if (!file.read(reinterpret_cast<char*>(buffer.data()), buffer.size())) {
@@ -189,37 +192,29 @@ void Audio::Initialize(const std::string& directoryPath)
 		assert(SUCCEEDED(result));
 	}
 
+	CreateAnalyzerSubmix();
+	Start();
+}
+
+void Audio::CreateAnalyzerSubmix()
+{
 	// ============================================
-	//   ★ SubmixVoice を作り、ここに XAPO を付ける
+	//   ★ SubmixVoice を作る
 	// ============================================
 
 	// MasterVoice と同じフォーマットで作る
 	XAUDIO2_VOICE_DETAILS details = {};
 	masterVoice->GetVoiceDetails(&details);
 
+	HRESULT result;
+
 	result = xAudio2->CreateSubmixVoice(
 		&analyzerSubmix,
-		details.InputChannels,
-		details.InputSampleRate
+		kSubmixChannels,
+		kSubmixSampleRate,
+		0, 
+		kAnalyzer // ProcessingStage (下から上へ)
 	);
-	assert(SUCCEEDED(result));
-
-	// XAPO インスタンス
-	analyzerXAPO = new MyAnalyzerXAPO();
-
-	// Effect desc
-	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
-	effectDesc.InitialState = TRUE;
-	effectDesc.OutputChannels = details.InputChannels;
-	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO);
-
-	// Effect chain
-	XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
-	effectChainXAPO.EffectCount = 1;
-	effectChainXAPO.pEffectDescriptors = &effectDesc;
-
-	// SubmixVoice に XAPO をセット
-	result = analyzerSubmix->SetEffectChain(&effectChainXAPO);
 	assert(SUCCEEDED(result));
 
 	// Submix → MasteringVoice へ音を送る
@@ -234,35 +229,64 @@ void Audio::Initialize(const std::string& directoryPath)
 	result = analyzerSubmix->SetOutputVoices(&sends);
 	assert(SUCCEEDED(result));
 
+	// ============================================
+	//   ★ SubmixVoice に XAPO を付ける
+	// ============================================
+
+	// XAPO インスタンス
+	analyzerXAPO = new MyAnalyzerXAPO();
+
+	// Effect desc
+	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
+	effectDesc.InitialState = TRUE;
+	effectDesc.OutputChannels = kSubmixChannels;
+	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO);
+
+	// Effect chain
+	XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
+	effectChainXAPO.EffectCount = 1;
+	effectChainXAPO.pEffectDescriptors = &effectDesc;
+
+	// SubmixVoice に XAPO をセット
+	result = analyzerSubmix->SetEffectChain(&effectChainXAPO);
+	assert(SUCCEEDED(result));
+}
+
+void Audio::Start()
+{
 	xAudio2->StartEngine();
+
+	HRESULT result;
 
 	// ---- ★無音バッファ用 Voice を作成 ----
 	silentFormat_.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
 	silentFormat_.nChannels = 1;
-	silentFormat_.nSamplesPerSec = 48000;
+	silentFormat_.nSamplesPerSec = kSubmixSampleRate;
 	silentFormat_.wBitsPerSample = 32;
 	silentFormat_.nBlockAlign = 4;
-	silentFormat_.nAvgBytesPerSec = 48000 * 4;
+	silentFormat_.nAvgBytesPerSec = kSubmixSampleRate * 4;
 	silentFormat_.cbSize = 0;
 
 	// 無音バッファ（50ms程度）
-	int silentSamples = int(48000 * 0.05f);
+	int silentSamples = int(kSubmixSampleRate * 0.05f);
 	silentBuffer_.assign(silentSamples, 0.0f);
 
-	sendDesc = {};
+	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 	sendDesc.Flags = 0;
 	sendDesc.pOutputVoice = analyzerSubmix;
 
-	sends = {};
+	XAUDIO2_VOICE_SENDS sends = {};
 	sends.SendCount = 1;
 	sends.pSends = &sendDesc;
 
-	xAudio2->CreateSourceVoice(
+	result = xAudio2->CreateSourceVoice(
 		&silentVoice_,
 		&silentFormat_,
 		0, 2.0f,
 		nullptr, &sends, nullptr
 	);
+
+	assert(SUCCEEDED(result));
 
 	silentVoice_->Start(0);
 	EnableSilentFeed(true);
@@ -322,6 +346,27 @@ void Audio::SetCategoryVolume(const std::string& soundCategory, float volume)
 void Audio::SetSoundVolume(int resourceNum, float volume)
 {
 	pSourceVoices_[resourceNum]->SetVolume(volume);
+}
+
+float Audio::GetMasterVolume()
+{
+	float volume = 0;
+	masterVoice->GetVolume(&volume);
+	return volume;
+}
+
+float Audio::GetCategoryVolume(const std::string& soundCategory)
+{
+	float volume = 0;
+	pSoundCategorySubmixVoices_[soundCategory]->GetVolume(&volume);
+	return volume;
+}
+
+float Audio::GetSoundVolume(int resourceNum)
+{
+	float volume = 0;
+	pSourceVoices_[resourceNum]->GetVolume(&volume);
+	return volume;
 }
 
 void Audio::LoadWave(const std::string& filename)
@@ -436,7 +481,15 @@ void Audio::AddSoundCategory(const std::string& soundCategory)
 		return;
 	}
 
-	// CategorySubmix → analyzerSubmix へ音を送る設定
+	HRESULT result;
+
+	// analyzerSubmix と同じフォーマットで作る
+	XAUDIO2_VOICE_DETAILS details = {};
+	analyzerSubmix->GetVoiceDetails(&details);
+
+	// ボイス
+	IXAudio2SubmixVoice* voice;
+
 	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 	sendDesc.Flags = 0;
 	sendDesc.pOutputVoice = analyzerSubmix;
@@ -445,22 +498,14 @@ void Audio::AddSoundCategory(const std::string& soundCategory)
 	sends.SendCount = 1;
 	sends.pSends = &sendDesc;
 
-	// ボイス
-	IXAudio2SubmixVoice* voice;
-
-	HRESULT result;
-
-	// MasterVoice と同じフォーマットで作る
-	XAUDIO2_VOICE_DETAILS details = {};
-	masterVoice->GetVoiceDetails(&details);
-
 	result = xAudio2->CreateSubmixVoice(
 		&voice,
-		details.InputChannels,
-		details.InputSampleRate,
-		0, 0,
-		&sends,
-		NULL
+		kSubmixChannels,
+		kSubmixSampleRate,
+		0,          
+		kCategory,          // ProcessingStage (下から上へ)
+		&sends,     
+		nullptr
 	);
 	assert(SUCCEEDED(result));
 

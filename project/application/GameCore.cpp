@@ -22,6 +22,8 @@
 #include "DissolveEffect.h"
 #include "RandomEffect.h"
 
+#include "AppSystem/Audio/GameAudio.h"
+
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG
@@ -48,6 +50,8 @@ void GameCore::Initialize()
 	modelManager->Initialize(directXBasis, srvManager.get());
 
 	Audio::GetInstance()->Initialize();
+	GameAudio::GetInstance()->InitCategory();
+	//Audio::GetInstance()->Start();
 
 	sceneFactory_ = std::make_unique<SceneFactory>();
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
@@ -122,6 +126,7 @@ void GameCore::Initialize()
 
 void GameCore::Finalize()
 {
+	GameAudio::GetInstance()->Destroy();;
 	TYFrameWork::Finalize();
 }
 

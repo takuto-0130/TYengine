@@ -77,7 +77,6 @@ private: // メンバ変数
 	float pitch_ = 1.0f;
 	Vector3 cameraOffset_ = {};
 
-	std::unique_ptr<PlayUI> playUI_;
 
 	std::unique_ptr<StageManager> stageManager_;
 
@@ -92,6 +91,8 @@ private: // メンバ変数
 	BulletTimeController* bulletTime_ = nullptr;
 
 	
+	// UIクラスは後にまとめる
+	std::unique_ptr<PlayUI> playUI_;
 	std::unique_ptr<StartUI> startDraw_;
 	std::unique_ptr<ScoreUI> scoreDraw_;
 	std::unique_ptr<RetryUI> retryDraw_;
@@ -111,7 +112,9 @@ private: // メンバ変数
 
 
 	jx::JsonManager gameUIJM_;
-	std::string err_;
+	std::string errUI_;
+	jx::JsonManager configJM_;
+	std::string errConfig_;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数

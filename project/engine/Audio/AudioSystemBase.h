@@ -56,7 +56,7 @@ public:
 	/**
 	 * @brief リソース番号指定で音量設定
 	 */
-	void SetVolume(int resourceNum, float volume)
+	void SetSoundVolume(int resourceNum, float volume)
 	{
 		audio_->SetSoundVolume(resourceNum, volume);
 	}
@@ -64,7 +64,7 @@ public:
 	/**
 	 * @brief Enum指定で音量設定
 	 */
-	void SetVolume(CategoryEnum category, float volume)
+	void SetCategoryVolume(CategoryEnum category, float volume)
 	{
 		if (categoryMap_.find(category) != categoryMap_.end())
 		{
@@ -76,6 +76,33 @@ public:
 	void SetMasterVolume(float volume)
 	{
 		audio_->SetMasterVolume(volume);
+	}
+
+
+	/**
+	 * @brief リソース番号指定で音量設定
+	 */
+	float GetSoundVolume(int resourceNum)
+	{
+		return audio_->GetSoundVolume(resourceNum);
+	}
+
+	/**
+	 * @brief Enum指定で音量設定
+	 */
+	float GetCategoryVolume(CategoryEnum category)
+	{
+		if (categoryMap_.find(category) != categoryMap_.end())
+		{
+			return audio_->GetCategoryVolume(categoryMap_[category]);
+		}
+		return -1.0f;
+	}
+
+	// 全体音量（Master）
+	float GetMasterVolume()
+	{
+		return audio_->GetMasterVolume();
 	}
 
 private:

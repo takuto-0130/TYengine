@@ -6,7 +6,8 @@ enum class SoundCategory
 {
     BGM,
     SE,
-    UI
+    UI,
+    CategoryNum
 };
 
 class GameAudio :
@@ -18,12 +19,13 @@ class GameAudio :
 
 private:
     // 外部からの new/delete を禁止
-    GameAudio()
+    GameAudio() = default;
+    ~GameAudio() = default;
+public:
+    void InitCategory()
     {
-        // 初期のカテゴリー登録
         CreateCategory(SoundCategory::BGM, "BGM");
         CreateCategory(SoundCategory::SE, "SE");
         CreateCategory(SoundCategory::UI, "UI");
     }
-    ~GameAudio() = default;
 };

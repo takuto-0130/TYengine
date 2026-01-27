@@ -8,6 +8,7 @@
 #include "CubemapBasis.h"
 #include "Timer.h"
 #include "Audio/Audio.h"
+#include "../../AppSystem/Audio/GameAudio.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
@@ -109,8 +110,8 @@ void TitleScene::Update() {
 
 	if (input_->TriggerKey(DIK_M))
 	{
-		int a = Audio::GetInstance()->Play("gameBGM", true);
-		Audio::GetInstance()->SetSoundVolume(a, 1.0f);
+		int a = GameAudio::GetInstance()->Play("gameBGM", true, SoundCategory::BGM);
+		GameAudio::GetInstance()->SetSoundVolume(a, 1.0f);
 	}
 
 	// ImGui で編集

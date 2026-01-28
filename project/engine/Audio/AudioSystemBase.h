@@ -9,16 +9,27 @@ template<typename CategoryEnum>
 class AudioSystemBase
 {
 protected:
-	AudioSystemBase()
-	{
-		audio_ = Audio::GetInstance();
-	}
+	AudioSystemBase() : audio_(Audio::GetInstance()) {}
+
 
 	// Audioクラスへの生アクセスが必要な場合
 	Audio* GetAudio() { return audio_; }
 
+private:
+	// 子クラスで必ず実装（カテゴリ登録など）
+	virtual void OnInit() = 0;
+
 public:
 	virtual ~AudioSystemBase() = default;
+
+	void Init()
+	{
+		// 子クラス固有の登録処理などを呼ぶ
+		OnInit();
+
+		// 初期化済みフラグ
+		isInit_ = true;
+	}
 
 	void LoadSound(const std::string& filename)
 	{
@@ -112,7 +123,8 @@ public:
 
 private:
 	Audio* audio_ = nullptr;
-
 	std::unordered_map<CategoryEnum, std::string> categoryMap_;
+
+	bool isInit_ = false;
 };
 

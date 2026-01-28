@@ -50,7 +50,7 @@ void GameCore::Initialize()
 	modelManager->Initialize(directXBasis, srvManager.get());
 
 	Audio::GetInstance()->Initialize();
-	GameAudio::GetInstance()->InitCategory();
+	GameAudio::GetInstance()->Init();
 	//Audio::GetInstance()->Start();
 
 	sceneFactory_ = std::make_unique<SceneFactory>();

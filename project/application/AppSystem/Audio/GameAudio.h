@@ -21,11 +21,14 @@ private:
     // 外部からの new/delete を禁止
     GameAudio() = default;
     ~GameAudio() = default;
-public:
-    void InitCategory()
+
+    void OnInit() override
     {
         CreateCategory(SoundCategory::BGM, "BGM");
         CreateCategory(SoundCategory::SE, "SE");
         CreateCategory(SoundCategory::UI, "UI");
-    }
+    } 
+
+public:
+
 };

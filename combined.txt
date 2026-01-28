@@ -38,6 +38,9 @@
     ├── _bat/
     ├── application/
     └── ├── AppSystem/
+    └── └── ├── Audio/
+    └── └── └── ├── GameAudio.cpp
+    └── └── └── └── GameAudio.h
     └── └── ├── Combo/
     └── └── └── ├── ComboManager.cpp
     └── └── └── └── ComboManager.h
@@ -48,6 +51,8 @@
     └── └── └── Score/
     └── └──     ├── ScoreManager.cpp
     └── └──     └── ScoreManager.h
+    └── ├── GameCore.cpp
+    └── ├── GameCore.h
     └── ├── Object/
     └── └── ├── BaseBullet/
     └── └── └── └── BaseBullet.h
@@ -56,6 +61,9 @@
     └── └── ├── ColliderTypeID/
     └── └── └── └── ColliderTypeID.h
     └── └── ├── Enemy/
+    └── └── └── ├── AttackStrategy/
+    └── └── └── └── ├── AttackStrategies.h
+    └── └── └── └── └── IAttackStrategy.h
     └── └── └── ├── Enemy.cpp
     └── └── └── ├── Enemy.h
     └── └── └── ├── EnemyBullet/
@@ -144,6 +152,9 @@
     └── └── └── └── ├── StartUI.cpp
     └── └── └── └── └── StartUI.h
     └── └── └── └── emitterInit.cpp
+    └── └── ├── SceneFactory/
+    └── └── └── ├── SceneFactory.cpp
+    └── └── └── └── SceneFactory.h
     └── └── ├── TitleScene/
     └── └── └── ├── TitleScene.cpp
     └── └── └── └── TitleScene.h
@@ -173,11 +184,11 @@
     └── └── ├── Audio.h
     └── └── ├── AudioAnalyzer.cpp
     └── └── ├── AudioAnalyzer.h
+    └── └── ├── AudioSystemBase.h
     └── └── ├── MyAnalyzerXAPO.cpp
     └── └── ├── MyAnalyzerXAPO.h
     └── └── ├── StreamingAudio.cpp
-    └── └── ├── StreamingAudio.h
-    └── └── └── xapobase.cpp
+    └── └── └── StreamingAudio.h
     └── ├── Camera/
     └── └── ├── Camera.cpp
     └── └── ├── Camera.h
@@ -217,15 +228,11 @@
     └── └── └── WindowsApp.h
     └── ├── Framework/
     └── └── ├── AbstractSceneFactory.h
-    └── └── ├── GameCore.cpp
-    └── └── ├── GameCore.h
     └── └── ├── Input/
     └── └── └── ├── Input.cpp
     └── └── └── └── Input.h
     └── └── ├── SceneBase/
     └── └── └── ├── IScene.h
-    └── └── └── ├── SceneFactory.cpp
-    └── └── └── ├── SceneFactory.h
     └── └── └── ├── SceneManager.cpp
     └── └── └── └── SceneManager.h
     └── └── ├── TYFrameWork.cpp
@@ -327,6 +334,7 @@
     └──         ├── JSON/
     └──         └── └── JsonManager.h
     └──         ├── Random.h
+    └──         ├── SingletonObject.h
     └──         ├── StateMachine.h
     └──         ├── StringUtility.cpp
     └──         ├── StringUtility.h
@@ -408,7 +416,7 @@ File Path: project/TYengine.vcxproj
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Utility\Collider\2DCollider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\Audio;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Utility\Collider\2DCollider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\$(FileName)</ObjectFileName>
       <PrecompiledHeaderOutputFile>$(IntDir)%(RelativeDir)$(FileName).pch</PrecompiledHeaderOutputFile>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -450,7 +458,7 @@ if exist "externals\dxil.dll" (
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Utility\Collider\2DCollider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\Audio;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Utility\Collider\2DCollider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\$(FileName)</ObjectFileName>
       <PrecompiledHeaderOutputFile>$(IntDir)%(RelativeDir)$(FileName).pch</PrecompiledHeaderOutputFile>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -544,7 +552,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\EngineCore\DirectXBasis.cpp" />
     <ClCompile Include="engine\Debugger\Logger.cpp" />
     <ClCompile Include="engine\EngineCore\WindowsApp.cpp" />
-    <ClCompile Include="engine\Framework\GameCore.cpp" />
+    <ClCompile Include="application\GameCore.cpp" />
     <ClCompile Include="engine\Framework\SceneBase\SceneManager.cpp" />
     <ClCompile Include="engine\Framework\TYFrameWork.cpp" />
     <ClCompile Include="engine\Graphics\Model\Model.cpp" />
@@ -571,7 +579,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\main.cpp" />
     <ClCompile Include="application\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="engine\Audio\StreamingAudio.cpp" />
-    <ClCompile Include="engine\Framework\SceneBase\SceneFactory.cpp" />
+    <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp" />
     <ClCompile Include="engine\Effect\ParticleManager.cpp" />
     <ClCompile Include="engine\Effect\PlaneParticle.cpp" />
     <ClCompile Include="engine\Effect\RingParticle.cpp" />
@@ -609,6 +617,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
+    <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
@@ -616,6 +625,8 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
     <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h" />
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h" />
+    <ClInclude Include="application\Object\Enemy\AttackStrategy\AttackStrategies.h" />
+    <ClInclude Include="application\Object\Enemy\AttackStrategy\IAttackStrategy.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
@@ -649,6 +660,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Utility\Math\Ease.h" />
     <ClInclude Include="engine\Utility\Utils\JSON\JsonManager.h" />
     <ClInclude Include="engine\Utility\Utils\Random.h" />
+    <ClInclude Include="engine\Utility\Utils\SingletonObject.h" />
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
     <ClInclude Include="engine\Utility\Collider\Collider.h" />
@@ -670,7 +682,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Debugger\Logger.h" />
     <ClInclude Include="engine\EngineCore\WindowsApp.h" />
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h" />
-    <ClInclude Include="engine\Framework\GameCore.h" />
+    <ClInclude Include="application\GameCore.h" />
     <ClInclude Include="engine\Framework\SceneBase\SceneManager.h" />
     <ClInclude Include="engine\Framework\TYFrameWork.h" />
     <ClInclude Include="engine\Graphics\Model\Model.h" />
@@ -700,7 +712,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Framework\SceneBase\IScene.h" />
     <ClInclude Include="application\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="engine\Audio\StreamingAudio.h" />
-    <ClInclude Include="engine\Framework\SceneBase\SceneFactory.h" />
+    <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h" />
     <ClInclude Include="engine\Effect\ParticleManager.h" />
     <ClInclude Include="engine\Effect\PlaneParticle.h" />
     <ClInclude Include="engine\Effect\RingParticle.h" />
@@ -741,6 +753,8 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
+    <ClInclude Include="engine\Audio\AudioSystemBase.h" />
+    <ClInclude Include="application\AppSystem\Audio\GameAudio.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -762,196 +776,202 @@ File Path: project/TYengine.vcxproj.filters
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="application">
-      <UniqueIdentifier>{f4ad2aa8-a9f7-437d-9777-38b145009f90}</UniqueIdentifier>
+      <UniqueIdentifier>{70de6423-acbf-4d6f-9671-e32711b6864a}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem">
-      <UniqueIdentifier>{5753e452-4d0e-46da-8824-80eb5509c789}</UniqueIdentifier>
+      <UniqueIdentifier>{3bf74c17-d4a8-44ab-a479-96c3f3fc5335}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\AppSystem\Audio">
+      <UniqueIdentifier>{f2bc40f7-3029-4561-a4f1-03882a8284dd}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Combo">
-      <UniqueIdentifier>{9543739f-1b0d-4ae8-97e6-8dcc5c2ef95a}</UniqueIdentifier>
+      <UniqueIdentifier>{b6dc85ab-051e-4b87-b310-2fe384ec32a3}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener">
-      <UniqueIdentifier>{82ab2a2b-8f16-49ee-ae0a-d2cd095fabb5}</UniqueIdentifier>
+      <UniqueIdentifier>{3ab997f8-c9e5-4fe9-a823-2b5fc64c73b3}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener\EnemyEvent">
-      <UniqueIdentifier>{005d077a-b2eb-476c-baab-cb816c6af742}</UniqueIdentifier>
+      <UniqueIdentifier>{81bd258d-0cea-4c36-94ab-a9c7adc90f7e}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Score">
-      <UniqueIdentifier>{009e9e71-d2fa-4370-bada-4f63c99ce8ad}</UniqueIdentifier>
+      <UniqueIdentifier>{f160a835-4407-4777-8388-3808a7bd4f32}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object">
-      <UniqueIdentifier>{78d825fc-916b-4953-b2fd-bb70044eb6ef}</UniqueIdentifier>
+      <UniqueIdentifier>{95491adb-cdc0-4ca3-88c3-17ebab7132e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseBullet">
-      <UniqueIdentifier>{a18a8887-e3bb-4053-8572-819fd01d8234}</UniqueIdentifier>
+      <UniqueIdentifier>{ea7b1625-6403-49cd-8d9e-ba6c2f90a6ef}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseCharacter">
-      <UniqueIdentifier>{c4cf8249-f4bf-40e9-ab96-a7cebc9e1152}</UniqueIdentifier>
+      <UniqueIdentifier>{11adbcf2-8b24-4b3d-97e6-abd9b7a9ac57}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\ColliderTypeID">
-      <UniqueIdentifier>{4b0d9aac-199b-47c9-9cd4-7feecb4e5c0e}</UniqueIdentifier>
+      <UniqueIdentifier>{2b58a7c7-98d3-465c-ba15-a35cf14be58f}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy">
-      <UniqueIdentifier>{8caa4e0c-123b-473d-8224-f9e06ad93ee3}</UniqueIdentifier>
+      <UniqueIdentifier>{1f91a727-dc49-4728-9003-2eec548b9467}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet">
-      <UniqueIdentifier>{95447a01-d373-4784-bcc9-1a5c30efc16d}</UniqueIdentifier>
+      <UniqueIdentifier>{8cc10c87-e65d-4064-83ee-23d3e21fa04d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet\Liner">
-      <UniqueIdentifier>{3556db06-0b9a-4fa4-9889-b70aed4446e6}</UniqueIdentifier>
+      <UniqueIdentifier>{5dd1f522-ecc9-450b-bede-78e0ab6ac3fa}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\TitleEnemy">
-      <UniqueIdentifier>{50db82ca-8de8-4df8-b18e-81fb99a76d4f}</UniqueIdentifier>
+      <UniqueIdentifier>{6446b759-c122-493b-bc0e-560c5bb7b4c2}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player">
-      <UniqueIdentifier>{7b3018f7-3f33-4949-8f69-67f5018e2aab}</UniqueIdentifier>
+      <UniqueIdentifier>{2fa92c6f-f707-4d9a-8757-fb081b01841d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet">
-      <UniqueIdentifier>{31d6ab8d-25f4-45ff-8cba-7d7bdfecb757}</UniqueIdentifier>
+      <UniqueIdentifier>{b7bc6e26-5f03-4fe0-9077-c4a13fdda4c3}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet\NormalBullet">
-      <UniqueIdentifier>{0dd4ac2c-61c3-49d9-a8e8-ac9fe911c0eb}</UniqueIdentifier>
+      <UniqueIdentifier>{982fab97-8af8-41ef-97df-8a18740e6993}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerState">
-      <UniqueIdentifier>{193484d7-f838-4c9d-b81d-a7ae10ddbd2b}</UniqueIdentifier>
+      <UniqueIdentifier>{a44659a1-8288-4e32-ad1a-f5e4f3790f37}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\Reticle">
-      <UniqueIdentifier>{82fcfe4c-a76d-4607-aecb-01ba8b436618}</UniqueIdentifier>
+      <UniqueIdentifier>{2990c700-e2ed-44c2-82ed-795761c6b7f2}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Rail">
-      <UniqueIdentifier>{a6b491fd-6be1-48c7-869e-0894ac39f6e6}</UniqueIdentifier>
+      <UniqueIdentifier>{f7bd166f-51a5-4095-b8f7-41bd4a21a9d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene">
-      <UniqueIdentifier>{1a01bd9e-6c7d-414e-8ed2-9ff09b0da3a5}</UniqueIdentifier>
+      <UniqueIdentifier>{80fe3329-3f9e-4563-b807-ef57b13a9674}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene">
-      <UniqueIdentifier>{88cd3942-07bc-448b-acbc-79a61233fa09}</UniqueIdentifier>
+      <UniqueIdentifier>{eab590c9-c71b-4ede-87af-ecb7a436b36c}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\GameSceneStates">
-      <UniqueIdentifier>{fa854c65-364b-4609-9281-1c80de7df55f}</UniqueIdentifier>
+      <UniqueIdentifier>{75a7476e-4674-4eda-82b4-fba3772a615b}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Pause">
-      <UniqueIdentifier>{6617d687-05a0-4be1-ab7e-c69d1191baa5}</UniqueIdentifier>
+      <UniqueIdentifier>{cb3511e3-4e37-4f2e-925b-3bd6265d0a7a}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\PlayUI">
-      <UniqueIdentifier>{8de4a1df-207b-4a52-a009-02830a9c3551}</UniqueIdentifier>
+      <UniqueIdentifier>{8f55155b-b5ec-4169-8062-eb17decbb13c}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Result">
-      <UniqueIdentifier>{42b3a4bd-2619-46f1-871f-3c3ab1a93610}</UniqueIdentifier>
+      <UniqueIdentifier>{b1c5000c-aa95-4f5d-8908-ef69c984492a}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\RetryUI">
-      <UniqueIdentifier>{ef984b45-a116-4428-b3c4-6b36da083195}</UniqueIdentifier>
+      <UniqueIdentifier>{68b2887e-23da-47cb-ac84-b2b8038d5a70}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\StartUI">
-      <UniqueIdentifier>{90e4426a-86e0-4b66-b9cc-385d93b42313}</UniqueIdentifier>
+      <UniqueIdentifier>{8f46d1fd-fc64-4605-bd1f-e3f6db73182e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\Scene\SceneFactory">
+      <UniqueIdentifier>{13d261c4-259e-4230-97c3-516a3e756ba1}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\TitleScene">
-      <UniqueIdentifier>{afa0d032-4c0d-43eb-95f9-fdfd44906883}</UniqueIdentifier>
+      <UniqueIdentifier>{98d91250-f8cb-4805-ba96-96423fbe7d97}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition">
-      <UniqueIdentifier>{02a8bf1b-292d-4c91-8fc1-dec5a9b87300}</UniqueIdentifier>
+      <UniqueIdentifier>{0b7efa99-cb91-4b61-a424-16214072450f}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition\Fade">
-      <UniqueIdentifier>{0994bba4-9369-4e57-958a-212fa659c18c}</UniqueIdentifier>
+      <UniqueIdentifier>{806252b9-c52b-4c1e-95a0-ca5bc8899b53}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition\Fade2">
-      <UniqueIdentifier>{7088e8f5-4518-43f8-923b-9bd835ccffe0}</UniqueIdentifier>
+      <UniqueIdentifier>{0b947bd2-544b-4a6e-ae2f-01b2e9ad2279}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\ScoreUI">
-      <UniqueIdentifier>{7a442443-f53d-4408-9495-1536f277afc1}</UniqueIdentifier>
+      <UniqueIdentifier>{7b289f93-0170-4d65-ac9e-4f127b0ef2cf}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Stage">
-      <UniqueIdentifier>{8da4bf81-2ea0-4d4c-b5eb-00ed6108afb4}</UniqueIdentifier>
+      <UniqueIdentifier>{56be09d7-3a3f-4df5-b948-24a3a57d466e}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine">
-      <UniqueIdentifier>{81631d82-0b2f-48c9-89a5-81544fe5bf23}</UniqueIdentifier>
+      <UniqueIdentifier>{dae693e5-6e45-403b-b644-7b80a2f25806}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio">
-      <UniqueIdentifier>{5a1f9a12-750a-40f3-b455-d9fa2ff53043}</UniqueIdentifier>
+      <UniqueIdentifier>{7040de1e-8c6a-468c-b9a8-418e839ea6c0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Camera">
-      <UniqueIdentifier>{c8b74fe0-fae4-4fe8-a68c-54f9fb862971}</UniqueIdentifier>
+      <UniqueIdentifier>{aa490640-5295-4db9-9cad-81edaf184b19}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Debugger">
-      <UniqueIdentifier>{4eeda037-9f2d-4615-89e5-36c743d6217e}</UniqueIdentifier>
+      <UniqueIdentifier>{d11bc2ea-5c82-48b0-9468-03bfb5a48637}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Effect">
-      <UniqueIdentifier>{c7c323f7-3e86-4f07-b27b-ba2540911dac}</UniqueIdentifier>
+      <UniqueIdentifier>{a6b21138-dddf-420e-b5ea-6003e336f753}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\EngineCore">
-      <UniqueIdentifier>{6f2b712e-4966-4553-a019-1a4f6793ddf5}</UniqueIdentifier>
+      <UniqueIdentifier>{3838e6e1-630d-4539-9a44-467acaf6a763}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework">
-      <UniqueIdentifier>{94013dbd-e7f5-418d-b7d5-3fdaa61e5a7a}</UniqueIdentifier>
+      <UniqueIdentifier>{2c796419-e9a9-4f29-99bc-834cda88a6f9}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\Input">
-      <UniqueIdentifier>{72ce141b-2b39-4cf9-88a0-37c95c3c517a}</UniqueIdentifier>
+      <UniqueIdentifier>{d2e8f746-b26f-49d7-992a-1421690d6001}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\SceneBase">
-      <UniqueIdentifier>{b9e725ba-b8b0-44ae-8d0c-ca09890df43c}</UniqueIdentifier>
+      <UniqueIdentifier>{17e25921-e023-4103-b356-b122a232c8c0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics">
-      <UniqueIdentifier>{bdfb9f54-f61e-41c5-b24e-5b987f34a4b5}</UniqueIdentifier>
+      <UniqueIdentifier>{c3a3acf1-6b2d-4b12-8b3f-688290f3cfe1}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Cubemap">
-      <UniqueIdentifier>{ecb801cc-3077-452a-a1da-ec7c2a871c73}</UniqueIdentifier>
+      <UniqueIdentifier>{0bff320b-5479-44cc-87cf-65171f3251fb}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Model">
-      <UniqueIdentifier>{582897f7-393e-4592-a8c6-047dc63c6a39}</UniqueIdentifier>
+      <UniqueIdentifier>{1d859b86-75a8-442a-942a-9bfe9f11e1ea}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Sprite">
-      <UniqueIdentifier>{65cf00ce-44b8-4c7e-9b88-0fc9baa6f071}</UniqueIdentifier>
+      <UniqueIdentifier>{338fa605-2db6-4d6a-bae0-ed222a33fe74}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\SRV">
-      <UniqueIdentifier>{1c1728fd-14be-4cd8-a534-f8752f434e67}</UniqueIdentifier>
+      <UniqueIdentifier>{2b0b62d7-3818-4f0c-906c-932e36dc4114}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen">
-      <UniqueIdentifier>{70a64fb2-6a60-4e66-9d6d-51207204d7dd}</UniqueIdentifier>
+      <UniqueIdentifier>{181f3704-4643-4c43-b0d7-f982894ff16d}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen\PostEffect">
-      <UniqueIdentifier>{429cdae9-873b-4072-ae79-44dbe128b520}</UniqueIdentifier>
+      <UniqueIdentifier>{431f1a73-3340-4dc6-9683-9a9025fb8300}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility">
-      <UniqueIdentifier>{49260006-bbdc-4456-9d5f-9c89006c818e}</UniqueIdentifier>
+      <UniqueIdentifier>{bd4ceeb0-f330-4c21-a279-917052faad1e}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider">
-      <UniqueIdentifier>{c112fbed-6535-4699-9724-0f15ab753b21}</UniqueIdentifier>
+      <UniqueIdentifier>{12e6fe29-5d97-40f7-849d-3e04ad56c410}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\2DCollider">
-      <UniqueIdentifier>{978fa3c5-51a4-4301-b882-8fea19b0a090}</UniqueIdentifier>
+      <UniqueIdentifier>{25c29215-3ecd-4ef6-832a-8229d30a6e0e}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Ray">
-      <UniqueIdentifier>{e557216b-b5e3-4eb3-8d20-92a0bc4be60a}</UniqueIdentifier>
+      <UniqueIdentifier>{6cc16f41-6539-4d0b-841a-de78b1a139f8}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Sphere">
-      <UniqueIdentifier>{69c34ad7-46a8-4f9e-8e74-9fe67f28a3b8}</UniqueIdentifier>
+      <UniqueIdentifier>{a4e24501-84fa-4584-a7fe-0bcc197f75c5}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Loader">
-      <UniqueIdentifier>{42702e14-6365-4cdc-97e8-abfab322c115}</UniqueIdentifier>
+      <UniqueIdentifier>{33bcb2af-d3a7-4a99-8b36-442283b429fe}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Math">
-      <UniqueIdentifier>{4f634f82-15b6-40ea-872f-4ab482c6dca9}</UniqueIdentifier>
+      <UniqueIdentifier>{9e5bf061-f6b8-4caa-925b-51978c778621}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\ObjectBasis">
-      <UniqueIdentifier>{bd7d5466-33ab-4e6e-9030-765b5fc72678}</UniqueIdentifier>
+      <UniqueIdentifier>{a8001068-b5b0-40fc-b80a-1d493a1006b2}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\SceneObjects">
-      <UniqueIdentifier>{7cf7974c-82d9-4c1d-8037-4515fa151eea}</UniqueIdentifier>
+      <UniqueIdentifier>{ea24ff68-cb87-4c01-909e-17767d239c5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils">
-      <UniqueIdentifier>{4aa2c262-ff85-48e2-890c-21388af8671e}</UniqueIdentifier>
+      <UniqueIdentifier>{43bca530-8023-46b8-a984-696ed6b55139}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\JSON">
-      <UniqueIdentifier>{ecf13a6a-91df-4f0f-b71d-c1ac90223909}</UniqueIdentifier>
+      <UniqueIdentifier>{8aff35b9-edbd-40aa-8920-f1abd2750dcd}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\Time">
-      <UniqueIdentifier>{8045446a-a7c9-4494-8201-3e4b1beb4079}</UniqueIdentifier>
+      <UniqueIdentifier>{6f6b3d5e-87f0-4644-86c9-fb385da4c084}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals">
-      <UniqueIdentifier>{89f2af93-2061-4f5a-b969-9f7283cc51cd}</UniqueIdentifier>
+      <UniqueIdentifier>{a70fa920-5ca6-4277-9937-e682d51934e5}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals\imgui">
-      <UniqueIdentifier>{eff568eb-55a1-44e8-856e-d1670cf0740c}</UniqueIdentifier>
+      <UniqueIdentifier>{b1d1cc0b-f520-47d8-9f73-f6eca07089db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1132,8 +1152,8 @@ File Path: project/TYengine.vcxproj.filters
     <ClCompile Include="engine\EngineCore\WindowsApp.cpp">
       <Filter>engine\EngineCore</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Framework\GameCore.cpp">
-      <Filter>engine\Framework</Filter>
+    <ClCompile Include="application\GameCore.cpp">
+      <Filter>application</Filter>
     </ClCompile>
     <ClCompile Include="engine\Framework\SceneBase\SceneManager.cpp">
       <Filter>engine\Framework\SceneBase</Filter>
@@ -1213,8 +1233,8 @@ File Path: project/TYengine.vcxproj.filters
     <ClCompile Include="engine\Audio\StreamingAudio.cpp">
       <Filter>engine\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Framework\SceneBase\SceneFactory.cpp">
-      <Filter>engine\Framework\SceneBase</Filter>
+    <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp">
+      <Filter>application\Scene\SceneFactory</Filter>
     </ClCompile>
     <ClCompile Include="engine\Effect\ParticleManager.cpp">
       <Filter>engine\Effect</Filter>
@@ -1326,6 +1346,9 @@ File Path: project/TYengine.vcxproj.filters
     </ClCompile>
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp">
       <Filter>application\Scene\GameScene\RetryUI</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp">
+      <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1443,6 +1466,9 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="engine\Utility\Utils\Random.h">
       <Filter>engine\Utility\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\SingletonObject.h">
+      <Filter>engine\Utility\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h">
       <Filter>engine\Utility\Utils\Time</Filter>
     </ClInclude>
@@ -1506,8 +1532,8 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="engine\Framework\AbstractSceneFactory.h">
       <Filter>engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Framework\GameCore.h">
-      <Filter>engine\Framework</Filter>
+    <ClInclude Include="application\GameCore.h">
+      <Filter>application</Filter>
     </ClInclude>
     <ClInclude Include="engine\Framework\SceneBase\SceneManager.h">
       <Filter>engine\Framework\SceneBase</Filter>
@@ -1596,8 +1622,8 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="engine\Audio\StreamingAudio.h">
       <Filter>engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Framework\SceneBase\SceneFactory.h">
-      <Filter>engine\Framework\SceneBase</Filter>
+    <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h">
+      <Filter>application\Scene\SceneFactory</Filter>
     </ClInclude>
     <ClInclude Include="engine\Effect\ParticleManager.h">
       <Filter>engine\Effect</Filter>
@@ -1719,6 +1745,14 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h">
       <Filter>application\Scene\GameScene\RetryUI</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Audio\AudioSystemBase.h">
+      <Filter>engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\Audio\GameAudio.h">
+      <Filter>application\AppSystem\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Enemy\AttackStrategy\IAttackStrategy.h" />
+    <ClInclude Include="application\Object\Enemy\AttackStrategy\AttackStrategies.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -1726,6 +1760,50 @@ File Path: project/TYengine.vcxproj.filters
     </Text>
   </ItemGroup>
 </Project>
+
+============================================================
+File Path: project/application/AppSystem/Audio/GameAudio.cpp
+============================================================
+#include "GameAudio.h"
+
+
+============================================================
+File Path: project/application/AppSystem/Audio/GameAudio.h
+============================================================
+#pragma once
+#include "AudioSystemBase.h"
+#include "SingletonObject.h"
+
+enum class SoundCategory
+{
+    BGM,
+    SE,
+    UI,
+    CategoryNum
+};
+
+class GameAudio :
+    public AudioSystemBase<SoundCategory>,
+    public SingletonObject<GameAudio>
+{
+    friend class SingletonObject<GameAudio>;
+    friend struct std::default_delete<GameAudio>;
+
+private:
+    // 外部からの new/delete を禁止
+    GameAudio() = default;
+    ~GameAudio() = default;
+
+    void OnInit() override
+    {
+        CreateCategory(SoundCategory::BGM, "BGM");
+        CreateCategory(SoundCategory::SE, "SE");
+        CreateCategory(SoundCategory::UI, "UI");
+    } 
+
+public:
+
+};
 
 ============================================================
 File Path: project/application/AppSystem/Combo/ComboManager.cpp
@@ -1885,6 +1963,237 @@ private:
 
 
 ============================================================
+File Path: project/application/GameCore.cpp
+============================================================
+#include "GameCore.h"
+#include "Audio/Audio.h"
+#include "Scene/SceneFactory/SceneFactory.h"
+#include "ColliderManager.h"
+#include "CubemapBasis.h"
+#include "Timer.h"
+
+#include "PlaneParticle.h"
+#include "RingParticle.h"
+#include "CylinderParticle.h"
+#include "Effect/ContrailBehaviour.h"
+#include "Effect/ExplosionBehaviour.h"
+#include "Effect/ExplosionRingBehaviour.h"
+#include "Effect/DebrisBehaviour.h"
+
+#include "GrayscaleEffect.h"
+#include "VignetteEffect.h"
+#include "BoxFilterEffect.h"
+#include "GaussianEffect.h"
+#include "RadialBlurEffect.h"
+#include "LuminanceBasedOutlineEffect.h"
+#include "DissolveEffect.h"
+#include "RandomEffect.h"
+
+#include "AppSystem/Audio/GameAudio.h"
+
+#ifdef _DEBUG
+#include <imgui.h>
+#endif // _DEBUG
+
+void GameCore::Initialize()
+{
+	TYFrameWork::Initialize();
+
+	Timer::GetInstance()->Start();
+
+	imgui = ImGuiManager::GetInstance();
+	imgui->Initialize(windowsApp.get(), directXBasis);
+
+	spriteBasis = SpriteBasis::GetInstance();
+	spriteBasis->Initialize(directXBasis);
+
+	camera = std::make_unique<Camera>();
+
+	object3dBasis = Object3dBasis::GetInstance();
+	object3dBasis->Initialize(directXBasis);
+	object3dBasis->SetDefaultCamera(camera.get());
+
+	modelManager = ModelManager::GetInstance();
+	modelManager->Initialize(directXBasis, srvManager.get());
+
+	Audio::GetInstance()->Initialize();
+	GameAudio::GetInstance()->Init();
+	//Audio::GetInstance()->Start();
+
+	sceneFactory_ = std::make_unique<SceneFactory>();
+	sceneManager_->SetSceneFactory(sceneFactory_.get());
+	sceneManager_->ChangeScene("TITLE");
+
+	particleManager = ParticleManager::GetInstance();
+
+	auto plane = std::make_unique<PlaneParticle>();
+	auto ring = std::make_unique<RingParticle>();
+	auto cylinder = std::make_unique<CylinderParticle>();
+
+
+	ring->SetBehaviour(std::make_unique<ExplosionRingBehaviour>());//
+
+	auto contrail = std::make_unique<PlaneParticle>();  // 板ポリ形状
+	contrail->SetBehaviour(std::make_unique<ContrailBehaviour>()); // 挙動を設定
+
+	auto explosion = std::make_unique<PlaneParticle>(); // 爆発
+	explosion->SetBehaviour(std::make_unique<ExplosionBehaviour>());
+
+	auto debris = std::make_unique<PlaneParticle>(); // 破片
+	debris->SetBehaviour(std::make_unique<DebrisBehaviour>());
+
+	int index = particleManager->Add(std::move(plane));		// 0
+	int indexRing = particleManager->Add(std::move(ring));	// 1
+	particleManager->Add(std::move(cylinder));				// 2
+	particleManager->Add(std::move(contrail));				// 3
+	particleManager->Add(std::move(explosion));				// 4
+	particleManager->Add(std::move(debris));				// 5
+
+	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
+	IParticleRenderer::Emitter emitter{};
+	particleManager->SetEmitter(index, emitter);
+
+	IParticleRenderer::Emitter emitterRing{};
+	particleManager->SetEmitter(indexRing, emitterRing);
+
+
+	ColliderManager::GetInstance();
+
+
+	renderTexture = std::make_unique<RenderTexture>();
+	renderTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1, 0, 0, 1 }); 
+	
+	tempTexture = std::make_unique<RenderTexture>();
+	tempTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+
+	outlineTexture = std::make_unique<RenderTexture>();
+	outlineTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+
+	postEffectManager = PostEffectManager::GetInstance();
+	postEffectManager->Initialize(directXBasis, srvManager.get());
+	postEffectManager->SetTempRenderTexture(std::move(tempTexture));
+	postEffectManager->SetOutlineRenderTexture(std::move(outlineTexture));
+
+	// 適用するエフェクトを追加（順番に処理される）
+	postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
+	postEffectManager->AddEffect("Grayscale", std::make_unique<GrayscaleEffect>());
+	postEffectManager->AddEffect("Vignette", std::make_unique<VignetteEffect>());
+	postEffectManager->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
+	postEffectManager->AddEffect("Gaussian", std::make_unique<GaussianEffect>());
+	postEffectManager->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
+	postEffectManager->AddEffect("Random", std::make_unique<RandomEffect>());
+	postEffectManager->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
+	
+	postEffectManager->EffectAllDisable();
+
+
+	CubemapBasis::GetInstance()->Initialize(directXBasis);
+	CubemapBasis::GetInstance()->SetDefaultCamera(camera.get());
+}
+
+void GameCore::Finalize()
+{
+	GameAudio::GetInstance()->Destroy();;
+	TYFrameWork::Finalize();
+}
+
+void GameCore::Update()
+{
+	// Windowsメッセージ処理
+	if (windowsApp->ProcessMessage()) {
+		// ゲームループを抜ける
+		endRequest_ = true;
+	}
+	else { //ゲーム処理
+		imgui->Begin();
+		Timer::GetInstance()->Update();
+		Audio::GetInstance()->Update();
+		TYFrameWork::Update();
+		particleManager->UpdateAll();
+		camera->Update();
+		postEffectManager->Update();
+		ColliderManager::GetInstance()->Update();
+		imgui->End();
+	}
+}
+
+void GameCore::Draw()
+{
+	// フレームの切り替えタイミングでリングバッファを進める
+	TextureManager::GetInstance()->NextFrame();
+
+	// ---------- オフスクリーン描画 ----------
+	renderTexture->BeginRender();
+
+	sceneManager_->Draw();   // 実際の描画
+
+	particleManager->DrawAll();
+
+	renderTexture->EndRender();
+
+	// ---------- SwapChainへの描画 ----------
+	directXBasis->DrawBegin();
+
+	postEffectManager->Apply(renderTexture.get(), nullptr); // nullptr指定でSwapChain描画
+
+	sceneManager_->UIDraw(); // ポストエフェクト後にUIを描画
+	
+	imgui->Draw();
+
+
+	directXBasis->DrawEnd();
+}
+
+
+============================================================
+File Path: project/application/GameCore.h
+============================================================
+#pragma once
+#include "TYFrameWork.h"
+#include "IScene.h"
+#include "ParticleManager.h"
+
+/// <summary>
+/// ゲーム全体のメインエントリーポイント。  
+/// TYFrameWork を継承し、ゲーム特有の初期化・更新・描画ロジックを実装する。
+/// </summary>
+class GameCore : public TYFrameWork
+{
+public:
+    /// <summary>
+    /// 初期化処理。  
+    /// ゲームで使用する各種マネージャ（入力・パーティクル・シーンなど）を初期化する。
+    /// </summary>
+    void Initialize() override;
+
+    /// <summary>
+    /// 終了処理。  
+    /// 使用している全リソースの解放やマネージャの終了処理を行う。
+    /// </summary>
+    void Finalize() override;
+
+    /// <summary>
+    /// 毎フレーム更新処理。  
+    /// 入力状態やシーンの更新、パーティクルなどの動作を制御する。
+    /// </summary>
+    void Update() override;
+
+    /// <summary>
+    /// 描画処理。  
+    /// フレーム全体のレンダリングを行う。
+    /// </summary>
+    void Draw() override;
+
+private:
+    /// <summary>入力管理クラス（キーボード、マウス、パッドなど）。</summary>
+    Input* input = nullptr;
+
+    /// <summary>パーティクル描画および管理クラス。</summary>
+    ParticleManager* particleManager = nullptr;
+};
+
+
+============================================================
 File Path: project/application/Object/BaseBullet/BaseBullet.h
 ============================================================
 #pragma once
@@ -2008,16 +2317,131 @@ enum class ColliderTypeID {
 
 
 ============================================================
+File Path: project/application/Object/Enemy/AttackStrategy/AttackStrategies.h
+============================================================
+#pragma once
+#include "IAttackStrategy.h"
+#include "../EnemyBullet/Liner/Liner.h"
+#include "../EnemyBullet/EnemyBulletManager.h"
+#include <cmath>
+// 共通ヘルパー: 弾を1発生成してマネージャに追加
+inline void SpawnBullet(EnemyBulletManager* manager, const Vector3& pos, const Vector3& dir)
+{
+    auto bullet = std::make_unique<EnemyBullet::Liner>();
+    bullet->Init();
+    bullet->SetTranslation(pos);
+    bullet->SetShotDirection(dir);
+    manager->AddBullet(std::move(bullet));
+}
+// -------------------------------------------------------------
+// Type 0: 通常攻撃（プレイヤーに向かって1発）
+// -------------------------------------------------------------
+class NormalAttackStrategy : public IAttackStrategy
+{
+public:
+    void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) override
+    {
+        Vector3 forward = Normalize(target - origin);
+        SpawnBullet(manager, origin, forward);
+    }
+};
+// -------------------------------------------------------------
+// Type 1: 垂直2点攻撃
+// -------------------------------------------------------------
+class VerticalSplitAttackStrategy : public IAttackStrategy
+{
+public:
+    void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) override
+    {
+        Vector3 forward = Normalize(target - origin);
+
+        // ローカル上方向を計算
+        Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
+        if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f };
+        Vector3 right = Normalize(Cross(worldUp, forward));
+        Vector3 up = Normalize(Cross(forward, right));
+        // 上下に少しずらして発射
+        SpawnBullet(manager, origin, Normalize(forward + up * 0.02f));
+        SpawnBullet(manager, origin, Normalize(forward + up * -0.02f));
+    }
+};
+// -------------------------------------------------------------
+// Type 2: 水平4点攻撃
+// -------------------------------------------------------------
+class HorizontalSplitAttackStrategy : public IAttackStrategy
+{
+public:
+    void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) override
+    {
+        Vector3 forward = Normalize(target - origin);
+
+        Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
+        if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f };
+        Vector3 right = Normalize(Cross(worldUp, forward));
+        // 左右にずらして4発発射
+        SpawnBullet(manager, origin, Normalize(forward + right * 0.06f));
+        SpawnBullet(manager, origin, Normalize(forward + right * 0.02f));
+        SpawnBullet(manager, origin, Normalize(forward + right * -0.02f));
+        SpawnBullet(manager, origin, Normalize(forward + right * -0.06f));
+    }
+};
+// -------------------------------------------------------------
+// Type 3: 三角3点攻撃
+// -------------------------------------------------------------
+class TriangleAttackStrategy : public IAttackStrategy
+{
+public:
+    void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) override
+    {
+        Vector3 forward = Normalize(target - origin);
+
+        Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
+        if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f };
+        Vector3 right = Normalize(Cross(worldUp, forward));
+        Vector3 up = Normalize(Cross(forward, right));
+        // 左右にずらして4発発射
+        SpawnBullet(manager, origin, Normalize(forward + up * 0.04f));
+        SpawnBullet(manager, origin, Normalize(forward + right * 0.04f + up * -0.02f));
+        SpawnBullet(manager, origin, Normalize(forward + right * -0.04f + up * -0.02f));
+    }
+};
+
+============================================================
+File Path: project/application/Object/Enemy/AttackStrategy/IAttackStrategy.h
+============================================================
+#pragma once
+#include "struct.h"
+
+class EnemyBulletManager;
+
+/// 攻撃行動の抽象インターフェース
+class IAttackStrategy
+{
+public:
+    virtual ~IAttackStrategy() = default;
+    /**
+     * @brief 攻撃を実行する
+     * @param origin 発射位置（敵の座標）
+     * @param target 目標位置（プレイヤー座標など）
+     * @param manager 弾管理マネージャ
+     */
+    virtual void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) = 0;
+};
+
+
+============================================================
 File Path: project/application/Object/Enemy/Enemy.cpp
 ============================================================
 #include "Enemy.h"
 #include "./EnemyBullet/EnemyBulletManager.h"
+#include "AttackStrategy/AttackStrategies.h"
 #include "Timer.h"
 #include "Ease.h"
 #include "ColliderManager.h"
 #include "ParticleManager.h"
 #include "EnemyBullet/Liner/Liner.h"
 #include "Random.h"
+#include "../../AppSystem/Audio/GameAudio.h"
 
 #define ENEMY_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Enemy, stateEnum, funcName)
@@ -2054,21 +2478,25 @@ void Enemy::Init()
 	{
 		// 通常ショット
 		obj_->SetModel("crystal1.obj");
+		SetAttackStrategy(std::make_unique<NormalAttackStrategy>());
 	}
 	else if (enemyType_ == 1)
 	{
 		// 垂直2点
 		obj_->SetModel("crystal2.obj");
+		SetAttackStrategy(std::make_unique<VerticalSplitAttackStrategy>());
 	}
 	else if (enemyType_ == 2)
 	{
 		// 水平4点
 		obj_->SetModel("crystal4.obj");
+		SetAttackStrategy(std::make_unique<HorizontalSplitAttackStrategy>());
 	}
 	else if (enemyType_ == 3)
 	{
 		// 3角形
 		obj_->SetModel("crystal.obj");
+		SetAttackStrategy(std::make_unique<TriangleAttackStrategy>());
 	}
 	obj_->SetColor({ 1, 1, 1, 1 });
 	worldTransform_.Initialize();
@@ -2141,10 +2569,12 @@ void Enemy::OnCollision()
 
 	if (hitpoint_ > 0) // 0より大きいなら
 	{
+		GameAudio::GetInstance()->Play("damageE", false, SoundCategory::SE);
 		ChangeState(EnemyState::DAMAGED);
 	}
 	else // 0以下の時
 	{
+		GameAudio::GetInstance()->Play("gekiha", false, SoundCategory::SE);
 		ChangeState(EnemyState::DESPAWNED);
 	}
 }
@@ -2154,55 +2584,12 @@ void Enemy::IsShot()
 	bulletTimer_ = kBulletCoolTime_;
 	if (!isInGame_) return;
 
-	// 1. 基本となる方向（正面）を計算
-	Vector3 enemyPos = GetWorldPosition();
-	Vector3 forward = Normalize(targetPos_ - enemyPos);
-
-	// 2. 右方向と上方向のベクトルを算出 (外積を使用)
-	// ※真上や真下を向いた時のエラーを避けるため、基本は (0,1,0) との外積
-	Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
-	if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f }; // 真上を向いている場合の回避策
-
-	Vector3 right = Normalize(Cross(worldUp, forward));
-	Vector3 up = Normalize(Cross(forward, right));
-
-	// 弾を生成する共通処理
-	auto SpawnBullet = [&](const Vector3& directionOffset)
-		{
-			std::unique_ptr<EnemyBullet::Liner> bullet = std::make_unique<EnemyBullet::Liner>();
-			bullet->Init();
-			bullet->SetTranslation(enemyPos);
-			// forward に対して right や up の成分を加えて発射方向を決める
-			bullet->SetShotDirection(Normalize(forward + directionOffset));
-			bulletManager_->AddBullet(std::move(bullet));
-		};
+	GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
 
-	if (enemyType_ == 0)
+	if (attackStrategy_)
 	{
-		// 通常ショット
-		SpawnBullet(Vector3(0, 0, 0));
-	}
-	else if (enemyType_ == 1)
-	{
-		// 垂直2点
-		SpawnBullet(up * 0.02f);
-		SpawnBullet(up * -0.02f);
-	}
-	else if (enemyType_ == 2)
-	{
-		// 水平4点
-		SpawnBullet(right * 0.06f);
-		SpawnBullet(right * 0.02f);
-		SpawnBullet(right * -0.02f);
-		SpawnBullet(right * -0.06f);
-	}
-	else if (enemyType_ == 3)
-	{
-		// 3角形
-		SpawnBullet(up * 0.04f);
-		SpawnBullet(right * 0.04f + up * -0.02f);
-		SpawnBullet(right * -0.04f + up * -0.02f);
+		attackStrategy_->Attack(GetWorldPosition(), targetPos_, bulletManager_);
 	}
 }
 
@@ -2292,6 +2679,7 @@ File Path: project/application/Object/Enemy/Enemy.h
 #include "Ease.h"
 #include "IParticleRenderer.h"
 #include "../../AppSystem/EventListener/EnemyEvent/IEnemyEventListener .h"
+#include "AttackStrategy/IAttackStrategy.h"
 #include <iostream>
 #include <random>
 
@@ -2349,6 +2737,12 @@ public:
 
 	const Vector2& GetScreenPos() { return screenPos; }
 
+	void SetAttackStrategy(std::unique_ptr<IAttackStrategy> strategy)
+	{
+		attackStrategy_ = std::move(strategy);
+		
+	}
+
 private:
 	void IsShot();
 
@@ -2362,6 +2756,8 @@ private:
 	const float kPopTime_ = 1.0f;
 
 	int enemyType_ = 0;
+
+	std::unique_ptr<IAttackStrategy> attackStrategy_;
 
 
 	float kBulletCoolTime_ = 2.0f;
@@ -3138,6 +3534,7 @@ File Path: project/application/Object/Player/Player.cpp
 #include "Effect/PlaneParticle.h"
 #include "Effect/ContrailBehaviour.h"
 #include "Effect/ParticleManager.h"
+#include "../../AppSystem/Audio/GameAudio.h"
 
 #define PLAYER_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Player, stateEnum, funcName)
@@ -3259,6 +3656,7 @@ void Player::TakeDamage()
 
 	if (hitpoint_ > 0)
 	{
+		GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
 		ChangeState(PlayerState::TAKE_DAMAGE);
 	}
 	else
@@ -3271,6 +3669,7 @@ void Player::OnCollision()
 {
 	isDead_ = true;
 
+	GameAudio::GetInstance()->Play("gekiha", false, SoundCategory::SE);
 
 	IParticleRenderer::Emitter e;
 	e.transform.translate = GetWorldPosition();
@@ -3315,6 +3714,7 @@ void Player::Attack()
 		currentBulletType_ = PlayerBulletType::NORMAL;
 		Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
 		bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+		GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 		bulletTimer_ = bulletCoolTime_;
 	}
 }
@@ -4079,9 +4479,11 @@ File Path: project/application/Object/Player/PlayerState/PlayerBarrelRoll.cpp
 #include "PostEffectManager.h"
 #include "VignetteEffect.h"
 #include "RadialBlurEffect.h"
+#include "../../../AppSystem/Audio/GameAudio.h"
 
 void Player::InitBarrelRoll()
 {
+    GameAudio::GetInstance()->Play("roll", false, SoundCategory::SE);
 	startRollPos_ = screenOffset_;
 	rollEffectTimer_ = 0.0f;
     auto* pem = PostEffectManager::GetInstance();
@@ -5328,11 +5730,16 @@ GameScene::~GameScene()
 void GameScene::Init()
 {
 	//========== ロード ==========//
-
-	gameUIJM_.Load("GameUI.json", true, &err_);
+	gameUIJM_.Load("GameUI.json", true, &errUI_);
+	configJM_.Load("Config.json", true, &errConfig_);
 #ifdef _DEBUG
-	Logger::Log(err_);
+	Logger::Log(errUI_);
+	Logger::Log(errConfig_);
 #endif // _DEBUG
+
+	gameAudio_ = GameAudio::GetInstance();
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
@@ -5365,9 +5772,12 @@ void GameScene::Update()
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");
-	static jx::JsonImGuiEditor inspector(gameUIJM_);
-	inspector.Draw(gameUIJM_.Root(), "GameUI.json");
+	static jx::JsonImGuiEditor inspectorUI(gameUIJM_);
+	inspectorUI.Draw(gameUIJM_.Root(), "GameUI.json");
 	if (ImGui::Button("Save")) gameUIJM_.Save();
+	static jx::JsonImGuiEditor inspectorConfig(configJM_);
+	inspectorConfig.Draw(configJM_.Root(), "Config.json");
+	if (ImGui::Button("SaveConfig")) configJM_.Save();
 	ImGui::End();
 #endif // _DEBUG
 
@@ -5402,6 +5812,7 @@ File Path: project/application/Scene/GameScene/GameScene.h
 #include "ObjectCubemap.h"
 #include "Result/ConfettiSystem.h"
 #include "UISpriteColliderManager.h"
+#include "../../AppSystem/Audio/GameAudio.h"
 
 #define JSONMGR_WITH_IMGUI
 #include "Utils/Json/JsonManager.h"
@@ -5472,7 +5883,9 @@ private: // メンバ変数
 	float pitch_ = 1.0f;
 	Vector3 cameraOffset_ = {};
 
-	std::unique_ptr<PlayUI> playUI_;
+	int BGMHandle_ = -1;
+	GameAudio* gameAudio_ = nullptr;
+
 
 	std::unique_ptr<StageManager> stageManager_;
 
@@ -5487,6 +5900,8 @@ private: // メンバ変数
 	BulletTimeController* bulletTime_ = nullptr;
 
 	
+	// UIクラスは後にまとめる
+	std::unique_ptr<PlayUI> playUI_;
 	std::unique_ptr<StartUI> startDraw_;
 	std::unique_ptr<ScoreUI> scoreDraw_;
 	std::unique_ptr<RetryUI> retryDraw_;
@@ -5506,7 +5921,9 @@ private: // メンバ変数
 
 
 	jx::JsonManager gameUIJM_;
-	std::string err_;
+	std::string errUI_;
+	jx::JsonManager configJM_;
+	std::string errConfig_;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
@@ -5684,6 +6101,7 @@ File Path: project/application/Scene/GameScene/GameSceneStates/GameSceneFadeOut.
 
 void GameScene::InitFadeOut()
 {
+	Audio::GetInstance()->StopBGM(BGMHandle_);
 	auto transition = std::make_unique<FadeTransition>(FadeTransition::Type::FADE_OUT, 1.0f);
 	transition->SetOnFinishCallback([this]() {
 		sceneManager_->ChangeScene("TITLE");
@@ -5721,14 +6139,26 @@ File Path: project/application/Scene/GameScene/GameSceneStates/GameScenePause.cp
 
 void GameScene::InitPause()
 {
+	pauseMenu_->Reset();
 }
 void GameScene::UpdatePause()
 {
 	pauseMenu_->Update();
-	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PLAY);
-
-
-	if (input_->TriggerKey(DIK_T)) ChangeState(GameSceneState::FADE_OUT);
+	if (input_->TriggerKey(DIK_ESCAPE)) 
+	{
+		ChangeState(GameSceneState::PLAY);
+		gameAudio_->Play("close", false, SoundCategory::UI);
+	}
+	if (pauseMenu_->GetElements() == ButtonElements::RESUME) 
+	{
+		ChangeState(GameSceneState::PLAY);
+		gameAudio_->Play("close", false, SoundCategory::UI);
+	}
+	if (pauseMenu_->GetElements() == ButtonElements::RETURN_TITLE)
+	{
+		ChangeState(GameSceneState::FADE_OUT);
+		gameAudio_->Play("enter", false, SoundCategory::UI);
+	}
 }
 void GameScene::ExitPause()
 {
@@ -5755,9 +6185,11 @@ void GameScene::UpdatePlay()
 
 	PlayUIUpdate();
 
-	if (input_->TriggerKey(DIK_ESCAPE)) ChangeState(GameSceneState::PAUSE);
-
-	if (input_->TriggerKey(DIK_T)) ChangeState(GameSceneState::FADE_OUT);
+	if (input_->TriggerKey(DIK_ESCAPE)) 
+	{
+		gameAudio_->Play("open", false, SoundCategory::UI);
+		ChangeState(GameSceneState::PAUSE);
+	}
 
 	if (stageManager_->GetPlayer()->IsDead())
 	{
@@ -5834,6 +6266,7 @@ void GameScene::UpdateReady()
 }
 void GameScene::ExitReady()
 {
+	BGMHandle_ = gameAudio_->Play("gameBGM", true, SoundCategory::BGM);
 	startDraw_->Reset();
 	startCameraTimer_ = 0;
 	prevStateElapsed_ = 0;
@@ -5989,6 +6422,8 @@ File Path: project/application/Scene/GameScene/GameSceneStates/GameSceneResult.c
 
 void GameScene::InitResult()
 {
+	gameAudio_->Play("fanfare", false, SoundCategory::BGM);
+
 	PostEffectManager::GetInstance()->SetEffectEnabled("Gaussian", true);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetKernelSize(13);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(0.0f);
@@ -6001,8 +6436,6 @@ void GameScene::InitResult()
 	setSpr.insert(setSpr.end(), scoreDraw_->GetSprite().begin(), scoreDraw_->GetSprite().end());
 
 	uiCollider_.SetSprites(setSpr);
-
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 
 	confetti_.Init(
 		400,
@@ -6018,8 +6451,6 @@ void GameScene::InitResult()
 }
 void GameScene::UpdateResult()
 {
-	if (input_->TriggerKey(DIK_C)) ChangeState(GameSceneState::RESULT);
-
 	resultMenu_->Update();
 	scoreDraw_->UpdateResult(GetStateElapsedTime());
 
@@ -6038,7 +6469,11 @@ void GameScene::UpdateResult()
 	}
 	else if (GetStateElapsedTime() > 4.5f)
 	{
-		if (input_->TriggerKey(DIK_SPACE)) ChangeState(GameSceneState::FADE_OUT);
+		if (input_->TriggerKey(DIK_SPACE)) 
+		{
+			gameAudio_->Play("enter", false, SoundCategory::UI);
+			ChangeState(GameSceneState::FADE_OUT);
+		}
 	}
 }
 void GameScene::ExitResult()
@@ -6076,7 +6511,11 @@ void GameScene::UpdateRetry()
 	}
 	else
 	{
-		if (input_->TriggerKey(DIK_SPACE)) ChangeState(GameSceneState::FADE_OUT);
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			gameAudio_->Play("enter", false, SoundCategory::UI);
+			ChangeState(GameSceneState::FADE_OUT);
+		}
 	}
 }
 
@@ -6116,6 +6555,7 @@ void GameScene::UIInit()
 
 	pauseMenu_ = std::make_unique<PauseClass>();
 	pauseMenu_->SetJsonManager(&gameUIJM_);
+	pauseMenu_->SetConfigJsonManager(&configJM_);
 	pauseMenu_->Init();
 
 	resultMenu_ = std::make_unique<ResultClass>();
@@ -6199,9 +6639,16 @@ File Path: project/application/Scene/GameScene/Pause/Pause.cpp
 #include "Pause.h"
 #include "Sprite.h"
 #include "TextureManager.h"
+#include "mathFunc.h"
+#include "Timer.h"
+#include "Ease.h"
+#include "imgui.h"
 
 void PauseClass::Init()
 {
+	input_ = Input::GetInstance();
+	audio_ = GameAudio::GetInstance();
+
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/blackScreen.png");
 	back_ = std::make_unique<Sprite>();
 	back_->Initialize("Resources/Texture/blackScreen.png");
@@ -6213,22 +6660,202 @@ void PauseClass::Init()
 	text_ = std::make_unique<Sprite>();
 	text_->Initialize("Resources/Texture/PauseText.png");
 	text_->SetPosition(jm_->Get<Vector2>("Pause.PauseText.Position"));
+
+	// 代入する SoundCategory で CategoryNum を Master として代用
+	volumeControl_[static_cast<int>(VolumeCategory::Master)].soundCategory = SoundCategory::CategoryNum;
+	volumeControl_[static_cast<int>(VolumeCategory::BGM)].soundCategory = SoundCategory::BGM;
+	volumeControl_[static_cast<int>(VolumeCategory::SE)].soundCategory = SoundCategory::SE;
+	volumeControl_[static_cast<int>(VolumeCategory::UI)].soundCategory = SoundCategory::UI;
+
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/MasterVolume.png");
+	volumeControl_[static_cast<int>(VolumeCategory::Master)].text = std::make_unique<Sprite>();
+	volumeControl_[static_cast<int>(VolumeCategory::Master)].text->Initialize("Resources/Texture/MasterVolume.png");
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/BGMVolume.png");
+	volumeControl_[static_cast<int>(VolumeCategory::BGM)].text = std::make_unique<Sprite>();
+	volumeControl_[static_cast<int>(VolumeCategory::BGM)].text->Initialize("Resources/Texture/BGMVolume.png");
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/SEVolume.png");
+	volumeControl_[static_cast<int>(VolumeCategory::SE)].text = std::make_unique<Sprite>();
+	volumeControl_[static_cast<int>(VolumeCategory::SE)].text->Initialize("Resources/Texture/SEVolume.png");
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/UIVolume.png");
+	volumeControl_[static_cast<int>(VolumeCategory::UI)].text = std::make_unique<Sprite>();
+	volumeControl_[static_cast<int>(VolumeCategory::UI)].text->Initialize("Resources/Texture/UIVolume.png");
+
+
+
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Slide.png");
+
+	int index = 0;
+	for (auto&& vol : volumeControl_)
+	{
+		vol.bar = std::make_unique<Sprite>();
+		vol.bar->Initialize("Resources/Texture/white2x2.png");
+		vol.bar->SetAnchorPoint(Vector2(0.5f, 0.5f));
+		vol.bar->SetSize(Vector2(416.0f, 32.0f));
+		vol.bar->SetPosition(Vector2(740.0f, 96.0f * float(index + 1)));
+		vol.colorBar = std::make_unique<Sprite>();
+		vol.colorBar->Initialize("Resources/Texture/white2x2.png");
+		vol.colorBar->SetAnchorPoint(Vector2(0.5f, 0.5f));
+		vol.colorBar->SetSize(Vector2(416.0f, 32.0f));
+		vol.colorBar->SetPosition(Vector2(740.0f, 96.0f * float(index + 1)));
+
+		
+
+
+		vol.text->SetAnchorPoint(Vector2(0.5f, 0.5f));
+		vol.text->SetPosition(Vector2(400.0f, 96.0f * float(index + 1)));
+
+
+
+		vol.slide = std::make_unique<Sprite>();
+		vol.slide->Initialize("Resources/Texture/Slide.png");
+		vol.slide->SetAnchorPoint(Vector2(0.5f, 0.5f));
+
+		Vector2 pos = {};
+		pos.y = vol.bar->GetPosition().y;
+
+		if (vol.bar->GetSize().x != 0.0f)
+		{
+			float minX = vol.bar->GetPosition().x - (vol.bar->GetSize().x / 2.0f);
+			float maxX = vol.bar->GetPosition().x + (vol.bar->GetSize().x / 2.0f);
+			float volume = 1.0f;
+			if (vol.soundCategory == SoundCategory::CategoryNum)
+			{
+				vol.colorBar->SetColor(Vector4{ 1.0f,0.0f,0.0f,1.0f });
+				volume = configJM_->Get<float>("Volume.Master");
+			}
+			else if (vol.soundCategory == SoundCategory::BGM)
+			{
+				vol.colorBar->SetColor(Vector4{ 1.0f,1.0f,0.0f,1.0f });
+				volume = configJM_->Get<float>("Volume.BGM");
+			}
+			else if (vol.soundCategory == SoundCategory::SE)
+			{
+				vol.colorBar->SetColor(Vector4{ 0.0f,1.0f,0.0f,1.0f });
+				volume = configJM_->Get<float>("Volume.SE");
+			}
+			else if (vol.soundCategory == SoundCategory::UI)
+			{
+				vol.colorBar->SetColor(Vector4{ 0.0f,0.0f,1.0f,1.0f });
+				volume = configJM_->Get<float>("Volume.UI");
+			}
+			pos.x = Lerp(minX, maxX, volume);
+
+			float len = pos.x - minX;
+			vol.colorBar->SetSize(Vector2(len, 32.0f));
+			vol.colorBar->SetPosition(Vector2(minX + (len / 2.0f), 96.0f * float(index + 1)));
+		}
+
+
+		vol.slide->SetPosition(pos);
+		vol.size = vol.slide->GetSize();
+
+		vol.pos = pos;
+
+		++index;
+	}
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/TitleReturn.png");
+	menuButtons_[RETURN_TITLE].button = std::make_unique<Sprite>();
+	menuButtons_[RETURN_TITLE].button->Initialize("Resources/Texture/TitleReturn.png");
+	menuButtons_[RETURN_TITLE].button->SetPosition(Vector2(832.0f, 528.0f));
+	menuButtons_[RETURN_TITLE].elements = RETURN_TITLE;
+
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Resume.png");
+	menuButtons_[RESUME].button = std::make_unique<Sprite>();
+	menuButtons_[RESUME].button->Initialize("Resources/Texture/Resume.png");
+	menuButtons_[RESUME].button->SetPosition(Vector2(448.0f, 528.0f));
+	menuButtons_[RESUME].elements = RESUME;
+
+	for (auto&& button : menuButtons_)
+	{
+		button.button->SetAnchorPoint(Vector2(0.5f, 0.5f));
+		button.size = button.button->GetSize();
+		button.pos = button.button->GetPosition();
+	}
+}
+void PauseClass::Reset()
+{
+	elements_ = ButtonElements::Num;
+	isPush_ = false;
+	timer_ = 0.0f;
+	for (auto& vol : volumeControl_)
+	{
+		vol.isPush = false; 
+		vol.hoverProgress = 0.0f;
+	}
+	for (auto&& button : menuButtons_)
+	{
+		button.hoverProgress = 0.0f;
+	}
 }
 
 void PauseClass::Update()
 {
 #ifdef _DEBUG
 	DebugJMApply();
+
+	ImGui::Begin("Volume");
+	Vector2 mousePos = input_->GetMousePosition();
+	ImGui::DragFloat2("mouse", &mousePos.x);
+	for (auto& vol : volumeControl_)
+	{
+		Vector2 pos = vol.slide->GetPosition();
+		ImGui::DragFloat2("spr", &pos.x);
+	}
+	float masterVol = audio_->GetMasterVolume();
+	ImGui::DragFloat("master", &masterVol);
+	for (int i = 1; i < static_cast<int>(VolumeCategory::CategoryNum); ++i)
+	{
+		float volume = audio_->GetCategoryVolume(volumeControl_[i].soundCategory);
+		ImGui::DragFloat("cate", &volume);
+	}
+	ImGui::End();
+
 #endif // _DEBUG
+
+	timer_ += Timer::GetInstance()->GetDeltaTime();
 
 	back_->Update();
 	text_->Update();
+
+	VolumeChange();
+	ButtonProcess();
+
+	for (auto& vol : volumeControl_)
+	{
+		vol.bar->Update();
+		vol.colorBar->Update();
+		vol.slide->Update();
+		vol.text->Update();
+	}
+	for (auto&& button : menuButtons_)
+	{
+		button.button->Update();
+	}
 }
 
 void PauseClass::Draw()
 {
 	back_->Draw();
 	text_->Draw();
+
+	for (auto& vol : volumeControl_)
+	{
+		vol.bar->Draw();
+		vol.colorBar->Draw();
+		vol.slide->Draw();
+		vol.text->Draw();
+	}
+	for (auto&& button : menuButtons_)
+	{
+		button.button->Draw();
+	}
 }
 
 void PauseClass::DebugJMApply()
@@ -6239,6 +6866,171 @@ void PauseClass::DebugJMApply()
 	text_->SetPosition(jm_->Get<Vector2>("Pause.PauseText.Position"));
 }
 
+void PauseClass::ButtonProcess()
+{
+	if (isPush_) return;
+
+	Vector2 mousePos = input_->GetMousePosition();
+	float deltaTime = Timer::GetInstance()->GetDeltaTime();
+
+	// アニメーションの速度（1.0 / 秒数） 
+	// 例: 0.2秒で最大にしたい場合は 5.0f
+	const float kAnimeSpeed = 5.0f;
+	const float kMaxScale = 1.2f; // 最大1.2倍にスケーリング
+
+	for (auto&& button : menuButtons_)
+	{
+		// 当たり判定
+		bool isHovered = (std::abs(mousePos.x - button.pos.x) <= button.size.x / 2.0f) &&
+			(std::abs(mousePos.y - button.pos.y) <= button.size.y / 2.0f);
+
+		// タイマー（進捗度）の更新
+		if (isHovered)
+		{
+			button.hoverProgress += kAnimeSpeed * deltaTime;
+			button.button->SetColor(Vector4{ 220.0f/255.0f, 220.0f/255.0f, 60.0f/255.0f, 1.0f });
+		}
+		else
+		{
+			button.hoverProgress -= kAnimeSpeed * deltaTime;
+			button.button->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
+		}
+		// 0.0f ～ 1.0f の間にクランプ
+		button.hoverProgress = std::clamp<float>(button.hoverProgress, 0.0f, 1.0f);
+
+		// イージングを適用してサイズを計算
+		float t = EaseFixed::OutBack(button.hoverProgress);
+
+		// 線形補間でスケール値を決定 (1.0f から kMaxScale への補間)
+		float currentScale = 1.0f + (kMaxScale - 1.0f) * t;
+		button.button->SetSize(button.size * currentScale);
+
+		// クリック処理
+		if (isHovered && input_->IsTriggerMouse(0))
+		{
+			elements_ = button.elements;
+			break;
+		}
+	}
+}
+
+void PauseClass::VolumeChange()
+{
+	float deltaTime = Timer::GetInstance()->GetDeltaTime();
+
+	// アニメーションの速度（1.0 / 秒数） 
+	// 例: 0.2秒で最大にしたい場合は 5.0f
+	const float kAnimeSpeed = 5.0f;
+	const float kMaxScale = 1.2f; // 最大1.2倍にスケーリング
+
+	if (!isPush_)
+	{
+		Vector2 mousePos = input_->GetMousePosition();
+		for (auto&& vol : volumeControl_)
+		{
+			vol.hoverProgress -= kAnimeSpeed * deltaTime;
+
+			if ((std::abs(mousePos.x - vol.pos.x) <= vol.size.x / 2.0f) &&
+				(std::abs(mousePos.y - vol.pos.y) <= vol.size.y / 2.0f))
+			{
+				vol.slide->SetColor(Vector4(0.9f, 0.7f, 0.2f, 1.0f));
+				if (input_->IsTriggerMouse(0))
+				{
+					audio_->Play("slide", false, SoundCategory::UI);
+					vol.isPush = true;
+					isPush_ = true;
+					break;
+				}
+			}
+			else
+			{
+				vol.slide->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			}
+		}
+	}
+
+
+	if (input_->IsPressMouse(0) && isPush_)
+	{
+		int index = 0;
+		for (auto&& vol : volumeControl_)
+		{
+			vol.slide->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			if (vol.isPush)
+			{
+				vol.hoverProgress += kAnimeSpeed * deltaTime;
+
+				if (vol.bar->GetSize().x != 0.0f)
+				{
+					float minX = vol.bar->GetPosition().x - (vol.bar->GetSize().x / 2.0f);
+					float maxX = vol.bar->GetPosition().x + (vol.bar->GetSize().x / 2.0f);
+					vol.pos.x = std::clamp(input_->GetMousePosition().x, minX, maxX);
+					float liner = maxX - minX;
+					float t = (vol.pos.x - minX) / liner;
+
+					if (vol.soundCategory != SoundCategory::CategoryNum)
+					{
+						audio_->SetCategoryVolume(vol.soundCategory, t);
+					}
+					else
+					{
+						audio_->SetMasterVolume(t);
+					}
+
+					if (vol.soundCategory == SoundCategory::CategoryNum)
+					{
+						configJM_->Set("Volume.Master", t);
+					}
+					else if (vol.soundCategory == SoundCategory::BGM)
+					{
+						configJM_->Set("Volume.BGM", t);
+					}
+					else if (vol.soundCategory == SoundCategory::SE)
+					{
+						configJM_->Set("Volume.SE", t);
+					}
+					else if (vol.soundCategory == SoundCategory::UI)
+					{
+						configJM_->Set("Volume.UI", t);
+					}
+
+					float len = vol.pos.x - minX;
+					vol.colorBar->SetSize(Vector2(len, 32.0f));
+					vol.colorBar->SetPosition(Vector2(minX + (len / 2.0f), 96.0f * float(index + 1)));
+				}
+
+				vol.slide->SetColor(Vector4(0.9f, 0.7f, 0.2f, 1.0f));
+				vol.slide->SetPosition(vol.pos);
+				configJM_->Save();
+			}
+			++index;
+		}
+	}
+	else if (isPush_)
+	{
+		for (auto&& vol : volumeControl_)
+		{
+			vol.hoverProgress -= kAnimeSpeed * deltaTime;
+			vol.slide->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			vol.isPush = false;
+		}
+		isPush_ = false;
+	}
+
+	for (auto&& vol : volumeControl_)
+	{
+		// 0.0f ～ 1.0f の間にクランプ
+		vol.hoverProgress = std::clamp<float>(vol.hoverProgress, 0.0f, 1.0f);
+
+		// イージングを適用してサイズを計算
+		float t = EaseFixed::OutBack(vol.hoverProgress);
+
+		// 線形補間でスケール値を決定 (1.0f から kMaxScale への補間)
+		float currentScale = 1.0f + (kMaxScale - 1.0f) * t;
+		vol.slide->SetSize(vol.size * currentScale);
+	}
+}
+
 
 ============================================================
 File Path: project/application/Scene/GameScene/Pause/Pause.h
@@ -6247,12 +7039,25 @@ File Path: project/application/Scene/GameScene/Pause/Pause.h
 #include <memory>
 
 #include "Utils/Json/JsonManager.h"
+#include "Input.h"
+
+#include "../../../AppSystem/Audio/GameAudio.h"
 
 class Sprite;
+
+enum ButtonElements
+{
+	RESUME,
+	RETURN_TITLE,
+	Num
+};
+
 class PauseClass
 {
 public:
 	void Init();
+
+	void Reset();
 
 	void Update();
 
@@ -6260,14 +7065,70 @@ public:
 
 	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
 
+	void SetConfigJsonManager(jx::JsonManager* jm) { configJM_ = jm; }
+
+	ButtonElements GetElements() { return elements_; }
+
 private:
 	void DebugJMApply();
 
+	void ButtonProcess();
+
+	void VolumeChange();
+
 private:
+	struct VolumeControl
+	{
+		SoundCategory soundCategory = SoundCategory::CategoryNum;
+		Vector2 pos = {};	// 判定用座標
+		Vector2 size = {};	// 判定用サイズ
+		bool isPush = false;
+		float hoverProgress = 0.0f;
+		std::unique_ptr<Sprite> bar;
+		std::unique_ptr<Sprite> colorBar;
+		std::unique_ptr<Sprite> slide;
+		std::unique_ptr<Sprite> text;
+	};
+
+	enum VolumeCategory
+	{
+		Master,
+		BGM,
+		SE,
+		UI,
+		CategoryNum
+	};
+
+	std::array<VolumeControl, VolumeCategory::CategoryNum> volumeControl_;
+
+	struct MenuButton
+	{
+		ButtonElements elements = ButtonElements::Num;
+		Vector2 pos = {};	// 判定用座標
+		Vector2 size = {};	// 判定用サイズ
+		std::unique_ptr<Sprite> button;
+		float hoverProgress = 0.0f;
+	};
+
+	std::array<MenuButton, ButtonElements::Num> menuButtons_;
+
+	bool isPush_ = false;
+	ButtonElements elements_ = ButtonElements::Num;
+
+	Input* input_ = nullptr;
+	GameAudio* audio_ = nullptr;
+
+	float timer_ = 0.0f;
+
+
+	std::unique_ptr<Sprite> returnTitle_;
+	std::unique_ptr<Sprite> resume_;
+
 	std::unique_ptr<Sprite> back_;
 	std::unique_ptr<Sprite> text_;
 
 	jx::JsonManager* jm_;
+	jx::JsonManager* configJM_;
 };
 
 
@@ -6329,9 +7190,9 @@ void PlayUI::Init()
 	sprites_[OUTLINE]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
-	sprites_[RETURN_TITLE] = std::make_unique<Sprite>();
-	sprites_[RETURN_TITLE]->Initialize("Resources/Texture/ReturnTitle.png");
-	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
+	sprites_[PAUSE] = std::make_unique<Sprite>();
+	sprites_[PAUSE]->Initialize("Resources/Texture/ReturnTitle.png");
+	sprites_[PAUSE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
 
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Shift.png");
@@ -6362,7 +7223,7 @@ void PlayUI::DebugJMApply()
 	sprites_[OUTLINE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.Operation.Size"));
 	sprites_[OUTLINE]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
 
-	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
+	sprites_[PAUSE]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.ReturnTitle.Size"));
 
 	sprites_[SHIFT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
 }
@@ -6500,7 +7361,7 @@ private:
 		HP_NUM_TEXT,
 		OPERATION,
 		OUTLINE,
-		RETURN_TITLE,
+		PAUSE,
 		SHIFT,
 		SpriteNum
 	};
@@ -6962,12 +7823,6 @@ void ResultClass::Init()
 	sprites_[SPACE]->SetPosition(jm_->Get<Vector2>("Result.Texture.TitleSpace.Position"));
 	sprites_[SPACE]->SetAlpha(jm_->Get<float>("Result.Texture.TitleSpace.Alpha"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ReturnTitle.png");
-	sprites_[RETURN_TITLE] = std::make_unique<Sprite>();
-	sprites_[RETURN_TITLE]->Initialize("Resources/Texture/ReturnTitle.png");
-	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("Result.Texture.ReturnTitle.Size"));
-	sprites_[RETURN_TITLE]->SetPosition(jm_->Get<Vector2>("Result.Texture.ReturnTitle.Position"));
-
 
 	timer_ = jm_->Get<float>("Result.timer.reset");
 	maxTime_ = jm_->Get<float>("Result.timer.max");
@@ -6987,8 +7842,6 @@ void ResultClass::DebugJMApply()
 
 	sprites_[SPACE]->SetAnchorPoint(jm_->Get<Vector2>("Result.Texture.TitleSpace.AnchorPoint"));
 	sprites_[SPACE]->SetPosition(jm_->Get<Vector2>("Result.Texture.TitleSpace.Position"));
-
-	sprites_[RETURN_TITLE]->SetSize(jm_->Get<Vector2>("Result.Texture.ReturnTitle.Size"));
 }
 
 void ResultClass::Reset()
@@ -7079,7 +7932,6 @@ private:
 		RESULT,
 		SCORE,
 		SPACE,
-		RETURN_TITLE,
 		SpriteNum
 	};
 
@@ -7403,6 +8255,43 @@ void GameScene::EmitterInit()
 }
 
 ============================================================
+File Path: project/application/Scene/SceneFactory/SceneFactory.cpp
+============================================================
+#include "SceneFactory.h"
+#include "Scene/TitleScene/TitleScene.h"
+#include "Scene/GameScene/GameScene.h"
+
+
+std::unique_ptr<IScene> SceneFactory::CreateScene(const std::string& sceneName)
+{
+    if (sceneName == "TITLE") return std::make_unique<TitleScene>();
+    if (sceneName == "GAME")  return std::make_unique<GameScene>();
+    return nullptr;
+}
+
+
+============================================================
+File Path: project/application/Scene/SceneFactory/SceneFactory.h
+============================================================
+#pragma once
+#include "AbstractSceneFactory.h"
+
+// このゲーム用のシーン工場
+class SceneFactory :
+    public AbstractSceneFactory
+{
+public:
+    /**
+     * @brief シーン生成
+     * @param sceneName シーン名
+     * @return 生成したシーン
+     */
+    std::unique_ptr<IScene> CreateScene(const std::string& sceneName) override;
+};
+
+
+
+============================================================
 File Path: project/application/Scene/TitleScene/TitleScene.cpp
 ============================================================
 #include "TitleScene.h"
@@ -7415,6 +8304,7 @@ File Path: project/application/Scene/TitleScene/TitleScene.cpp
 #include "CubemapBasis.h"
 #include "Timer.h"
 #include "Audio/Audio.h"
+#include "../../AppSystem/Audio/GameAudio.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
@@ -7433,6 +8323,18 @@ void TitleScene::Init()
 	Logger::Log(err);
 	Audio::GetInstance()->LoadWave("gameBGM");
 #endif // _DEBUG
+
+	GameAudio::GetInstance()->LoadSound("open");
+	GameAudio::GetInstance()->LoadSound("close");
+	GameAudio::GetInstance()->LoadSound("slide");
+	GameAudio::GetInstance()->LoadSound("enter");
+	GameAudio::GetInstance()->LoadSound("fanfare");
+	GameAudio::GetInstance()->LoadSound("gameBGM");
+	GameAudio::GetInstance()->LoadSound("gekiha");
+	GameAudio::GetInstance()->LoadSound("damageE");
+	GameAudio::GetInstance()->LoadSound("damageP");
+	GameAudio::GetInstance()->LoadSound("roll");
+	GameAudio::GetInstance()->LoadSound("attack");
 
 
 	//========== カメラ、入力取得 ==========//
@@ -7516,8 +8418,8 @@ void TitleScene::Update() {
 
 	if (input_->TriggerKey(DIK_M))
 	{
-		int a = Audio::GetInstance()->PlayWave("gameBGM", true);
-		Audio::GetInstance()->SetBGMVolume(a, 1.0f);
+		int a = GameAudio::GetInstance()->Play("gameBGM", true, SoundCategory::BGM);
+		GameAudio::GetInstance()->SetSoundVolume(a, 1.0f);
 	}
 
 	// ImGui で編集
@@ -7586,6 +8488,7 @@ void TitleScene::Transition()
 #else
 	if (input_->TriggerKey(DIK_RETURN))
 	{
+		GameAudio::GetInstance()->Play("enter", false, SoundCategory::UI);
 		BlockFadeConfig cfg;
 		auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
 		transition->SetOnFinishCallback([this]()
@@ -8342,22 +9245,20 @@ File Path: project/application/Scene/Transition/TransitionManager.h
 ============================================================
 #pragma once
 #include "ITransition.h"
+#include "SingletonObject.h"
 #include <queue>
 #include <memory>
 
-class TransitionManager {
-public:
-	static TransitionManager* GetInstance()
-	{
-		static TransitionManager instance;
-		return &instance;
-	}
+class TransitionManager :
+	public SingletonObject<TransitionManager>
+{
+	friend class SingletonObject<TransitionManager>;
+	friend struct std::default_delete<TransitionManager>;
 
-	~TransitionManager();
 private:
+	// 外部からの new/delete を禁止
 	TransitionManager() = default;
-	TransitionManager(TransitionManager&) = delete;
-	TransitionManager& operator=(TransitionManager&) = delete;
+	~TransitionManager();
 
 public:
 	// 単発トランジションの開始（現在のを上書き）
@@ -9066,6 +9967,9 @@ File Path: project/engine/Audio/Audio.cpp
 #include <algorithm>
 #include <queue>
 
+constexpr UINT kSubmixChannels = 8;
+constexpr UINT kSubmixSampleRate = 48000;
+
 // ファイルからデータを読み込む関数
 bool ReadAudioData(std::ifstream& file, std::vector<BYTE>& buffer) {
 	if (!file.read(reinterpret_cast<char*>(buffer.data()), buffer.size())) {
@@ -9252,37 +10156,29 @@ void Audio::Initialize(const std::string& directoryPath)
 		assert(SUCCEEDED(result));
 	}
 
+	CreateAnalyzerSubmix();
+	Start();
+}
+
+void Audio::CreateAnalyzerSubmix()
+{
 	// ============================================
-	//   ★ SubmixVoice を作り、ここに XAPO を付ける
+	//   ★ SubmixVoice を作る
 	// ============================================
 
 	// MasterVoice と同じフォーマットで作る
 	XAUDIO2_VOICE_DETAILS details = {};
 	masterVoice->GetVoiceDetails(&details);
 
+	HRESULT result;
+
 	result = xAudio2->CreateSubmixVoice(
 		&analyzerSubmix,
-		details.InputChannels,
-		details.InputSampleRate
+		kSubmixChannels,
+		kSubmixSampleRate,
+		0, 
+		kAnalyzer // ProcessingStage (下から上へ)
 	);
-	assert(SUCCEEDED(result));
-
-	// XAPO インスタンス
-	analyzerXAPO = new MyAnalyzerXAPO();
-
-	// Effect desc
-	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
-	effectDesc.InitialState = TRUE;
-	effectDesc.OutputChannels = details.InputChannels;
-	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO);
-
-	// Effect chain
-	XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
-	effectChainXAPO.EffectCount = 1;
-	effectChainXAPO.pEffectDescriptors = &effectDesc;
-
-	// SubmixVoice に XAPO をセット
-	result = analyzerSubmix->SetEffectChain(&effectChainXAPO);
 	assert(SUCCEEDED(result));
 
 	// Submix → MasteringVoice へ音を送る
@@ -9297,35 +10193,64 @@ void Audio::Initialize(const std::string& directoryPath)
 	result = analyzerSubmix->SetOutputVoices(&sends);
 	assert(SUCCEEDED(result));
 
+	// ============================================
+	//   ★ SubmixVoice に XAPO を付ける
+	// ============================================
+
+	// XAPO インスタンス
+	analyzerXAPO = new MyAnalyzerXAPO();
+
+	// Effect desc
+	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
+	effectDesc.InitialState = TRUE;
+	effectDesc.OutputChannels = kSubmixChannels;
+	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO);
+
+	// Effect chain
+	XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
+	effectChainXAPO.EffectCount = 1;
+	effectChainXAPO.pEffectDescriptors = &effectDesc;
+
+	// SubmixVoice に XAPO をセット
+	result = analyzerSubmix->SetEffectChain(&effectChainXAPO);
+	assert(SUCCEEDED(result));
+}
+
+void Audio::Start()
+{
 	xAudio2->StartEngine();
+
+	HRESULT result;
 
 	// ---- ★無音バッファ用 Voice を作成 ----
 	silentFormat_.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
 	silentFormat_.nChannels = 1;
-	silentFormat_.nSamplesPerSec = 48000;
+	silentFormat_.nSamplesPerSec = kSubmixSampleRate;
 	silentFormat_.wBitsPerSample = 32;
 	silentFormat_.nBlockAlign = 4;
-	silentFormat_.nAvgBytesPerSec = 48000 * 4;
+	silentFormat_.nAvgBytesPerSec = kSubmixSampleRate * 4;
 	silentFormat_.cbSize = 0;
 
 	// 無音バッファ（50ms程度）
-	int silentSamples = int(48000 * 0.05f);
+	int silentSamples = int(kSubmixSampleRate * 0.05f);
 	silentBuffer_.assign(silentSamples, 0.0f);
 
-	sendDesc = {};
+	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 	sendDesc.Flags = 0;
 	sendDesc.pOutputVoice = analyzerSubmix;
 
-	sends = {};
+	XAUDIO2_VOICE_SENDS sends = {};
 	sends.SendCount = 1;
 	sends.pSends = &sendDesc;
 
-	xAudio2->CreateSourceVoice(
+	result = xAudio2->CreateSourceVoice(
 		&silentVoice_,
 		&silentFormat_,
 		0, 2.0f,
 		nullptr, &sends, nullptr
 	);
+
+	assert(SUCCEEDED(result));
 
 	silentVoice_->Start(0);
 	EnableSilentFeed(true);
@@ -9362,24 +10287,54 @@ void Audio::StopBGM(int resourceNum)
 	pSourceVoices_[resourceNum]->FlushSourceBuffers();
 }
 
-void Audio::PauseBGM(int resourceNum)
+void Audio::Pause(int resourceNum)
 {
 	pSourceVoices_[resourceNum]->Stop();
 }
 
-void Audio::ReStartBGM(int resourceNum)
+void Audio::ReStart(int resourceNum)
 {
 	pSourceVoices_[resourceNum]->Start();
 }
 
-void Audio::SetBGMVolume(int resourceNum, float volume)
+void Audio::SetMasterVolume(float volume)
+{
+	masterVoice->SetVolume(volume);
+}
+
+void Audio::SetCategoryVolume(const std::string& soundCategory, float volume)
+{
+	pSoundCategorySubmixVoices_[soundCategory]->SetVolume(volume);
+}
+
+void Audio::SetSoundVolume(int resourceNum, float volume)
 {
 	pSourceVoices_[resourceNum]->SetVolume(volume);
 }
 
-void Audio::LoadWave(const char* filename)
+float Audio::GetMasterVolume()
 {
-	//HRESULT result;
+	float volume = 0;
+	masterVoice->GetVolume(&volume);
+	return volume;
+}
+
+float Audio::GetCategoryVolume(const std::string& soundCategory)
+{
+	float volume = 0;
+	pSoundCategorySubmixVoices_[soundCategory]->GetVolume(&volume);
+	return volume;
+}
+
+float Audio::GetSoundVolume(int resourceNum)
+{
+	float volume = 0;
+	pSourceVoices_[resourceNum]->GetVolume(&volume);
+	return volume;
+}
+
+void Audio::LoadWave(const std::string& filename)
+{
 	if (soundDataMap.count(filename)) {
 		// キーが存在する場合、処理を中断
 		return;
@@ -9464,7 +10419,7 @@ void Audio::LoadWave(const char* filename)
 	soundDataMap[filename] = soundData;
 }
 
-void Audio::SoundUnload(const char* filename)
+void Audio::SoundUnload(const std::string& filename)
 {
 	auto it = soundDataMap.find(filename);
 	if (it == soundDataMap.end())
@@ -9482,7 +10437,46 @@ void Audio::SoundUnload(const char* filename)
 	soundData->wfex = {};
 }
 
-int Audio::PlayWave(const char* filename, const bool isLoop)
+void Audio::AddSoundCategory(const std::string& soundCategory)
+{
+	if (pSoundCategorySubmixVoices_.count(soundCategory))
+	{
+		// キーが存在する場合、処理を中断
+		return;
+	}
+
+	HRESULT result;
+
+	// analyzerSubmix と同じフォーマットで作る
+	XAUDIO2_VOICE_DETAILS details = {};
+	analyzerSubmix->GetVoiceDetails(&details);
+
+	// ボイス
+	IXAudio2SubmixVoice* voice;
+
+	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
+	sendDesc.Flags = 0;
+	sendDesc.pOutputVoice = analyzerSubmix;
+
+	XAUDIO2_VOICE_SENDS sends = {};
+	sends.SendCount = 1;
+	sends.pSends = &sendDesc;
+
+	result = xAudio2->CreateSubmixVoice(
+		&voice,
+		kSubmixChannels,
+		kSubmixSampleRate,
+		0,          
+		kCategory,          // ProcessingStage (下から上へ)
+		&sends,     
+		nullptr
+	);
+	assert(SUCCEEDED(result));
+
+	pSoundCategorySubmixVoices_[soundCategory] = voice;
+}
+
+int Audio::Play(const std::string& filename, const bool isLoop, std::string soundCategory)
 {
 	HRESULT result;
 
@@ -9510,13 +10504,34 @@ int Audio::PlayWave(const char* filename, const bool isLoop)
 	if (pSourceVoices_[sourceNum] != nullptr)
 	{
 		pSourceVoices_[sourceNum]->Stop();
-		pSourceVoices_[sourceNum]->FlushSourceBuffers();
+		pSourceVoices_[sourceNum]->FlushSourceBuffers(); 
+		pSourceVoices_[sourceNum]->DestroyVoice();
+		pSourceVoices_[sourceNum] = nullptr;
 	}
 
-	// 出力先を SubmixVoice にする
+	// 出力先をの Submix を決定
 	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 	sendDesc.Flags = 0;
-	sendDesc.pOutputVoice = analyzerSubmix;
+	if(soundCategory == "")
+	{
+		// 指定ナシなら analyzer へ直接送る
+		sendDesc.pOutputVoice = analyzerSubmix;
+	}
+	else
+	{
+		// 指定アリなら捜査して送る
+		auto itSub = pSoundCategorySubmixVoices_.find(soundCategory);
+		if (itSub == pSoundCategorySubmixVoices_.end())
+		{
+			// カテゴリが見つからない場合のエラー処理
+			Logger::Log("SoundCategory not found.\n");
+			// analyzer へ直接送る
+			sendDesc.pOutputVoice = analyzerSubmix;
+		}
+		IXAudio2SubmixVoice* submix = itSub->second;
+
+		sendDesc.pOutputVoice = submix;
+	}
 
 	XAUDIO2_VOICE_SENDS sends = {};
 	sends.SendCount = 1;
@@ -9627,6 +10642,7 @@ File Path: project/engine/Audio/Audio.h
 
 #include "MyAnalyzerXAPO.h"
 #include "StreamingAudio.h"
+#include "SingletonObject.h"
 
 
 // WAVヘッダーの定義
@@ -9677,14 +10693,11 @@ private:
 // 音源の同時再生数
 static const size_t kMaxPlayWave = 100;
 
-class Audio
+class Audio :
+	public SingletonObject<Audio>
 {
-public:
-	static Audio* GetInstance()
-	{
-		static Audio instance; // 静的ローカル変数（寿命がプログラム全体に渡る）
-		return &instance;
-	}
+	friend class SingletonObject<Audio>;
+	friend struct std::default_delete<Audio>;
 
 private:
 	Audio()
@@ -9695,8 +10708,44 @@ private:
 		, BUFFER_SIZE(0)
 	{}
 	~Audio();
-	Audio(Audio&) = delete;
-	Audio& operator=(Audio&) = delete;
+
+private: // 構造体
+	// submixのプロセスステージ（上から順に下層）
+	enum mixStage
+	{
+		kCategory,
+		kAnalyzer
+	};
+
+	// チャンクヘッダー
+	struct ChunkHeader
+	{
+		char id[4]; // チャンクごとのID
+		int32_t size; // チャンクサイズ
+	};
+
+	// RIFFヘッダチャンク
+	struct RiffHeader
+	{
+		ChunkHeader chunk; // "RIFF"
+		char type[4]; // "WAVE"
+	};
+
+	// FMTチャンク
+	struct FormatChunk
+	{
+		ChunkHeader chunk; // "fmt"
+		WAVEFORMATEX fmt; // 波形フォーマット
+	};
+
+	// 音声データ
+	struct SoundData
+	{
+		WAVEFORMATEX wfex; // 波形フォーマット
+		BYTE* pBuffer; // バッファの先頭アドレス
+		unsigned int bufferSize; // バッファのサイズ
+		int playSoundLength;
+	};
 
 #pragma region
 public:
@@ -9806,36 +10855,11 @@ private:
 	}
 #pragma endregion
 
-private: // 構造体
-	// チャンクヘッダー
-	struct ChunkHeader {
-		char id[4]; // チャンクごとのID
-		int32_t size; // チャンクサイズ
-	};
-
-	// RIFFヘッダチャンク
-	struct RiffHeader {
-		ChunkHeader chunk; // "RIFF"
-		char type[4]; // "WAVE"
-	};
-
-	// FMTチャンク
-	struct FormatChunk {
-		ChunkHeader chunk; // "fmt"
-		WAVEFORMATEX fmt; // 波形フォーマット
-	};
-
-	// 音声データ
-	struct SoundData {
-		WAVEFORMATEX wfex; // 波形フォーマット
-		BYTE* pBuffer; // バッファの先頭アドレス
-		unsigned int bufferSize; // バッファのサイズ
-		int playSoundLength;
-	};
-
 public:
 	// 初期化
 	void Initialize(const std::string& directoryPath = "Resources/Sound/");
+	
+	void Start();
 
 	/**
 	 * @brief 音源の停止
@@ -9849,35 +10873,67 @@ public:
 
 	/**
 	 * @brief 音源のポーズ
-	 * @param resourceNum BGMのリソース番号
+	 * @param resourceNum サウンドのリソース番号
 	 */
-	void PauseBGM(int resourceNum);
+	void Pause(int resourceNum);
 
 	/**
 	 * @brief 音源の再開
-	 * @param resourceNum BGMのリソース番号
+	 * @param resourceNum サウンドのリソース番号
 	 */
-	void ReStartBGM(int resourceNum);
+	void ReStart(int resourceNum);
 
 	/**
-	 * @brief 音量調整
-	 * @param resourceNum BGMのリソース番号
+	 * @brief 全体音量調整
 	 */
-	void SetBGMVolume(int resourceNum, float volume);
+	void SetMasterVolume(float volume);
+
+	/**
+	 * @brief カテゴリー別音量調整
+	 * @param soundCategory サウンドのカテゴリー
+	 */
+	void SetCategoryVolume(const std::string& soundCategory, float volume);
+
+	/**
+	 * @brief 個別音量調整
+	 * @param resourceNum サウンドのリソース番号
+	 */
+	void SetSoundVolume(int resourceNum, float volume);
+
+	/**
+	 * @brief 全体音量
+	 */
+	float GetMasterVolume();
+
+	/**
+	 * @brief カテゴリー別音量
+	 * @param soundCategory サウンドのカテゴリー
+	 */
+	float GetCategoryVolume(const std::string& soundCategory);
+
+	/**
+	 * @brief 個別音量
+	 * @param resourceNum サウンドのリソース番号
+	 */
+	float GetSoundVolume(int resourceNum);
 
 	// 音声読み込み
-	void LoadWave(const char* filename);
+	void LoadWave(const std::string& filename);
 
 	// 音声データ解放
-	void SoundUnload(const char* filename);
+	void SoundUnload(const std::string& filename);
+
+	// サウンドカテゴリー追加
+	void AddSoundCategory(const std::string& soundCategory);
 
 	/**
 	 * @brief 音源の再生
 	 * @param soundData 音源データ
 	 * @param isLoop ループするか　default : false
+	 * @param soundCategory サウンドのカテゴリー
 	 * @return int BGMのリソース番号
 	 */
-	int PlayWave(const char* filename, const bool isLoop = false);
+	int Play(const std::string& filename, const bool isLoop = false, std::string soundCategory = "");
 
 	MyAnalyzerXAPO* GetAnalyzerXAPO() { return analyzerXAPO; }
 
@@ -9889,15 +10945,20 @@ public:
 		return submixDetails.InputSampleRate;
 	}
 
+
 private:
 	// 利用可能なソースボイスを検索
 	int SearchSourceVoice(IXAudio2SourceVoice** sourceVoices);
 
 	XAUDIO2_BUFFER SetBuffer(bool loop, const SoundData& sound);
 
+	void CreateAnalyzerSubmix();
+
 private:
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2;
 	IXAudio2MasteringVoice* masterVoice;
+
+	std::unordered_map<std::string, IXAudio2SubmixVoice*> pSoundCategorySubmixVoices_;
 
 	// サウンドデータ格納コンテナ
 	std::unordered_map<std::string, Audio::SoundData> soundDataMap;
@@ -9905,6 +10966,25 @@ private:
 	// 再生中データコンテナ
 	std::array<IXAudio2SourceVoice*, kMaxPlayWave> pSourceVoices_ = { nullptr };
 
+
+
+
+	// サウンド格納ディレクトリ
+	std::string directoryPath_;
+
+	// XAPO のインスタンス
+	MyAnalyzerXAPO* analyzerXAPO = nullptr;
+
+	// 全体解析用 Submix
+	IXAudio2SubmixVoice* analyzerSubmix = nullptr;
+
+	// ---- 無音バッファ用 Voice ----
+	IXAudio2SourceVoice* silentVoice_ = nullptr;
+	WAVEFORMATEX silentFormat_{};
+	std::vector<float> silentBuffer_;
+	bool silentFeedEnabled_ = false;
+
+private: // 削除予定
 	// ストリーミング再生
 	std::atomic<bool> isStreaming;
 	std::atomic<bool> isLoopStreaming;
@@ -9915,20 +10995,6 @@ private:
 	XAUDIO2FX_REVERB_PARAMETERS reverbParameters = {};
 	XAUDIO2_EFFECT_CHAIN effectChain = {};
 	XAUDIO2_EFFECT_DESCRIPTOR effect[1] = {};
-
-	// サウンド格納ディレクトリ
-	std::string directoryPath_;
-
-	// XAPO のインスタンス
-	MyAnalyzerXAPO* analyzerXAPO = nullptr;
-
-	IXAudio2SubmixVoice* analyzerSubmix = nullptr;
-
-	// ---- ★無音バッファ用 Voice ----
-	IXAudio2SourceVoice* silentVoice_ = nullptr;
-	WAVEFORMATEX silentFormat_{};
-	std::vector<float> silentBuffer_;
-	bool silentFeedEnabled_ = false;
 };
 
 
@@ -10469,6 +11535,141 @@ private:
     float midGray_ = 0.0f;
     float highGray_ = 0.0f;
 };
+
+
+============================================================
+File Path: project/engine/Audio/AudioSystemBase.h
+============================================================
+#pragma once
+#include "Audio.h"
+#include <string>
+#include <unordered_map>
+#include <cassert>
+
+// Template引数でユーザー定義のEnumを受け取る
+template<typename CategoryEnum>
+class AudioSystemBase
+{
+protected:
+	AudioSystemBase() : audio_(Audio::GetInstance()) {}
+
+
+	// Audioクラスへの生アクセスが必要な場合
+	Audio* GetAudio() { return audio_; }
+
+private:
+	// 子クラスで必ず実装（カテゴリ登録など）
+	virtual void OnInit() = 0;
+
+public:
+	virtual ~AudioSystemBase() = default;
+
+	void Init()
+	{
+		// 子クラス固有の登録処理などを呼ぶ
+		OnInit();
+
+		// 初期化済みフラグ
+		isInit_ = true;
+	}
+
+	void LoadSound(const std::string& filename)
+	{
+		audio_->LoadWave(filename);
+	}
+
+	/**
+	 * @brief カテゴリーの登録（初期化時に呼ぶ）
+	 * @param type アプリ側で使うEnum
+	 * @param name Audioクラスに登録する文字列
+	 * @param defaultVolume 初期音量
+	 */
+	void CreateCategory(CategoryEnum type, const std::string& name, float defaultVolume = 1.0f)
+	{
+		// マップに登録
+		categoryMap_[type] = name;
+
+		// Audioエンジン本体にカテゴリーを作成
+		audio_->AddSoundCategory(name);
+		audio_->SetCategoryVolume(name, defaultVolume);
+	}
+
+	/**
+	 * @brief Enum指定で再生
+	 */
+	int Play(const std::string& filename, bool isLoop, CategoryEnum category)
+	{
+		// 登録されていないカテゴリーならエラー（またはデフォルト扱い）
+		if (categoryMap_.find(category) == categoryMap_.end())
+		{
+			// 登録忘れを防ぐため assert を入れるか、デフォルト文字列で再生
+			assert(false && "Category not registered!");
+			return audio_->Play(filename, isLoop);
+		}
+
+		// Enum -> string に変換して再生
+		return audio_->Play(filename, isLoop, categoryMap_[category]);
+	}
+
+	/**
+	 * @brief リソース番号指定で音量設定
+	 */
+	void SetSoundVolume(int resourceNum, float volume)
+	{
+		audio_->SetSoundVolume(resourceNum, volume);
+	}
+
+	/**
+	 * @brief Enum指定で音量設定
+	 */
+	void SetCategoryVolume(CategoryEnum category, float volume)
+	{
+		if (categoryMap_.find(category) != categoryMap_.end())
+		{
+			audio_->SetCategoryVolume(categoryMap_[category], volume);
+		}
+	}
+
+	// 全体音量（Master）
+	void SetMasterVolume(float volume)
+	{
+		audio_->SetMasterVolume(volume);
+	}
+
+
+	/**
+	 * @brief リソース番号指定で音量設定
+	 */
+	float GetSoundVolume(int resourceNum)
+	{
+		return audio_->GetSoundVolume(resourceNum);
+	}
+
+	/**
+	 * @brief Enum指定で音量設定
+	 */
+	float GetCategoryVolume(CategoryEnum category)
+	{
+		if (categoryMap_.find(category) != categoryMap_.end())
+		{
+			return audio_->GetCategoryVolume(categoryMap_[category]);
+		}
+		return -1.0f;
+	}
+
+	// 全体音量（Master）
+	float GetMasterVolume()
+	{
+		return audio_->GetMasterVolume();
+	}
+
+private:
+	Audio* audio_ = nullptr;
+	std::unordered_map<CategoryEnum, std::string> categoryMap_;
+
+	bool isInit_ = false;
+};
+
 
 
 ============================================================
@@ -11101,267 +12302,6 @@ private:
 
 
 ============================================================
-File Path: project/engine/Audio/xapobase.cpp
-============================================================
-// ======================================================================================
-//  Windows SDK XAPOBase 実装ファイル
-//  (xapobase.h の実体部分。Windows SDK では lib として提供されないため自前実装が必要)
-// ======================================================================================
-
-#include "xapobase.h"
-#include <cstring>
-#include <cstdlib>
-#include <algorithm>
-#include <new>
-#include <assert.h>
-
-#ifndef UNREFERENCED_PARAMETER
-#define UNREFERENCED_PARAMETER(P) (P)
-#endif
-
-// ======================================================================================
-//  CXAPOBase
-// ======================================================================================
-
-CXAPOBase::CXAPOBase(const XAPO_REGISTRATION_PROPERTIES* pRegistrationProperties)
-    : m_pRegistrationProperties(pRegistrationProperties),
-    m_pfnMatrixMixFunction(nullptr),
-    m_pfl32MatrixCoefficients(nullptr),
-    m_nSrcFormatType(0),
-    m_fIsScalarMatrix(FALSE),
-    m_fIsLocked(FALSE),
-    m_lReferenceCount(1)
-{}
-
-CXAPOBase::~CXAPOBase()
-{}
-
-HRESULT CXAPOBase::ValidateFormatDefault(WAVEFORMATEX* pFormat, BOOL fOverwrite)
-{
-    if (!pFormat)
-        return E_INVALIDARG;
-
-    if (pFormat->wFormatTag != XAPOBASE_DEFAULT_FORMAT_TAG)
-    {
-        if (!fOverwrite)
-            return XAPO_E_FORMAT_UNSUPPORTED;
-
-        pFormat->wFormatTag = XAPOBASE_DEFAULT_FORMAT_TAG;
-        pFormat->wBitsPerSample = XAPOBASE_DEFAULT_FORMAT_BITSPERSAMPLE;
-        pFormat->nBlockAlign = (pFormat->nChannels * pFormat->wBitsPerSample) / 8;
-        pFormat->nAvgBytesPerSec = pFormat->nSamplesPerSec * pFormat->nBlockAlign;
-    }
-
-    if (pFormat->nChannels < XAPOBASE_DEFAULT_FORMAT_MIN_CHANNELS ||
-        pFormat->nChannels > XAPOBASE_DEFAULT_FORMAT_MAX_CHANNELS)
-    {
-        if (!fOverwrite)
-            return XAPO_E_FORMAT_UNSUPPORTED;
-
-        pFormat->nChannels = (BYTE)std::min<UINT32>(XAPOBASE_DEFAULT_FORMAT_MAX_CHANNELS,
-            std::max<UINT32>(XAPOBASE_DEFAULT_FORMAT_MIN_CHANNELS, pFormat->nChannels));
-    }
-
-    if (pFormat->nSamplesPerSec < XAPOBASE_DEFAULT_FORMAT_MIN_FRAMERATE ||
-        pFormat->nSamplesPerSec > XAPOBASE_DEFAULT_FORMAT_MAX_FRAMERATE)
-    {
-        if (!fOverwrite)
-            return XAPO_E_FORMAT_UNSUPPORTED;
-
-        pFormat->nSamplesPerSec = std::min<UINT32>(
-            XAPOBASE_DEFAULT_FORMAT_MAX_FRAMERATE,
-            std::max<UINT32>(XAPOBASE_DEFAULT_FORMAT_MIN_FRAMERATE, pFormat->nSamplesPerSec));
-    }
-
-    return S_OK;
-}
-
-HRESULT CXAPOBase::ValidateFormatPair(const WAVEFORMATEX* pSupportedFormat, WAVEFORMATEX* pRequestedFormat, BOOL fOverwrite)
-{
-    if (!pRequestedFormat || !pSupportedFormat)
-        return E_INVALIDARG;
-
-    HRESULT hr = ValidateFormatDefault(pRequestedFormat, fOverwrite);
-    if (FAILED(hr))
-        return hr;
-
-    if ((pRequestedFormat->nChannels != pSupportedFormat->nChannels) ||
-        (pRequestedFormat->nSamplesPerSec != pSupportedFormat->nSamplesPerSec) ||
-        (pRequestedFormat->wBitsPerSample != pSupportedFormat->wBitsPerSample))
-    {
-        if (!fOverwrite)
-            return XAPO_E_FORMAT_UNSUPPORTED;
-
-        memcpy(pRequestedFormat, pSupportedFormat, sizeof(WAVEFORMATEX));
-    }
-
-    return S_OK;
-}
-
-HRESULT CXAPOBase::GetRegistrationProperties(XAPO_REGISTRATION_PROPERTIES** ppRegistrationProperties)
-{
-    if (!ppRegistrationProperties)
-        return E_INVALIDARG;
-
-    *ppRegistrationProperties = (XAPO_REGISTRATION_PROPERTIES*)XAPOAlloc(sizeof(XAPO_REGISTRATION_PROPERTIES));
-    if (!*ppRegistrationProperties)
-        return E_OUTOFMEMORY;
-
-    memcpy(*ppRegistrationProperties, m_pRegistrationProperties, sizeof(XAPO_REGISTRATION_PROPERTIES));
-    return S_OK;
-}
-
-HRESULT CXAPOBase::IsInputFormatSupported(
-    const WAVEFORMATEX* pOutputFormat,
-    const WAVEFORMATEX* pRequestedInputFormat,
-    WAVEFORMATEX** ppSupportedInputFormat)
-{
-    UNREFERENCED_PARAMETER(pOutputFormat);
-
-    if (!pRequestedInputFormat)
-        return E_INVALIDARG;
-
-    HRESULT hr = ValidateFormatDefault(const_cast<WAVEFORMATEX*>(pRequestedInputFormat), FALSE);
-    if (FAILED(hr))
-    {
-        if (ppSupportedInputFormat)
-        {
-            *ppSupportedInputFormat = (WAVEFORMATEX*)XAPOAlloc(sizeof(WAVEFORMATEX));
-            if (*ppSupportedInputFormat)
-            {
-                memcpy(*ppSupportedInputFormat, pRequestedInputFormat, sizeof(WAVEFORMATEX));
-                ValidateFormatDefault(*ppSupportedInputFormat, TRUE);
-            }
-        }
-        return XAPO_E_FORMAT_UNSUPPORTED;
-    }
-
-    if (ppSupportedInputFormat)
-        *ppSupportedInputFormat = nullptr;
-
-    return S_OK;
-}
-
-HRESULT CXAPOBase::IsOutputFormatSupported(
-    const WAVEFORMATEX* pInputFormat,
-    const WAVEFORMATEX* pRequestedOutputFormat,
-    WAVEFORMATEX** ppSupportedOutputFormat)
-{
-    UNREFERENCED_PARAMETER(pInputFormat);
-
-    if (!pRequestedOutputFormat)
-        return E_INVALIDARG;
-
-    HRESULT hr = ValidateFormatDefault(const_cast<WAVEFORMATEX*>(pRequestedOutputFormat), FALSE);
-    if (FAILED(hr))
-    {
-        if (ppSupportedOutputFormat)
-        {
-            *ppSupportedOutputFormat = (WAVEFORMATEX*)XAPOAlloc(sizeof(WAVEFORMATEX));
-            if (*ppSupportedOutputFormat)
-            {
-                memcpy(*ppSupportedOutputFormat, pRequestedOutputFormat, sizeof(WAVEFORMATEX));
-                ValidateFormatDefault(*ppSupportedOutputFormat, TRUE);
-            }
-        }
-        return XAPO_E_FORMAT_UNSUPPORTED;
-    }
-
-    if (ppSupportedOutputFormat)
-        *ppSupportedOutputFormat = nullptr;
-
-    return S_OK;
-}
-
-HRESULT CXAPOBase::LockForProcess(
-    UINT32 InputLockedParameterCount,
-    const XAPO_LOCKFORPROCESS_BUFFER_PARAMETERS* pInputLockedParameters,
-    UINT32 OutputLockedParameterCount,
-    const XAPO_LOCKFORPROCESS_BUFFER_PARAMETERS* pOutputLockedParameters)
-{
-    UNREFERENCED_PARAMETER(InputLockedParameterCount);
-    UNREFERENCED_PARAMETER(pInputLockedParameters);
-    UNREFERENCED_PARAMETER(OutputLockedParameterCount);
-    UNREFERENCED_PARAMETER(pOutputLockedParameters);
-
-    m_fIsLocked = TRUE;
-    return S_OK;
-}
-
-void CXAPOBase::UnlockForProcess()
-{
-    m_fIsLocked = FALSE;
-}
-
-// ======================================================================================
-//  CXAPOParametersBase
-// ======================================================================================
-
-CXAPOParametersBase::CXAPOParametersBase(
-    const XAPO_REGISTRATION_PROPERTIES* pRegistrationProperties,
-    BYTE* pParameterBlocks,
-    UINT32 ParameterBlockByteSize,
-    BOOL fProducer)
-    : CXAPOBase(pRegistrationProperties),
-    m_pParameterBlocks(pParameterBlocks),
-    m_uParameterBlockByteSize(ParameterBlockByteSize),
-    m_fProducer(fProducer),
-    m_pCurrentParameters(nullptr),
-    m_pCurrentParametersInternal(nullptr),
-    m_uCurrentParametersIndex(0),
-    m_fNewerResultsReady(FALSE)
-{
-    if (pParameterBlocks && ParameterBlockByteSize > 0)
-    {
-        memset(pParameterBlocks, 0, ParameterBlockByteSize * 3);
-        m_pCurrentParameters = pParameterBlocks;
-        m_pCurrentParametersInternal = pParameterBlocks;
-    }
-}
-
-CXAPOParametersBase::~CXAPOParametersBase()
-{}
-
-void CXAPOParametersBase::SetParameters(const void* pParameters, UINT32 ParameterByteSize)
-{
-    if (!pParameters || ParameterByteSize != m_uParameterBlockByteSize)
-        return;
-
-    BYTE* dst = m_pParameterBlocks + ((m_uCurrentParametersIndex + 1) % 3) * m_uParameterBlockByteSize;
-    memcpy(dst, pParameters, ParameterByteSize);
-
-    m_pCurrentParameters = dst;
-    m_uCurrentParametersIndex = (m_uCurrentParametersIndex + 1) % 3;
-    m_fNewerResultsReady = TRUE;
-}
-
-void CXAPOParametersBase::GetParameters(void* pParameters, UINT32 ParameterByteSize)
-{
-    if (!pParameters || ParameterByteSize != m_uParameterBlockByteSize)
-        return;
-
-    memcpy(pParameters, m_pCurrentParametersInternal, ParameterByteSize);
-}
-
-BOOL CXAPOParametersBase::ParametersChanged()
-{
-    return m_fNewerResultsReady;
-}
-
-BYTE* CXAPOParametersBase::BeginProcess()
-{
-    m_pCurrentParametersInternal = m_pCurrentParameters;
-    return m_pCurrentParametersInternal;
-}
-
-void CXAPOParametersBase::EndProcess()
-{
-    m_fNewerResultsReady = FALSE;
-}
-
-
-
-============================================================
 File Path: project/engine/Camera/Camera.cpp
 ============================================================
 #include "Camera.h"
@@ -11625,17 +12565,6 @@ File Path: project/engine/Debugger/ImGuiManager.cpp
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
 
-std::unique_ptr<ImGuiManager> ImGuiManager::instance = nullptr;
-std::once_flag ImGuiManager::initInstanceFlag;
-
-ImGuiManager* ImGuiManager::GetInstance()
-{
-	std::call_once(initInstanceFlag, []() {
-		instance = std::make_unique<ImGuiManager>();
-		});
-	return instance.get();
-}
-
 void ImGuiManager::Initialize(WindowsApp* winApp, DirectXBasis* dxBasis)
 {
 	winApp_ = winApp;
@@ -11711,15 +12640,21 @@ File Path: project/engine/Debugger/ImGuiManager.h
 #include "DirectXBasis.h"
 #include <memory>
 #include <mutex>
+#include "SingletonObject.h"
 
 // ImGui管理クラス
-class ImGuiManager
+class ImGuiManager :
+	public SingletonObject<ImGuiManager>
 {
-public:
+	friend class SingletonObject<ImGuiManager>;
+	friend struct std::default_delete<ImGuiManager>;
+
+private:
+	// 外部からの new/delete を禁止
 	ImGuiManager() = default;
 	~ImGuiManager() = default;
-	// シングルトンインスタンスの取得
-	static ImGuiManager* GetInstance();
+
+public:
 	// 初期化
 	void Initialize(WindowsApp* winApp, DirectXBasis* dxBasis);
 	// ImGui受付開始
@@ -11735,13 +12670,6 @@ private:
 	DirectXBasis* dxBasis_ = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
-
-private: // シングルトンインスタンス
-	static std::unique_ptr<ImGuiManager> instance;
-	static std::once_flag initInstanceFlag;
-
-	ImGuiManager(ImGuiManager&) = default;
-	ImGuiManager& operator=(ImGuiManager&) = default;
 };
 
 
@@ -12480,17 +13408,24 @@ File Path: project/engine/Effect/ParticleManager.h
 ============================================================
 #pragma once
 #include "IParticleRenderer.h"
+#include "SingletonObject.h"
 #include <vector>
 #include <memory>
 
 
 
-class ParticleManager {
+class ParticleManager :
+    public SingletonObject<ParticleManager>
+{
+    friend class SingletonObject<ParticleManager>;
+    friend struct std::default_delete<ParticleManager>;
+
+private:
+    // 外部からの new/delete を禁止
+    ParticleManager() = default;
+    ~ParticleManager() = default;
+
 public:
-    static ParticleManager* GetInstance() {
-        static ParticleManager instance;
-        return &instance;
-    }
     int Add(std::unique_ptr<IParticleRenderer> particle);
     void InitializeAll(DirectXBasis* dx, SrvManager* srv, Camera* cam);
     void UpdateAll();
@@ -13384,6 +14319,7 @@ File Path: project/engine/EngineCore/DirectXBasis.h
 #include <chrono>
 #include "Logger.h"
 #include "StringUtility.h"
+#include "SingletonObject.h"
 #include "DirectXTex/DirectXTex.h"
 #include "DirectXTex/d3dx12.h"
 
@@ -13392,15 +14328,18 @@ File Path: project/engine/EngineCore/DirectXBasis.h
 /// デバイス／コマンド／スワップチェーン／各ディスクリプタヒープや、  
 /// シェーダコンパイル・テクスチャロードなどの共通ユーティリティを提供する。
 /// </summary>
-class DirectXBasis
+class DirectXBasis :
+    public SingletonObject<DirectXBasis>
 {
+    friend class SingletonObject<DirectXBasis>;
+    friend struct std::default_delete<DirectXBasis>;
+
+private:
+    // 外部からの new/delete を禁止
+    DirectXBasis() = default;
+    ~DirectXBasis() = default;
+
 public: // メンバ関数
-    /// <summary>シングルトンインスタンスを取得する。</summary>
-    static DirectXBasis* GetInstance()
-    {
-        static DirectXBasis instance;
-        return &instance;
-    }
 
     /// <summary>
     /// 初期化処理。  
@@ -13749,232 +14688,6 @@ public:
 };
 
 ============================================================
-File Path: project/engine/Framework/GameCore.cpp
-============================================================
-#include "GameCore.h"
-#include "Audio/Audio.h"
-#include "SceneFactory.h"
-#include "ColliderManager.h"
-#include "CubemapBasis.h"
-#include "Timer.h"
-
-#include "PlaneParticle.h"
-#include "RingParticle.h"
-#include "CylinderParticle.h"
-#include "Effect/ContrailBehaviour.h"
-#include "Effect/ExplosionBehaviour.h"
-#include "Effect/ExplosionRingBehaviour.h"
-#include "Effect/DebrisBehaviour.h"
-
-#include "GrayscaleEffect.h"
-#include "VignetteEffect.h"
-#include "BoxFilterEffect.h"
-#include "GaussianEffect.h"
-#include "RadialBlurEffect.h"
-#include "LuminanceBasedOutlineEffect.h"
-#include "DissolveEffect.h"
-#include "RandomEffect.h"
-
-#ifdef _DEBUG
-#include <imgui.h>
-#endif // _DEBUG
-
-void GameCore::Initialize()
-{
-	TYFrameWork::Initialize();
-
-	Timer::GetInstance()->Start();
-
-	imgui = ImGuiManager::GetInstance();
-	imgui->Initialize(windowsApp.get(), directXBasis);
-
-	spriteBasis = SpriteBasis::GetInstance();
-	spriteBasis->Initialize(directXBasis);
-
-	camera = std::make_unique<Camera>();
-
-	object3dBasis = Object3dBasis::GetInstance();
-	object3dBasis->Initialize(directXBasis);
-	object3dBasis->SetDefaultCamera(camera.get());
-
-	modelManager = ModelManager::GetInstance();
-	modelManager->Initialize(directXBasis, srvManager.get());
-
-	Audio::GetInstance()->Initialize();
-
-	sceneFactory_ = std::make_unique<SceneFactory>();
-	sceneManager_->SetSceneFactory(sceneFactory_.get());
-	sceneManager_->ChangeScene("TITLE");
-
-	particleManager = ParticleManager::GetInstance();
-
-	auto plane = std::make_unique<PlaneParticle>();
-	auto ring = std::make_unique<RingParticle>();
-	auto cylinder = std::make_unique<CylinderParticle>();
-
-
-	ring->SetBehaviour(std::make_unique<ExplosionRingBehaviour>());//
-
-	auto contrail = std::make_unique<PlaneParticle>();  // 板ポリ形状
-	contrail->SetBehaviour(std::make_unique<ContrailBehaviour>()); // 挙動を設定
-
-	auto explosion = std::make_unique<PlaneParticle>(); // 爆発
-	explosion->SetBehaviour(std::make_unique<ExplosionBehaviour>());
-
-	auto debris = std::make_unique<PlaneParticle>(); // 破片
-	debris->SetBehaviour(std::make_unique<DebrisBehaviour>());
-
-	int index = particleManager->Add(std::move(plane));		// 0
-	int indexRing = particleManager->Add(std::move(ring));	// 1
-	particleManager->Add(std::move(cylinder));				// 2
-	particleManager->Add(std::move(contrail));				// 3
-	particleManager->Add(std::move(explosion));				// 4
-	particleManager->Add(std::move(debris));				// 5
-
-	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
-	IParticleRenderer::Emitter emitter{};
-	particleManager->SetEmitter(index, emitter);
-
-	IParticleRenderer::Emitter emitterRing{};
-	particleManager->SetEmitter(indexRing, emitterRing);
-
-
-	ColliderManager::GetInstance();
-
-
-	renderTexture = std::make_unique<RenderTexture>();
-	renderTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1, 0, 0, 1 }); 
-	
-	tempTexture = std::make_unique<RenderTexture>();
-	tempTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
-
-	outlineTexture = std::make_unique<RenderTexture>();
-	outlineTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
-
-	postEffectManager = PostEffectManager::GetInstance();
-	postEffectManager->Initialize(directXBasis, srvManager.get());
-	postEffectManager->SetTempRenderTexture(std::move(tempTexture));
-	postEffectManager->SetOutlineRenderTexture(std::move(outlineTexture));
-
-	// 適用するエフェクトを追加（順番に処理される）
-	postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
-	postEffectManager->AddEffect("Grayscale", std::make_unique<GrayscaleEffect>());
-	postEffectManager->AddEffect("Vignette", std::make_unique<VignetteEffect>());
-	postEffectManager->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
-	postEffectManager->AddEffect("Gaussian", std::make_unique<GaussianEffect>());
-	postEffectManager->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
-	postEffectManager->AddEffect("Random", std::make_unique<RandomEffect>());
-	postEffectManager->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
-	
-	postEffectManager->EffectAllDisable();
-
-
-	CubemapBasis::GetInstance()->Initialize(directXBasis);
-	CubemapBasis::GetInstance()->SetDefaultCamera(camera.get());
-}
-
-void GameCore::Finalize()
-{
-	TYFrameWork::Finalize();
-}
-
-void GameCore::Update()
-{
-	// Windowsメッセージ処理
-	if (windowsApp->ProcessMessage()) {
-		// ゲームループを抜ける
-		endRequest_ = true;
-	}
-	else { //ゲーム処理
-		imgui->Begin();
-		Timer::GetInstance()->Update();
-		Audio::GetInstance()->Update();
-		TYFrameWork::Update();
-		particleManager->UpdateAll();
-		camera->Update();
-		postEffectManager->Update();
-		ColliderManager::GetInstance()->Update();
-		imgui->End();
-	}
-}
-
-void GameCore::Draw()
-{
-	// フレームの切り替えタイミングでリングバッファを進める
-	TextureManager::GetInstance()->NextFrame();
-
-	// ---------- オフスクリーン描画 ----------
-	renderTexture->BeginRender();
-
-	sceneManager_->Draw();   // 実際の描画
-
-	particleManager->DrawAll();
-
-	renderTexture->EndRender();
-
-	// ---------- SwapChainへの描画 ----------
-	directXBasis->DrawBegin();
-
-	postEffectManager->Apply(renderTexture.get(), nullptr); // nullptr指定でSwapChain描画
-
-	sceneManager_->UIDraw(); // ポストエフェクト後にUIを描画
-	
-	imgui->Draw();
-
-
-	directXBasis->DrawEnd();
-}
-
-
-============================================================
-File Path: project/engine/Framework/GameCore.h
-============================================================
-#pragma once
-#include "TYFrameWork.h"
-#include "IScene.h"
-#include "ParticleManager.h"
-
-/// <summary>
-/// ゲーム全体のメインエントリーポイント。  
-/// TYFrameWork を継承し、ゲーム特有の初期化・更新・描画ロジックを実装する。
-/// </summary>
-class GameCore : public TYFrameWork
-{
-public:
-    /// <summary>
-    /// 初期化処理。  
-    /// ゲームで使用する各種マネージャ（入力・パーティクル・シーンなど）を初期化する。
-    /// </summary>
-    void Initialize() override;
-
-    /// <summary>
-    /// 終了処理。  
-    /// 使用している全リソースの解放やマネージャの終了処理を行う。
-    /// </summary>
-    void Finalize() override;
-
-    /// <summary>
-    /// 毎フレーム更新処理。  
-    /// 入力状態やシーンの更新、パーティクルなどの動作を制御する。
-    /// </summary>
-    void Update() override;
-
-    /// <summary>
-    /// 描画処理。  
-    /// フレーム全体のレンダリングを行う。
-    /// </summary>
-    void Draw() override;
-
-private:
-    /// <summary>入力管理クラス（キーボード、マウス、パッドなど）。</summary>
-    Input* input = nullptr;
-
-    /// <summary>パーティクル描画および管理クラス。</summary>
-    ParticleManager* particleManager = nullptr;
-};
-
-
-============================================================
 File Path: project/engine/Framework/Input/Input.cpp
 ============================================================
 #include "Input.h"
@@ -14105,9 +14818,9 @@ bool Input::IsTriggerMouse(int32_t buttonNumber) const
     return (mouse_.rgbButtons[buttonNumber] & 0x80) && !(mousePre_.rgbButtons[buttonNumber] & 0x80);
 }
 
-Input::MouseMove Input::GetMouseMove()
+Vector3 Input::GetMouseMove()
 {
-    MouseMove move = { mouse_.lX, mouse_.lY, mouse_.lZ };
+    Vector3 move = { static_cast<float>(mouse_.lX), static_cast<float>(mouse_.lY), static_cast<float>(mouse_.lZ) };
     return move;
 }
 
@@ -14258,54 +14971,25 @@ File Path: project/engine/Framework/Input/Input.h
 #include <mutex>
 
 #include "struct.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// 入力
 /// </summary>
-class Input {
-
-public:
-	struct MouseMove {
-		LONG lX;
-		LONG lY;
-		LONG lZ;
-	};
-
-public:
-	enum class PadType {
-		DirectInput,
-		XInput,
-	};
-
-	union State {
-		XINPUT_STATE xInput_;
-		DIJOYSTATE2 directInput_;
-	};
-
-	struct Joystick {
-		Microsoft::WRL::ComPtr<IDirectInputDevice8> device_;
-		int32_t deadZoneL_;
-		int32_t deadZoneR_;
-		PadType type_;
-		State state_;
-		State statePre_;
-	};
-
+class Input :
+	public SingletonObject<Input>
+{
+	friend class SingletonObject<Input>;
+	friend struct std::default_delete<Input>;
 
 private:
+	// 外部からの new/delete を禁止
 	Input() = default;
-	~Input() { Finalize(); }
-	Input(const Input&) = delete;
-	Input& operator=(const Input&) = delete;
+	~Input() = default;
 
+public: // メンバ関数
 	// 終了
 	void Finalize();
-public: // メンバ関数
-	static Input* GetInstance()
-	{
-		static Input instance;
-		return &instance;
-	}
 
 	// 初期化
 	void Initialize(const HWND& hwnd);
@@ -14338,7 +15022,7 @@ public: // メンバ関数
 	bool IsTriggerMouse(int32_t buttonNumber) const;
 
 	/// マウス移動量
-	MouseMove GetMouseMove();
+	Vector3 GetMouseMove();
 
 	/// ホイールスクロール量
 	int32_t GetWheel() const;
@@ -14389,7 +15073,29 @@ public: // メンバ関数
 private:
 	static BOOL CALLBACK
 		EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) noexcept;
-	
+
+public:
+	enum class PadType
+	{
+		DirectInput,
+		XInput,
+	};
+
+	union State
+	{
+		XINPUT_STATE xInput_;
+		DIJOYSTATE2 directInput_;
+	};
+
+	struct Joystick
+	{
+		Microsoft::WRL::ComPtr<IDirectInputDevice8> device_;
+		int32_t deadZoneL_;
+		int32_t deadZoneR_;
+		PadType type_;
+		State state_;
+		State statePre_;
+	};
 private: // メンバ変数
 	Microsoft::WRL::ComPtr<IDirectInput8> dInput_;
 	Microsoft::WRL::ComPtr<IDirectInputDevice8> devKeyboard_;
@@ -14473,43 +15179,6 @@ public:
 
 
 ============================================================
-File Path: project/engine/Framework/SceneBase/SceneFactory.cpp
-============================================================
-#include "SceneFactory.h"
-#include "Scene/TitleScene/TitleScene.h"
-#include "Scene/GameScene/GameScene.h"
-
-
-std::unique_ptr<IScene> SceneFactory::CreateScene(const std::string& sceneName)
-{
-    if (sceneName == "TITLE") return std::make_unique<TitleScene>();
-    if (sceneName == "GAME")  return std::make_unique<GameScene>();
-    return nullptr;
-}
-
-
-============================================================
-File Path: project/engine/Framework/SceneBase/SceneFactory.h
-============================================================
-#pragma once
-#include "AbstractSceneFactory.h"
-
-// このゲーム用のシーン工場
-class SceneFactory :
-    public AbstractSceneFactory
-{
-public:
-    /**
-     * @brief シーン生成
-     * @param sceneName シーン名
-     * @return 生成したシーン
-     */
-    std::unique_ptr<IScene> CreateScene(const std::string& sceneName) override;
-};
-
-
-
-============================================================
 File Path: project/engine/Framework/SceneBase/SceneManager.cpp
 ============================================================
 #include "SceneManager.h"
@@ -14543,6 +15212,8 @@ void SceneManager::Update()
 
 	// 実行中シーンを更新する
 	scene_->Update();
+
+	// 画面遷移は固定フレームで進行
 	TransitionManager::GetInstance()->Update(1.0f / 60.0f);
 }
 
@@ -14564,40 +15235,23 @@ File Path: project/engine/Framework/SceneBase/SceneManager.h
 #pragma once
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// ゲームシーンの管理を行うクラス。  
 /// 現在のシーンの更新・描画・切り替えを制御し、  
 /// シーン遷移時のメモリ管理や初期化を自動で行うシングルトンクラス。
 /// </summary>
-class SceneManager
+class SceneManager :
+    public SingletonObject<SceneManager>
 {
-public:
-    /// <summary>
-    /// シングルトンインスタンスを取得する。
-    /// </summary>
-    /// <returns>SceneManager の唯一のインスタンス。</returns>
-    static SceneManager* GetInstance()
-    {
-        static SceneManager instance; ///< 静的ローカル変数（寿命はプログラム全体に渡る）。
-        return &instance;
-    }
-
-    /// <summary>
-    /// デストラクタ。  
-    /// 現在保持しているシーンのリソースを解放する。
-    /// </summary>
-    ~SceneManager();
+    friend class SingletonObject<SceneManager>;
+    friend struct std::default_delete<SceneManager>;
 
 private:
-    /// <summary>コンストラクタ（外部からの生成を禁止）。</summary>
+    // 外部からの new/delete を禁止
     SceneManager() = default;
-
-    /// <summary>コピーコンストラクタ（禁止）。</summary>
-    SceneManager(SceneManager&) = delete;
-
-    /// <summary>代入演算子（禁止）。</summary>
-    SceneManager& operator=(SceneManager&) = delete;
+    ~SceneManager();
 
 public:
     /// <summary>
@@ -15018,37 +15672,23 @@ File Path: project/engine/Graphics/Cubemap/CubemapBasis.h
 #pragma once
 #include "Camera.h"
 #include "DirectXBasis.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// キューブマップ（スカイボックス）描画の基盤クラス。  
 /// DirectX のルートシグネチャ・パイプライン・カメラを管理し、  
 /// スカイボックスの描画を簡単に実行できるようにするシングルトンクラス。
 /// </summary>
-class CubemapBasis
+class CubemapBasis :
+    public SingletonObject<CubemapBasis>
 {
-public:
-    /// <summary>
-    /// シングルトンインスタンスを取得する。
-    /// </summary>
-    /// <returns>CubemapBasis の唯一のインスタンス。</returns>
-    static CubemapBasis* GetInstance()
-    {
-        static CubemapBasis instance; ///< 静的ローカル変数として一度だけ生成される。
-        return &instance;
-    }
-
-    /// <summary>デストラクタ。</summary>
-    ~CubemapBasis() = default;
+    friend class SingletonObject<CubemapBasis>;
+    friend struct std::default_delete<CubemapBasis>;
 
 private:
-    /// <summary>コンストラクタ（外部からの生成を禁止）。</summary>
+    // 外部からの new/delete を禁止
     CubemapBasis() = default;
-
-    /// <summary>コピーコンストラクタ（禁止）。</summary>
-    CubemapBasis(CubemapBasis&) = delete;
-
-    /// <summary>代入演算子（禁止）。</summary>
-    CubemapBasis& operator=(CubemapBasis&) = delete;
+    ~CubemapBasis() = default;
 
 public:
     /// <summary>
@@ -15807,17 +16447,6 @@ File Path: project/engine/Graphics/Model/ModelManager.cpp
 ============================================================
 #include "ModelManager.h"
 
-std::unique_ptr<ModelManager> ModelManager::instance = nullptr;
-std::once_flag ModelManager::initInstanceFlag;
-
-ModelManager* ModelManager::GetInstance()
-{
-	std::call_once(initInstanceFlag, []() {
-		instance = std::make_unique<ModelManager>();
-		});
-	return instance.get();
-}
-
 void ModelManager::Initialize(DirectXBasis* dxManager, SrvManager* srvManager)
 {
 	modelLoader_ = std::make_unique<ModelLoader>();
@@ -15826,9 +16455,7 @@ void ModelManager::Initialize(DirectXBasis* dxManager, SrvManager* srvManager)
 
 void ModelManager::LoadModel(const std::string& directoryPath, const std::string& fileName)
 {
-	if (models_.contains(fileName)) {
-		return;// 読み込み済みなら早期 return
-	}
+	if (models_.contains(fileName)) return;// 読み込み済みなら早期 return
 
 	std::unique_ptr<Model> model = std::make_unique<Model>();
 	model->Initialize(modelLoader_.get(), directoryPath, fileName);
@@ -15838,10 +16465,7 @@ void ModelManager::LoadModel(const std::string& directoryPath, const std::string
 
 Model* ModelManager::FindModel(const std::string& filePath)
 {
-	if (models_.contains(filePath)) {
-		// 読み込みモデルを戻り値として return
-		return models_.at(filePath).get();
-	}
+	if (models_.contains(filePath)) return models_.at(filePath).get();// 読み込みモデルを戻り値として return
 
 	// ファイル名が一致しなければ null
 	return nullptr;
@@ -15859,26 +16483,25 @@ File Path: project/engine/Graphics/Model/ModelManager.h
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <TextureManager.h>
+#include "TextureManager.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// 3D モデルの読み込み・管理を一元化するシングルトンクラス。  
 /// ファイルパスをキーに Model をキャッシュし、重複読み込みを防ぐ。
 /// </summary>
-class ModelManager
+class ModelManager :
+    public SingletonObject<ModelManager>
 {
-public:
-    /// <summary>デフォルトコンストラクタ。</summary>
-    ModelManager() = default;
+    friend class SingletonObject<ModelManager>;
+    friend struct std::default_delete<ModelManager>;
 
-    /// <summary>デストラクタ。</summary>
+private:
+    // 外部からの new/delete を禁止
+    ModelManager() = default;
     ~ModelManager() = default;
 
-    /// <summary>
-    /// シングルトンインスタンスの取得。
-    /// </summary>
-    /// <returns>ModelManager の唯一のインスタンス。</returns>
-    static ModelManager* GetInstance();
+public:
 
     /// <summary>
     /// 初期化処理。モデル読み込みに必要な DirectX 基盤と SRV 管理を登録する。
@@ -15886,8 +16509,6 @@ public:
     /// <param name="dxManager">DirectX 基盤（デバイス・コマンド関連）。</param>
     /// <param name="srvManager">SRV 管理クラス。</param>
     void Initialize(DirectXBasis* dxManager, SrvManager* srvManager);
-
-public:
     /// <summary>
     /// モデルファイルを読み込み、管理下に追加する。  
     /// 同じファイルは再読み込みせずキャッシュを使用する。
@@ -15918,19 +16539,6 @@ private:
     /// 実際の読み込み処理を担うローダ。
     /// </summary>
     std::unique_ptr<ModelLoader> modelLoader_ = nullptr;
-
-private:
-    /// <summary>シングルトン本体。</summary>
-    static std::unique_ptr<ModelManager> instance;
-
-    /// <summary>スレッドセーフな一度きりの初期化用フラグ。</summary>
-    static std::once_flag initInstanceFlag;
-
-    /// <summary>コピーコンストラクタ（非公開／未使用）。</summary>
-    ModelManager(ModelManager&) = delete;
-
-    /// <summary>代入演算子（非公開／未使用）。</summary>
-    ModelManager& operator=(ModelManager&) = delete;
 };
 
 
@@ -16183,17 +16791,6 @@ File Path: project/engine/Graphics/Model/Object3dBasis.cpp
 
 using namespace Logger;
 
-std::unique_ptr<Object3dBasis> Object3dBasis::instance = nullptr;
-std::once_flag Object3dBasis::initInstanceFlag;
-
-Object3dBasis* Object3dBasis::GetInstance()
-{
-	std::call_once(initInstanceFlag, []() {
-		instance = std::make_unique<Object3dBasis>();
-		});
-	return instance.get();
-}
-
 void Object3dBasis::Initialize(DirectXBasis* directXBasis)
 {
 	directXBasis_ = directXBasis;
@@ -16391,20 +16988,24 @@ File Path: project/engine/Graphics/Model/Object3dBasis.h
 #pragma once
 #include "Camera.h"
 #include "DirectXBasis.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// 3D オブジェクト描画の共通設定（ルートシグネチャ／グラフィックスパイプライン／ライト等）を一元管理するクラス。  
 /// シングルトンとして提供し、3D 描画時の共通セットアップやデフォルトカメラ・スカイボックスの管理を行う。
 /// </summary>
-class Object3dBasis
+class Object3dBasis :
+    public SingletonObject<Object3dBasis>
 {
-public: // メンバ関数
-    /// <summary>
-    /// シングルトンインスタンスの取得。
-    /// </summary>
-    /// <returns>Object3dBasis の唯一のインスタンス。</returns>
-    static Object3dBasis* GetInstance();
+    friend class SingletonObject<Object3dBasis>;
+    friend struct std::default_delete<Object3dBasis>;
 
+private:
+    // 外部からの new/delete を禁止
+    Object3dBasis() = default;
+    ~Object3dBasis() = default;
+
+public:
     /// <summary>
     /// 初期化処理。DirectX 基盤を登録し、必要なリソース／状態を構築する。
     /// </summary>
@@ -16485,26 +17086,6 @@ private: // メンバ変数
     DirectionalLight* directionalLightData = nullptr;                 ///< ライト定数バッファのマップ先。
 
     std::string skyboxTextureFilePath_ = ""; ///< スカイボックス用テクスチャパス。
-
-private:
-    /// <summary>シングルトン本体。</summary>
-    static std::unique_ptr<Object3dBasis> instance;
-
-    /// <summary>スレッドセーフな一度きりの初期化用フラグ。</summary>
-    static std::once_flag initInstanceFlag;
-
-    /// <summary>コピーコンストラクタ（非公開／未使用）。</summary>
-    Object3dBasis(Object3dBasis&) = default;
-
-    /// <summary>代入演算子（非公開／未使用）。</summary>
-    Object3dBasis& operator=(Object3dBasis&) = default;
-
-public:
-    /// <summary>デフォルトコンストラクタ。</summary>
-    Object3dBasis() = default;
-
-    /// <summary>デストラクタ。</summary>
-    ~Object3dBasis() = default;
 };
 
 
@@ -17092,17 +17673,6 @@ File Path: project/engine/Graphics/Sprite/SpriteBasis.cpp
 
 using namespace Logger;
 
-std::unique_ptr<SpriteBasis> SpriteBasis::instance = nullptr;
-std::once_flag SpriteBasis::initInstanceFlag;
-
-SpriteBasis* SpriteBasis::GetInstance()
-{
-	std::call_once(initInstanceFlag, []() {
-		instance = std::make_unique<SpriteBasis>();
-		});
-	return instance.get();
-}
-
 void SpriteBasis::Initialize(DirectXBasis* directXBasis)
 {
 	directXBasis_ = directXBasis;
@@ -17264,19 +17834,24 @@ File Path: project/engine/Graphics/Sprite/SpriteBasis.h
 ============================================================
 #pragma once
 #include "DirectXBasis.h"
+#include "SingletonObject.h"
 
 /// <summary>
 /// スプライト描画の共通設定（ルートシグネチャ／グラフィックスパイプライン等）を一元管理するクラス。  
 /// シングルトンとして提供し、スプライト描画時の共通セットアップを行う。
 /// </summary>
-class SpriteBasis
+class SpriteBasis :
+    public SingletonObject<SpriteBasis>
 {
-public: // メンバ関数
-    /// <summary>
-    /// シングルトンインスタンスの取得。
-    /// </summary>
-    /// <returns>SpriteBasis の唯一のインスタンス。</returns>
-    static SpriteBasis* GetInstance();
+    friend class SingletonObject<SpriteBasis>;
+    friend struct std::default_delete<SpriteBasis>;
+
+private:
+    // 外部からの new/delete を禁止
+    SpriteBasis() = default;
+    ~SpriteBasis() = default;
+
+public:
 
     /// <summary>
     /// 初期化処理。DirectX 基盤を登録し、必要なリソース/状態を構築する。
@@ -17341,26 +17916,6 @@ private: // メンバ変数
 
     /// <summary>ルートシグネチャ生成時のエラーメッセージ出力。</summary>
     Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-
-private:
-    /// <summary>シングルトン本体。</summary>
-    static std::unique_ptr<SpriteBasis> instance;
-
-    /// <summary>スレッドセーフな一度きりの初期化用フラグ。</summary>
-    static std::once_flag initInstanceFlag;
-
-    /// <summary>コピーコンストラクタ（非公開／未使用）。</summary>
-    SpriteBasis(SpriteBasis&) = default;
-
-    /// <summary>代入演算子（非公開／未使用）。</summary>
-    SpriteBasis& operator=(SpriteBasis&) = default;
-
-public:
-    /// <summary>デフォルトコンストラクタ。</summary>
-    SpriteBasis() = default;
-
-    /// <summary>デストラクタ。</summary>
-    ~SpriteBasis() = default;
 };
 
 
@@ -17371,11 +17926,6 @@ File Path: project/engine/Graphics/Sprite/TextureManager.cpp
 #include "StringUtility.h"
 #include <cassert>
 #include <filesystem>
-
-TextureManager* TextureManager::GetInstance() {
-    static TextureManager instance;
-    return &instance;
-}
 
 void TextureManager::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager) {
     dxBasis_ = dxBasis;
@@ -17555,6 +18105,7 @@ File Path: project/engine/Graphics/Sprite/TextureManager.h
 #include "DirectXTex/DirectXTex.h"
 #include "DirectXBasis.h"
 #include "SrvManager.h"
+#include "SingletonObject.h"
 
 static constexpr size_t FrameCount = 3;
 
@@ -17562,15 +18113,18 @@ static constexpr size_t FrameCount = 3;
 /// テクスチャの読み込み・管理を一元化するクラス。  
 /// ファイルパスをキーにテクスチャをロード・キャッシュし、SRV を自動生成して扱いやすくする。
 /// </summary>
-class TextureManager
+class TextureManager :
+    public SingletonObject<TextureManager>
 {
-public:
-    /// <summary>
-    /// シングルトンインスタンスを取得する。
-    /// </summary>
-    /// <returns>TextureManager の唯一のインスタンス。</returns>
-    static TextureManager* GetInstance();
+    friend class SingletonObject<TextureManager>;
+    friend struct std::default_delete<TextureManager>;
 
+private:
+    // 外部からの new/delete を禁止
+    TextureManager() = default;
+    ~TextureManager() = default;
+
+public:
     /// <summary>
     /// 初期化処理。DirectX 基盤および SRV 管理クラスを登録する。
     /// </summary>
@@ -17631,6 +18185,7 @@ private:
     /// </summary>
     void CreateDummyCubemap();
 
+private:
     /// <summary>
     /// テクスチャ情報構造体。  
     /// メタデータ・リソース・ディスクリプタ情報を保持する。
@@ -17643,8 +18198,6 @@ private:
         D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU{};       ///< CPU SRV ハンドル。
         D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU{};       ///< GPU SRV ハンドル。
     };
-
-private:
     DirectXBasis* dxBasis_ = nullptr;   ///< DirectX 基盤。
     SrvManager* srvManager_ = nullptr;  ///< SRV 管理クラス。
 
@@ -19718,6 +20271,7 @@ File Path: project/engine/OffScreen/PostEffectManager.h
 #include "OutlinePass.h"
 #include "DoFPass.h"
 #include "CopyImage.h"
+#include "SingletonObject.h"
 #include <vector>
 #include <memory>
 
@@ -19730,30 +20284,16 @@ class IPostEffect;
 /// ポストエフェクト全体を統括管理するマネージャークラス。
 /// 複数のポストエフェクト（Outline, DoF, Copy など）を登録・適用・制御する。
 /// </summary>
-class PostEffectManager
+class PostEffectManager :
+    public SingletonObject<PostEffectManager>
 {
-public:
-    /// <summary>
-    /// シングルトンインスタンスを取得する。
-    /// </summary>
-    /// <returns>PostEffectManager の唯一のインスタンス。</returns>
-    static PostEffectManager* GetInstance()
-    {
-        static PostEffectManager instance;
-        return &instance;
-    }
-
-    // コピー・ムーブ禁止
-    PostEffectManager(const PostEffectManager&) = delete;
-    PostEffectManager& operator=(const PostEffectManager&) = delete;
-    PostEffectManager(PostEffectManager&&) = delete;
-    PostEffectManager& operator=(PostEffectManager&&) = delete;
+    friend class SingletonObject<PostEffectManager>;
+    friend struct std::default_delete<PostEffectManager>;
 
 private:
-    /// <summary>
-    /// コンストラクタ（外部からの生成禁止）。
-    /// </summary>
+    // 外部からの new/delete を禁止
     PostEffectManager() = default;
+    ~PostEffectManager() = default;
 
 public:
     /// <summary>
@@ -20557,6 +21097,7 @@ File Path: project/engine/Utility/Collider/ColliderManager.h
 ============================================================
 #pragma once
 #include "Collider.h"
+#include "SingletonObject.h"
 #include <vector>
 #include <unordered_set>
 
@@ -20575,18 +21116,18 @@ class SphereCollider;
 /// <summary>
 /// 当たり判定の管理クラス
 /// </summary>
-class ColliderManager 
+class ColliderManager :
+    public SingletonObject<ColliderManager>
 {
-public: // メンバ関数
-    // シングルトンインスタンス
-    static ColliderManager* GetInstance()
-    {
-        static ColliderManager instance;
-        return &instance;
-    }
-    // デストラクタ
+    friend class SingletonObject<ColliderManager>;
+    friend struct std::default_delete<ColliderManager>;
+
+private:
+    // 外部からの new/delete を禁止
+    ColliderManager() = default;
     ~ColliderManager() = default;
 
+public:
     /// <summary>
     /// コライダーを追加
     /// </summary>
@@ -20613,15 +21154,6 @@ public: // メンバ関数
     void Update();
 
 private: // メンバ関数
-    // コンストラクタ
-    ColliderManager() = default;
-
-    // コピー・ムーブの禁止
-    ColliderManager(const ColliderManager&) = delete;
-    ColliderManager& operator=(const ColliderManager&) = delete;
-    ColliderManager(ColliderManager&&) = delete;
-    ColliderManager& operator=(ColliderManager&&) = delete;
-
     /// <summary>
     /// 2つのコライダーIDをソートしてペアを作成する  
     /// （順序に依存しない衝突ペア判定のため）
@@ -24551,16 +25083,24 @@ File Path: project/engine/Utility/Utils/Random.h
 ============================================================
 #pragma once
 #include <random>
+#include "SingletonObject.h"
 
-class Random
+class Random :
+    public SingletonObject<Random>
 {
-public:
-    static Random* GetInstance()
-    {
-        static Random instance;
-        return &instance;
-    }
+    friend class SingletonObject<Random>;
+    friend struct std::default_delete<Random>;
 
+private:
+    // 外部からの new/delete を禁止
+    Random()
+    {
+        std::random_device rd;
+        mt_.seed(rd());
+    }
+    ~Random() = default;
+
+public:
     // 整数乱数
     int Int(int min, int max)
     {
@@ -24590,21 +25130,92 @@ public:
     }
 
 private:
-    Random()
-    {
-        std::random_device rd;
-        mt_.seed(rd());
-    }
-
-    ~Random() = default;
-
-    Random(const Random&) = delete;
-    Random& operator=(const Random&) = delete;
-
-private:
     std::mt19937 mt_;
 };
 
+
+============================================================
+File Path: project/engine/Utility/Utils/SingletonObject.h
+============================================================
+#pragma once
+#include <memory>
+#include <mutex>
+#include <cassert>
+
+template <typename T>
+class SingletonObject
+{
+public:
+    // インスタンスの取得
+    static T* GetInstance()
+    {
+        std::call_once(initFlag_, []()
+            {
+                // friend 登録があっても make_unique は使えないため new を使用
+                instance_.reset(new T());
+            });
+
+        // 再生成を許さないため、破棄後に呼ぶとエラーにする
+        assert(instance_ != nullptr && "Attempted to access Singleton after destruction.");
+
+        return instance_.get();
+    }
+
+    // 明示的な破棄
+    static void Destroy()
+    {
+        instance_.reset(); // メモリ解放
+    }
+
+protected:
+    SingletonObject() = default;
+    virtual ~SingletonObject() = default;
+    SingletonObject(const SingletonObject&) = delete;
+    SingletonObject& operator=(const SingletonObject&) = delete;
+
+private:
+    static std::unique_ptr<T> instance_;
+    static std::once_flag initFlag_;
+};
+
+// 静的メンバの定義
+template <typename T>
+std::unique_ptr<T> SingletonObject<T>::instance_ = nullptr;
+
+template <typename T>
+std::once_flag SingletonObject<T>::initFlag_;
+
+
+#if 0
+#include <iostream>
+
+// --- 派生クラスの実装 ---
+class Class : public SingletonObject<Class>
+{
+    // 親クラスが private なコンストラクタを呼べるようにする
+    friend class SingletonObject<Class>;
+    // std::unique_ptr が private なデストラクタを呼べるようにする
+    friend struct std::default_delete<Class>;
+
+private:
+    // コンストラクタを private にして外部からの new を禁止
+    Class()
+    {
+        std::cout << "Class: 生成されました" << std::endl;
+    }
+
+    ~Class()
+    {
+        std::cout << "Class: 破棄されました" << std::endl;
+    }
+
+public:
+    void Update()
+    {
+        std::cout << "Class Update: 更新しました" << std::endl;
+    }
+};
+#endif
 
 ============================================================
 File Path: project/engine/Utility/Utils/StateMachine.h
@@ -25066,6 +25677,7 @@ File Path: project/engine/Utility/Utils/Time/BulletTimeController.h
 ============================================================
 #pragma once
 #include "StateMachine.h"
+#include "SingletonObject.h"
 #include <functional>
 
 using EaseFunc = std::function<float(float)>;
@@ -25081,28 +25693,19 @@ enum class BulletTimeState
 class Timer;
 // バレットタイム制御用クラス
 class BulletTimeController
-	: public StateMachine<BulletTimeController, BulletTimeState>
+	: public StateMachine<BulletTimeController, BulletTimeState>,
+	public SingletonObject<BulletTimeController>
 {
-public: // 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
-
-public:
-	// シングルトンインスタンス
-	static BulletTimeController* GetInstance() 
-	{
-		static BulletTimeController instance;
-		return &instance;
-	}
-
-	// コピー・ムーブの禁止
-	BulletTimeController(const BulletTimeController&) = delete;
-	BulletTimeController& operator=(const BulletTimeController&) = delete;
-	BulletTimeController(BulletTimeController&&) = delete;
-	BulletTimeController& operator=(BulletTimeController&&) = delete;
+	friend class SingletonObject<BulletTimeController>;
+	friend struct std::default_delete<BulletTimeController>;
 
 private:
-	// コンストラクタ
+	// 外部からの new/delete を禁止
 	BulletTimeController();
+	~BulletTimeController() = default;
+
+public: // 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public: // メンバ関数
 	// 更新
@@ -25238,17 +25841,21 @@ File Path: project/engine/Utility/Utils/Time/Timer.h
 ============================================================
 #pragma once
 #include <Windows.h>
+#include "SingletonObject.h"
 
 // 時間管理クラス
-class Timer {
-public: // メンバ関数
-    // シングルトンインスタンス
-    static Timer* GetInstance()
-    {
-        static Timer instance;
-        return &instance;
-    }
+class Timer :
+    public SingletonObject<Timer>
+{
+    friend class SingletonObject<Timer>;
+    friend struct std::default_delete<Timer>;
 
+private:
+    // 外部からの new/delete を禁止
+    Timer() = default;
+    ~Timer() = default;
+
+public:
     // タイマー開始（初期化時に1度だけ呼ぶ）
     void Start();
     // 更新
@@ -25264,18 +25871,6 @@ public: // メンバ関数
     // setter / getter
     void SetTimeScale(float scale) { timeScale_ = scale; }
     float GetTimeScale() const { return timeScale_; }
-
-    // コピー・ムーブ禁止
-    Timer(const Timer&) = delete;
-    Timer& operator=(const Timer&) = delete;
-    Timer(Timer&&) = delete;
-    Timer& operator=(Timer&&) = delete;
-
-private: // メンバ関数
-    // コンストラクタ
-    Timer() = default;
-    // デストラクタ
-    ~Timer() = default;
 
 private: // メンバ変数
     LARGE_INTEGER frequency_{};

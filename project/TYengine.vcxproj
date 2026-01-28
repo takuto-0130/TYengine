@@ -274,6 +274,8 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
     <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h" />
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h" />
+    <ClInclude Include="application\Object\Enemy\AttackStrategy\AttackStrategies.h" />
+    <ClInclude Include="application\Object\Enemy\AttackStrategy\IAttackStrategy.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />

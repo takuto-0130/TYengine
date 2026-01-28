@@ -5,6 +5,7 @@
 #include "Ease.h"
 #include "IParticleRenderer.h"
 #include "../../AppSystem/EventListener/EnemyEvent/IEnemyEventListener .h"
+#include "AttackStrategy/IAttackStrategy.h"
 #include <iostream>
 #include <random>
 
@@ -62,6 +63,12 @@ public:
 
 	const Vector2& GetScreenPos() { return screenPos; }
 
+	void SetAttackStrategy(std::unique_ptr<IAttackStrategy> strategy)
+	{
+		attackStrategy_ = std::move(strategy);
+		
+	}
+
 private:
 	void IsShot();
 
@@ -75,6 +82,8 @@ private:
 	const float kPopTime_ = 1.0f;
 
 	int enemyType_ = 0;
+
+	std::unique_ptr<IAttackStrategy> attackStrategy_;
 
 
 	float kBulletCoolTime_ = 2.0f;

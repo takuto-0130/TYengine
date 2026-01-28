@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "./EnemyBullet/EnemyBulletManager.h"
+#include "AttackStrategy/AttackStrategies.h"
 #include "Timer.h"
 #include "Ease.h"
 #include "ColliderManager.h"
@@ -43,21 +44,25 @@ void Enemy::Init()
 	{
 		// 通常ショット
 		obj_->SetModel("crystal1.obj");
+		SetAttackStrategy(std::make_unique<NormalAttackStrategy>());
 	}
 	else if (enemyType_ == 1)
 	{
 		// 垂直2点
 		obj_->SetModel("crystal2.obj");
+		SetAttackStrategy(std::make_unique<VerticalSplitAttackStrategy>());
 	}
 	else if (enemyType_ == 2)
 	{
 		// 水平4点
 		obj_->SetModel("crystal4.obj");
+		SetAttackStrategy(std::make_unique<HorizontalSplitAttackStrategy>());
 	}
 	else if (enemyType_ == 3)
 	{
 		// 3角形
 		obj_->SetModel("crystal.obj");
+		SetAttackStrategy(std::make_unique<TriangleAttackStrategy>());
 	}
 	obj_->SetColor({ 1, 1, 1, 1 });
 	worldTransform_.Initialize();
@@ -147,55 +152,10 @@ void Enemy::IsShot()
 
 	GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
-	// 1. 基本となる方向（正面）を計算
-	Vector3 enemyPos = GetWorldPosition();
-	Vector3 forward = Normalize(targetPos_ - enemyPos);
 
-	// 2. 右方向と上方向のベクトルを算出 (外積を使用)
-	// ※真上や真下を向いた時のエラーを避けるため、基本は (0,1,0) との外積
-	Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
-	if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f }; // 真上を向いている場合の回避策
-
-	Vector3 right = Normalize(Cross(worldUp, forward));
-	Vector3 up = Normalize(Cross(forward, right));
-
-	// 弾を生成する共通処理
-	auto SpawnBullet = [&](const Vector3& directionOffset)
-		{
-			std::unique_ptr<EnemyBullet::Liner> bullet = std::make_unique<EnemyBullet::Liner>();
-			bullet->Init();
-			bullet->SetTranslation(enemyPos);
-			// forward に対して right や up の成分を加えて発射方向を決める
-			bullet->SetShotDirection(Normalize(forward + directionOffset));
-			bulletManager_->AddBullet(std::move(bullet));
-		};
-
-
-	if (enemyType_ == 0)
+	if (attackStrategy_)
 	{
-		// 通常ショット
-		SpawnBullet(Vector3(0, 0, 0));
-	}
-	else if (enemyType_ == 1)
-	{
-		// 垂直2点
-		SpawnBullet(up * 0.02f);
-		SpawnBullet(up * -0.02f);
-	}
-	else if (enemyType_ == 2)
-	{
-		// 水平4点
-		SpawnBullet(right * 0.06f);
-		SpawnBullet(right * 0.02f);
-		SpawnBullet(right * -0.02f);
-		SpawnBullet(right * -0.06f);
-	}
-	else if (enemyType_ == 3)
-	{
-		// 3角形
-		SpawnBullet(up * 0.04f);
-		SpawnBullet(right * 0.04f + up * -0.02f);
-		SpawnBullet(right * -0.04f + up * -0.02f);
+		attackStrategy_->Attack(GetWorldPosition(), targetPos_, bulletManager_);
 	}
 }
 

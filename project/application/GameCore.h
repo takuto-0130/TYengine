@@ -36,8 +36,8 @@ public:
 
 private:
     /// <summary>入力管理クラス（キーボード、マウス、パッドなど）。</summary>
-    Input* input = nullptr;
+    Input* input_ = nullptr;
 
     /// <summary>パーティクル描画および管理クラス。</summary>
-    ParticleManager* particleManager = nullptr;
+    ParticleManager* particleManager_ = nullptr;
 };

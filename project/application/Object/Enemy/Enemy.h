@@ -47,19 +47,19 @@ public:
 
 	void SetEnemyBulletManager(EnemyBulletManager* bulletManager) { bulletManager_ = bulletManager; }
 
-	void SetAndApplyPos(Vector3 pos) 
+	void SetAndApplyPos(const Vector3& pos) 
 	{
 		worldTransform_.SetTranslation(pos);
 		worldTransform_.Update();
 	}
 
-	void SetTargetPos(Vector3 pos) { targetPos_ = pos; }
+	void SetTargetPos(const Vector3& pos) { targetPos_ = pos; }
 
 	void SetIsInGame(bool is) { isInGame_ = is; }
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
-	void SetScreenPos(Vector2 pos) { screenPos = pos; }
+	void SetScreenPos(const Vector2& pos) { screenPos = pos; }
 
 	const Vector2& GetScreenPos() { return screenPos; }
 

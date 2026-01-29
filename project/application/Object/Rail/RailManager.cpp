@@ -83,12 +83,12 @@ void RailManager::UpdateEdit()
 }
 
 
-void RailManager::PopRail(Vector3 position, Vector3 rota)
+void RailManager::PopRail(const Vector3& position, const Vector3& rotate)
 {
 	auto rail = std::make_unique<Rail>();
 	rail->Init();
 	rail->SetTranslation(position);
-	rail->SetRotate(rota);
+	rail->SetRotate(rotate);
 	rail->Update();
 	rails_.push_back(std::move(rail));
 }

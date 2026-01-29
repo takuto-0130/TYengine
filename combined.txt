@@ -2209,25 +2209,6 @@ class BaseBullet :
     public BaseObject
 {
 public:
-	// ワールド座標を取得
-	virtual Vector3 GetWorldPosition()
-	{
-		Vector3 worldPos;
-		worldPos.x = worldTransform_.matWorld_.m[3][0];
-		worldPos.y = worldTransform_.matWorld_.m[3][1];
-		worldPos.z = worldTransform_.matWorld_.m[3][2];
-		return worldPos;
-	}
-
-	// ローカルスケールをセット
-	virtual void SetScale(const Vector3& scale) { worldTransform_.colliderScale_ = scale; }
-
-	// ローカル回転をセット
-	virtual void SetRotate(const Vector3& rota) { worldTransform_.rotation_ = rota; }
-
-	// ローカル座標をセット
-	virtual void SetTranslation(const Vector3& pos) { worldTransform_.translation_ = pos; }
-
 	// 飛んでいく向き
 	virtual void SetShotDirection(const Vector3& direction) { direction_ = direction; }
 
@@ -2277,25 +2258,6 @@ File Path: project/application/Object/BaseCharacter/BaseCharacter.h
 class BaseCharacter : public BaseObject
 {
 public:
-	// ワールド座標を取得
-	virtual Vector3 GetWorldPosition() 
-	{
-		Vector3 worldPos;
-		worldPos.x = worldTransform_.matWorld_.m[3][0];
-		worldPos.y = worldTransform_.matWorld_.m[3][1];
-		worldPos.z = worldTransform_.matWorld_.m[3][2];
-		return worldPos;
-	}
-
-	// ローカルスケールをセット
-	virtual void SetScale(const Vector3& scale) { worldTransform_.colliderScale_ = scale; }
-
-	// ローカル回転をセット
-	virtual void SetRotate(const Vector3& rota) { worldTransform_.rotation_ = rota; }
-
-	// ローカル座標をセット
-	virtual void SetTranslation(const Vector3& pos) { worldTransform_.translation_ = pos; }
-
 	// 死んだかどうか
 	virtual bool IsDead() const { return isDead_; }
 
@@ -2507,9 +2469,9 @@ void Enemy::Init()
 	}
 	obj_->SetColor({ 1, 1, 1, 1 });
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = defaultScale_;
-	worldTransform_.TransferMatrix();
-	worldTransform_.useQuaternion_ = true;
+	worldTransform_.SetScale(defaultScale_);
+	worldTransform_.Update();
+	worldTransform_.SetUseQuaternion(true);
 
 	collider_ = std::make_unique<EnemyCollider>(
 		static_cast<uint32_t>(ColliderTypeID::ENEMY),
@@ -2534,7 +2496,7 @@ void Enemy::Update()
 	lifeTime_ -= deltaTime_;
 	if(lifeTime_ > 0)
 	{
-		worldTransform_.translation_ -= camera_->GetDeltaTranslate();
+		worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 		UpdateState(deltaTime_);
 
 		UpdateTransform();
@@ -2549,7 +2511,7 @@ void Enemy::Update()
 
 void Enemy::UpdateTransform()
 {
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void Enemy::Draw()
@@ -2559,8 +2521,8 @@ void Enemy::Draw()
 
 void Enemy::Pop()
 {
-	worldTransform_.colliderScale_ = ZeroScale;
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetScale(ZeroScale);
+	worldTransform_.Update();
 	emitter.transform.translate = GetWorldPosition();
 	emitter.transform.translate.y += 0.1f;
 	emitter.transform.scale = { 0.5f,0.4f,0.5f };
@@ -2603,7 +2565,7 @@ void Enemy::IsShot()
 void Enemy::Rotate()
 {
 	Vector3 playerPos = targetPos_;
-	Vector3 enemyPos = worldTransform_.translation_;
+	Vector3 enemyPos = worldTransform_.GetTranslation();
 
 	Vector3 toPlayer = playerPos - enemyPos;
 	if (Length(toPlayer) < 1e-6f) return;
@@ -2627,7 +2589,7 @@ void Enemy::Rotate()
 
 	Quaternion q = Multiply(qYaw, Multiply(qPitch, qRoll));
 
-	worldTransform_.rotationQ_ = Normalize(q);
+	worldTransform_.SetRotateQuaternion(Normalize(q));
 }
 
 void Enemy::InitDespawned()
@@ -2730,8 +2692,8 @@ public:
 
 	void SetAndApplyPos(Vector3 pos) 
 	{
-		worldTransform_.translation_ = pos;
-		worldTransform_.TransferMatrix();
+		worldTransform_.SetTranslation(pos);
+		worldTransform_.Update();
 	}
 
 	void SetTargetPos(Vector3 pos) { targetPos_ = pos; }
@@ -2836,14 +2798,14 @@ private: // シーン内のState関連関数
 		float t = GetStateElapsedTime() / kPopTime_;
 		if (t <= 1.0f)
 		{
-			worldTransform_.colliderScale_ = Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t));
+			worldTransform_.SetScale(Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t)));
 		}
 		else
 		{
 			ChangeState(EnemyState::ACTIVE);
 		}
 	};
-	void ExitEntering() { worldTransform_.colliderScale_ = defaultScale_; }
+	void ExitEntering() { worldTransform_.SetScale(defaultScale_); }
 
 	// 通常行動
 	void InitActive() {}
@@ -2859,7 +2821,7 @@ private: // シーン内のState関連関数
 				{
 					t = 1.5f;
 				}
-				worldTransform_.colliderScale_ = Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f));
+				worldTransform_.SetScale(Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f)));
 			}
 
 			if (bulletTimer_ <= 0.5f)
@@ -2921,10 +2883,12 @@ private: // シーン内のState関連関数
 		if (GetStateElapsedTime() < 2.0f)
 		{
 			roll_ += 0.02f;
-			worldTransform_.translation_.y -= 0.02f;
+			Vector3 pos = worldTransform_.GetTranslation();
+			pos.y -= 0.02f;
+			worldTransform_.SetTranslation(pos);
 			float t = 1.0f - (GetStateElapsedTime() / 2.0f);
 			obj_->SetAlpha(t / 2.0f);
-			worldTransform_.colliderScale_ = defaultScale_ * t;
+			worldTransform_.SetScale(defaultScale_ * t);
 		}
 		else
 		{
@@ -3106,8 +3070,8 @@ void Liner::Init()
 	obj_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
 	obj_->SetIsLighting(true);
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+	worldTransform_.Update();
 
 	collider_ = std::make_unique<EBulletCollider>(
 		static_cast<uint32_t>(ColliderTypeID::E_BULLET),
@@ -3214,13 +3178,7 @@ void EnemyBullet::Liner::InitShot()
 
 void EnemyBullet::Liner::UpdateShot()
 {
-#ifdef _DEBUG
-	ImGui::Begin("Bullet");
-	ImGui::Text("%.2f,%.2f,%.2f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
-	ImGui::Text("%.5f", deltaTime_);
-	ImGui::End();
-#endif // _DEBUG
-	// 寿命を超えたら死亡フラグをtrueに
+	// 寿命を超えたら死亡フラグを true に
 	if (GetStateElapsedTime() > lifeTime_)
 	{
 		isDead_ = true;
@@ -3229,7 +3187,7 @@ void EnemyBullet::Liner::UpdateShot()
 	Move();
 	RotationDirection();
 
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void EnemyBullet::Liner::ExitShot()
@@ -3240,7 +3198,7 @@ void EnemyBullet::Liner::Move()
 {
 	velocity_ = direction_ * defaultSpeed_ * deltaTime_;
 
-	worldTransform_.translation_ += velocity_;
+	worldTransform_.SetTranslation(worldTransform_.GetTranslation() + velocity_);
 }
 
 void EnemyBullet::Liner::RotationDirection()
@@ -3256,8 +3214,8 @@ void EnemyBullet::Liner::RotationDirection()
 	float roll = 0.0f;
 
 	// 回転を適用
-	worldTransform_.rotation_ = { pitch, yaw, roll };
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetRotate({ pitch, yaw, roll });
+	worldTransform_.Update();
 }
 
 ============================================================
@@ -3577,11 +3535,13 @@ void Player::Init()
 	obj_->SetIsLighting(false);
 	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
-	worldTransform_.useQuaternion_ = true; // プレイヤーではQuaternion使うようにする
-	worldTransform_.TransferMatrix();
-	worldTransform_.parentMatrix_ = &camera_->GetWorldMatrix();
-	worldTransform_.translation_.z = 4.0f;
+	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+	worldTransform_.SetUseQuaternion(true); // プレイヤーではQuaternion使うようにする
+	worldTransform_.SetParentMatrix(&camera_->GetWorldMatrix());
+	Vector3 pos = worldTransform_.GetTranslation();
+	pos.z = 4.0f;
+	worldTransform_.SetTranslation(pos);
+	worldTransform_.Update(); // 一度初期化後に worldTransform の更新をしておく
 
 	collider_ = std::make_unique<PlayerCollider>(
 		static_cast<uint32_t>(ColliderTypeID::PLAYER), 
@@ -3623,7 +3583,7 @@ void Player::Update()
 
 	UpdateState(deltaTime_);
 
-	Vector3 back = -Normalize(Vector3(worldTransform_.matWorld_.m[2][0], worldTransform_.matWorld_.m[2][1], worldTransform_.matWorld_.m[2][2]));
+	Vector3 back = -Normalize(Vector3(worldTransform_.GetMatWorld().m[2][0], worldTransform_.GetMatWorld().m[2][1], worldTransform_.GetMatWorld().m[2][2]));
 	IParticleRenderer::Emitter e;
 	e.transform.translate = GetWorldPosition() + back * 0.3f;
 	e.transform.scale = { 0.1f ,0.1f ,0.1f };
@@ -3694,8 +3654,8 @@ void Player::PostStateUpdate()
 {
 	//RotationOffset();
 	RotationOffsetLocal();
-	if(camera_->ShakeActive()) worldTransform_.translation_ -= camera_->GetShake();
-	worldTransform_.TransferMatrix();
+	if(camera_->ShakeActive()) worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetShake());
+	worldTransform_.Update();
 	collider_->Update(GetWorldPosition());
 	justCollider_->Update(GetWorldPosition());
 
@@ -3748,11 +3708,11 @@ void Player::Move()
 
 	// ===== ここが一番の変更点：ローカル座標で直接指定 =====
 	// 親はカメラなので、+Z がカメラ前方（エンジンによっては -Z）になる
-	worldTransform_.translation_ = {
+	worldTransform_.SetTranslation({
 		screenOffset_.x * xRange,
 		screenOffset_.y * yRange,
 		playerDepthFromCamera_      // 画面からの奥行き(カメラ前方)
-	};
+		});
 
 	RotationOffsetLocal();  // ←下の関数に差し替え
 }
@@ -3771,8 +3731,8 @@ void Player::RotationOffsetLocal()
 	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, movePitch);
 
 	// 好みで順序調整（ここでは Roll→Pitch）
-	worldTransform_.rotationQ_ = Multiply(qRoll, qPitch);
-	worldTransform_.TransferMatrix(); // 中で parent * local になること
+	worldTransform_.SetRotateQuaternion(Multiply(qRoll, qPitch));
+	worldTransform_.Update();
 }
 
 Vector3 Player::ConvertScreenOffsetToWorld(const Vector2& offset)
@@ -3825,17 +3785,17 @@ void Player::TestReticleInit()
 	reticleObj_->SetIsLighting(false);
 	reticleObj_->SetColor({ 0,1,0,1 });
 	reticleWT_.Initialize();
-	reticleWT_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
-	reticleWT_.TransferMatrix();
+	reticleWT_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+	reticleWT_.Update();
 #endif // _DEBUG
 }
 
 void Player::TestReticleUpdate()
 {
 #ifdef _DEBUG
-	reticleWT_.rotation_ = worldTransform_.rotation_;
-	reticleWT_.translation_ = reticle_->GetTarget();
-	reticleWT_.TransferMatrix();
+	reticleWT_.SetRotate(worldTransform_.GetRotate());
+	reticleWT_.SetTranslation(reticle_->GetTarget());
+	reticleWT_.Update();
 #endif // _DEBUG
 }
 
@@ -4088,7 +4048,7 @@ void PlayerBulletNormal::UpdateLiner()
 	Move();
 	RotationDirection();
 
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void PlayerBulletNormal::ExitLiner()
@@ -4099,7 +4059,7 @@ void PlayerBulletNormal::Move()
 {
 	velocity_ = direction_ * defaultSpeed_ * deltaTime_;
 
-	worldTransform_.translation_ += velocity_;
+	worldTransform_.SetTranslation(worldTransform_.GetTranslation() + velocity_);
 }
 
 void PlayerBulletNormal::RotationDirection()
@@ -4115,8 +4075,8 @@ void PlayerBulletNormal::RotationDirection()
 	float roll = 0.0f;
 
 	// 回転を適用
-	worldTransform_.rotation_ = { pitch, yaw, roll }; 
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetRotate({ pitch, yaw, roll });
+	worldTransform_.Update();
 }
 
 
@@ -4159,8 +4119,8 @@ void PlayerBulletNormal::Init()
 	obj_->SetModel("unitSphere.obj");
 	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = { scale_, scale_, scale_ };
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetScale({ scale_, scale_, scale_ });
+	worldTransform_.Update();
 
 	collider_ = std::make_unique<PBulletCollider>(
 		static_cast<uint32_t>(ColliderTypeID::P_BULLET),
@@ -4177,7 +4137,7 @@ void PlayerBulletNormal::Init()
 void PlayerBulletNormal::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
-	worldTransform_.translation_ -= camera_->GetDeltaTranslate();
+	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 	UpdateState(deltaTime_);
 	collider_->Update(GetWorldPosition());
 }
@@ -4595,11 +4555,11 @@ void Player::BarrelRoll()
     // 画面オフセットのクランプ
     ClampOffset();
 
-    worldTransform_.translation_ = {
+    worldTransform_.SetTranslation({
         screenOffset_.x * xRange,
         screenOffset_.y * yRange,
         playerDepthFromCamera_
-    };
+        });
 
     RotationOffsetLocal();
 
@@ -4933,12 +4893,12 @@ void Rail::Init()
 	obj_->Initialize();
 	obj_->SetModel("cube.obj");
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = { 0.06f, 0.03f, 0.4f };
+	worldTransform_.SetScale({ 0.06f, 0.03f, 0.4f });
 }
 
 void Rail::Update() 
 {
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void Rail::Draw() 
@@ -4965,8 +4925,8 @@ public:
 
 	void Draw() override;
 
-	void SetRotate(const Vector3& rotation) { worldTransform_.rotation_ = rotation; }
-	void SetTranslation(const Vector3& translation) { worldTransform_.translation_ = translation; }
+	void SetRotate(const Vector3& rotation) { worldTransform_.SetRotate(rotation); }
+	void SetTranslation(const Vector3& translation) { worldTransform_.SetTranslation(translation); }
 };
 
 
@@ -5192,7 +5152,7 @@ void RailManager::Reset()
 		if (i < segments.size() && segments[i].triggerEvent)
 		{
 			triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-			triggerObjects_.back()->world.TransferMatrix();
+			triggerObjects_.back()->world.Update();
 		}
 	}
 
@@ -5268,7 +5228,7 @@ void RailManager::StageEdit()
 			if (i < segments.size() && segments[i].triggerEvent)
 			{
 				triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-				triggerObjects_.back()->world.TransferMatrix();
+				triggerObjects_.back()->world.Update();
 			}
 		}
 
@@ -5646,8 +5606,8 @@ private:
 		explicit TriggerObject(const Vector3& pos)
 		{
 			world.Initialize();
-			world.translation_ = pos;
-			world.colliderScale_ = { 0.1f, 0.1f, 0.1f };
+			world.SetTranslation(pos);
+			world.SetScale({ 0.1f, 0.1f, 0.1f });
 			object.Initialize();
 			object.SetColor({ 1,0,0,1 });
 			object.SetModel("unitSphere.obj");
@@ -8383,7 +8343,7 @@ void TitleScene::Init()
 	ground_->Initialize();
 	ground_->SetModel("titleground.obj");
 	groundWT_.Initialize();
-	groundWT_.TransferMatrix();
+	groundWT_.Update();
 	rotateSpeed_ = titleJM.Get<float>("config.ground.rotateSpeed");
 
 
@@ -8454,9 +8414,10 @@ void TitleScene::Update() {
 	enemyMgr_.SetTargetPos(&pos);
 
 	enemyMgr_.Update();
-
-	groundWT_.rotation_.y -= rotateSpeed_ * Timer::GetInstance()->GetDeltaTime();
-	groundWT_.TransferMatrix();
+	Vector3 rotate = groundWT_.GetRotate();
+	rotate.y -= rotateSpeed_ * Timer::GetInstance()->GetDeltaTime();
+	groundWT_.SetRotate(rotate);
+	groundWT_.Update();
 
 	Vector2 mouse = input_->GetMousePosition();
 	reticle_->SetPosition(mouse);
@@ -9570,7 +9531,7 @@ void Stage::Init()
     ground_->Initialize();
     ground_->SetModel("ground.obj");
     groundWT_.Initialize();
-    groundWT_.TransferMatrix();
+    groundWT_.Update();
 }
 
 void Stage::Reset()
@@ -22960,13 +22921,13 @@ File Path: project/engine/Utility/Math/WorldTransform.cpp
 void WorldTransform::Initialize()
 {
     // ワールド行列の初期化
-    matWorld_ = MakeAffineMatrix(colliderScale_, rotation_, translation_);
+    matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
 
     // 定数バッファ生成
     CreateConstBuffer();
 
     // 定数バッファへ初期行列を転送
-    TransferMatrix();
+    Update();
 }
 
 void WorldTransform::CreateConstBuffer()
@@ -22983,28 +22944,42 @@ void WorldTransform::CreateConstBuffer()
 
 void WorldTransform::TransferMatrix()
 {
-    // スケール、回転、平行移動を合成して行列を計算する
-    if (useQuaternion_) {
-        matWorld_ = MakeAffineMatrix(colliderScale_, rotationQ_, translation_);
-    }
-    else {
-        matWorld_ = MakeAffineMatrix(colliderScale_, rotation_, translation_);
-    }
-
     // ワールド行列を定数バッファに転送
-    if (constMap != nullptr) {
-        // 親が存在する場合、親のワールド行列を掛け合わせる
-        if (parent_) {
-            matWorld_ = matWorld_ * parent_->matWorld_; // 親の行列と自身の行列を合成
-        }
-        else if (parentMatrix_ != nullptr)
-        {
-            matWorld_ = matWorld_ * (*parentMatrix_);
-        }
-
+    if (constMap != nullptr)
+    {
         constMap->World = matWorld_; // 定数バッファに行列をコピー
         constMap->WorldInverseTranspose = Inverse(matWorld_);
     }
+}
+
+void WorldTransform::UpdateMatrix()
+{
+    // スケール、回転、平行移動を合成して行列を計算する
+    if (useQuaternion_)
+    {
+        matWorld_ = MakeAffineMatrix(scale_, rotationQ_, translation_);
+    }
+    else
+    {
+        matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
+    }
+
+    // 親が存在する場合、親のワールド行列を掛け合わせる(parent_ と parentMatrix_ 両方に値が入っていた場合　parent_ を優先)
+    if (parent_)
+    {
+        
+        matWorld_ = matWorld_ * parent_->matWorld_; // 親の行列と自身の行列を合成
+    }
+    else if (parentMatrix_ != nullptr)
+    {
+        matWorld_ = matWorld_ * (*parentMatrix_);
+    }
+}
+
+void WorldTransform::Update()
+{
+    UpdateMatrix();
+    TransferMatrix();
 }
 
 
@@ -23019,35 +22994,12 @@ File Path: project/engine/Utility/Math/WorldTransform.h
 #include <type_traits>
 #include <wrl.h>
 
-struct TransformationMatrix
-{
-	Matrix4x4 WVP;
-	Matrix4x4 World;
-	Matrix4x4 WorldInverseTranspose;
-};
-
 /// <summary>
 /// ワールド変換データ
 /// </summary>
 class WorldTransform
 {
 public:
-	// ローカルスケール
-	Vector3 colliderScale_ = { 1, 1, 1 };
-	// X,Y,Z軸回りのローカル回転角
-	Vector3 rotation_ = { 0, 0, 0 };
-	// クォータニオン
-	Quaternion rotationQ_{};
-	bool useQuaternion_ = false; // 使用するかどうか
-	// ローカル座標
-	Vector3 translation_ = { 0, 0, 0 };
-	// ローカル → ワールド変換行列
-	Matrix4x4 matWorld_ = MakeIdentity4x4();
-	// 親となるワールド変換へのポインタ
-	const WorldTransform* parent_ = nullptr;
-	// 親となるワールド変換へのポインタ
-	const Matrix4x4* parentMatrix_ = nullptr;
-
 	// コンストラクタ
 	WorldTransform() = default;
 	// デストラクタ
@@ -23057,36 +23009,82 @@ public:
 	/// 初期化
 	/// </summary>
 	void Initialize();
+
 	/// <summary>
 	/// 定数バッファ生成
 	/// </summary>
 	void CreateConstBuffer();
+
 	/// <summary>
 	/// 行列を転送する
 	/// </summary>
 	void TransferMatrix();
+
 	/// <summary>
-	/// 定数バッファの取得
+	/// 行列を更新する
 	/// </summary>
-	/// <returns>定数バッファ</returns>
-	const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
+	void UpdateMatrix();
+
 	/// <summary>
-	/// マップのセット
+	/// 行列の転送・更新をする
 	/// </summary>
-	/// <param name="wvp">WVP行列</param>
+	void Update();
+
+
+	// ========================
+	//        Setter
+	// ========================
+
 	void SetMapWVP(const Matrix4x4& wvp) { constMap->WVP = wvp; }
-	/// <summary>
-	/// マップのセット
-	/// </summary>
-	/// <param name="world">World行列</param>
 	void SetMapWorld(const Matrix4x4& world) { constMap->World = world; }
-	/// <summary>
-	/// ワールド行列の取得
-	/// </summary>
-	/// <returns>>World行列</returns>
+	void SetScale(const Vector3& scale) { scale_ = scale; }
+	void SetRotate(const Vector3& rotate) { rotation_ = rotate; }
+	void SetTranslation(const Vector3& translation) { translation_ = translation; }
+	void SetRotateQuaternion(const Quaternion& rotationQ) { rotationQ_ = rotationQ; }
+	void SetUseQuaternion(bool use) { useQuaternion_ = use; }
+	void SetParentWT(const WorldTransform* parent) { parent_ = parent; }
+	void SetParentMatrix(const Matrix4x4* parentMatrix) { parentMatrix_ = parentMatrix; }
+
+
+	// ========================
+	//        Getter
+	// ========================
+
+	const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
 	const Matrix4x4& GetMatWorld() { return matWorld_; }
+	const Vector3& GetScale() { return scale_; }
+	const Vector3& GetRotate() { return rotation_; }
+	const Vector3& GetTranslation() { return translation_; }
+	const Quaternion& GetRotateQuaternion() { return rotationQ_; }
+	bool GetUseQuaternion() { return useQuaternion_; }
+	const WorldTransform* GetParentWT() { return parent_; }
+	const Matrix4x4* GetParentMatrix() { return parentMatrix_; }
 
 private:
+	struct TransformationMatrix
+	{
+		Matrix4x4 WVP;
+		Matrix4x4 World;
+		Matrix4x4 WorldInverseTranspose;
+	};
+
+	// ローカルスケール
+	Vector3 scale_ = { 1, 1, 1 };
+	// X,Y,Z軸回りのローカル回転角
+	Vector3 rotation_ = { 0, 0, 0 };
+	// クォータニオン
+	Quaternion rotationQ_{};
+	bool useQuaternion_ = false; // 使用するかどうか
+	// ローカル座標
+	Vector3 translation_ = { 0, 0, 0 };
+	// ローカル → ワールド変換行列
+	Matrix4x4 matWorld_ = MakeIdentity4x4();
+	// 親となるワールド変換（階層構造用）
+	const WorldTransform* parent_ = nullptr;
+	// 親となる行列への直接参照（特定の行列に追従させたい場合用）
+	const Matrix4x4* parentMatrix_ = nullptr;
+
+
 	// 定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffer_;
 	// マッピング済みアドレス
@@ -23924,6 +23922,25 @@ public:
 	// 描画
 	virtual void Draw() = 0;
 
+	// ワールド座標を取得
+	virtual Vector3 GetWorldPosition()
+	{
+		Vector3 worldPos;
+		worldPos.x = worldTransform_.GetMatWorld().m[3][0];
+		worldPos.y = worldTransform_.GetMatWorld().m[3][1];
+		worldPos.z = worldTransform_.GetMatWorld().m[3][2];
+		return worldPos;
+	}
+
+	// ローカルスケールをセット
+	virtual void SetScale(const Vector3& scale) { worldTransform_.SetScale(scale); }
+
+	// ローカル回転をセット
+	virtual void SetRotate(const Vector3& rota) { worldTransform_.SetRotate(rota); }
+
+	// ローカル座標をセット
+	virtual void SetTranslation(const Vector3& pos) { worldTransform_.SetTranslation(pos); }
+
 protected:
 	// 3Dオブジェクト
 	std::unique_ptr<Object3d> obj_;
@@ -23950,7 +23967,7 @@ void LevelObject::Init()
 
 void LevelObject::Update()
 {
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void LevelObject::Draw()
@@ -23978,9 +23995,9 @@ public:
 
 public:
     void SetModelName(const std::string& modelName) { modelName_ = modelName; }
-    void SetPosition(Vector3 pos) { worldTransform_.translation_ = pos; }
-    void SetRotation(Vector3 rota) { worldTransform_.rotation_ = rota; }
-    void SetScale(Vector3 scale) { worldTransform_.colliderScale_ = scale; }
+    void SetPosition(Vector3 pos) { worldTransform_.SetTranslation(pos); }
+    void SetRotation(Vector3 rota) { worldTransform_.SetRotate(rota); }
+    void SetScale(Vector3 scale) { worldTransform_.SetScale(scale); }
 
 private:
     std::string modelName_;

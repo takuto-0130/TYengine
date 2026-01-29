@@ -40,7 +40,7 @@ public: // メンバ関数
     /// 渡されたワールド変換と、内部のモデル・マテリアル・カメラ情報を用いて描画する。
     /// </summary>
     /// <param name="worldTransform">オブジェクトのワールド変換（WVP 計算に使用）。</param>
-    void Draw(const WorldTransform& worldTransform);
+    void Draw(WorldTransform& worldTransform);
 
 private:
     /// <summary>

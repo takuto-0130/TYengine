@@ -237,7 +237,7 @@
     <ClCompile Include="application\Object\Player\PlayerState\PlayerTakeDamage.cpp">
       <Filter>application\Object\Player\PlayerState</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\emitterInit.cpp">
+    <ClCompile Include="application\Scene\GameScene\EmitterInit.cpp">
       <Filter>application\Scene\GameScene</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp">
@@ -279,7 +279,7 @@
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp">
       <Filter>application\Scene\GameScene\GameSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScene_Clear.cpp">
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneClear.cpp">
       <Filter>application\Scene\GameScene\GameSceneStates</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp">

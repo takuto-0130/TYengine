@@ -40,6 +40,9 @@ void Enemy::Init()
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
+
+	using namespace EnemyAttack;
+
 	if (enemyType_ == 0)
 	{
 		// 通常ショット

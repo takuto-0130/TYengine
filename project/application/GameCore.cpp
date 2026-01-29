@@ -34,20 +34,20 @@ void GameCore::Initialize()
 
 	Timer::GetInstance()->Start();
 
-	imgui = ImGuiManager::GetInstance();
-	imgui->Initialize(windowsApp.get(), directXBasis);
+	imgui_ = ImGuiManager::GetInstance();
+	imgui_->Initialize(windowsApp_.get(), directXBasis_);
 
-	spriteBasis = SpriteBasis::GetInstance();
-	spriteBasis->Initialize(directXBasis);
+	spriteBasis_ = SpriteBasis::GetInstance();
+	spriteBasis_->Initialize(directXBasis_);
 
-	camera = std::make_unique<Camera>();
+	camera_ = std::make_unique<Camera>();
 
-	object3dBasis = Object3dBasis::GetInstance();
-	object3dBasis->Initialize(directXBasis);
-	object3dBasis->SetDefaultCamera(camera.get());
+	object3dBasis_ = Object3dBasis::GetInstance();
+	object3dBasis_->Initialize(directXBasis_);
+	object3dBasis_->SetDefaultCamera(camera_.get());
 
-	modelManager = ModelManager::GetInstance();
-	modelManager->Initialize(directXBasis, srvManager.get());
+	modelManager_ = ModelManager::GetInstance();
+	modelManager_->Initialize(directXBasis_, srvManager_.get());
 
 	Audio::GetInstance()->Initialize();
 	GameAudio::GetInstance()->Init();
@@ -82,7 +82,7 @@ void GameCore::Initialize()
 	particleManager_->Add(std::move(explosion));				// 4
 	particleManager_->Add(std::move(debris));				// 5
 
-	particleManager_->InitializeAll(directXBasis, srvManager.get(), camera.get());
+	particleManager_->InitializeAll(directXBasis_, srvManager_.get(), camera_.get());
 	IParticleRenderer::Emitter emitter{};
 	particleManager_->SetEmitter(index, emitter);
 
@@ -93,35 +93,35 @@ void GameCore::Initialize()
 	ColliderManager::GetInstance();
 
 
-	renderTexture = std::make_unique<RenderTexture>();
-	renderTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1, 0, 0, 1 }); 
+	renderTexture_ = std::make_unique<RenderTexture>();
+	renderTexture_->Initialize(directXBasis_, srvManager_.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1, 0, 0, 1 }); 
 	
-	tempTexture = std::make_unique<RenderTexture>();
-	tempTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+	tempTexture_ = std::make_unique<RenderTexture>();
+	tempTexture_->Initialize(directXBasis_, srvManager_.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
 
-	outlineTexture = std::make_unique<RenderTexture>();
-	outlineTexture->Initialize(directXBasis, srvManager.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+	outlineTexture_ = std::make_unique<RenderTexture>();
+	outlineTexture_->Initialize(directXBasis_, srvManager_.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
 
-	postEffectManager = PostEffectManager::GetInstance();
-	postEffectManager->Initialize(directXBasis, srvManager.get());
-	postEffectManager->SetTempRenderTexture(std::move(tempTexture));
-	postEffectManager->SetOutlineRenderTexture(std::move(outlineTexture));
+	postEffectManager_ = PostEffectManager::GetInstance();
+	postEffectManager_->Initialize(directXBasis_, srvManager_.get());
+	postEffectManager_->SetTempRenderTexture(std::move(tempTexture_));
+	postEffectManager_->SetOutlineRenderTexture(std::move(outlineTexture_));
 
 	// 適用するエフェクトを追加（順番に処理される）
-	postEffectManager->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
-	postEffectManager->AddEffect("Grayscale", std::make_unique<GrayscaleEffect>());
-	postEffectManager->AddEffect("Vignette", std::make_unique<VignetteEffect>());
-	postEffectManager->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
-	postEffectManager->AddEffect("Gaussian", std::make_unique<GaussianEffect>());
-	postEffectManager->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
-	postEffectManager->AddEffect("Random", std::make_unique<RandomEffect>());
-	postEffectManager->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
+	postEffectManager_->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
+	postEffectManager_->AddEffect("Grayscale", std::make_unique<GrayscaleEffect>());
+	postEffectManager_->AddEffect("Vignette", std::make_unique<VignetteEffect>());
+	postEffectManager_->AddEffect("BoxFilter", std::make_unique<BoxFilterEffect>());
+	postEffectManager_->AddEffect("Gaussian", std::make_unique<GaussianEffect>());
+	postEffectManager_->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
+	postEffectManager_->AddEffect("Random", std::make_unique<RandomEffect>());
+	postEffectManager_->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
 	
-	postEffectManager->EffectAllDisable();
+	postEffectManager_->EffectAllDisable();
 
 
-	CubemapBasis::GetInstance()->Initialize(directXBasis);
-	CubemapBasis::GetInstance()->SetDefaultCamera(camera.get());
+	CubemapBasis::GetInstance()->Initialize(directXBasis_);
+	CubemapBasis::GetInstance()->SetDefaultCamera(camera_.get());
 }
 
 void GameCore::Finalize()
@@ -133,20 +133,20 @@ void GameCore::Finalize()
 void GameCore::Update()
 {
 	// Windowsメッセージ処理
-	if (windowsApp->ProcessMessage()) {
+	if (windowsApp_->ProcessMessage()) {
 		// ゲームループを抜ける
 		endRequest_ = true;
 	}
 	else { //ゲーム処理
-		imgui->Begin();
+		imgui_->Begin();
 		Timer::GetInstance()->Update();
 		Audio::GetInstance()->Update();
 		TYFrameWork::Update();
 		particleManager_->UpdateAll();
-		camera->Update();
-		postEffectManager->Update();
+		camera_->Update();
+		postEffectManager_->Update();
 		ColliderManager::GetInstance()->Update();
-		imgui->End();
+		imgui_->End();
 	}
 }
 
@@ -156,23 +156,23 @@ void GameCore::Draw()
 	TextureManager::GetInstance()->NextFrame();
 
 	// ---------- オフスクリーン描画 ----------
-	renderTexture->BeginRender();
+	renderTexture_->BeginRender();
 
 	sceneManager_->Draw();   // 実際の描画
 
 	particleManager_->DrawAll();
 
-	renderTexture->EndRender();
+	renderTexture_->EndRender();
 
 	// ---------- SwapChainへの描画 ----------
-	directXBasis->DrawBegin();
+	directXBasis_->DrawBegin();
 
-	postEffectManager->Apply(renderTexture.get(), nullptr); // nullptr指定でSwapChain描画
+	postEffectManager_->Apply(renderTexture_.get(), nullptr); // nullptr指定でSwapChain描画
 
 	sceneManager_->UIDraw(); // ポストエフェクト後にUIを描画
 	
-	imgui->Draw();
+	imgui_->Draw();
 
 
-	directXBasis->DrawEnd();
+	directXBasis_->DrawEnd();
 }

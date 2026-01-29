@@ -8,7 +8,7 @@
 void Sprite::Initialize(std::string textureFilePath)
 {
 	spriteBasis_ = SpriteBasis::GetInstance();
-	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 	textureFilePath_ = textureFilePath;
 
 	CreateVertexData();

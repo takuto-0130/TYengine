@@ -23,12 +23,12 @@ void PostEffectManager::Initialize(DirectXBasis* dx, SrvManager* srv)
     dofPass->Initialize(dxBasis_, srvMgr_);
 }
 
-void PostEffectManager::AddEffect(const std::string& name, std::shared_ptr<IPostEffect> effect)
+void PostEffectManager::AddEffect(const std::string& name, std::shared_ptr<IPostEffect> effect_)
 {
-    effect->Initialize(dxBasis_, srvMgr_);
+    effect_->Initialize(dxBasis_, srvMgr_);
     EffectEntry effectEntry = {
         name,
-        std::move(effect)
+        std::move(effect_)
     };
     effectStack_.emplace_back(std::move(effectEntry));
 }
@@ -89,14 +89,14 @@ void PostEffectManager::Update()
             ImGui::PushID(static_cast<int>(i));
 
             // チェックボックス
-            bool enabled = effectStack_[i].effect->IsEnabled();
+            bool enabled = effectStack_[i].effect_->IsEnabled();
             if (ImGui::Checkbox("", &enabled)) {
-                effectStack_[i].effect->SetEnabled(enabled);
+                effectStack_[i].effect_->SetEnabled(enabled);
             }
             ImGui::SameLine();
 
             // エフェクト固有のUI
-            effectStack_[i].effect->ImGuiUpdate();
+            effectStack_[i].effect_->ImGuiUpdate();
 
             // --- 右カラム: 横並びの UP / DOWN ボタン ---
             ImGui::TableSetColumnIndex(1);
@@ -193,8 +193,8 @@ void PostEffectManager::Apply(RenderTexture* source, RenderTexture* target)
     // 有効なエフェクトだけ抽出
     std::vector<IPostEffect*> enabledEffects;
     for (auto& e : effectStack_) {
-        if (e.effect->IsEnabled()) {
-            enabledEffects.push_back(e.effect.get());
+        if (e.effect_->IsEnabled()) {
+            enabledEffects.push_back(e.effect_.get());
         }
     }
 
@@ -243,7 +243,7 @@ void PostEffectManager::SetEffectEnabled(const std::string& name, bool enabled)
 {
     for (auto& entry : effectStack_) {
         if (entry.name == name) {
-            entry.effect->SetEnabled(enabled);
+            entry.effect_->SetEnabled(enabled);
             return;
         }
     }
@@ -265,6 +265,6 @@ void PostEffectManager::EffectAllDisable()
     SetOutlineEnabled(false);
     SetDoFEnabled(false);
 	for (auto& entry : effectStack_) {
-		entry.effect->SetEnabled(false);
+		entry.effect_->SetEnabled(false);
 	}
 }

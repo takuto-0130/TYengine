@@ -24,19 +24,19 @@ void TYFrameWork::Initialize()
 #pragma region // 基盤システム初期化
 
 	// ウィンドウズアプリケーション
-	windowsApp = std::make_unique<WindowsApp>();
-	windowsApp->Initialize();
+	windowsApp_ = std::make_unique<WindowsApp>();
+	windowsApp_->Initialize();
 
-	directXBasis = DirectXBasis::GetInstance();
-	directXBasis->Initialize(windowsApp.get());
+	directXBasis_ = DirectXBasis::GetInstance();
+	directXBasis_->Initialize(windowsApp_.get());
 
-	srvManager = std::make_unique<SrvManager>();
-	srvManager->Initialize(directXBasis);
+	srvManager_ = std::make_unique<SrvManager>();
+	srvManager_->Initialize(directXBasis_);
 
-	input = Input::GetInstance();
-	input->Initialize(windowsApp->GetHwnd());
+	input_ = Input::GetInstance();
+	input_->Initialize(windowsApp_->GetHwnd());
 
-	TextureManager::GetInstance()->Initialize(directXBasis, srvManager.get());
+	TextureManager::GetInstance()->Initialize(directXBasis_, srvManager_.get());
 
 	sceneManager_ = SceneManager::GetInstance();
 #pragma endregion
@@ -44,12 +44,12 @@ void TYFrameWork::Initialize()
 
 void TYFrameWork::Finalize()
 {
-	imgui->Finalize();
-	windowsApp->Finalize();
+	imgui_->Finalize();
+	windowsApp_->Finalize();
 }
 
 void TYFrameWork::Update()
 {
-	input->Update();
+	input_->Update();
 	sceneManager_->Update();
 }

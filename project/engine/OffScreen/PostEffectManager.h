@@ -40,7 +40,7 @@ public:
     /// </summary>
     /// <param name="name">エフェクト名。</param>
     /// <param name="effect">登録するポストエフェクト（IPostEffect の派生）。</param>
-    void AddEffect(const std::string& name, std::shared_ptr<IPostEffect> effect);
+    void AddEffect(const std::string& name, std::shared_ptr<IPostEffect> effect_);
 
     /// <summary>
     /// すべてのエフェクトの更新処理を行う。
@@ -117,7 +117,7 @@ public:
         {
             if (e.name == name)
             {
-                return dynamic_cast<T*>(e.effect.get());
+                return dynamic_cast<T*>(e.effect_.get());
             }
         }
         return nullptr;
@@ -133,7 +133,7 @@ private:
     struct EffectEntry
     {
         std::string name;                     ///< エフェクト名。
-        std::shared_ptr<IPostEffect> effect;  ///< エフェクト本体。
+        std::shared_ptr<IPostEffect> effect_;  ///< エフェクト本体。
     };
 
     std::vector<EffectEntry> effectStack_;      ///< 適用順に並ぶエフェクトスタック。

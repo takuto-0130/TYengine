@@ -43,8 +43,8 @@ void Liner::Init()
 	obj_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
 	obj_->SetIsLighting(true);
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+	worldTransform_.Update();
 
 	collider_ = std::make_unique<EBulletCollider>(
 		static_cast<uint32_t>(ColliderTypeID::E_BULLET),

@@ -6,13 +6,7 @@ void EnemyBullet::Liner::InitShot()
 
 void EnemyBullet::Liner::UpdateShot()
 {
-#ifdef _DEBUG
-	ImGui::Begin("Bullet");
-	ImGui::Text("%.2f,%.2f,%.2f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
-	ImGui::Text("%.5f", deltaTime_);
-	ImGui::End();
-#endif // _DEBUG
-	// 寿命を超えたら死亡フラグをtrueに
+	// 寿命を超えたら死亡フラグを true に
 	if (GetStateElapsedTime() > lifeTime_)
 	{
 		isDead_ = true;
@@ -21,7 +15,7 @@ void EnemyBullet::Liner::UpdateShot()
 	Move();
 	RotationDirection();
 
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void EnemyBullet::Liner::ExitShot()
@@ -32,7 +26,7 @@ void EnemyBullet::Liner::Move()
 {
 	velocity_ = direction_ * defaultSpeed_ * deltaTime_;
 
-	worldTransform_.translation_ += velocity_;
+	worldTransform_.SetTranslation(worldTransform_.GetTranslation() + velocity_);
 }
 
 void EnemyBullet::Liner::RotationDirection()
@@ -48,6 +42,6 @@ void EnemyBullet::Liner::RotationDirection()
 	float roll = 0.0f;
 
 	// 回転を適用
-	worldTransform_.rotation_ = { pitch, yaw, roll };
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetRotate({ pitch, yaw, roll });
+	worldTransform_.Update();
 }

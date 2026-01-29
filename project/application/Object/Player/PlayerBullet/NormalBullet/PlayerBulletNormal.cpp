@@ -34,8 +34,8 @@ void PlayerBulletNormal::Init()
 	obj_->SetModel("unitSphere.obj");
 	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = { scale_, scale_, scale_ };
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetScale({ scale_, scale_, scale_ });
+	worldTransform_.Update();
 
 	collider_ = std::make_unique<PBulletCollider>(
 		static_cast<uint32_t>(ColliderTypeID::P_BULLET),
@@ -52,7 +52,7 @@ void PlayerBulletNormal::Init()
 void PlayerBulletNormal::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
-	worldTransform_.translation_ -= camera_->GetDeltaTranslate();
+	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 	UpdateState(deltaTime_);
 	collider_->Update(GetWorldPosition());
 }

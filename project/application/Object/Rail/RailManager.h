@@ -144,8 +144,8 @@ private:
 		explicit TriggerObject(const Vector3& pos)
 		{
 			world.Initialize();
-			world.translation_ = pos;
-			world.colliderScale_ = { 0.1f, 0.1f, 0.1f };
+			world.SetTranslation(pos);
+			world.SetScale({ 0.1f, 0.1f, 0.1f });
 			object.Initialize();
 			object.SetColor({ 1,0,0,1 });
 			object.SetModel("unitSphere.obj");

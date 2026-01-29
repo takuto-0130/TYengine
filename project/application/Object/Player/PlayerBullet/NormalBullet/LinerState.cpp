@@ -15,7 +15,7 @@ void PlayerBulletNormal::UpdateLiner()
 	Move();
 	RotationDirection();
 
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void PlayerBulletNormal::ExitLiner()
@@ -26,7 +26,7 @@ void PlayerBulletNormal::Move()
 {
 	velocity_ = direction_ * defaultSpeed_ * deltaTime_;
 
-	worldTransform_.translation_ += velocity_;
+	worldTransform_.SetTranslation(worldTransform_.GetTranslation() + velocity_);
 }
 
 void PlayerBulletNormal::RotationDirection()
@@ -42,6 +42,6 @@ void PlayerBulletNormal::RotationDirection()
 	float roll = 0.0f;
 
 	// 回転を適用
-	worldTransform_.rotation_ = { pitch, yaw, roll }; 
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetRotate({ pitch, yaw, roll });
+	worldTransform_.Update();
 }

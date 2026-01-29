@@ -26,7 +26,7 @@ void Stage::Init()
     ground_->Initialize();
     ground_->SetModel("ground.obj");
     groundWT_.Initialize();
-    groundWT_.TransferMatrix();
+    groundWT_.Update();
 }
 
 void Stage::Reset()

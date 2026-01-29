@@ -21,12 +21,12 @@ LevelData* BlenderLevelLoader::Load(const std::string& filename)
     assert(name.compare("scene") == 0);
 
     // レベルデータ格納用インスタンスの生成
-    LevelData* levelData = new LevelData();
+    levelData_ = std::make_unique<LevelData>();
 
     // "objects"の全オブジェクトを走査
-    ObjectTraversal(levelData, j, "objects");
+    ObjectTraversal(levelData_.get(), j, "objects");
 
-    return levelData;
+    return levelData_.get();
 }
 
 void BlenderLevelLoader::DataToObject(LevelData* data, std::vector<std::unique_ptr<LevelObject>>& objects)

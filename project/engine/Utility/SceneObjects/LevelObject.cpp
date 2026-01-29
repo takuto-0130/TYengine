@@ -11,7 +11,7 @@ void LevelObject::Init()
 
 void LevelObject::Update()
 {
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void LevelObject::Draw()

@@ -42,11 +42,13 @@ void Player::Init()
 	obj_->SetIsLighting(false);
 	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
-	worldTransform_.useQuaternion_ = true; // プレイヤーではQuaternion使うようにする
-	worldTransform_.TransferMatrix();
-	worldTransform_.parentMatrix_ = &camera_->GetWorldMatrix();
-	worldTransform_.translation_.z = 4.0f;
+	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+	worldTransform_.SetUseQuaternion(true); // プレイヤーではQuaternion使うようにする
+	worldTransform_.SetParentMatrix(&camera_->GetWorldMatrix());
+	Vector3 pos = worldTransform_.GetTranslation();
+	pos.z = 4.0f;
+	worldTransform_.SetTranslation(pos);
+	worldTransform_.Update(); // 一度初期化後に worldTransform の更新をしておく
 
 	collider_ = std::make_unique<PlayerCollider>(
 		static_cast<uint32_t>(ColliderTypeID::PLAYER), 
@@ -88,7 +90,7 @@ void Player::Update()
 
 	UpdateState(deltaTime_);
 
-	Vector3 back = -Normalize(Vector3(worldTransform_.matWorld_.m[2][0], worldTransform_.matWorld_.m[2][1], worldTransform_.matWorld_.m[2][2]));
+	Vector3 back = -Normalize(Vector3(worldTransform_.GetMatWorld().m[2][0], worldTransform_.GetMatWorld().m[2][1], worldTransform_.GetMatWorld().m[2][2]));
 	IParticleRenderer::Emitter e;
 	e.transform.translate = GetWorldPosition() + back * 0.3f;
 	e.transform.scale = { 0.1f ,0.1f ,0.1f };
@@ -159,8 +161,8 @@ void Player::PostStateUpdate()
 {
 	//RotationOffset();
 	RotationOffsetLocal();
-	if(camera_->ShakeActive()) worldTransform_.translation_ -= camera_->GetShake();
-	worldTransform_.TransferMatrix();
+	if(camera_->ShakeActive()) worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetShake());
+	worldTransform_.Update();
 	collider_->Update(GetWorldPosition());
 	justCollider_->Update(GetWorldPosition());
 
@@ -213,11 +215,11 @@ void Player::Move()
 
 	// ===== ここが一番の変更点：ローカル座標で直接指定 =====
 	// 親はカメラなので、+Z がカメラ前方（エンジンによっては -Z）になる
-	worldTransform_.translation_ = {
+	worldTransform_.SetTranslation({
 		screenOffset_.x * xRange,
 		screenOffset_.y * yRange,
 		playerDepthFromCamera_      // 画面からの奥行き(カメラ前方)
-	};
+		});
 
 	RotationOffsetLocal();  // ←下の関数に差し替え
 }
@@ -236,8 +238,8 @@ void Player::RotationOffsetLocal()
 	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, movePitch);
 
 	// 好みで順序調整（ここでは Roll→Pitch）
-	worldTransform_.rotationQ_ = Multiply(qRoll, qPitch);
-	worldTransform_.TransferMatrix(); // 中で parent * local になること
+	worldTransform_.SetRotateQuaternion(Multiply(qRoll, qPitch));
+	worldTransform_.Update();
 }
 
 Vector3 Player::ConvertScreenOffsetToWorld(const Vector2& offset)
@@ -290,17 +292,17 @@ void Player::TestReticleInit()
 	reticleObj_->SetIsLighting(false);
 	reticleObj_->SetColor({ 0,1,0,1 });
 	reticleWT_.Initialize();
-	reticleWT_.colliderScale_ = { colliderScale_, colliderScale_, colliderScale_ };
-	reticleWT_.TransferMatrix();
+	reticleWT_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+	reticleWT_.Update();
 #endif // _DEBUG
 }
 
 void Player::TestReticleUpdate()
 {
 #ifdef _DEBUG
-	reticleWT_.rotation_ = worldTransform_.rotation_;
-	reticleWT_.translation_ = reticle_->GetTarget();
-	reticleWT_.TransferMatrix();
+	reticleWT_.SetRotate(worldTransform_.GetRotate());
+	reticleWT_.SetTranslation(reticle_->GetTarget());
+	reticleWT_.Update();
 #endif // _DEBUG
 }
 

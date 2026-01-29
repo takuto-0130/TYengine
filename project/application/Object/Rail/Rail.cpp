@@ -10,12 +10,12 @@ void Rail::Init()
 	obj_->Initialize();
 	obj_->SetModel("cube.obj");
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = { 0.06f, 0.03f, 0.4f };
+	worldTransform_.SetScale({ 0.06f, 0.03f, 0.4f });
 }
 
 void Rail::Update() 
 {
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void Rail::Draw() 

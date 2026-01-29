@@ -49,8 +49,8 @@ public:
 
 	void SetAndApplyPos(Vector3 pos) 
 	{
-		worldTransform_.translation_ = pos;
-		worldTransform_.TransferMatrix();
+		worldTransform_.SetTranslation(pos);
+		worldTransform_.Update();
 	}
 
 	void SetTargetPos(Vector3 pos) { targetPos_ = pos; }
@@ -155,14 +155,14 @@ private: // シーン内のState関連関数
 		float t = GetStateElapsedTime() / kPopTime_;
 		if (t <= 1.0f)
 		{
-			worldTransform_.colliderScale_ = Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t));
+			worldTransform_.SetScale(Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t)));
 		}
 		else
 		{
 			ChangeState(EnemyState::ACTIVE);
 		}
 	};
-	void ExitEntering() { worldTransform_.colliderScale_ = defaultScale_; }
+	void ExitEntering() { worldTransform_.SetScale(defaultScale_); }
 
 	// 通常行動
 	void InitActive() {}
@@ -178,7 +178,7 @@ private: // シーン内のState関連関数
 				{
 					t = 1.5f;
 				}
-				worldTransform_.colliderScale_ = Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f));
+				worldTransform_.SetScale(Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f)));
 			}
 
 			if (bulletTimer_ <= 0.5f)
@@ -240,10 +240,12 @@ private: // シーン内のState関連関数
 		if (GetStateElapsedTime() < 2.0f)
 		{
 			roll_ += 0.02f;
-			worldTransform_.translation_.y -= 0.02f;
+			Vector3 pos = worldTransform_.GetTranslation();
+			pos.y -= 0.02f;
+			worldTransform_.SetTranslation(pos);
 			float t = 1.0f - (GetStateElapsedTime() / 2.0f);
 			obj_->SetAlpha(t / 2.0f);
-			worldTransform_.colliderScale_ = defaultScale_ * t;
+			worldTransform_.SetScale(defaultScale_ * t);
 		}
 		else
 		{

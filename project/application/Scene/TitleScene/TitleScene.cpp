@@ -80,7 +80,7 @@ void TitleScene::Init()
 	ground_->Initialize();
 	ground_->SetModel("titleground.obj");
 	groundWT_.Initialize();
-	groundWT_.TransferMatrix();
+	groundWT_.Update();
 	rotateSpeed_ = titleJM.Get<float>("config.ground.rotateSpeed");
 
 
@@ -151,9 +151,10 @@ void TitleScene::Update() {
 	enemyMgr_.SetTargetPos(&pos);
 
 	enemyMgr_.Update();
-
-	groundWT_.rotation_.y -= rotateSpeed_ * Timer::GetInstance()->GetDeltaTime();
-	groundWT_.TransferMatrix();
+	Vector3 rotate = groundWT_.GetRotate();
+	rotate.y -= rotateSpeed_ * Timer::GetInstance()->GetDeltaTime();
+	groundWT_.SetRotate(rotate);
+	groundWT_.Update();
 
 	Vector2 mouse = input_->GetMousePosition();
 	reticle_->SetPosition(mouse);

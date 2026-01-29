@@ -33,7 +33,7 @@ void RailManager::Reset()
 		if (i < segments.size() && segments[i].triggerEvent)
 		{
 			triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-			triggerObjects_.back()->world.TransferMatrix();
+			triggerObjects_.back()->world.Update();
 		}
 	}
 
@@ -109,7 +109,7 @@ void RailManager::StageEdit()
 			if (i < segments.size() && segments[i].triggerEvent)
 			{
 				triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-				triggerObjects_.back()->world.TransferMatrix();
+				triggerObjects_.back()->world.Update();
 			}
 		}
 

@@ -66,9 +66,9 @@ void Enemy::Init()
 	}
 	obj_->SetColor({ 1, 1, 1, 1 });
 	worldTransform_.Initialize();
-	worldTransform_.colliderScale_ = defaultScale_;
-	worldTransform_.TransferMatrix();
-	worldTransform_.useQuaternion_ = true;
+	worldTransform_.SetScale(defaultScale_);
+	worldTransform_.Update();
+	worldTransform_.SetUseQuaternion(true);
 
 	collider_ = std::make_unique<EnemyCollider>(
 		static_cast<uint32_t>(ColliderTypeID::ENEMY),
@@ -93,7 +93,7 @@ void Enemy::Update()
 	lifeTime_ -= deltaTime_;
 	if(lifeTime_ > 0)
 	{
-		worldTransform_.translation_ -= camera_->GetDeltaTranslate();
+		worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 		UpdateState(deltaTime_);
 
 		UpdateTransform();
@@ -108,7 +108,7 @@ void Enemy::Update()
 
 void Enemy::UpdateTransform()
 {
-	worldTransform_.TransferMatrix();
+	worldTransform_.Update();
 }
 
 void Enemy::Draw()
@@ -118,8 +118,8 @@ void Enemy::Draw()
 
 void Enemy::Pop()
 {
-	worldTransform_.colliderScale_ = ZeroScale;
-	worldTransform_.TransferMatrix();
+	worldTransform_.SetScale(ZeroScale);
+	worldTransform_.Update();
 	emitter.transform.translate = GetWorldPosition();
 	emitter.transform.translate.y += 0.1f;
 	emitter.transform.scale = { 0.5f,0.4f,0.5f };
@@ -162,7 +162,7 @@ void Enemy::IsShot()
 void Enemy::Rotate()
 {
 	Vector3 playerPos = targetPos_;
-	Vector3 enemyPos = worldTransform_.translation_;
+	Vector3 enemyPos = worldTransform_.GetTranslation();
 
 	Vector3 toPlayer = playerPos - enemyPos;
 	if (Length(toPlayer) < 1e-6f) return;
@@ -186,7 +186,7 @@ void Enemy::Rotate()
 
 	Quaternion q = Multiply(qYaw, Multiply(qPitch, qRoll));
 
-	worldTransform_.rotationQ_ = Normalize(q);
+	worldTransform_.SetRotateQuaternion(Normalize(q));
 }
 
 void Enemy::InitDespawned()

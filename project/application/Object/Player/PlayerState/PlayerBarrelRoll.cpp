@@ -116,11 +116,11 @@ void Player::BarrelRoll()
     // 画面オフセットのクランプ
     ClampOffset();
 
-    worldTransform_.translation_ = {
+    worldTransform_.SetTranslation({
         screenOffset_.x * xRange,
         screenOffset_.y * yRange,
         playerDepthFromCamera_
-    };
+        });
 
     RotationOffsetLocal();
 

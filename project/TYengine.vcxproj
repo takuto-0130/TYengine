@@ -153,7 +153,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Player\PlayerState\PlayerIdle.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerRoot.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerTakeDamage.cpp" />
-    <ClCompile Include="application\Scene\GameScene\emitterInit.cpp" />
+    <ClCompile Include="application\Scene\GameScene\EmitterInit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="application\Object\Rail\Rail.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneDead.cpp" />
@@ -167,7 +167,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneResult.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneRetry.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
-    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameScene_Clear.cpp" />
+    <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneClear.cpp" />
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />

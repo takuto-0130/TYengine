@@ -29,7 +29,7 @@ Audio::~Audio()
 {
 	StopStreaming();
 	// BGMリソースの解放
-	for (auto SourceVoice : pSourceVoices_)
+	for (auto SourceVoice : sourceVoices_)
 	{
 		if (SourceVoice != nullptr)
 		{
@@ -37,32 +37,32 @@ Audio::~Audio()
 			SourceVoice = nullptr;
 		}
 	}
-	if (streamVoice != nullptr) {
-		streamVoice->DestroyVoice();
-		streamVoice = nullptr;
+	if (streamVoice_ != nullptr) {
+		streamVoice_->DestroyVoice();
+		streamVoice_ = nullptr;
 	}
-	if (analyzerXAPO)
+	if (analyzerXAPO_)
 	{
-		analyzerXAPO->Release();
-		analyzerXAPO = nullptr;
+		analyzerXAPO_->Release();
+		analyzerXAPO_ = nullptr;
 	}
-	if (masterVoice != nullptr)
+	if (masterVoice_ != nullptr)
 	{
-		masterVoice->DestroyVoice();
-		masterVoice = nullptr;
+		masterVoice_->DestroyVoice();
+		masterVoice_ = nullptr;
 	}
 
 	// 読み込んだサウンドデータを全部解放
-	for (auto& [name, soundData] : soundDataMap)
+	for (auto& [name, soundData] : soundDataMap_)
 	{
 		delete[] soundData.pBuffer;
 		soundData.pBuffer = nullptr;
 		soundData.bufferSize = 0;
 		soundData.wfex = {};
 	}
-	soundDataMap.clear();
+	soundDataMap_.clear();
 
-	xAudio2.Reset();
+	xAudio2_.Reset();
 }
 
 void Audio::StreamAudio(const char* filename) {
@@ -100,13 +100,13 @@ void Audio::StreamAudio(const char* filename) {
 	// ストリーミング用のバッファを複数作成
 	constexpr int BUFFER_COUNT = 3; // バッファ数
 	BUFFER_SIZE = header.sampleRate * waveFormat.nBlockAlign; // バッファサイズ
-	audioBuffers.resize(BUFFER_COUNT, std::vector<BYTE>(BUFFER_SIZE));
+	audioBuffers_.resize(BUFFER_COUNT, std::vector<BYTE>(BUFFER_SIZE));
 	XAUDIO2_BUFFER xAudioBuffers[BUFFER_COUNT] = {};
 	StreamingVoiceCallback callback;
 
 
 	// ソースボイスを作成し、コールバックを渡す
-	if (FAILED(xAudio2->CreateSourceVoice(&streamVoice, &waveFormat, XAUDIO2_VOICE_USEFILTER, XAUDIO2_MAX_FREQ_RATIO, &callback, nullptr))) {
+	if (FAILED(xAudio2_->CreateSourceVoice(&streamVoice_, &waveFormat, XAUDIO2_VOICE_USEFILTER, XAUDIO2_MAX_FREQ_RATIO, &callback, nullptr))) {
 		Logger::Log("Failed to create source voice.\n");
 		return;
 	}
@@ -115,15 +115,15 @@ void Audio::StreamAudio(const char* filename) {
 	
 	
 	// ソースボイスを開始
-	streamVoice->Start(0);
+	streamVoice_->Start(0);
 	// バッファリング処理
 	int currentBufferIndex = 0;
 
-	while (isStreaming.load()) {
-		std::vector<BYTE>& currentBuffer = audioBuffers[currentBufferIndex];
+	while (isStreaming_.load()) {
+		std::vector<BYTE>& currentBuffer = audioBuffers_[currentBufferIndex];
 		if (!ReadAudioData(audioFile, currentBuffer)) {
 			// EOF
-			if(isLoopStreaming.load()) { 
+			if(isLoopStreaming_.load()) { 
 				// EOF に達した場合、ファイルを先頭に戻してループ
 				audioFile.clear();  // EOF flag をクリア
 				audioFile.seekg(sizeof(WAVHeader), std::ios::beg);  // ヘッダーをスキップして再読み込み
@@ -131,7 +131,7 @@ void Audio::StreamAudio(const char* filename) {
 					break; // それでも読み込み失敗の場合はループ終了
 				}
 			}
-			else if (!isLoopStreaming.load()) {
+			else if (!isLoopStreaming_.load()) {
 				break; // EOF
 			}
 			else {
@@ -152,7 +152,7 @@ void Audio::StreamAudio(const char* filename) {
 		}
 
 		// ソースボイスにバッファを送信
-		if (FAILED(streamVoice->SubmitSourceBuffer(&xBuffer))) {
+		if (FAILED(streamVoice_->SubmitSourceBuffer(&xBuffer))) {
 			Logger::Log("Failed to submit buffer.\n");
 			break;
 		}
@@ -168,9 +168,9 @@ void Audio::StreamAudio(const char* filename) {
 
 	// クリーンアップ
 	audioFile.close();
-	streamVoice->Stop(0);
-	streamVoice->DestroyVoice();
-	streamVoice = nullptr;
+	streamVoice_->Stop(0);
+	streamVoice_->DestroyVoice();
+	streamVoice_ = nullptr;
 	Logger::Log("Streaming finished.\n");
 }
 
@@ -179,10 +179,10 @@ void Audio::Initialize(const std::string& directoryPath)
 	directoryPath_ = directoryPath;
 	HRESULT result;
 	// インスタンスの生成
-	result = XAudio2Create(&xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
+	result = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	assert(SUCCEEDED(result));
 	// マスターボイスの生成
-	result = xAudio2->CreateMasteringVoice(&masterVoice);
+	result = xAudio2_->CreateMasteringVoice(&masterVoice_);
 
 	if (FAILED(result))
 	{
@@ -204,12 +204,12 @@ void Audio::CreateAnalyzerSubmix()
 
 	// MasterVoice と同じフォーマットで作る
 	XAUDIO2_VOICE_DETAILS details = {};
-	masterVoice->GetVoiceDetails(&details);
+	masterVoice_->GetVoiceDetails(&details);
 
 	HRESULT result;
 
-	result = xAudio2->CreateSubmixVoice(
-		&analyzerSubmix,
+	result = xAudio2_->CreateSubmixVoice(
+		&analyzerSubmix_,
 		kSubmixChannels,
 		kSubmixSampleRate,
 		0, 
@@ -220,13 +220,13 @@ void Audio::CreateAnalyzerSubmix()
 	// Submix → MasteringVoice へ音を送る
 	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 	sendDesc.Flags = 0;
-	sendDesc.pOutputVoice = masterVoice;
+	sendDesc.pOutputVoice = masterVoice_;
 
 	XAUDIO2_VOICE_SENDS sends = {};
 	sends.SendCount = 1;
 	sends.pSends = &sendDesc;
 
-	result = analyzerSubmix->SetOutputVoices(&sends);
+	result = analyzerSubmix_->SetOutputVoices(&sends);
 	assert(SUCCEEDED(result));
 
 	// ============================================
@@ -234,13 +234,13 @@ void Audio::CreateAnalyzerSubmix()
 	// ============================================
 
 	// XAPO インスタンス
-	analyzerXAPO = new MyAnalyzerXAPO();
+	analyzerXAPO_ = new MyAnalyzerXAPO();
 
 	// Effect desc
 	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
 	effectDesc.InitialState = TRUE;
 	effectDesc.OutputChannels = kSubmixChannels;
-	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO);
+	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO_);
 
 	// Effect chain
 	XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
@@ -248,13 +248,13 @@ void Audio::CreateAnalyzerSubmix()
 	effectChainXAPO.pEffectDescriptors = &effectDesc;
 
 	// SubmixVoice に XAPO をセット
-	result = analyzerSubmix->SetEffectChain(&effectChainXAPO);
+	result = analyzerSubmix_->SetEffectChain(&effectChainXAPO);
 	assert(SUCCEEDED(result));
 }
 
 void Audio::Start()
 {
-	xAudio2->StartEngine();
+	xAudio2_->StartEngine();
 
 	HRESULT result;
 
@@ -273,13 +273,13 @@ void Audio::Start()
 
 	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 	sendDesc.Flags = 0;
-	sendDesc.pOutputVoice = analyzerSubmix;
+	sendDesc.pOutputVoice = analyzerSubmix_;
 
 	XAUDIO2_VOICE_SENDS sends = {};
 	sends.SendCount = 1;
 	sends.pSends = &sendDesc;
 
-	result = xAudio2->CreateSourceVoice(
+	result = xAudio2_->CreateSourceVoice(
 		&silentVoice_,
 		&silentFormat_,
 		0, 2.0f,
@@ -319,59 +319,59 @@ void Audio::EnableSilentFeed(bool enable)
 
 void Audio::StopBGM(int resourceNum)
 {
-	pSourceVoices_[resourceNum]->Stop();
-	pSourceVoices_[resourceNum]->FlushSourceBuffers();
+	sourceVoices_[resourceNum]->Stop();
+	sourceVoices_[resourceNum]->FlushSourceBuffers();
 }
 
 void Audio::Pause(int resourceNum)
 {
-	pSourceVoices_[resourceNum]->Stop();
+	sourceVoices_[resourceNum]->Stop();
 }
 
 void Audio::ReStart(int resourceNum)
 {
-	pSourceVoices_[resourceNum]->Start();
+	sourceVoices_[resourceNum]->Start();
 }
 
 void Audio::SetMasterVolume(float volume)
 {
-	masterVoice->SetVolume(volume);
+	masterVoice_->SetVolume(volume);
 }
 
 void Audio::SetCategoryVolume(const std::string& soundCategory, float volume)
 {
-	pSoundCategorySubmixVoices_[soundCategory]->SetVolume(volume);
+	soundCategorySubmixVoices_[soundCategory]->SetVolume(volume);
 }
 
 void Audio::SetSoundVolume(int resourceNum, float volume)
 {
-	pSourceVoices_[resourceNum]->SetVolume(volume);
+	sourceVoices_[resourceNum]->SetVolume(volume);
 }
 
 float Audio::GetMasterVolume()
 {
 	float volume = 0;
-	masterVoice->GetVolume(&volume);
+	masterVoice_->GetVolume(&volume);
 	return volume;
 }
 
 float Audio::GetCategoryVolume(const std::string& soundCategory)
 {
 	float volume = 0;
-	pSoundCategorySubmixVoices_[soundCategory]->GetVolume(&volume);
+	soundCategorySubmixVoices_[soundCategory]->GetVolume(&volume);
 	return volume;
 }
 
 float Audio::GetSoundVolume(int resourceNum)
 {
 	float volume = 0;
-	pSourceVoices_[resourceNum]->GetVolume(&volume);
+	sourceVoices_[resourceNum]->GetVolume(&volume);
 	return volume;
 }
 
 void Audio::LoadWave(const std::string& filename)
 {
-	if (soundDataMap.count(filename)) {
+	if (soundDataMap_.count(filename)) {
 		// キーが存在する場合、処理を中断
 		return;
 	}
@@ -452,13 +452,13 @@ void Audio::LoadWave(const std::string& filename)
 	soundData.bufferSize = data.size;
 	soundData.playSoundLength = data.size / format.fmt.nBlockAlign;
 
-	soundDataMap[filename] = soundData;
+	soundDataMap_[filename] = soundData;
 }
 
 void Audio::SoundUnload(const std::string& filename)
 {
-	auto it = soundDataMap.find(filename);
-	if (it == soundDataMap.end())
+	auto it = soundDataMap_.find(filename);
+	if (it == soundDataMap_.end())
 	{
 		Logger::Log("Sound not loaded.\n");
 		return;
@@ -475,7 +475,7 @@ void Audio::SoundUnload(const std::string& filename)
 
 void Audio::AddSoundCategory(const std::string& soundCategory)
 {
-	if (pSoundCategorySubmixVoices_.count(soundCategory))
+	if (soundCategorySubmixVoices_.count(soundCategory))
 	{
 		// キーが存在する場合、処理を中断
 		return;
@@ -485,20 +485,20 @@ void Audio::AddSoundCategory(const std::string& soundCategory)
 
 	// analyzerSubmix と同じフォーマットで作る
 	XAUDIO2_VOICE_DETAILS details = {};
-	analyzerSubmix->GetVoiceDetails(&details);
+	analyzerSubmix_->GetVoiceDetails(&details);
 
 	// ボイス
 	IXAudio2SubmixVoice* voice;
 
 	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 	sendDesc.Flags = 0;
-	sendDesc.pOutputVoice = analyzerSubmix;
+	sendDesc.pOutputVoice = analyzerSubmix_;
 
 	XAUDIO2_VOICE_SENDS sends = {};
 	sends.SendCount = 1;
 	sends.pSends = &sendDesc;
 
-	result = xAudio2->CreateSubmixVoice(
+	result = xAudio2_->CreateSubmixVoice(
 		&voice,
 		kSubmixChannels,
 		kSubmixSampleRate,
@@ -509,15 +509,15 @@ void Audio::AddSoundCategory(const std::string& soundCategory)
 	);
 	assert(SUCCEEDED(result));
 
-	pSoundCategorySubmixVoices_[soundCategory] = voice;
+	soundCategorySubmixVoices_[soundCategory] = voice;
 }
 
 int Audio::Play(const std::string& filename, const bool isLoop, std::string soundCategory)
 {
 	HRESULT result;
 
-	auto it = soundDataMap.find(filename);
-	if (it == soundDataMap.end())
+	auto it = soundDataMap_.find(filename);
+	if (it == soundDataMap_.end())
 	{
 		Logger::Log("Sound not loaded.\n");
 		return -1;
@@ -528,7 +528,7 @@ int Audio::Play(const std::string& filename, const bool isLoop, std::string soun
 	int sourceNum = -1;
 
 	// 使用できるリソースを検索
-	sourceNum = SearchSourceVoice(pSourceVoices_.data());
+	sourceNum = SearchSourceVoice(sourceVoices_.data());
 
 	// 使用できるリソースがない場合は-1を返す
 	if (sourceNum == -1) {
@@ -537,12 +537,12 @@ int Audio::Play(const std::string& filename, const bool isLoop, std::string soun
 	}
 
 	// 再生停止中、もしくは残りの再生数が最小のリソースを使用
-	if (pSourceVoices_[sourceNum] != nullptr)
+	if (sourceVoices_[sourceNum] != nullptr)
 	{
-		pSourceVoices_[sourceNum]->Stop();
-		pSourceVoices_[sourceNum]->FlushSourceBuffers(); 
-		pSourceVoices_[sourceNum]->DestroyVoice();
-		pSourceVoices_[sourceNum] = nullptr;
+		sourceVoices_[sourceNum]->Stop();
+		sourceVoices_[sourceNum]->FlushSourceBuffers(); 
+		sourceVoices_[sourceNum]->DestroyVoice();
+		sourceVoices_[sourceNum] = nullptr;
 	}
 
 	// 出力先をの Submix を決定
@@ -551,18 +551,18 @@ int Audio::Play(const std::string& filename, const bool isLoop, std::string soun
 	if(soundCategory == "")
 	{
 		// 指定ナシなら analyzer へ直接送る
-		sendDesc.pOutputVoice = analyzerSubmix;
+		sendDesc.pOutputVoice = analyzerSubmix_;
 	}
 	else
 	{
 		// 指定アリなら捜査して送る
-		auto itSub = pSoundCategorySubmixVoices_.find(soundCategory);
-		if (itSub == pSoundCategorySubmixVoices_.end())
+		auto itSub = soundCategorySubmixVoices_.find(soundCategory);
+		if (itSub == soundCategorySubmixVoices_.end())
 		{
 			// カテゴリが見つからない場合のエラー処理
 			Logger::Log("SoundCategory not found.\n");
 			// analyzer へ直接送る
-			sendDesc.pOutputVoice = analyzerSubmix;
+			sendDesc.pOutputVoice = analyzerSubmix_;
 		}
 		IXAudio2SubmixVoice* submix = itSub->second;
 
@@ -574,7 +574,7 @@ int Audio::Play(const std::string& filename, const bool isLoop, std::string soun
 	sends.pSends = &sendDesc;
 
 	// 波形フォーマットをもとにSourceVoiceの生成
-	if (FAILED(xAudio2->CreateSourceVoice(&pSourceVoices_[sourceNum],
+	if (FAILED(xAudio2_->CreateSourceVoice(&sourceVoices_[sourceNum],
 		&soundData.wfex, 0,
 		XAUDIO2_DEFAULT_FREQ_RATIO,
 		nullptr,
@@ -588,8 +588,8 @@ int Audio::Play(const std::string& filename, const bool isLoop, std::string soun
 	XAUDIO2_BUFFER buf = SetBuffer(isLoop, soundData);
 
 	// 波形データの再生
-	result = pSourceVoices_[sourceNum]->SubmitSourceBuffer(&buf);
-	result = pSourceVoices_[sourceNum]->Start();
+	result = sourceVoices_[sourceNum]->SubmitSourceBuffer(&buf);
+	result = sourceVoices_[sourceNum]->Start();
 
 	return sourceNum;
 }

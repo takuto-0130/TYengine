@@ -75,10 +75,10 @@ class Audio :
 
 private:
 	Audio()
-		: masterVoice(nullptr)
-		, isStreaming(false)
-		, isLoopStreaming(false)
-		, streamVoice(nullptr)
+		: masterVoice_(nullptr)
+		, isStreaming_(false)
+		, isLoopStreaming_(false)
+		, streamVoice_(nullptr)
 		, BUFFER_SIZE(0)
 	{}
 	~Audio();
@@ -125,33 +125,33 @@ private: // 構造体
 public:
 	void StartStreaming(const char* filename, bool isLoop = false) {
 		// すでにストリーミング中の場合は終了
-		if (isStreaming.load()) {
+		if (isStreaming_.load()) {
 			StopStreaming();
 		}
 
-		isLoopStreaming.store(isLoop);
+		isLoopStreaming_.store(isLoop);
 
-		isStreaming.store(true);
+		isStreaming_.store(true);
 
 		// デタッチ可能なスレッドでストリーミングを開始
-		audioThread = std::make_unique<std::thread>(&Audio::StreamAudio, this, filename);
+		audioThread_ = std::make_unique<std::thread>(&Audio::StreamAudio, this, filename);
 	}
 
 	void StopStreaming() {
-        if (isStreaming.load()) {
-            isStreaming.store(false); // ストリーミングを停止するフラグをセット
+        if (isStreaming_.load()) {
+            isStreaming_.store(false); // ストリーミングを停止するフラグをセット
 
-            if (audioThread && audioThread->joinable()) {
-                audioThread->join(); // スレッドが終了するのを待つ
+            if (audioThread_ && audioThread_->joinable()) {
+                audioThread_->join(); // スレッドが終了するのを待つ
 				Logger::Log("Stop streaming thread.\n");
             }
         }
     }
 
 	void SetPitch(float pitch) {
-		if(streamVoice)
+		if(streamVoice_)
 		{
-			streamVoice->SetFrequencyRatio(pitch);
+			streamVoice_->SetFrequencyRatio(pitch);
 		}
 	}
 
@@ -161,17 +161,17 @@ public:
 	 * @param effects エフェクトの設定の配列
 	 */
 	void SetEffectChain(uint32_t effectsNum, XAUDIO2_EFFECT_DESCRIPTOR* effects) {
-		effectChain.EffectCount = effectsNum;
-		effectChain.pEffectDescriptors = effects;
+		effectChain_.EffectCount = effectsNum;
+		effectChain_.pEffectDescriptors = effects;
 	}
 
 	/**
 	 * @brief エフェクトチェーンの適用
 	 */
 	void ApplyEffectChain() {
-		if (streamVoice) {
+		if (streamVoice_) {
 			// エフェクトチェーンの適用
-			if (FAILED(streamVoice->SetEffectChain(&effectChain)))
+			if (FAILED(streamVoice_->SetEffectChain(&effectChain_)))
 			{
 				Logger::Log("Failed to set effect chain.");
 			}
@@ -186,20 +186,20 @@ public:
 	 * @param parameters プリセット、"XAUDIO2FX_I3DL2_PRESET_~" を入れるか自力で設定
 	 */
 	void SetEffect(const XAUDIO2FX_REVERB_I3DL2_PARAMETERS parameters = {}) {
-		if (streamVoice)
+		if (streamVoice_)
 		{
-			ReverbConvertI3DL2ToNative(&parameters, &reverbParameters);
-			if (FAILED(streamVoice->SetEffectParameters(0, &reverbParameters, sizeof(reverbParameters)))) {
+			ReverbConvertI3DL2ToNative(&parameters, &reverbParameters_);
+			if (FAILED(streamVoice_->SetEffectParameters(0, &reverbParameters_, sizeof(reverbParameters_)))) {
 				Logger::Log("Failed to set effect parameters.");
 			}
-			streamVoice->EnableEffect(0);
+			streamVoice_->EnableEffect(0);
 		}
 	}
 
 	void DisableEffect() {
-		if (streamVoice)
+		if (streamVoice_)
 		{
-			streamVoice->DisableEffect(0);
+			streamVoice_->DisableEffect(0);
 		}
 	}
 private:
@@ -219,11 +219,11 @@ private:
 			Logger::Log("succeeded to create reverb effect.");
 		}
 		// エフェクトチェーンの設定
-		effect[0].pEffect = reverbEffect;  // リバーブエフェクトのインターフェース
-		effect[0].InitialState = FALSE;		// 初期状態で無効化
-		effect[0].OutputChannels = 2;      // ステレオ出力
-		effectChain.EffectCount = 1;
-		effectChain.pEffectDescriptors = effect;
+		effect_[0].pEffect = reverbEffect;  // リバーブエフェクトのインターフェース
+		effect_[0].InitialState = FALSE;		// 初期状態で無効化
+		effect_[0].OutputChannels = 2;      // ステレオ出力
+		effectChain_.EffectCount = 1;
+		effectChain_.pEffectDescriptors = effect_;
 		ApplyEffectChain();
 		reverbEffect->Release();
 	}
@@ -309,12 +309,12 @@ public:
 	 */
 	int Play(const std::string& filename, const bool isLoop = false, std::string soundCategory = "");
 
-	MyAnalyzerXAPO* GetAnalyzerXAPO() { return analyzerXAPO; }
+	MyAnalyzerXAPO* GetAnalyzerXAPO() { return analyzerXAPO_; }
 
 	int GetAnalyzerSampleRate()
 	{ 
 		XAUDIO2_VOICE_DETAILS submixDetails = {};
-		analyzerSubmix->GetVoiceDetails(&submixDetails);
+		analyzerSubmix_->GetVoiceDetails(&submixDetails);
 
 		return submixDetails.InputSampleRate;
 	}
@@ -329,16 +329,16 @@ private:
 	void CreateAnalyzerSubmix();
 
 private:
-	Microsoft::WRL::ComPtr<IXAudio2> xAudio2;
-	IXAudio2MasteringVoice* masterVoice;
+	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
+	IXAudio2MasteringVoice* masterVoice_;
 
-	std::unordered_map<std::string, IXAudio2SubmixVoice*> pSoundCategorySubmixVoices_;
+	std::unordered_map<std::string, IXAudio2SubmixVoice*> soundCategorySubmixVoices_;
 
 	// サウンドデータ格納コンテナ
-	std::unordered_map<std::string, Audio::SoundData> soundDataMap;
+	std::unordered_map<std::string, Audio::SoundData> soundDataMap_;
 
 	// 再生中データコンテナ
-	std::array<IXAudio2SourceVoice*, kMaxPlayWave> pSourceVoices_ = { nullptr };
+	std::array<IXAudio2SourceVoice*, kMaxPlayWave> sourceVoices_ = { nullptr };
 
 
 
@@ -347,10 +347,10 @@ private:
 	std::string directoryPath_;
 
 	// XAPO のインスタンス
-	MyAnalyzerXAPO* analyzerXAPO = nullptr;
+	MyAnalyzerXAPO* analyzerXAPO_ = nullptr;
 
 	// 全体解析用 Submix
-	IXAudio2SubmixVoice* analyzerSubmix = nullptr;
+	IXAudio2SubmixVoice* analyzerSubmix_ = nullptr;
 
 	// ---- 無音バッファ用 Voice ----
 	IXAudio2SourceVoice* silentVoice_ = nullptr;
@@ -360,13 +360,13 @@ private:
 
 private: // 削除予定
 	// ストリーミング再生
-	std::atomic<bool> isStreaming;
-	std::atomic<bool> isLoopStreaming;
-	std::unique_ptr<std::thread> audioThread;
-	IXAudio2SourceVoice* streamVoice = nullptr;
-	std::vector<std::vector<BYTE>> audioBuffers;
+	std::atomic<bool> isStreaming_;
+	std::atomic<bool> isLoopStreaming_;
+	std::unique_ptr<std::thread> audioThread_;
+	IXAudio2SourceVoice* streamVoice_ = nullptr;
+	std::vector<std::vector<BYTE>> audioBuffers_;
 	size_t BUFFER_SIZE;
-	XAUDIO2FX_REVERB_PARAMETERS reverbParameters = {};
-	XAUDIO2_EFFECT_CHAIN effectChain = {};
-	XAUDIO2_EFFECT_DESCRIPTOR effect[1] = {};
+	XAUDIO2FX_REVERB_PARAMETERS reverbParameters_ = {};
+	XAUDIO2_EFFECT_CHAIN effectChain_ = {};
+	XAUDIO2_EFFECT_DESCRIPTOR effect_[1] = {};
 };

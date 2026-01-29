@@ -6,35 +6,35 @@ StreamingAudio::~StreamingAudio()
 {
 	StopStreaming();
 	// BGMリソースの解放
-	if (streamVoice != nullptr) {
-		streamVoice->DestroyVoice();
-		streamVoice = nullptr;
+	if (streamVoice_ != nullptr) {
+		streamVoice_->DestroyVoice();
+		streamVoice_ = nullptr;
 	}
 }
 
 void StreamingAudio::StartStreaming(const char* filename, bool isLoop)
 {
 	// すでにストリーミング中の場合は終了
-	if (isStreaming.load()) {
+	if (isStreaming_.load()) {
 		StopStreaming();
 	}
 	if (isLoop) {
-		isLoopStreaming.store(true);
+		isLoopStreaming_.store(true);
 	}
 
-	isStreaming.store(true);
+	isStreaming_.store(true);
 
 	// デタッチ可能なスレッドでストリーミングを開始
-	audioThread = std::make_unique<std::thread>(&StreamingAudio::StreamAudio, this, filename);
+	audioThread_ = std::make_unique<std::thread>(&StreamingAudio::StreamAudio, this, filename);
 }
 
 void StreamingAudio::StopStreaming()
 {
-	if (isStreaming.load()) {
-		isStreaming.store(false); // ストリーミングを停止するフラグをセット
+	if (isStreaming_.load()) {
+		isStreaming_.store(false); // ストリーミングを停止するフラグをセット
 
-		if (audioThread && audioThread->joinable()) {
-			audioThread->join(); // スレッドが終了するのを待つ
+		if (audioThread_ && audioThread_->joinable()) {
+			audioThread_->join(); // スレッドが終了するのを待つ
 			Logger::Log("Stop streaming thread.\n");
 		}
 	}
@@ -42,9 +42,9 @@ void StreamingAudio::StopStreaming()
 
 void StreamingAudio::SetPitch(float pitch)
 {
-	if (streamVoice)
+	if (streamVoice_)
 	{
-		streamVoice->SetFrequencyRatio(pitch);
+		streamVoice_->SetFrequencyRatio(pitch);
 	}
 	else {
 		Logger::Log("UnInitialized streamVoice.");
@@ -53,9 +53,9 @@ void StreamingAudio::SetPitch(float pitch)
 
 void StreamingAudio::ApplyEffectChain()
 {
-	if (streamVoice) {
+	if (streamVoice_) {
 		// エフェクトチェーンの適用
-		if (FAILED(streamVoice->SetEffectChain(&effectChain)))
+		if (FAILED(streamVoice_->SetEffectChain(&effectChain_)))
 		{
 			Logger::Log("Failed to set effect chain.");
 		}
@@ -67,13 +67,13 @@ void StreamingAudio::ApplyEffectChain()
 
 void StreamingAudio::SetEffect(const XAUDIO2FX_REVERB_I3DL2_PARAMETERS parameters)
 {
-	if (streamVoice)
+	if (streamVoice_)
 	{
-		ReverbConvertI3DL2ToNative(&parameters, &reverbParameters);
-		if (FAILED(streamVoice->SetEffectParameters(0, &reverbParameters, sizeof(reverbParameters)))) {
+		ReverbConvertI3DL2ToNative(&parameters, &reverbParameters_);
+		if (FAILED(streamVoice_->SetEffectParameters(0, &reverbParameters_, sizeof(reverbParameters_)))) {
 			Logger::Log("Failed to set effect parameters.");
 		}
-		streamVoice->EnableEffect(0);
+		streamVoice_->EnableEffect(0);
 	}
 	else {
 		Logger::Log("UnInitialized streamVoice.");
@@ -82,9 +82,9 @@ void StreamingAudio::SetEffect(const XAUDIO2FX_REVERB_I3DL2_PARAMETERS parameter
 
 void StreamingAudio::DisableEffect()
 {
-	if (streamVoice)
+	if (streamVoice_)
 	{
-		streamVoice->DisableEffect(0);
+		streamVoice_->DisableEffect(0);
 	}
 }
 
@@ -123,13 +123,13 @@ void StreamingAudio::StreamAudio(const char* filename)
 	// ストリーミング用のバッファを複数作成
 	constexpr int BUFFER_COUNT = 3; // バッファ数
 	BUFFER_SIZE = header.sampleRate * waveFormat.nBlockAlign; // バッファサイズ
-	audioBuffers.resize(BUFFER_COUNT, std::vector<BYTE>(BUFFER_SIZE));
+	audioBuffers_.resize(BUFFER_COUNT, std::vector<BYTE>(BUFFER_SIZE));
 	XAUDIO2_BUFFER xAudioBuffers[BUFFER_COUNT] = {};
 	StreamingVoiceCallback callback;
 
 
 	// ソースボイスを作成し、コールバックを渡す
-	if (FAILED(xAudio2_->CreateSourceVoice(&streamVoice, &waveFormat, XAUDIO2_VOICE_USEFILTER, XAUDIO2_MAX_FREQ_RATIO, &callback, nullptr))) {
+	if (FAILED(xAudio2_->CreateSourceVoice(&streamVoice_, &waveFormat, XAUDIO2_VOICE_USEFILTER, XAUDIO2_MAX_FREQ_RATIO, &callback, nullptr))) {
 		Logger::Log("Failed to create source voice.\n");
 		return;
 	}
@@ -138,15 +138,15 @@ void StreamingAudio::StreamAudio(const char* filename)
 
 
 	// ソースボイスを開始
-	streamVoice->Start(0);
+	streamVoice_->Start(0);
 	// バッファリング処理
 	int currentBufferIndex = 0;
 
-	while (isStreaming.load()) {
-		std::vector<BYTE>& currentBuffer = audioBuffers[currentBufferIndex];
+	while (isStreaming_.load()) {
+		std::vector<BYTE>& currentBuffer = audioBuffers_[currentBufferIndex];
 		if (!ReadAudioData(audioFile, currentBuffer)) {
 			// EOF
-			if (isLoopStreaming.load()) {
+			if (isLoopStreaming_.load()) {
 				// EOF に達した場合、ファイルを先頭に戻してループ
 				audioFile.clear();  // EOF flag をクリア
 				audioFile.seekg(sizeof(WAVHeader), std::ios::beg);  // ヘッダーをスキップして再読み込み
@@ -154,7 +154,7 @@ void StreamingAudio::StreamAudio(const char* filename)
 					break; // それでも読み込み失敗の場合はループ終了
 				}
 			}
-			else if (!isLoopStreaming.load()) {
+			else if (!isLoopStreaming_.load()) {
 				break; // EOF
 			}
 			else {
@@ -175,7 +175,7 @@ void StreamingAudio::StreamAudio(const char* filename)
 		}
 
 		// ソースボイスにバッファを送信
-		if (FAILED(streamVoice->SubmitSourceBuffer(&xBuffer))) {
+		if (FAILED(streamVoice_->SubmitSourceBuffer(&xBuffer))) {
 			Logger::Log("Failed to submit buffer.\n");
 			break;
 		}
@@ -191,9 +191,9 @@ void StreamingAudio::StreamAudio(const char* filename)
 
 	// クリーンアップ
 	audioFile.close();
-	streamVoice->Stop(0);
-	streamVoice->DestroyVoice();
-	streamVoice = nullptr;
+	streamVoice_->Stop(0);
+	streamVoice_->DestroyVoice();
+	streamVoice_ = nullptr;
 	Logger::Log("Streaming finished.\n");
 }
 
@@ -209,11 +209,11 @@ void StreamingAudio::InitEffectChain()
 		Logger::Log("succece to create reverb effect.");
 	}
 	// エフェクトチェーンの設定
-	effect[0].pEffect = reverbEffect;  // リバーブエフェクトのインターフェース
-	effect[0].InitialState = FALSE;		// 初期状態で無効化
-	effect[0].OutputChannels = 2;      // ステレオ出力
-	effectChain.EffectCount = 1;
-	effectChain.pEffectDescriptors = effect;
+	effect_[0].pEffect = reverbEffect;  // リバーブエフェクトのインターフェース
+	effect_[0].InitialState = FALSE;		// 初期状態で無効化
+	effect_[0].OutputChannels = 2;      // ステレオ出力
+	effectChain_.EffectCount = 1;
+	effectChain_.pEffectDescriptors = effect_;
 	ApplyEffectChain();
 	reverbEffect->Release();
 }

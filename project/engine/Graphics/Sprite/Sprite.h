@@ -149,7 +149,7 @@ private: // メンバ変数
     //        スプライト情報
     // ========================
 
-    uint32_t textureIndex = 0;                      ///< 使用テクスチャの SRV インデックス。
+    uint32_t textureIndex_ = 0;                      ///< 使用テクスチャの SRV インデックス。
     std::string textureFilePath_;                   ///< 使用中のテクスチャファイルパス。
 
     bool isFlipX_ = false; ///< 左右反転フラグ。

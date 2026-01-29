@@ -88,8 +88,8 @@ public:
 	 * @param effects エフェクトの設定の配列
 	 */
 	void SetEffectChain(uint32_t effectsNum, XAUDIO2_EFFECT_DESCRIPTOR* effects) {
-		effectChain.EffectCount = effectsNum;
-		effectChain.pEffectDescriptors = effects;
+		effectChain_.EffectCount = effectsNum;
+		effectChain_.pEffectDescriptors = effects;
 	}
 
 	/**
@@ -137,14 +137,14 @@ private:
 
 
 	// ストリーミング再生
-	std::atomic<bool> isStreaming;
-	std::atomic<bool> isLoopStreaming;
-	std::unique_ptr<std::thread> audioThread;
-	IXAudio2SourceVoice* streamVoice = nullptr;
-	std::vector<std::vector<BYTE>> audioBuffers;
+	std::atomic<bool> isStreaming_;
+	std::atomic<bool> isLoopStreaming_;
+	std::unique_ptr<std::thread> audioThread_;
+	IXAudio2SourceVoice* streamVoice_ = nullptr;
+	std::vector<std::vector<BYTE>> audioBuffers_;
 	size_t BUFFER_SIZE;
-	XAUDIO2FX_REVERB_PARAMETERS reverbParameters = {};
-	XAUDIO2_EFFECT_CHAIN effectChain = {};
-	XAUDIO2_EFFECT_DESCRIPTOR effect[1] = {};
+	XAUDIO2FX_REVERB_PARAMETERS reverbParameters_ = {};
+	XAUDIO2_EFFECT_CHAIN effectChain_ = {};
+	XAUDIO2_EFFECT_DESCRIPTOR effect_[1] = {};
 };
 

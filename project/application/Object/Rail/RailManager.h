@@ -46,7 +46,7 @@ public:
 	bool IsEndRail() { return railFinished_; }
 
 private:
-	void PopRail(Vector3 position, Vector3 rota);
+	void PopRail(const Vector3& position, const Vector3& rotate);
 
 	void RailReDraw();
 

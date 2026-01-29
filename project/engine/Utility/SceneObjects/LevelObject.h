@@ -14,9 +14,9 @@ public:
 
 public:
     void SetModelName(const std::string& modelName) { modelName_ = modelName; }
-    void SetPosition(Vector3 pos) { worldTransform_.SetTranslation(pos); }
-    void SetRotation(Vector3 rota) { worldTransform_.SetRotate(rota); }
-    void SetScale(Vector3 scale) { worldTransform_.SetScale(scale); }
+    void SetPosition(const Vector3& pos) { worldTransform_.SetTranslation(pos); }
+    void SetRotation(const Vector3& rotate) { worldTransform_.SetRotate(rotate); }
+    void SetScale(const Vector3& scale) { worldTransform_.SetScale(scale); }
 
 private:
     std::string modelName_;

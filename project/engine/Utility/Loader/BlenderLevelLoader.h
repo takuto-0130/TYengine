@@ -39,5 +39,7 @@ private:
 
 private:
 	std::string kBaseDirectoryName_;
+
+	std::unique_ptr<LevelData> levelData_;
 };
 

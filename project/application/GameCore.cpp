@@ -57,7 +57,7 @@ void GameCore::Initialize()
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 	sceneManager_->ChangeScene("TITLE");
 
-	particleManager = ParticleManager::GetInstance();
+	particleManager_ = ParticleManager::GetInstance();
 
 	auto plane = std::make_unique<PlaneParticle>();
 	auto ring = std::make_unique<RingParticle>();
@@ -75,19 +75,19 @@ void GameCore::Initialize()
 	auto debris = std::make_unique<PlaneParticle>(); // 破片
 	debris->SetBehaviour(std::make_unique<DebrisBehaviour>());
 
-	int index = particleManager->Add(std::move(plane));		// 0
-	int indexRing = particleManager->Add(std::move(ring));	// 1
-	particleManager->Add(std::move(cylinder));				// 2
-	particleManager->Add(std::move(contrail));				// 3
-	particleManager->Add(std::move(explosion));				// 4
-	particleManager->Add(std::move(debris));				// 5
+	int index = particleManager_->Add(std::move(plane));		// 0
+	int indexRing = particleManager_->Add(std::move(ring));	// 1
+	particleManager_->Add(std::move(cylinder));				// 2
+	particleManager_->Add(std::move(contrail));				// 3
+	particleManager_->Add(std::move(explosion));				// 4
+	particleManager_->Add(std::move(debris));				// 5
 
-	particleManager->InitializeAll(directXBasis, srvManager.get(), camera.get());
+	particleManager_->InitializeAll(directXBasis, srvManager.get(), camera.get());
 	IParticleRenderer::Emitter emitter{};
-	particleManager->SetEmitter(index, emitter);
+	particleManager_->SetEmitter(index, emitter);
 
 	IParticleRenderer::Emitter emitterRing{};
-	particleManager->SetEmitter(indexRing, emitterRing);
+	particleManager_->SetEmitter(indexRing, emitterRing);
 
 
 	ColliderManager::GetInstance();
@@ -142,7 +142,7 @@ void GameCore::Update()
 		Timer::GetInstance()->Update();
 		Audio::GetInstance()->Update();
 		TYFrameWork::Update();
-		particleManager->UpdateAll();
+		particleManager_->UpdateAll();
 		camera->Update();
 		postEffectManager->Update();
 		ColliderManager::GetInstance()->Update();
@@ -160,7 +160,7 @@ void GameCore::Draw()
 
 	sceneManager_->Draw();   // 実際の描画
 
-	particleManager->DrawAll();
+	particleManager_->DrawAll();
 
 	renderTexture->EndRender();
 

@@ -63,7 +63,7 @@ public:
 
 	const Vector2& GetScreenPos() { return screenPos; }
 
-	void SetAttackStrategy(std::unique_ptr<IAttackStrategy> strategy)
+	void SetAttackStrategy(std::unique_ptr<EnemyAttack::IAttackStrategy> strategy)
 	{
 		attackStrategy_ = std::move(strategy);
 		
@@ -83,7 +83,7 @@ private:
 
 	int enemyType_ = 0;
 
-	std::unique_ptr<IAttackStrategy> attackStrategy_;
+	std::unique_ptr<EnemyAttack::IAttackStrategy> attackStrategy_;
 
 
 	float kBulletCoolTime_ = 2.0f;

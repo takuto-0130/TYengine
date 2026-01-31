@@ -52,7 +52,7 @@ void AudioAnalyzer::UpdateFFT()
 
 void AudioAnalyzer::UpdateWaveform()
 {
-    auto* xapo = Audio::GetInstance()->GetAnalyzerXAPO();
+    auto* xapo = Audio::GetInstance()->GetAnalyzerXAPO().Get();
     const auto& src = xapo->latestWaveform;
 
     int N = static_cast<int>(src.size());

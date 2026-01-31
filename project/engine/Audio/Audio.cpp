@@ -234,7 +234,7 @@ void Audio::CreateAnalyzerSubmix()
 	// ============================================
 
 	// XAPO インスタンス
-	analyzerXAPO_ = Microsoft::WRL::Make<MyAnalyzerXAPO>();
+	analyzerXAPO_ = Microsoft::WRL::ComPtr<MyAnalyzerXAPO>(new MyAnalyzerXAPO());
 
 	// Effect desc
 	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};

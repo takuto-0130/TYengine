@@ -234,13 +234,13 @@ void Audio::CreateAnalyzerSubmix()
 	// ============================================
 
 	// XAPO インスタンス
-	analyzerXAPO_ = new MyAnalyzerXAPO();
+	analyzerXAPO_ = Microsoft::WRL::Make<MyAnalyzerXAPO>();
 
 	// Effect desc
 	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
 	effectDesc.InitialState = TRUE;
 	effectDesc.OutputChannels = kSubmixChannels;
-	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO_);
+	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO_.Get());
 
 	// Effect chain
 	XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};

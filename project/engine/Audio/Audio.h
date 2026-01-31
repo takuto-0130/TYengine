@@ -309,7 +309,7 @@ public:
 	 */
 	int Play(const std::string& filename, const bool isLoop = false, std::string soundCategory = "");
 
-	MyAnalyzerXAPO* GetAnalyzerXAPO() { return analyzerXAPO_; }
+	Microsoft::WRL::ComPtr<MyAnalyzerXAPO> GetAnalyzerXAPO() { return analyzerXAPO_; }
 
 	int GetAnalyzerSampleRate()
 	{ 
@@ -347,7 +347,7 @@ private:
 	std::string directoryPath_;
 
 	// XAPO のインスタンス
-	MyAnalyzerXAPO* analyzerXAPO_ = nullptr;
+	Microsoft::WRL::ComPtr<MyAnalyzerXAPO> analyzerXAPO_;
 
 	// 全体解析用 Submix
 	IXAudio2SubmixVoice* analyzerSubmix_ = nullptr;

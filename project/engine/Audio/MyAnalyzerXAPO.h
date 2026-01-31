@@ -8,7 +8,6 @@ class Audio;
 class __declspec(uuid("2dde0a3b-45d5-4a48-a9e6-a3a8129ef91a"))
     MyAnalyzerXAPO : public CXAPOParametersBase
 {
-    friend class Microsoft::WRL::Details::MakeAllocator<MyAnalyzerXAPO>;
 public:
     static const UINT32 FFT_SIZE = 1024;
     static const UINT32 DELAY_FRAMES = 5;

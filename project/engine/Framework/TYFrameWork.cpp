@@ -11,7 +11,8 @@ void TYFrameWork::run()
 		// 毎フレーム更新処理（入力、シーン更新など）
 		Update();
 		// 終了リクエストがあればループを抜ける（ウィンドウ閉じるボタン等）
-		if (IsEndRequest()) {
+		if (IsEndRequest())
+		{
 			break;
 		}
 		// 描画処理

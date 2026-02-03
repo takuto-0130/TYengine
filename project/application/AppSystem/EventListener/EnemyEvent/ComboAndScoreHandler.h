@@ -1,8 +1,12 @@
 #pragma once
-#include "IEnemyEventListener .h"
+#include "IEnemyEventListener.h"
 #include "../../Combo/ComboManager.h"
 #include "../../Score/ScoreManager.h"
 
+/// <summary>
+/// 敵死亡時のイベントハンドラ。
+/// コンボカウントの加算とスコアの加算を連携して行う。
+/// </summary>
 class ComboAndScoreHandler : public IEnemyEventListener {
 public:
     ComboAndScoreHandler(ComboManager* combo, ScoreManager* score)

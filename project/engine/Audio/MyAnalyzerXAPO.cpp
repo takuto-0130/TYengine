@@ -22,16 +22,16 @@ static XAPO_REGISTRATION_PROPERTIES regProps =
 MyAnalyzerXAPO::MyAnalyzerXAPO()
     : CXAPOParametersBase(&regProps, nullptr, 0, TRUE)
 {
-    latestFFT.resize(FFT_SIZE, 0.0f);
-    latestWaveform.resize(WAVEFORM_SIZE, 0.0f);
+    latestFFT_.resize(FFT_SIZE, 0.0f);
+    latestWaveform_.resize(WAVEFORM_SIZE, 0.0f);
 
-    delayBuffer.resize(DELAY_FRAMES);
-    for (auto& v : delayBuffer)
+    delayBuffer_.resize(DELAY_FRAMES);
+    for (auto& v : delayBuffer_)
         v.resize(FFT_SIZE, 0.0f);
 
-    fftInput.resize(FFT_SIZE);
-    fftReal.resize(FFT_SIZE);
-    fftImag.resize(FFT_SIZE);
+    fftInput_.resize(FFT_SIZE);
+    fftReal_.resize(FFT_SIZE);
+    fftImag_.resize(FFT_SIZE);
 }
 
 MyAnalyzerXAPO::~MyAnalyzerXAPO() {}
@@ -43,7 +43,7 @@ HRESULT __stdcall MyAnalyzerXAPO::LockForProcess(
 {
     const WAVEFORMATEX* fmt = in_params[0].pFormat;
 
-    channels = fmt->nChannels;
+    channels_ = fmt->nChannels;
 
     // XAudio2 は Submix で float32 に自動変換する
     // ここでは float32 前提で扱う
@@ -57,8 +57,8 @@ void MyAnalyzerXAPO::ComputeFFT()
 {
     for (UINT32 i = 0; i < FFT_SIZE; i++)
     {
-        fftReal[i] = fftInput[i];
-        fftImag[i] = 0.0f;
+        fftReal_[i] = fftInput_[i];
+        fftImag_[i] = 0.0f;
     }
 
     UINT32 j = 0;
@@ -66,8 +66,8 @@ void MyAnalyzerXAPO::ComputeFFT()
     {
         if (i < j)
         {
-            std::swap(fftReal[i], fftReal[j]);
-            std::swap(fftImag[i], fftImag[j]);
+            std::swap(fftReal_[i], fftReal_[j]);
+            std::swap(fftImag_[i], fftImag_[j]);
         }
         UINT32 bit = FFT_SIZE >> 1;
         while (j & bit) { j ^= bit; bit >>= 1; }
@@ -90,14 +90,14 @@ void MyAnalyzerXAPO::ComputeFFT()
                 UINT32 a = i + k;
                 UINT32 b = i + k + len / 2;
 
-                float xr = fftReal[b] * uCos - fftImag[b] * uSin;
-                float xi = fftReal[b] * uSin + fftImag[b] * uCos;
+                float xr = fftReal_[b] * uCos - fftImag_[b] * uSin;
+                float xi = fftReal_[b] * uSin + fftImag_[b] * uCos;
 
-                fftReal[b] = fftReal[a] - xr;
-                fftImag[b] = fftImag[a] - xi;
+                fftReal_[b] = fftReal_[a] - xr;
+                fftImag_[b] = fftImag_[a] - xi;
 
-                fftReal[a] += xr;
-                fftImag[a] += xi;
+                fftReal_[a] += xr;
+                fftImag_[a] += xi;
 
                 float ucos2 = uCos * wCos - uSin * wSin;
                 uSin = uCos * wSin + uSin * wCos;
@@ -107,7 +107,7 @@ void MyAnalyzerXAPO::ComputeFFT()
     }
 
     for (UINT32 i = 0; i < FFT_SIZE; i++)
-        latestFFT[i] = sqrtf(fftReal[i] * fftReal[i] + fftImag[i] * fftImag[i]);
+        latestFFT_[i] = sqrtf(fftReal_[i] * fftReal_[i] + fftImag_[i] * fftImag_[i]);
 }
 
 // --------------------------------------------------------------
@@ -124,31 +124,31 @@ void __stdcall MyAnalyzerXAPO::Process(
     float* pOut = (float*)out->pBuffer;
     UINT32 frameCount = in->ValidFrameCount;
 
-    int copyCount = min(frameCount, (UINT32)latestWaveform.size());
-    memcpy(latestWaveform.data(), pIn, sizeof(float) * copyCount);
+    int copyCount = min(frameCount, (UINT32)latestWaveform_.size());
+    memcpy(latestWaveform_.data(), pIn, sizeof(float) * copyCount);
 
     // ---- スルー処理 ----
-    if (pIn != pOut) memcpy(pOut, pIn, frameCount * channels * sizeof(float));
+    if (pIn != pOut) memcpy(pOut, pIn, frameCount * channels_ * sizeof(float));
 
     if (frameCount == 0) return;
 
     // ---- RMS ----
     double sum = 0.0;
-    for (UINT32 i = 0; i < frameCount * channels; i++) sum += pIn[i] * pIn[i];
+    for (UINT32 i = 0; i < frameCount * channels_; i++) sum += pIn[i] * pIn[i];
 
-    latestRMS = (float)sqrt(sum / (frameCount * channels));
+    latestRMS_ = (float)sqrt(sum / (frameCount * channels_));
 
     // ---- 無音判定 ----
     // frameCount * channels 分の平均をとる
-    if (latestRMS < 0.00001f)   // しきい値
+    if (latestRMS_ < 0.00001f)   // しきい値
     {
         // 無音なら FFT と delayBuffer をクリア
-        std::fill(latestFFT.begin(), latestFFT.end(), 0.0f);
+        std::fill(latestFFT_.begin(), latestFFT_.end(), 0.0f);
 
-        for (auto& buf : delayBuffer) std::fill(buf.begin(), buf.end(), 0.0f);
+        for (auto& buf : delayBuffer_) std::fill(buf.begin(), buf.end(), 0.0f);
 
         // 次のフレームのため fftInput もクリア
-        std::fill(fftInput.begin(), fftInput.end(), 0.0f);
+        std::fill(fftInput_.begin(), fftInput_.end(), 0.0f);
 
         return;   // これ以上処理しない
     }
@@ -156,13 +156,13 @@ void __stdcall MyAnalyzerXAPO::Process(
     // ---- 遅延バッファ ----
     UINT32 copy = (frameCount < FFT_SIZE) ? frameCount : FFT_SIZE;
 
-    memset(delayBuffer[delayIndex].data(), 0, FFT_SIZE * sizeof(float));
-    memcpy(delayBuffer[delayIndex].data(), pIn, copy * sizeof(float));
+    memset(delayBuffer_[delayIndex_].data(), 0, FFT_SIZE * sizeof(float));
+    memcpy(delayBuffer_[delayIndex_].data(), pIn, copy * sizeof(float));
 
-    delayIndex = (delayIndex + 1) % DELAY_FRAMES;
-    UINT32 readIndex = (delayIndex + DELAY_FRAMES - 1) % DELAY_FRAMES;
+    delayIndex_ = (delayIndex_ + 1) % DELAY_FRAMES;
+    UINT32 readIndex = (delayIndex_ + DELAY_FRAMES - 1) % DELAY_FRAMES;
 
-    memcpy(fftInput.data(), delayBuffer[readIndex].data(), FFT_SIZE * sizeof(float));
+    memcpy(fftInput_.data(), delayBuffer_[readIndex].data(), FFT_SIZE * sizeof(float));
 
     ComputeFFT();
 }

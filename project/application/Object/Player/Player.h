@@ -223,10 +223,9 @@ private:
 	std::unique_ptr<Reticle> reticle_;
 
 
-	// test
-	/// <summary>テスト用レティクルオブジェクト。</summary>
+	/// <summary>デバッグ用レティクルオブジェクト。</summary>
 	std::unique_ptr<Object3d> reticleObj_;
-	/// <summary>テスト用レティクルワールド変換。</summary>
+	/// <summary>レティクルワールド変換。</summary>
 	WorldTransform reticleWT_;
 
 	/// <summary>コントレイルインデックス。</summary>

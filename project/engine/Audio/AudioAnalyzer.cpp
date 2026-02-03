@@ -26,7 +26,7 @@ void AudioAnalyzer::Update()
 
 void AudioAnalyzer::UpdateRMS()
 {
-    float rms = Audio::GetInstance()->GetAnalyzerXAPO()->latestRMS;
+    float rms = Audio::GetInstance()->GetAnalyzerXAPO()->GetRMS();
 
     // 履歴
     rmsHistory_[rmsIndex_] = rms;
@@ -41,7 +41,7 @@ void AudioAnalyzer::UpdateRMS()
 
 void AudioAnalyzer::UpdateFFT()
 {
-    const auto& fftNow = Audio::GetInstance()->GetAnalyzerXAPO()->latestFFT;
+    const auto& fftNow = Audio::GetInstance()->GetAnalyzerXAPO()->GetFFT();
 
     // 遅延バッファにコピー
     for (int i = 0; i < FFT_SIZE; i++)
@@ -53,7 +53,7 @@ void AudioAnalyzer::UpdateFFT()
 void AudioAnalyzer::UpdateWaveform()
 {
     auto* xapo = Audio::GetInstance()->GetAnalyzerXAPO().Get();
-    const auto& src = xapo->latestWaveform;
+    const auto& src = xapo->GetWaveform();
 
     int N = static_cast<int>(src.size());
 

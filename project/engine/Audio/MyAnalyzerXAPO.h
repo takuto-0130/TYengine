@@ -63,21 +63,25 @@ public:
         BOOL IsEnabled
     ) override;
 
-    float latestRMS = 0.0f;
-    std::vector<float> latestFFT;
-    std::vector<float> latestWaveform;  // タイムドメイン用
+    // getter
+    float GetRMS() { return latestRMS_; }
+    std::vector<float>& GetFFT() { return latestFFT_; }
+    std::vector<float>& GetWaveform() { return latestWaveform_; }
 
 private:
     void ComputeFFT();
 
 private:
-    UINT32 channels = 0;
+    UINT32 channels_ = 0;
 
-    std::vector<std::vector<float>> delayBuffer;
-    UINT32 delayIndex = 0;
+    std::vector<std::vector<float>> delayBuffer_;
+    UINT32 delayIndex_ = 0;
 
-    std::vector<float> fftInput;
-    std::vector<float> fftReal;
-    std::vector<float> fftImag;
+    std::vector<float> fftInput_;
+    std::vector<float> fftReal_;
+    std::vector<float> fftImag_;
 
+    float latestRMS_ = 0.0f;
+    std::vector<float> latestFFT_;
+    std::vector<float> latestWaveform_;  // タイムドメイン用
 };

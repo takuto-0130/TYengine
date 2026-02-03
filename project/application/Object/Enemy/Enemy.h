@@ -4,7 +4,7 @@
 #include "StateMachine.h"
 #include "Ease.h"
 #include "IParticleRenderer.h"
-#include "../../AppSystem/EventListener/EnemyEvent/IEnemyEventListener .h"
+#include "../../AppSystem/EventListener/EnemyEvent/IEnemyEventListener.h"
 #include "AttackStrategy/IAttackStrategy.h"
 #include <iostream>
 #include <random>

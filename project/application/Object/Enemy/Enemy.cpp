@@ -5,7 +5,7 @@
 #include "Ease.h"
 #include "ColliderManager.h"
 #include "ParticleManager.h"
-#include "EnemyBullet/Liner/Liner.h"
+#include "EnemyBullet/Linear/Linear.h"
 #include "Random.h"
 #include "../../AppSystem/Audio/GameAudio.h"
 

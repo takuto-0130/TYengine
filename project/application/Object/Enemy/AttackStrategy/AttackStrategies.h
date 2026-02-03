@@ -1,6 +1,6 @@
 #pragma once
 #include "IAttackStrategy.h"
-#include "../EnemyBullet/Liner/Liner.h"
+#include "../EnemyBullet/Linear/Linear.h"
 #include "../EnemyBullet/EnemyBulletManager.h"
 #include <cmath>
 
@@ -11,7 +11,7 @@ namespace EnemyAttack
 	// 共通ヘルパー: 弾を1発生成してマネージャに追加
 	inline void SpawnBullet(EnemyBulletManager* manager, const Vector3& pos, const Vector3& dir)
 	{
-		auto bullet = std::make_unique<EnemyBullet::Liner>();
+		auto bullet = std::make_unique<EnemyBullet::Linear>();
 		bullet->Init();
 		bullet->SetTranslation(pos);
 		bullet->SetShotDirection(dir);

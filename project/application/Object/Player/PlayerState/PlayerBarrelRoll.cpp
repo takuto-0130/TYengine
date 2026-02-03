@@ -147,7 +147,7 @@ void Player::BarrelRoll()
     // 終了判定
     if (GetStateElapsedTime() >= rollTime_)
     {
-        ChangeState(PlayerState::ROOT);
+        ChangeState(PlayerState::ROUTE);
     }
 }
 

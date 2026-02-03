@@ -1,10 +1,10 @@
-#include "Liner.h"
+#include "Linear.h"
 
-void EnemyBullet::Liner::InitShot()
+void EnemyBullet::Linear::InitShot()
 {
 }
 
-void EnemyBullet::Liner::UpdateShot()
+void EnemyBullet::Linear::UpdateShot()
 {
 	// 寿命を超えたら死亡フラグを true に
 	if (GetStateElapsedTime() > lifeTime_)
@@ -20,11 +20,11 @@ void EnemyBullet::Liner::UpdateShot()
 	worldTransform_.Update();
 }
 
-void EnemyBullet::Liner::ExitShot()
+void EnemyBullet::Linear::ExitShot()
 {
 }
 
-void EnemyBullet::Liner::Move()
+void EnemyBullet::Linear::Move()
 {
 	// 速度ベクトル算出
 	velocity_ = direction_ * defaultSpeed_ * deltaTime_;
@@ -33,7 +33,7 @@ void EnemyBullet::Liner::Move()
 	worldTransform_.SetTranslation(worldTransform_.GetTranslation() + velocity_);
 }
 
-void EnemyBullet::Liner::RotationDirection()
+void EnemyBullet::Linear::RotationDirection()
 {
 	// Z軸向き（前方）からY軸回転（Yaw）を計算（XZ平面で）
 	float yaw = std::atan2(direction_.x, direction_.z);

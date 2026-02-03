@@ -12,7 +12,7 @@
 enum class PlayerState
 {
 	IDLE,
-    ROOT,
+    ROUTE,
     BOOST,
     BARREL_ROLL,
     TAKE_DAMAGE,
@@ -240,7 +240,7 @@ private: // シーン内のState関連関数
 		switch (state) 
 		{
 		case State::IDLE: return "IDLE";
-		case State::ROOT: return "ROOT";
+		case State::ROUTE: return "ROUTE";
 		case State::BOOST: return "BOOST";
 		case State::BARREL_ROLL: return "BARREL_ROLL";
 		case State::TAKE_DAMAGE: return "TAKE_DAMAGE";
@@ -255,9 +255,9 @@ private: // シーン内のState関連関数
 	void ExitIdle();
 
 	// 通常行動
-	void InitRoot();
-	void UpdateRoot();
-	void ExitRoot();
+	void InitRoute();
+	void UpdateRoute();
+	void ExitRoute();
 
 	// 加速
 	void InitBoost();

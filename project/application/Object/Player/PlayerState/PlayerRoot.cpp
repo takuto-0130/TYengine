@@ -1,11 +1,11 @@
 #include "../Player.h"
 
-void Player::InitRoot()
+void Player::InitRoute()
 {
 
 }
 
-void Player::UpdateRoot()
+void Player::UpdateRoute()
 {
 	// 通常移動処理
 	Move();
@@ -14,7 +14,7 @@ void Player::UpdateRoot()
 	StartBarrelRoll();
 }
 
-void Player::ExitRoot()
+void Player::ExitRoute()
 {
 
 }

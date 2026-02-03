@@ -16,7 +16,7 @@ void Player::InitTakeDamage()
 void Player::UpdateTakeDamage()
 {
 	// 一定時間経過後にROOTステートへ復帰
-	if (GetStateElapsedTime() > 0.1f) ChangeState(PlayerState::ROOT);
+	if (GetStateElapsedTime() > 0.1f) ChangeState(PlayerState::ROUTE);
 
 	// 被弾中でもバレルロールは可能にする
 	StartBarrelRoll();

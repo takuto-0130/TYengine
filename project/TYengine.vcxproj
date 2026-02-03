@@ -143,10 +143,10 @@ if exist "externals\dxil.dll" (
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\AfterCollisionState.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\ShotState.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinerState.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinearState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBoost.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerDead.cpp" />
@@ -261,7 +261,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\OutlinePass.cpp" />
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\Liner.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\Linear.cpp" />
     <ClCompile Include="application\Object\Player\JustCollider.cpp" />
     <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
@@ -397,7 +397,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\OffScreen\PostEffect\LuminanceBasedOutlineEffect.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\OutlinePass.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
-    <ClInclude Include="application\Object\Enemy\EnemyBullet\Liner\Liner.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\Linear\Linear.h" />
     <ClInclude Include="application\Object\Player\JustCollider.h" />
     <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />

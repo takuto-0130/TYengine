@@ -45,10 +45,11 @@ void Audio::Initialize(const std::string& directoryPath)
 {
 	directoryPath_ = directoryPath;
 	HRESULT result;
-	// インスタンスの生成
+	// XAudio2エンジンのインスタンス生成
 	result = XAudio2Create(&xAudio2_, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	assert(SUCCEEDED(result));
-	// マスターボイスの生成
+	
+	// マスターボイス（最終出力）の生成
 	result = xAudio2_->CreateMasteringVoice(&masterVoice_);
 
 	if (FAILED(result))
@@ -59,6 +60,7 @@ void Audio::Initialize(const std::string& directoryPath)
 		assert(SUCCEEDED(result));
 	}
 
+	// 解析用サブミックスボイスの作成（周波数解析用）
 	CreateAnalyzerSubmix();
 	Start();
 }
@@ -128,7 +130,7 @@ void Audio::Start()
 
 	HRESULT result;
 
-	// ---- ★無音バッファ用 Voice を作成 ----
+	// ---- ★無音バッファ用 Voice を作成（解析器への入力維持用） ----
 	silentFormat_.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
 	silentFormat_.nChannels = 1;
 	silentFormat_.nSamplesPerSec = details.InputSampleRate;
@@ -169,6 +171,7 @@ void Audio::Update()
 	XAUDIO2_VOICE_STATE st{};
 	silentVoice_->GetState(&st);
 
+	// 無音バッファを定期的に供給して解析パイプラインを動かし続ける
 	if (st.BuffersQueued < 3)
 	{
 		XAUDIO2_BUFFER buf{};
@@ -242,11 +245,11 @@ float Audio::GetSoundVolume(int resourceNum)
 void Audio::LoadWave(const std::string& filename)
 {
 	if (soundDataMap_.count(filename)) {
-		// キーが存在する場合、処理を中断
+		// すでに読み込み済みならスキップ
 		return;
 	}
 
-	// ファイル入力 stream のインスタンス
+	// ファイルオープン
 	std::ifstream file;
 	std::string filePath = directoryPath_;
 	filePath += filename;
@@ -254,73 +257,62 @@ void Audio::LoadWave(const std::string& filename)
 	file.open(filePath, std::ios_base::binary);
 	assert(file.is_open());
 
-	// .wavデータ読み込み
+	// .wavデータ読み込み開始
 	// RIFFヘッダーの読み込み
 	RiffHeader riff;
 	file.read((char*)&riff, sizeof(riff));
 
-	// ファイルがRIFFかチェック
+	// ファイル形式チェック (RIFF / WAVE)
 	if (strncmp(riff.chunk.id, "RIFF", 4) != 0) {
 		assert(0);
 	}
-	// タイプがWAVEがチェック
 	if (strncmp(riff.type, "WAVE", 4) != 0) {
 		assert(0);
 	}
-	// Formatチャンクの読み込み
+	
+	// チャンク情報を順次読み込む
 	FormatChunk format = {};
-	// チャンクヘッダーの確認
-	file.read((char*)&format, sizeof(ChunkHeader));
-	if (strncmp(format.chunk.id, "fmt ", 4) != 0) {
-		assert(0);
-	}
-	// チャンク本体の読み込み
-	assert(format.chunk.size <= sizeof(format.fmt));
-	file.read((char*)&format.fmt, format.chunk.size);
+	ChunkHeader data = {};
 
-	// Dataチャンクの読み込み
-	ChunkHeader data;
-	file.read((char*)&data, sizeof(data));
-	// JUNKチャンクを検出した場合
-	if (strncmp(data.id, "JUNK", 4) == 0) {
-		// 読み取り位置をJUNKチャンクの終わりまで進める
-		file.seekg(data.size, std::ios_base::cur);
-		// 再読み込み
-		file.read((char*)&data, sizeof(data));
-	}
-	// LISTチャンクを検出した場合
-	if (strncmp(data.id, "LIST", 4) == 0) {
-		// 読み取り位置をLISTチャンクの終わりまで進める
-		file.seekg(data.size, std::ios_base::cur);
-		// 再読み込み
-		file.read((char*)&data, sizeof(data));
-	}
-	// INFOISFTチャンクを検出した場合
-	if (strncmp(data.id, "INFO", 4) == 0) {
-		// 読み取り位置をINFOISFTチャンクの終わりまで進める
-		file.seekg(data.size, std::ios_base::cur);
-		// 再読み込み
-		file.read((char*)&data, sizeof(data));
+	// 無限ループ防止のため、ある程度チャンクを検索
+	while (true)
+	{
+		ChunkHeader chunkHead;
+		file.read((char*)&chunkHead, sizeof(ChunkHeader));
+		if (file.eof()) break;
+
+		if (strncmp(chunkHead.id, "fmt ", 4) == 0)
+		{
+			// Formatチャンク
+			format.chunk = chunkHead;
+			assert(format.chunk.size <= sizeof(format.fmt));
+			file.read((char*)&format.fmt, format.chunk.size);
+		}
+		else if (strncmp(chunkHead.id, "data", 4) == 0)
+		{
+			// Dataチャンク（ここが見つかったら読み込みへ）
+			data = chunkHead;
+			break;
+		}
+		else
+		{
+			// JUNK, LIST, INFO などはスキップ
+			file.seekg(chunkHead.size, std::ios_base::cur);
+		}
 	}
 
-	if (strncmp(data.id, "data", 4) != 0) {
-		assert(0);
-	}
-
-	// Dataチャンクのデータ部 (波形のデータ) の読み込み
-	// SoundDataの生成
+	// Dataチャンクの読み込み (波形データ本体)
 	SoundData soundData = {};
 	soundData.wfex = format.fmt;
 	soundData.playSoundLength = data.size / format.fmt.nBlockAlign;
 
-	// vectorをリサイズして直接読み込む
+	// バッファを確保して一気に読み込み
 	soundData.buffer.resize(data.size);
 	file.read(reinterpret_cast<char*>(soundData.buffer.data()), data.size);
 
-
-	// ファイルクローズ
 	file.close();
 
+	// マップに登録
 	soundDataMap_[filename] = std::move(soundData);
 }
 
@@ -375,6 +367,7 @@ int Audio::Play(const std::string& filename, const bool isLoop, std::string soun
 {
 	HRESULT result;
 
+	// ロード済みデータから検索
 	auto it = soundDataMap_.find(filename);
 	if (it == soundDataMap_.end())
 	{
@@ -383,19 +376,15 @@ int Audio::Play(const std::string& filename, const bool isLoop, std::string soun
 	}
 	SoundData& soundData = it->second;
 
-	// 今回使うサウンドデータ
-	int sourceNum = -1;
+	// 空いているSourceVoiceを探す
+	int sourceNum = SearchSourceVoice(sourceVoices_.data());
 
-	// 使用できるリソースを検索
-	sourceNum = SearchSourceVoice(sourceVoices_.data());
-
-	// 使用できるリソースがない場合は-1を返す
 	if (sourceNum == -1) {
 		Logger::Log("No sound resource available.\n"); 
 		return -1; 
 	}
 
-	// 再生停止中、もしくは残りの再生数が最小のリソースを使用
+	// 必要なら古いVoiceを破棄して再利用
 	if (sourceVoices_[sourceNum] != nullptr)
 	{
 		sourceVoices_[sourceNum]->Stop();
@@ -404,35 +393,34 @@ int Audio::Play(const std::string& filename, const bool isLoop, std::string soun
 		sourceVoices_[sourceNum] = nullptr;
 	}
 
-	// 出力先をの Submix を決定
+	// 出力先(SubmixVoice)の決定
 	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 	sendDesc.Flags = 0;
 	if(soundCategory == "")
 	{
-		// 指定ナシなら analyzer へ直接送る
+		// カテゴリ指定なし -> Analyzerへ直接
 		sendDesc.pOutputVoice = analyzerSubmix_;
 	}
 	else
 	{
-		// 指定アリなら捜査して送る
+		// カテゴリ指定あり -> 該当Submixへ
 		auto itSub = soundCategorySubmixVoices_.find(soundCategory);
 		if (itSub == soundCategorySubmixVoices_.end())
 		{
-			// カテゴリが見つからない場合のエラー処理
 			Logger::Log("SoundCategory not found.\n");
-			// analyzer へ直接送る
 			sendDesc.pOutputVoice = analyzerSubmix_;
 		}
-		IXAudio2SubmixVoice* submix = itSub->second;
-
-		sendDesc.pOutputVoice = submix;
+		else
+		{
+			sendDesc.pOutputVoice = itSub->second;
+		}
 	}
 
 	XAUDIO2_VOICE_SENDS sends = {};
 	sends.SendCount = 1;
 	sends.pSends = &sendDesc;
 
-	// 波形フォーマットをもとにSourceVoiceの生成
+	// 波形フォーマットをもとにSourceVoice生成
 	if (FAILED(xAudio2_->CreateSourceVoice(&sourceVoices_[sourceNum],
 		&soundData.wfex, 0,
 		XAUDIO2_DEFAULT_FREQ_RATIO,
@@ -443,10 +431,10 @@ int Audio::Play(const std::string& filename, const bool isLoop, std::string soun
 		return -1;
 	}
 
-	// 再生する波形データの設定
+	// バッファ設定（ループ設定含む）
 	XAUDIO2_BUFFER buf = SetBuffer(isLoop, soundData);
 
-	// 波形データの再生
+	// 再生開始
 	result = sourceVoices_[sourceNum]->SubmitSourceBuffer(&buf);
 	result = sourceVoices_[sourceNum]->Start();
 

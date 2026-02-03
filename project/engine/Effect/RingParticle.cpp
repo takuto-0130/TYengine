@@ -4,7 +4,7 @@
 
 void RingParticle::CreateResources() {
     const uint32_t kDivide = 32;
-    const float outer = 0.4f, inner = 0.1f;
+    const float outer = 0.4f, inner = 0.1f; // 外径と内径
     const float dTheta = 2.0f * std::numbers::pi_v<float> / float(kDivide);
 
     std::vector<VertexData> vertices;
@@ -40,6 +40,7 @@ void RingParticle::CreateResources() {
     vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
     std::memcpy(vertexData_, vertices.data(), sizeof(VertexData) * vertices.size());
 
+    // テクスチャ
     std::string texturePath = "Resources/Texture/gradationLine.png";
     TextureManager::GetInstance()->LoadTexture(texturePath);
     textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(texturePath);
@@ -84,6 +85,7 @@ std::list<ParticleParam> RingParticle::Emit(std::mt19937& random)
     std::list<ParticleParam> result;
     for (uint32_t i = 0; i < emitter_.count; ++i) {
         Emitter emitter = emitter_;
+        // リングは生成時にサイズを変化させて重ねる
         emitter.transform.scale = emitter.transform.scale * ((2.0f + float(i) * 2.0f) / 4.0f);
         result.push_back(MakeNewParticle(random, emitter));
     }

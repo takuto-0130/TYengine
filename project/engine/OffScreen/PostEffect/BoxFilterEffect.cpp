@@ -10,7 +10,9 @@
 void BoxFilterEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
+    // シェーダ（CopyImage.VSとBoxFilter.PS）を使う
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/BoxFilter.PS.hlsl");
+    // パラメータバッファ確保
     param_ = copyPass_.AddExtraConstantBuffer<BoxFilterParam>(4);
 }
 

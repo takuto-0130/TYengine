@@ -24,6 +24,7 @@ Matrix4x4 Subtract(const Matrix4x4& matrix1, const Matrix4x4& matrix2) {
 Matrix4x4 Multiply(const Matrix4x4& matrix1, const Matrix4x4& matrix2) {
 	Matrix4x4 result{};
 	float buf;
+	// 行列の積計算 (4x4)
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			buf = 0;
@@ -208,6 +209,7 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 
 Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
 	Matrix4x4 result{};
+	// 透視投影行列の作成
 	result.m[0][0] = 1.0f / aspectRatio * (1.0f / std::tan(fovY / 2.0f));
 	result.m[1][1] = 1.0f / std::tan(fovY / 2.0f);
 	result.m[2][2] = farClip / (farClip - nearClip);
@@ -218,6 +220,7 @@ Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip
 
 Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
 	Matrix4x4 result{};
+	// 平行投影行列の作成
 	result.m[0][0] = 2.0f / (right - left);
 	result.m[1][1] = 2.0f / (top - bottom);
 	result.m[2][2] = 1.0f / (farClip - nearClip);

@@ -42,6 +42,7 @@ void BulletTimeController::Trigger(
 	params_.exitEase = exitEase;
 
 	elapsed_ = 0.0f;
+	// 強制的に状態遷移
 	UnlockState();
 	ChangeState(BulletTimeState::ENTER);
 }
@@ -54,6 +55,7 @@ void BulletTimeController::CallStateExit()
 
 void BulletTimeController::ForceExitNow()
 {
+	// 即時終了
 	timer_->SetTimeScale(1.0f);
 	UnlockState();
 	ChangeState(BulletTimeState::NONE);
@@ -78,6 +80,7 @@ void BulletTimeController::UpdateEnter()
 	float t = elapsed_ / params_.enterDuration;
 	t = std::clamp(t, 0.0f, 1.0f);
 
+	// 徐々にスローへ
 	float easedT = params_.enterEase ? params_.enterEase(t) : t;
 	float currentScale = std::lerp(1.0f, params_.slowScale, easedT);
 	timer_->SetTimeScale(currentScale);
@@ -103,6 +106,7 @@ void BulletTimeController::UpdateHold()
 	if (elapsed_ >= params_.holdDuration)
 	{
 		elapsed_ = 0.0f;
+		// 維持時間終了、Exitへ
 		ChangeState(BulletTimeState::EXIT);
 	}
 }
@@ -116,6 +120,7 @@ void BulletTimeController::UpdateExit()
 	float t = elapsed_ / params_.exitDuration;
 	t = std::clamp(t, 0.0f, 1.0f);
 
+	// 徐々に通常速度へ
 	float easedT = params_.exitEase ? params_.exitEase(t) : t;
 	float currentScale = std::lerp(params_.slowScale, 1.0f, easedT);
 	timer_->SetTimeScale(currentScale);

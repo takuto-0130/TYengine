@@ -9,7 +9,9 @@
 void RandomEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
+    // シェーダ（CopyImage.VSとRandom.PS）を使う
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Random.PS.hlsl");
+    // パラメータバッファ確保
     param_ = copyPass_.AddExtraConstantBuffer<RandomParam>(4);
 }
 

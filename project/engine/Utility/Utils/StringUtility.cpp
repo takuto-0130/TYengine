@@ -9,6 +9,7 @@ namespace StringUtility
 			return std::wstring();
 		}
 
+		// 多バイト文字列(UTF-8) -> ワイド文字列(UTF-16) への変換
 		auto sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
 		// サイズが0なら早期リターン
 		if (sizeNeeded == 0) {
@@ -25,6 +26,7 @@ namespace StringUtility
 			return std::string();
 		}
 
+		// ワイド文字列(UTF-16) -> 多バイト文字列(UTF-8) への変換
 		auto sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), NULL, 0, NULL, NULL);
 		// サイズが0なら早期リターン
 		if (sizeNeeded == 0) {

@@ -9,7 +9,9 @@
 void GrayscaleEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
+    // シェーダ読み込み
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Grayscale.PS.hlsl");
+    // 定数バッファ確保
     param_ = copyPass_.AddExtraConstantBuffer<GrayscaleParam>(4);
 }
 
@@ -36,5 +38,6 @@ void GrayscaleEffect::ImGuiUpdate()
 
 void GrayscaleEffect::Apply(RenderTexture* input)
 {
+    // CopyPassを使って描画
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }

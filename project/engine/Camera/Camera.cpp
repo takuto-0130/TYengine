@@ -23,6 +23,7 @@ Camera::Camera()
 void Camera::Update()
 {
 #ifdef _DEBUG
+	// デバッグ用UI：カメラパラメータの調整
 	ImGui::Begin("camera");
 	ImGui::DragFloat3("translate", &transform_.translate.x, 0.1f);
 	ImGui::DragFloat3("rotate", &transform_.rotate.x, 0.1f);
@@ -34,14 +35,18 @@ void Camera::Update()
 	deltaTranslate_ = transform_.translate - prevTranslate_;
 	prevTranslate_ = transform_.translate;
 
-	// --- シェイク ---
+	// --- シェイク（振動）効果の更新 ---
 	shakeController_.Update(Timer::GetInstance()->GetDeltaTime());
 	shake_ = shakeController_.GetOffset();
 	
-	// --- 行列更新（※差分計算には shake を含めない） ---
+	// --- 行列更新（※視点計算には shake を含める） ---
+	// ワールド行列（移動＋振動）
 	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate + shake_);
+	// ビュー行列（ワールド行列の逆行列）
 	viewMatrix_ = Inverse(worldMatrix_);
+	// プロジェクション行列（透視投影）
 	projectionMatrix_ = MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_);
+	// 合成行列（WVP）
 	worldViewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
 }
 

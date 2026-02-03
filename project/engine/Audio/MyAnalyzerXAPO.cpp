@@ -51,16 +51,19 @@ HRESULT __stdcall MyAnalyzerXAPO::LockForProcess(
 }
 
 // --------------------------------------------------------------
-// FFT (Cooley–Tukey)
+// FFT (高速フーリエ変換) の実行
+// Cooley–Tukey アルゴリズムによる実装
 // --------------------------------------------------------------
 void MyAnalyzerXAPO::ComputeFFT()
 {
+    // 入力を実数部にコピー、虚数部は0初期化
     for (UINT32 i = 0; i < FFT_SIZE; i++)
     {
         fftReal_[i] = fftInput_[i];
         fftImag_[i] = 0.0f;
     }
 
+    // ビット反転順序への並べ替え
     UINT32 j = 0;
     for (UINT32 i = 0; i < FFT_SIZE; i++)
     {
@@ -74,6 +77,7 @@ void MyAnalyzerXAPO::ComputeFFT()
         j |= bit;
     }
 
+    // バタフライ演算
     for (UINT32 len = 2; len <= FFT_SIZE; len <<= 1)
     {
         float ang = -2.0f * std::numbers::pi_v<float> / len;
@@ -106,10 +110,14 @@ void MyAnalyzerXAPO::ComputeFFT()
         }
     }
 
+    // パワースペクトル（振幅）の計算
     for (UINT32 i = 0; i < FFT_SIZE; i++)
         latestFFT_[i] = sqrtf(fftReal_[i] * fftReal_[i] + fftImag_[i] * fftImag_[i]);
 }
 
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+// XAudio2 の音声処理コールバック（リアルタイムスレッドで呼ばれる）
 // --------------------------------------------------------------
 void __stdcall MyAnalyzerXAPO::Process(
     UINT32,
@@ -124,42 +132,44 @@ void __stdcall MyAnalyzerXAPO::Process(
     float* pOut = (float*)out->pBuffer;
     UINT32 frameCount = in->ValidFrameCount;
 
+    // 波形データのコピー（可視化用）
     int copyCount = min(frameCount, (UINT32)latestWaveform_.size());
     memcpy(latestWaveform_.data(), pIn, sizeof(float) * copyCount);
 
-    // ---- スルー処理 ----
+    // ---- スルー処理 (入力そのまま出力) ----
     if (pIn != pOut) memcpy(pOut, pIn, frameCount * channels_ * sizeof(float));
 
     if (frameCount == 0) return;
 
-    // ---- RMS ----
+    // ---- RMS (二乗平均平方根) 計算 ----
     double sum = 0.0;
     for (UINT32 i = 0; i < frameCount * channels_; i++) sum += pIn[i] * pIn[i];
 
     latestRMS_ = (float)sqrt(sum / (frameCount * channels_));
 
     // ---- 無音判定 ----
-    // frameCount * channels 分の平均をとる
     if (latestRMS_ < 0.00001f)   // しきい値
     {
-        // 無音なら FFT と delayBuffer をクリア
+        // 無音なら FFT と delayBuffer をクリアして終了
         std::fill(latestFFT_.begin(), latestFFT_.end(), 0.0f);
 
         for (auto& buf : delayBuffer_) std::fill(buf.begin(), buf.end(), 0.0f);
 
-        // 次のフレームのため fftInput もクリア
         std::fill(fftInput_.begin(), fftInput_.end(), 0.0f);
 
-        return;   // これ以上処理しない
+        return;
     }
 
-    // ---- 遅延バッファ ----
+    // ---- 遅延バッファへの蓄積とFFT実行 ----
+    // 今回のサンプルをリングバッファに保存
     UINT32 copy = (frameCount < FFT_SIZE) ? frameCount : FFT_SIZE;
 
     memset(delayBuffer_[delayIndex_].data(), 0, FFT_SIZE * sizeof(float));
     memcpy(delayBuffer_[delayIndex_].data(), pIn, copy * sizeof(float));
 
     delayIndex_ = (delayIndex_ + 1) % DELAY_FRAMES;
+    
+    // 遅延させたバッファを取り出してFFTにかける
     UINT32 readIndex = (delayIndex_ + DELAY_FRAMES - 1) % DELAY_FRAMES;
 
     memcpy(fftInput_.data(), delayBuffer_[readIndex].data(), FFT_SIZE * sizeof(float));

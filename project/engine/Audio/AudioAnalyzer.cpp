@@ -18,10 +18,14 @@ AudioAnalyzer::AudioAnalyzer()
 
 void AudioAnalyzer::Update()
 {
-    UpdateRMS();
-    UpdateFFT();
-    UpdateWaveform();
-    UpdateSpectrumSmoothing();
+	// RMS（音量）更新 - XAPOから取得
+	UpdateRMS();
+	// FFT（周波数解析）更新 - XAPOから取得
+	UpdateFFT();
+	// 波形データ更新
+	UpdateWaveform();
+	// スペクトラムのスムージング処理
+	UpdateSpectrumSmoothing();
 }
 
 void AudioAnalyzer::UpdateRMS()
@@ -57,7 +61,7 @@ void AudioAnalyzer::UpdateWaveform()
 
     int N = static_cast<int>(src.size());
 
-    // リングバッファに書き込む
+    // リングバッファに書き込む（履歴保存）
     for (int i = 0; i < N; i++)
     {
         waveformScroll_[waveformWriteIndex_] = src[i];
@@ -72,6 +76,7 @@ void AudioAnalyzer::UpdateWaveform()
 
     for (int i = 0; i < 441; i++)
     {
+        // 常に最新から過去へ遡って取得
         int index = static_cast<int>(waveformWriteIndex_ - (441 - i) + waveformScroll_.size())
             % waveformScroll_.size();
 
@@ -205,13 +210,14 @@ std::vector<float> AudioAnalyzer::MakeLogSpectrum(
     std::vector<float> out(bands, 0.0f);
 
     float minF = 20.0f;              // 人間の可聴最低周波数
-    float maxF = sampleRate / 2.0f;  // ナイキスト
+    float maxF = sampleRate / 2.0f;  // ナイキスト周波数
 
     float minLog = log10f(minF);
     float maxLog = log10f(maxF);
 
     float freqPerBin = (float)sampleRate / FFT_SIZE;
 
+    // 対数スケールで等分割してビンを割り当てる
     for (int b = 0; b < bands; b++)
     {
         float logStart = minLog + (maxLog - minLog) * (float)b / bands;
@@ -229,10 +235,11 @@ std::vector<float> AudioAnalyzer::MakeLogSpectrum(
         float sum = 0;
         int count = 0;
 
+        // 該当範囲のFFT値を平均化
         for (int i = binStart; i <= binEnd; i++)
         {
             float v = fft[i];
-            v = log10f(1.0f + v * 1.0f);
+            v = log10f(1.0f + v * 1.0f); // 値も対数化してデシベルっぽく
             sum += v;
             count++;
         }
@@ -434,13 +441,18 @@ void AudioAnalyzer::Draw()
 
     float width = ImGui::GetWindowWidth() - 15.0f;
 
+    // 音量 (RMS) の可視化
     DrawRSM(width);
 
+    // スペクトラムバーの可視化
     DrawSpectrum(width);
+    
+    // 帯域ごとの強度数値表示
     ImGui::Text("Low : %.2f", lowGray_);
     ImGui::Text("Mid : %.2f", midGray_);
     ImGui::Text("High : %.2f", highGray_);
     
+    // 波形描画
     DrawWaveform(width);
 
     ImGui::End();

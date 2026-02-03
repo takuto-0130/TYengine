@@ -10,6 +10,7 @@ void ModelManager::LoadModel(const std::string& directoryPath, const std::string
 {
 	if (models_.contains(fileName)) return;// 読み込み済みなら早期 return
 
+	// 新規モデル生成と読み込み
 	std::unique_ptr<Model> model = std::make_unique<Model>();
 	model->Initialize(modelLoader_.get(), directoryPath, fileName);
 

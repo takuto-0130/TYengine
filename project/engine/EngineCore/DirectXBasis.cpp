@@ -24,18 +24,24 @@ void DirectXBasis::Initialize(WindowsApp* windowsApp)
 	assert(windowsApp); // NULL検出
 	windowsApp_ = windowsApp;
 
+	// 固定FPS制御用初期化
 	InitFixFPS();
 
+	// デバイス、コマンドリスト等の生成
 	InitDevice();
 	InitCommand();
+	// スワップチェーン、深度バッファ生成
 	CreateSwapChain();
 	CreateDepthBuffer();
+	// ディスクリプタヒープ生成
 	CreateVariousDescriptorHeap();
+	// RTV/DSV/Fence/Viewport初期化
 	InitRTV();
 	InitDSV();
 	InitFence();
 	InitViewportRect();
 	InitScissorRect();
+	// DXC(ShaderCompiler)初期化
 	CreateDXCCompiler();
 }
 
@@ -206,28 +212,30 @@ void DirectXBasis::ClearDepthStencilView()
 
 void DirectXBasis::DrawBegin()
 {
+	// --- 描画開始処理 ---
+	
 	//書き込むバックバッファのインデックス
 	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
 
-	//TransitionBarrierの設定
-	//今回のバリアはTransition
+	// TransitionBarrierの設定 (Present -> RenderTarget)
 	barrier_.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier_.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	barrier_.Transition.pResource = backBuffers_[backBufferIndex].Get();
 	barrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 	barrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	commandList_->ResourceBarrier(1, &barrier_);
-
 	
 	//描画先のRTVとDSVを設定
 	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, &dsvHandle_);
 
+	// 画面クリア（黒）
 	float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };//RGBA
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
 
+	// 深度バッファクリア
 	ClearDepthStencilView();
 
-
+	// ビューポート、シザー矩形セット
 	commandList_->RSSetViewports(1, &viewportRect_);
 	commandList_->RSSetScissorRects(1, &scissorRect_);
 }
@@ -248,6 +256,7 @@ void DirectXBasis::CommandListAndFence()
 {
 	HRESULT hr = S_FALSE;
 
+	// コマンドリストをクローズして実行
 	hr = commandList_->Close();
 	assert(SUCCEEDED(hr));
 
@@ -255,9 +264,10 @@ void DirectXBasis::CommandListAndFence()
 	ID3D12CommandList* commandLists[] = { commandList_.Get() };
 	commandQueue_->ExecuteCommandLists(1, commandLists);
 
+	// 画面フリップ
 	swapChain_->Present(1, 0);
 
-	// Fenceの値を更新
+	// Fenceの値を更新してシグナルを送る（GPU実行完了待ち用）
 	fenceValue_++;
 	commandQueue_->Signal(fence_.Get(), fenceValue_);
 

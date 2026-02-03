@@ -58,14 +58,16 @@ void WindowsApp::Initialize()
 		wc.hInstance,
 		nullptr);
 
+	// ウィンドウを表示状態にする
 	ShowWindow(hwnd, SW_SHOW);
 
-	// システムタイマーの分解能を上げる
+	// システムタイマーの分解能を上げる（マルチメディアタイマーなどへの影響）
 	timeBeginPeriod(1);
 }
 
 bool WindowsApp::ProcessMessage()
 {
+	// メッセージループ
 	MSG msg{};
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 	{

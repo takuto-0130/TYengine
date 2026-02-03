@@ -47,15 +47,18 @@ void RenderTexture::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager, ui
 
     dxBasis_->GetDevice()->CreateRenderTargetView(texture_.Get(), nullptr, rtvHandle_);
 
+    // SRV（シェーダリソースビュー）作成
     srvIndex_ = srvManager_->Allocate();
     srvManager_->CreateSRVForTexture2D(srvIndex_, texture_.Get(), format, 1);
 
     currentState_ = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
+    // 深度ステンシルバッファ生成
     CreateDepthStencil();
 }
 
 void RenderTexture::BeginRender() {
+    // リソースステート変更（PixelShaderResource -> RenderTarget）
     if (currentState_ != D3D12_RESOURCE_STATE_RENDER_TARGET) {
         auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
             texture_.Get(),
@@ -65,6 +68,7 @@ void RenderTexture::BeginRender() {
         currentState_ = D3D12_RESOURCE_STATE_RENDER_TARGET;
     }
 
+    // 深度クリア
     if (depthBuffer_) {
         dxBasis_->GetCommandList()->ClearDepthStencilView(
             dsvHandle_,
@@ -73,7 +77,7 @@ void RenderTexture::BeginRender() {
             0, nullptr);
     }
 
-    //dsvHandle_ = dxBasis_->GetDSVHandle();
+    // レンダーターゲットセット
     dxBasis_->GetCommandList()->OMSetRenderTargets(1, &rtvHandle_, FALSE, &dsvHandle_);
 
     // ビューポートとシザー設定
@@ -94,11 +98,13 @@ void RenderTexture::BeginRender() {
     dxBasis_->GetCommandList()->RSSetViewports(1, &viewport);
     dxBasis_->GetCommandList()->RSSetScissorRects(1, &scissorRect);
 
+    // カラークリア
     float clearColor[] = { clearColor_.x, clearColor_.y, clearColor_.z, clearColor_.w };
     dxBasis_->GetCommandList()->ClearRenderTargetView(rtvHandle_, clearColor, 0, nullptr);
 }
 
 void RenderTexture::EndRender() {
+    // リソースステート変更（RenderTarget -> PixelShaderResource）
     if (currentState_ != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
         auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
             texture_.Get(),

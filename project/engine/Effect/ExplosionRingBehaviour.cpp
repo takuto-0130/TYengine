@@ -15,13 +15,13 @@ void ExplosionRingBehaviour::Update(ParticleParam& p, float dt)
 
     // ▼ 色調：最初は明るい黄色 → 薄いオレンジ → 消失
     p.color.x = 1.0f;               // R
-    p.color.y = 0.9f - t * 0.4f;    // G
-    p.color.z = 0.2f;               // B
+    p.color.y = 0.9f - t * 0.4f;    // G: 0.9 → 0.5
+    p.color.z = 0.2f;               // B: 固定
     p.color.w = 1.0f - t;           // Alpha フェードアウト
 
     // ▼ 中心からの微弱な広がり（ほぼ固定）
     p.transform.translate += p.velocity * (0.2f * dt);
 
-    // ▼ 速度は急速に減衰（リングは飛ばない）
+    // ▼ 速度は急速に減衰（リングは飛ばず、その場で広がる）
     p.velocity *= (1.0f - dt * 4.0f);
 }

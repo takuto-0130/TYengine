@@ -23,6 +23,12 @@ void Timer::Update()
 
     previousTime_ = currentTime;
 
+    // ゲーム内時間の更新（TimeScale反映なし版を使用したい場合はGetRawDeltaTimeを使用）
+    // deltaTime_ は生の経過時間。TimeScaleの反映は取得側で調整するか、ここで行うかは設計方針によるが、
+    // ここではRawDeltaTimeとして保持し、TimeScaleはGetter等で反映させることが多いが、
+    // この実装では deltaTime_ は Raw 値。
+    // (BulletTimeController等でTimeScale管理している)
+
     // FPS 計測
     ++frameCount_;
     timeAccumulator_ += deltaTime_;

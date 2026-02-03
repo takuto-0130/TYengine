@@ -52,7 +52,7 @@ void WorldTransform::UpdateMatrix()
     // 親が存在する場合、親のワールド行列を掛け合わせる(parent_ と parentMatrix_ 両方に値が入っていた場合　parent_ を優先)
     if (parent_)
     {
-        
+        // 行列の積（親 * 子）
         matWorld_ = matWorld_ * parent_->matWorld_; // 親の行列と自身の行列を合成
     }
     else if (parentMatrix_ != nullptr)

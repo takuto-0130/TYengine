@@ -11,10 +11,11 @@ void DebrisBehaviour::Update(ParticleParam& p, float dt)
     // ▼ 空気抵抗（減速）
     p.velocity *= (1.0f - dt * 3.0f);  // 3.0f は抵抗の強さ
 
-    // ▼ 重力（お好みでON/OFF）
+    // ▼ 重力がかかり落下する（お好みでON/OFF）
     p.velocity.y -= 9.8f * 0.3f * dt;  // 弱めの重力
 
     // ▼ 火花の色変化（StarFox風）
+    // 黄色っぽい色から黒へ変化
     p.color.x = 1.0f;           // R
     p.color.y = 0.8f - t * 0.6f; // G: 0.8 → 0.2
     p.color.z = 0.2f - t * 0.2f; // B: 0.2 → 0.0（黒）

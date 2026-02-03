@@ -150,9 +150,9 @@ void Enemy::Pop()
 void Enemy::OnCollision()
 {
 	// HP減少
-	--hitpoint_;
+	--hitPoint_;
 
-	if (hitpoint_ > 0) // まだ生きている場合
+	if (hitPoint_ > 0) // まだ生きている場合
 	{
 		GameAudio::GetInstance()->Play("damageE", false, SoundCategory::SE);
 		ChangeState(EnemyState::DAMAGED);

@@ -91,10 +91,10 @@ void Player::Init()
 	reticle_->Init();
 
 	// HP設定
-	hitpoint_ = 9;
+	hitPoint_ = 9;
 
 	// デバッグ用レティクル初期化
-	TestReticleInit();
+	ReticleInit();
 }
 
 void Player::Update()
@@ -131,8 +131,7 @@ void Player::Draw()
 		obj_->Draw(worldTransform_);
 		bulletManager_->Draw();
 
-		// test
-		TestReticleDraw();
+		ReticleDraw();
 	}
 }
 
@@ -144,10 +143,10 @@ void Player::TakeDamage()
 	// デバッグ時ダメージ処理（現在はなし）
 #else
 	// 通常ダメージ処理：HP減少
-	--hitpoint_;
+	--hitPoint_;
 #endif // _DEBUG
 
-	if (hitpoint_ > 0)
+	if (hitPoint_ > 0)
 	{
 		// 生存していれば被弾音声再生・被弾ステートへ遷移
 		GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
@@ -203,7 +202,7 @@ void Player::PostStateUpdate()
 	reticle_->Update();
 
 	// デバッグ用レティクルの更新
-	TestReticleUpdate();
+	ReticleUpdate();
 
 	DebugGUI();
 }
@@ -311,7 +310,7 @@ void Player::DebugGUI()
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 
-	ImGui::Text("hp : %d", hitpoint_);
+	ImGui::Text("hp : %d", hitPoint_);
 
 	ImGui::DragFloat2("ScreenOffset", &screenOffset_.x);
 
@@ -334,7 +333,7 @@ void Player::DebugGUI()
 #endif // _DEBUG
 }
 
-void Player::TestReticleInit()
+void Player::ReticleInit()
 {
 #ifdef _DEBUG
 	reticleObj_ = std::make_unique<Object3d>();
@@ -348,7 +347,7 @@ void Player::TestReticleInit()
 #endif // _DEBUG
 }
 
-void Player::TestReticleUpdate()
+void Player::ReticleUpdate()
 {
 #ifdef _DEBUG
 	reticleWT_.SetRotate(worldTransform_.GetRotate());
@@ -357,7 +356,7 @@ void Player::TestReticleUpdate()
 #endif // _DEBUG
 }
 
-void Player::TestReticleDraw()
+void Player::ReticleDraw()
 {
 #ifdef _DEBUG
 	reticleObj_->Draw(reticleWT_);

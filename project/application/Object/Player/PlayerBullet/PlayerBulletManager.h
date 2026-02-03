@@ -9,6 +9,10 @@
 #include "Camera.h"
 
 class Player;
+/// <summary>
+/// プレイヤーの弾を一括管理するクラス。
+/// 発射、更新、描画、衝突判定などを統括する。
+/// </summary>
 class PlayerBulletManager
 {
 public:
@@ -16,34 +20,41 @@ public:
 	~PlayerBulletManager() = default;
 
 	/// <summary>
-	/// 初期化
+	/// 初期化処理。
 	/// </summary>
 	void Init();
 
 	/// <summary>
-	/// 更新
+	/// 毎フレームの更新処理。
+	/// 弾の移動、寿命削除などを行う。
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// 描画
+	/// 全弾の描画処理。
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// 弾の発射処理
+	/// 弾を発射する。
 	/// </summary>
-	/// <param name="type"> 発射する弾の種類 </param>
-	/// <param name="pos"> 射出点の座標 </param>
-	/// <param name="direction"> 射出される向き </param>
+	/// <param name="type">弾の種類（NORMAL, MISSILEなど）。</param>
+	/// <param name="pos">発射位置（ワールド座標）。</param>
+	/// <param name="direction">発射方向（正規化ベクトル）。</param>
 	void Fire(PlayerBulletType type, const Vector3& pos, const Vector3& direction);
 
+	/// <summary>
+	/// カメラを設定する（ビルボード用）。
+	/// </summary>
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 private:
+	/// <summary>所有者（プレイヤー）。</summary>
 	Player* player_ = nullptr;
+	/// <summary>弾リスト。</summary>
 	std::list<std::unique_ptr<BaseBullet>> bullets_;
 
+	/// <summary>カメラ。</summary>
 	Camera* camera_ = nullptr;
 };
 

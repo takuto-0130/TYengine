@@ -10,23 +10,30 @@ void Input::Initialize(const HWND& hwnd)
 {
     HRESULT hr;
     clientHwnd_ = hwnd;
+
+    // DirectInput8 インスタンス作成
     hr = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dInput_, nullptr);
     assert(SUCCEEDED(hr));
 
+    // キーボードデバイス作成
     hr = dInput_->CreateDevice(GUID_SysKeyboard, &devKeyboard_, nullptr);
     assert(SUCCEEDED(hr));
 
+    // マウスデバイス作成
     hr = dInput_->CreateDevice(GUID_SysMouse, &devMouse_, nullptr);
     assert(SUCCEEDED(hr));
 
+    // キーボードデータフォーマットと協調レベル設定
     devKeyboard_->SetDataFormat(&c_dfDIKeyboard);
     devKeyboard_->SetCooperativeLevel(clientHwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
     devKeyboard_->Acquire();
 
+    // マウスデータフォーマットと協調レベル設定
     devMouse_->SetDataFormat(&c_dfDIMouse2);
     devMouse_->SetCooperativeLevel(clientHwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
     devMouse_->Acquire();
 
+    // ジョイスティック（パッド）の列挙
     dInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, EnumJoysticksCallback, this, DIEDFL_ATTACHEDONLY);
 }
 

@@ -3,26 +3,49 @@
 #include <array>
 #include <imgui.h>
 
+/// <summary>
+/// オーディオ解析クラス。
+/// 波形データ、FFT解析、RMS（音圧）計測を行い、ビジュアライザリング用のデータを提供する。
+/// </summary>
 class AudioAnalyzer
 {
 public:
-    static const int FFT_SIZE = 1024;
-    static const int BANDS = 8;
-    static const int RMS_HISTORY_SIZE = 120; // 2秒
-    static const int DELAY_FRAMES = 5;
+    static const int FFT_SIZE = 1024;        ///< FFTサンプル数
+    static const int BANDS = 8;              ///< 周波数帯域分割数
+    static const int RMS_HISTORY_SIZE = 120; ///< RMS履歴保持数（60fps換算で2秒分）
+    static const int DELAY_FRAMES = 5;       ///< 解析遅延フレーム数
 
 public:
+public:
+    /// <summary>コンストラクタ。</summary>
     AudioAnalyzer();
-    void Update();          // 全処理
-    void Draw();            // ImGui描画
+    
+    /// <summary>
+    /// 毎フレームの更新処理。
+    /// XAPOから受け取ったデータの解析、スムージングを行う。
+    /// </summary>
+    void Update();
 
-    // 値の取得（ゲーム側で利用）
+    /// <summary>
+    /// ImGuiによるデバッグ描画。
+    /// </summary>
+    void Draw();
+
+    /// <summary>
+    /// 同期されたRMS（音圧）値を取得する。
+    /// </summary>
     float GetSyncedRMS() const { return syncedRMS_; }
+    
+    /// <summary>
+    /// スムージング済みの周波数スペクトラムを取得する。
+    /// </summary>
     const std::vector<float>& GetSmoothedSpectrum() const { return spectrumSmoothed_; }
 
-    // 低域・中域・高域のグレースケール値（0〜1）
+    /// <summary>低音域の強度（0.0～1.0）。</summary>
     float GetLowGray()  const { return lowGray_; }
+    /// <summary>中音域の強度（0.0～1.0）。</summary>
     float GetMidGray()  const { return midGray_; }
+    /// <summary>高音域の強度（0.0～1.0）。</summary>
     float GetHighGray() const { return highGray_; }
 
 private:

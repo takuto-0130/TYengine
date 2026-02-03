@@ -11,26 +11,45 @@
 #include <wrl.h>
 #include <numbers>
 
+/// <summary>
+/// パーティクル描画の基底クラス。
+/// GPUリソース管理、インスタンシング描画、エミッター制御の共通機能を提供する。
+/// 具象クラス（PlaneParticleなど）でリソース生成や初期化の実装を行う。
+/// </summary>
 class IParticleRenderer {
 public:
     virtual ~IParticleRenderer();
+
+    /// <summary>
+    /// 初期化処理。
+    /// </summary>
+    /// <param name="dx">DirectX基盤。</param>
+    /// <param name="srv">SRVマネージャ。</param>
+    /// <param name="cam">カメラ。</param>
     virtual void Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam);
+
+    /// <summary>更新処理。</summary>
     virtual void Update();
+
+    /// <summary>描画処理。</summary>
     virtual void Draw();
 
 
+    /// <summary>
+    /// パーティクル発生装置（エミッター）の設定構造体。
+    /// </summary>
     struct Emitter {
-        Transform transform{
+        Transform transform{        ///< 発生源のトランスフォーム（位置・回転・スケール）
             {1.0f, 1.0f, 1.0f},
             {0.0f, 0.0f, 0.0f},
             {0.0f, 0.0f, 0.0f}
         };
-        uint32_t count = 5;
-        float frequency = 0.5f;
-        float frequencyTime = 0.0f;
-        Vector4 color = { 1,1,1,1 };
-        Vector3 velocity = { 0.0f, 0.0f, 0.0f };
-        bool randomVel = false;
+        uint32_t count = 5;         ///< 一度の発生数
+        float frequency = 0.5f;     ///< 発生頻度（秒）
+        float frequencyTime = 0.0f; ///< 発生タイマー
+        Vector4 color = { 1,1,1,1 };///< 基本カラー
+        Vector3 velocity = { 0.0f, 0.0f, 0.0f }; ///< 基本初速度
+        bool randomVel = false;     ///<速度をランダムにするか
     };
 
     virtual void SetEmitter(Emitter& emitter) { emitter_ = emitter; }

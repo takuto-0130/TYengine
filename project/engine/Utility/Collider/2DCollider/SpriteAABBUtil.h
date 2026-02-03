@@ -3,6 +3,12 @@
 #include "Collision2D.h"
 #include <cmath>
 
+/// <summary>
+/// スプライトのAABB（回転なし）を計算する。
+/// 位置、サイズ、アンカーポイントを考慮する。
+/// </summary>
+/// <param name="sprite">対象のスプライト。</param>
+/// <returns>計算されたAABB。</returns>
 inline AABB2D ComputeSpriteAABB_NoRotation(Sprite& sprite)
 {
     Vector2 pos = sprite.GetPosition();
@@ -20,6 +26,12 @@ inline AABB2D ComputeSpriteAABB_NoRotation(Sprite& sprite)
     return box;
 }
 
+/// <summary>
+/// スプライトのAABB（回転あり）を計算する。
+/// 4隅の頂点を回転させ、それらを包含する最小の矩形を求める。
+/// </summary>
+/// <param name="sprite">対象のスプライト。</param>
+/// <returns>計算されたAABB。</returns>
 inline AABB2D ComputeSpriteAABB_WithRotation(Sprite& sprite)
 {
     Vector2 pos = sprite.GetPosition();

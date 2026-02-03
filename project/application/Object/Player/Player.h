@@ -29,120 +29,206 @@ public: // 関数テーブル
     static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
-	~Player();
-    void Init()override;
-    void Update()override;
-    void Draw()override;
+	virtual ~Player();
+    /// <summary>
+    /// 初期化処理。
+    /// 状態マシンの初期化、弾マネージャの生成などを行う。
+    /// </summary>
+    void Init() override;
 
+    /// <summary>
+    /// 毎フレーム更新処理。
+    /// 入力に応じた移動、攻撃、状態遷移を行う。
+    /// </summary>
+    void Update() override;
+
+    /// <summary>
+    /// 描画処理。
+    /// 3Dモデル、弾、レティクルの描画を行う。
+    /// </summary>
+    void Draw() override;
+
+	/// <summary>
+	/// プレイヤーに使用させるカメラを設定する。
+	/// </summary>
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
+	/// <summary>
+	/// プレイヤーの3Dオブジェクトを取得する。
+	/// </summary>
 	Object3d* GetObj() { return obj_.get(); }
 
+	/// <summary>ジャスト回避成功時のフラグを立てる。</summary>
 	void OnJust() { isJust_ = true; }
+	/// <summary>ジャスト回避フラグを下ろす。</summary>
 	void OffJust() { isJust_ = false; }
 
+	/// <summary>ジャスト回避成功状態かを取得する。</summary>
 	bool IsJust() { return isJust_; }
 
+	/// <summary>
+	/// 画面内での相対オフセット位置を設定する。
+	/// </summary>
+	/// <param name="offset">オフセット（-1.0 ~ 1.0）。</param>
 	void SetScreenOffset(const Vector2& offset) { screenOffset_ = offset; }
 
+	/// <summary>
+	/// ダメージを受ける処理。
+	/// HPを減らし、無敵時間や被弾演出を開始する。
+	/// </summary>
 	void TakeDamage();
 
+	/// <summary>現在のHPを取得する。</summary>
 	int GetHP() { return hitpoint_; }
 
+	/// <summary>現在の画面内オフセットを取得する。</summary>
 	Vector2 GetScreenOffset() { return screenOffset_; }
 
+	/// <summary>
+	/// 衝突時コールバック。
+	/// 敵や敵弾と衝突した際の処理を行う。
+	/// </summary>
 	void OnCollision() override;
 
 private:
+	/// <summary>状態更新後の共通処理（フラグ管理など）。</summary>
 	void PostStateUpdate();
 
+	/// <summary>攻撃処理（弾の発射）。</summary>
 	void Attack();
+	/// <summary>移動処理（入力に応じた位置更新）。</summary>
 	void Move();
+	/// <summary>移動範囲の制限（クランプ）。</summary>
 	void ClampOffset();
 
+	/// <summary>ローカル回転の更新（機体の傾き）。</summary>
 	void RotationOffsetLocal();
 
+	/// <summary>
+	/// スクリーン座標オフセットをワールド座標に変換する。
+	/// </summary>
+	/// <param name="offset">スクリーンオフセット。</param>
+	/// <returns>ワール座標。</returns>
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
-	//void RotationOffset();
-
 
 	// BarrelRoll
+	/// <summary>バレルロール（回避）開始処理。</summary>
 	void StartBarrelRoll();
+	/// <summary>バレルロール中の更新処理。</summary>
 	void BarrelRoll();
+	/// <summary>左方向へのロール。</summary>
 	void LeftRoll(const Vector2& dir);
+	/// <summary>右方向へのロール。</summary>
 	void RightRoll(const Vector2& dir);
 
 
 	// Debug
+	/// <summary>デバッグ用GUIの表示。</summary>
 	void DebugGUI();
 	// test
+	/// <summary>テスト用レティクル初期化。</summary>
 	void TestReticleInit();
+	/// <summary>テスト用レティクル更新。</summary>
 	void TestReticleUpdate();
+	/// <summary>テスト用レティクル描画。</summary>
 	void TestReticleDraw();
 
 private:
+	/// <summary>入力管理クラス。</summary>
 	Input* input_ = nullptr;
+	/// <summary>使用するカメラ。</summary>
 	Camera* camera_ = nullptr;
-	Vector2 screenOffset_{}; // カメラ基準のスクリーン内オフセット（例：[-1, 1]）
+	/// <summary>カメラ基準のスクリーン内オフセット（例：[-1, 1]）。</summary>
+	Vector2 screenOffset_{}; 
+	/// <summary>プレイヤー用コライダー。</summary>
 	std::unique_ptr<PlayerCollider> collider_;
+	/// <summary>ジャスト回避判定用コライダー。</summary>
 	std::unique_ptr<JustCollider> justCollider_;
 
+	/// <summary>コライダーのスケール。</summary>
 	float colliderScale_ = 0.2f;
+	/// <summary>カメラからの深度距離。</summary>
 	float playerDepthFromCamera_ = 4.0f;
-	float xRange = 16.0f * 0.09f; // 横移動の最大幅（画面内の物理スケール）
-	float yRange = 9.0f * 0.085f; // 縦移動の最大高さ
+	/// <summary>横移動の最大幅（画面内の物理スケール）。</summary>
+	float xRange = 16.0f * 0.09f;
+	/// <summary>縦移動の最大高さ。</summary>
+	float yRange = 9.0f * 0.085f;
 
+	/// <summary>基本移動速度。</summary>
 	float defaultSpeed_ = 0.3f;
+	/// <summary>現在の移動速度。</summary>
 	Vector2 speed_{ defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
+	/// <summary>入力方向。</summary>
 	Vector2 inputDir_{};
 
+	/// <summary>ロール回転方向。</summary>
 	Vector2 rollDir_{};
 
+	/// <summary>デルタタイム。</summary>
 	float deltaTime_ = 1.0f / 60.0f;
 
 	// hp
+	/// <summary>ヒットポイント。</summary>
 	int hitpoint_ = 30;
 
 
 	// 姿勢
-	// Yaw（Y軸回転）
+	/// <summary>Yaw（Y軸回転）。</summary>
 	float yaw = 0.0f;
-	// Pitch（上下回転）
+	/// <summary>Pitch（上下回転）。</summary>
 	float pitch = 0.0f;
-	// Roll（横傾き）
+	/// <summary>Roll（横傾き）。</summary>
 	float roll = 0.0f;
 
-	// Pitch（上下回転）
+	/// <summary>移動に伴うPitch傾斜。</summary>
 	float movePitch = 0.0f;
 
 	// バレルロール
+	/// <summary>ロール所要時間。</summary>
 	float rollTime_ = 0.6f;
+	/// <summary>ロール移動範囲。</summary>
 	float rollRange_ = 0.3f;
+	/// <summary>左ロール目標角度。</summary>
 	float leftRoll_ = 2.0f * std::numbers::pi_v<float>;
+	/// <summary>右ロール目標角度。</summary>
 	float rightRoll_ = -2.0f * std::numbers::pi_v<float>;
+	/// <summary>ロール開始位置。</summary>
 	Vector2 startRollPos_{};
+	/// <summary>ロール終了位置。</summary>
 	Vector2 goalRollPos_{};
 
+	/// <summary>ロールエフェクトタイマー。</summary>
 	float rollEffectTimer_ = 0.0f;
 
+	/// <summary>ジャスト回避成功フラグ。</summary>
 	bool isJust_ = false;
+	/// <summary>ジャスト回避ロール中かどうか。</summary>
 	bool justRoll_ = false;
+	/// <summary>ジャスト回避時のスケール倍率。</summary>
 	float justScale_ = 3.0f;
 
 
 	// 弾関連
+	/// <summary>弾管理マネージャ。</summary>
 	std::unique_ptr<PlayerBulletManager> bulletManager_;
+	/// <summary>現在の弾タイプ。</summary>
 	PlayerBulletType currentBulletType_ = PlayerBulletType::NORMAL;
+	/// <summary>発射クールタイム。</summary>
 	float bulletCoolTime_ = 0.1f;
+	/// <summary>発射タイマー。</summary>
 	float bulletTimer_ = 0.0f;
 
+	/// <summary>レティクル管理クラス。</summary>
 	std::unique_ptr<Reticle> reticle_;
 
 
 	// test
+	/// <summary>テスト用レティクルオブジェクト。</summary>
 	std::unique_ptr<Object3d> reticleObj_;
+	/// <summary>テスト用レティクルワールド変換。</summary>
 	WorldTransform reticleWT_;
 
+	/// <summary>コントレイルインデックス。</summary>
 	int contrailIndex_;
 
 

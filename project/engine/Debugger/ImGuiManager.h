@@ -5,7 +5,10 @@
 #include <mutex>
 #include "SingletonObject.h"
 
-// ImGui管理クラス
+/// <summary>
+/// ImGuiの管理クラス。
+/// 初期化、フレーム開始・終了処理、描画実行を担当する。
+/// </summary>
 class ImGuiManager :
 	public SingletonObject<ImGuiManager>
 {
@@ -18,15 +21,34 @@ private:
 	~ImGuiManager() = default;
 
 public:
-	// 初期化
+	/// <summary>
+	/// 初期化処理。
+	/// DirectXデバイスやウィンドウハンドルとの紐付けを行う。
+	/// </summary>
+	/// <param name="winApp">Windowsアプリケーション基盤クラス。</param>
+	/// <param name="dxBasis">DirectX基盤クラス。</param>
 	void Initialize(WindowsApp* winApp, DirectXBasis* dxBasis);
-	// ImGui受付開始
+
+	/// <summary>
+	/// ImGuiのフレーム受付開始。
+	/// 毎フレームの描画処理の最初に呼び出す。
+	/// </summary>
 	void Begin();
-	// ImGui受付終了
+
+	/// <summary>
+	/// ImGuiのフレーム受付終了。
+	/// 描画コマンドの生成を行う。
+	/// </summary>
 	void End();
-	// 描画
+
+	/// <summary>
+	/// 実際の描画コマンドを発行する。
+	/// </summary>
 	void Draw();
-	// 終了
+
+	/// <summary>
+	/// 終了処理。リソースの開放など。
+	/// </summary>
 	void Finalize();
 private:
 	WindowsApp* winApp_ = nullptr;

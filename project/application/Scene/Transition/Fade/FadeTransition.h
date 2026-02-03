@@ -4,24 +4,39 @@
 
 class Sprite;
 
+/// <summary>
+/// フェードイン・フェードアウトを行うトランジションクラス。
+/// ステートマシンを使用して状態を管理する。
+/// </summary>
 class FadeTransition : public StateMachineTransition<FadeTransition>
 {
 public: // 関数テーブル
 	static const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSet>& GetStateTable();
 
 public:
+	/// <summary>
+	/// フェードの種類の定義。
+	/// </summary>
 	enum class Type
 	{
-		IDLE,
-		FADE_IN,
-		FADE_OUT,
+		IDLE,		///< 待機
+		FADE_IN,	///< フェードイン（黒 -> 透明）
+		FADE_OUT,	///< フェードアウト（透明 -> 黒）
 	};
 
+	/// <summary>
+	/// コンストラクタ。
+	/// </summary>
+	/// <param name="type">フェードの種類。</param>
+	/// <param name="duration">フェードにかける時間（秒）。</param>
 	FadeTransition(FadeTransition::Type type, float duration);
 
 
+	/// <summary>初期化処理。</summary>
 	void Init() override;
+	/// <summary>描画処理。</summary>
 	void Draw() override;
+	/// <summary>完了判定。</summary>
 	bool IsFinished() const override;
 
 private:

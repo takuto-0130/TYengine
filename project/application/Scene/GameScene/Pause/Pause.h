@@ -8,22 +8,33 @@
 
 class Sprite;
 
+/// <summary>
+/// ポーズメニューのボタンの種類。
+/// </summary>
 enum ButtonElements
 {
-	RESUME,
-	RETURN_TITLE,
+	RESUME,			///< ゲームに戻る
+	RETURN_TITLE,	///< タイトルに戻る
 	Num
 };
 
+/// <summary>
+/// ポーズ画面の管理クラス。
+/// ボタンの操作、音量設定の変更などを担当する。
+/// </summary>
 class PauseClass
 {
 public:
+	/// <summary>初期化処理。</summary>
 	void Init();
 
+	/// <summary>状態のリセット。</summary>
 	void Reset();
 
+	/// <summary>毎フレームの更新処理。</summary>
 	void Update();
 
+	/// <summary>描画処理。</summary>
 	void Draw();
 
 	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
@@ -42,14 +53,23 @@ private:
 private:
 	struct VolumeControl
 	{
+		/// <summary>サウンドカテゴリ。</summary>
 		SoundCategory soundCategory = SoundCategory::CategoryNum;
-		Vector2 pos = {};	// 判定用座標
-		Vector2 size = {};	// 判定用サイズ
+		/// <summary>判定用座標。</summary>
+		Vector2 pos = {};	
+		/// <summary>判定用サイズ。</summary>
+		Vector2 size = {};	
+		/// <summary>押下状態フラグ。</summary>
 		bool isPush = false;
+		/// <summary>ホバーアニメーション進捗。</summary>
 		float hoverProgress = 0.0f;
+		/// <summary>背景バーのスプライト。</summary>
 		std::unique_ptr<Sprite> bar;
+		/// <summary>音量バー（中身）のスプライト。</summary>
 		std::unique_ptr<Sprite> colorBar;
+		/// <summary>スライダつまみのスプライト。</summary>
 		std::unique_ptr<Sprite> slide;
+		/// <summary>テキスト表示用スプライト。</summary>
 		std::unique_ptr<Sprite> text;
 	};
 
@@ -66,10 +86,15 @@ private:
 
 	struct MenuButton
 	{
+		/// <summary>ボタンの種類。</summary>
 		ButtonElements elements = ButtonElements::Num;
-		Vector2 pos = {};	// 判定用座標
-		Vector2 size = {};	// 判定用サイズ
+		/// <summary>判定用座標。</summary>
+		Vector2 pos = {};	
+		/// <summary>判定用サイズ。</summary>
+		Vector2 size = {};	
+		/// <summary>ボタン画像スプライト。</summary>
 		std::unique_ptr<Sprite> button;
+		/// <summary>ホバーアニメーション進捗。</summary>
 		float hoverProgress = 0.0f;
 	};
 

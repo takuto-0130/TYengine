@@ -2,23 +2,23 @@
 #include "Timer.h"
 
 
-void TitleEnemyManager::Init(Camera* camera)
+void EnemyManager::Init(Camera* camera)
 {
 	camera_ = camera;
 	bulletManager_.Init();
 }
 
-void TitleEnemyManager::Reset()
+void EnemyManager::Reset()
 {
 	enemies_.clear();
 }
 
-void TitleEnemyManager::MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score)
+void EnemyManager::MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score)
 {
 	comboAndScoreHandler_ = std::make_unique<ComboAndScoreHandler>(combo, score);
 }
 
-void TitleEnemyManager::Update()
+void EnemyManager::Update()
 {
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& e) { return e->IsDead(); });
 
@@ -39,7 +39,7 @@ void TitleEnemyManager::Update()
 	bulletManager_.Update();
 }
 
-void TitleEnemyManager::Draw()
+void EnemyManager::Draw()
 {
 	for (auto& enemy : enemies_)
 	{
@@ -48,7 +48,7 @@ void TitleEnemyManager::Draw()
 	bulletManager_.Draw();
 }
 
-void TitleEnemyManager::SetTargetPos(Vector3* pos)
+void EnemyManager::SetTargetPos(Vector3* pos)
 {
 	if (pos)
 	{
@@ -59,7 +59,7 @@ void TitleEnemyManager::SetTargetPos(Vector3* pos)
 	}
 }
 
-Vector3 TitleEnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
+Vector3 EnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 {
 	Vector3 camPos = camera_->GetPosition();
 	Vector3 camForward = camera_->GetForward();
@@ -75,7 +75,7 @@ Vector3 TitleEnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 		+ camUp * (offset.y * yRange);
 }
 
-void TitleEnemyManager::Pop()
+void EnemyManager::Pop()
 {
 	std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
 	enemy->Init();
@@ -92,7 +92,7 @@ void TitleEnemyManager::Pop()
 	enemies_.push_back(std::move(enemy));
 }
 
-void TitleEnemyManager::SetCamera(Camera* camera)
+void EnemyManager::SetCamera(Camera* camera)
 {
 	for (auto& enemy : enemies_)
 	{

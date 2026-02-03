@@ -3,25 +3,29 @@
 
 void Stage::Init()
 {
+	// プレイヤー生成と初期化
     player_ = std::make_unique<Player>();
     player_->SetCamera(camera_);
     player_->Init();
 
+    // マネージャ群（コンボ、スコア）初期化
     comboManager_ = std::make_unique<ComboManager>();
     comboManager_->Init();
     scoreManager_ = std::make_unique<ScoreManager>();
     scoreManager_->Init();
 
-
+    // 敵マネージャ設定（スコア/コンボ関連付け）
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
     enemyMgr_.Init(camera_);
 
+    // レール管理初期化
     railManager_ = std::make_unique<RailManager>();
     railManager_->SetCamera(camera_);
     railManager_->Init();
 
     Reset();
 
+    // 背景（地面）オブジェクト初期化
     ground_ = std::make_unique<Object3d>();
     ground_->Initialize();
     ground_->SetModel("ground.obj");
@@ -38,8 +42,10 @@ void Stage::Update()
 {
     isEdit_ = false;
 
+    // カメラ情報の更新
     enemyMgr_.SetCamera(camera_);
 
+    // レール更新
     railManager_->Update();
 
     if (railManager_->RailTrigger())
@@ -47,24 +53,28 @@ void Stage::Update()
         // トリガーに到達したとき
     }
 
+    // プレイヤー更新
     player_->Update();
 
+    // プレイヤー位置を敵側に通知（エイム等のため）
     Vector3 pos = player_->GetWorldPosition();
-
     enemyMgr_.SetTargetPos(&pos);
 
+    // 敵更新
     enemyMgr_.Update();
 
+    // コンボシステム更新
     comboManager_->Update();
 }
 
 void Stage::Draw()
 {
+    // 背景描画
     ground_->Draw(groundWT_);
 
+    // レール・敵・プレイヤー描画
     railManager_->Draw();
     enemyMgr_.Draw();
-
     player_->Draw();
 }
 

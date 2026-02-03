@@ -5,13 +5,17 @@
 
 class Audio;
 
+/// <summary>
+/// カスタムXAPO（Cross-Platform Audio Processing Object）。
+/// オーディオストリームに挿入し、解析用データ（波形、FFT）を取得する。
+/// </summary>
 class __declspec(uuid("2dde0a3b-45d5-4a48-a9e6-a3a8129ef91a"))
     MyAnalyzerXAPO : public CXAPOParametersBase
 {
 public:
-    static const UINT32 FFT_SIZE = 1024;
-    static const UINT32 DELAY_FRAMES = 5;
-    static const UINT32 WAVEFORM_SIZE = 441; // Analyzer側のサイズに合わせる
+    static const UINT32 FFT_SIZE = 1024;     ///< FFTサンプルサイズ
+    static const UINT32 DELAY_FRAMES = 5;    ///< 遅延フレーム数
+    static const UINT32 WAVEFORM_SIZE = 441; ///< 波形バッファサイズ
 private:
     MyAnalyzerXAPO();
     ~MyAnalyzerXAPO();
@@ -19,6 +23,11 @@ private:
     friend class Audio;
 
 public:
+public:
+    /// <summary>
+    /// プロセス前のロック処理。
+    /// フォーマットの確認やパラメータの更新を行う。
+    /// </summary>
     HRESULT __stdcall LockForProcess(
         UINT32 inputLockedParameterCount,
         const XAPO_LOCKFORPROCESS_BUFFER_PARAMETERS* inputLockedParameters,
@@ -26,6 +35,10 @@ public:
         const XAPO_LOCKFORPROCESS_BUFFER_PARAMETERS* outputLockedParameters
     ) override;
 
+    /// <summary>
+    /// オーディオ処理の実行。
+    /// ストリームからデータをコピーし、解析用バッファに格納する。
+    /// </summary>
     void __stdcall Process(
         UINT32 InputProcessParameterCount,
         const XAPO_PROCESS_BUFFER_PARAMETERS* pInputProcessParameters,

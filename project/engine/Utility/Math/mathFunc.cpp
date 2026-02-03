@@ -179,17 +179,17 @@ void OBBRotation(const Vector3& rotate, OBB& obb) {
 
 	OBBrotateMatrix =
 		Multiply(MakeRotateXMatrix(rotate.x), Multiply(MakeRotateYMatrix(rotate.y), MakeRotateZMatrix(rotate.z)));
-	obb.oriientations[0].x = OBBrotateMatrix.m[0][0];
-	obb.oriientations[0].y = OBBrotateMatrix.m[0][1];
-	obb.oriientations[0].z = OBBrotateMatrix.m[0][2];
+	obb.orientations[0].x = OBBrotateMatrix.m[0][0];
+	obb.orientations[0].y = OBBrotateMatrix.m[0][1];
+	obb.orientations[0].z = OBBrotateMatrix.m[0][2];
 
-	obb.oriientations[1].x = OBBrotateMatrix.m[1][0];
-	obb.oriientations[1].y = OBBrotateMatrix.m[1][1];
-	obb.oriientations[1].z = OBBrotateMatrix.m[1][2];
+	obb.orientations[1].x = OBBrotateMatrix.m[1][0];
+	obb.orientations[1].y = OBBrotateMatrix.m[1][1];
+	obb.orientations[1].z = OBBrotateMatrix.m[1][2];
 
-	obb.oriientations[2].x = OBBrotateMatrix.m[2][0];
-	obb.oriientations[2].y = OBBrotateMatrix.m[2][1];
-	obb.oriientations[2].z = OBBrotateMatrix.m[2][2];
+	obb.orientations[2].x = OBBrotateMatrix.m[2][0];
+	obb.orientations[2].y = OBBrotateMatrix.m[2][1];
+	obb.orientations[2].z = OBBrotateMatrix.m[2][2];
 }
 
 

@@ -6,19 +6,31 @@
 
 class Camera;
 
-class TitleEnemyManager
+/// <summary>
+/// 敵管理クラス。
+/// 敵キャラクターの生成と管理を行う。
+/// </summary>
+class EnemyManager
 {
 public:
+	/// <summary>初期化処理。</summary>
 	void Init(Camera* camera);
 
+	/// <summary>
+	/// スコア・コンボ管理ハンドラを生成・登録する。
+	/// </summary>
 	void MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score);
 
+	/// <summary>状態をリセットする。</summary>
 	void Reset();
 
+	/// <summary>更新処理。</summary>
 	void Update();
 
+	/// <summary>描画処理。</summary>
 	void Draw();
 
+	/// <summary>敵をポップ（出現）させる。</summary>
 	void Pop();
 
 public:
@@ -27,27 +39,44 @@ public:
 	void SetCamera(Camera* camera);
 
 private:
+	/// <summary>
+	/// スクリーン座標オフセットをワールド座標に変換する。
+	/// </summary>
+	/// <param name="offset">スクリーンオフセット。</param>
+	/// <returns>ワールド座標。</returns>
 	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
 	
 private:
+	/// <summary>カメラへのポインタ。</summary>
 	Camera* camera_ = nullptr;
 
+	/// <summary>管理中の敵リスト。</summary>
 	std::list<std::unique_ptr<Enemy>> enemies_;
 
+	/// <summary>敵弾マネージャ。</summary>
 	EnemyBulletManager bulletManager_;
 
+	/// <summary>敵の出現深度（最小）。</summary>
 	float enemyPopDepthMin_ = 12.0f;
+	/// <summary>敵の出現深度（最大）。</summary>
 	float enemyPopDepthMax_ = 17.0f;
-	float xRange = 16.0f * 0.09f * 2.0f; // 横移動の最大幅（画面内の物理スケール）
-	float yRange = 9.0f * 0.085f * 2.0f; // 縦移動の最大高さ
+	/// <summary>横移動の最大幅（出現範囲）。</summary>
+	float xRange = 16.0f * 0.09f * 2.0f;
+	/// <summary>縦移動の最大高さ（出現範囲）。</summary>
+	float yRange = 9.0f * 0.085f * 2.0f;
 
+	/// <summary>乱数生成器。</summary>
 	std::random_device rd;
 
+	/// <summary>出現タイマー。</summary>
 	float timer_ = 0.0f;
+	/// <summary>出現間隔。</summary>
 	const float spawnReadyTimer_ = 2.0f;
 
+	/// <summary>同時出現数。</summary>
 	const int spawnNum_ = 5;
 
+	/// <summary>コンボ・スコア処理ハンドラ。</summary>
 	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;
 };
 

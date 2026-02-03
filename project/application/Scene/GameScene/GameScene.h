@@ -51,73 +51,130 @@ public: // 関数テーブル
 public:
 	GameScene();
 	~GameScene() override;
+
+	/// <summary>
+	/// シーンの初期化処理。
+	/// ステージ、プレイヤー、UI、オーディオ等の読み込みと生成を行う。
+	/// </summary>
 	void Init() override;
+
+	/// <summary>
+	/// シーンの毎フレーム更新処理。
+	/// 進行状態（State）に応じた更新ロジックを実行する。
+	/// </summary>
 	void Update() override;
+
+	/// <summary>
+	/// シーンの描画処理。
+	/// 背景、キャラクター、エフェクト等の3D描画を行う。
+	/// </summary>
 	void Draw() override;
+
+	/// <summary>
+	/// シーンのUI描画処理。
+	/// スコア、HUD、メニュー画面等の2D描画を行う。
+	/// </summary>
 	void UIDraw() override;
 
 private:
-	// GameSceneUI
+	/// <summary>
+	/// UI関連の初期化を行う。
+	/// </summary>
 	void UIInit();
 
-	// GameSceneReady
+	/// <summary>
+	/// ゲーム開始演出時のカメラワークを開始する。
+	/// </summary>
 	void StartCamera();
 
 	// GameScenePlay
+	/// <summary>プレイ中のUI更新。</summary>
 	void PlayUIUpdate();
+	/// <summary>コンボUIの更新。</summary>
 	void ComboUIUpdate();
 
-	// EmitterInit
+	/// <summary>
+	/// パーティクルエミッターの初期設定を行う。
+	/// </summary>
 	void EmitterInit();
 
-	// GameSceneDebugEdit
+	/// <summary>
+	/// デバッグ編集モードの切り替え処理。
+	/// </summary>
 	void SwitchEdit();
 
 private: // メンバ変数
 
+	/// <summary>カメラのピッチ角。</summary>
 	float pitch_ = 1.0f;
+	/// <summary>カメラのオフセット位置。</summary>
 	Vector3 cameraOffset_ = {};
 
+	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
+	/// <summary>オーディオマネージャ。</summary>
 	GameAudio* gameAudio_ = nullptr;
 
 
+	/// <summary>ステージ管理マネージャ。</summary>
 	std::unique_ptr<StageManager> stageManager_;
 
 
-
+	/// <summary>汎用パーティクルエミッター。</summary>
 	IParticleRenderer::Emitter emitter;
+	/// <summary>リング状パーティクルエミッター。</summary>
 	IParticleRenderer::Emitter emitterRing;
 
+	/// <summary>UI用コライダー管理。</summary>
 	UISpriteColliderManager uiCollider_;
+	/// <summary>紙吹雪エフェクトシステム。</summary>
 	ConfettiSystem confetti_;
 
+	/// <summary>バレットタイムコントローラー。</summary>
 	BulletTimeController* bulletTime_ = nullptr;
 
 	
-	// UIクラスは後にまとめる
+	// UIクラス群
+	/// <summary>プレイ中UI。</summary>
 	std::unique_ptr<PlayUI> playUI_;
+	/// <summary>スタート画面UI。</summary>
 	std::unique_ptr<StartUI> startDraw_;
+	/// <summary>スコア表示UI。</summary>
 	std::unique_ptr<ScoreUI> scoreDraw_;
+	/// <summary>リトライ画面UI。</summary>
 	std::unique_ptr<RetryUI> retryDraw_;
+	/// <summary>ポーズメニュー。</summary>
 	std::unique_ptr<PauseClass> pauseMenu_;
+	/// <summary>リザルト画面。</summary>
 	std::unique_ptr<ResultClass> resultMenu_;
 
+	/// <summary>スカイボックス。</summary>
 	std::unique_ptr<ObjectCubemap> skybox_;
 
+	/// <summary>エディタ切り替えスイッチ。</summary>
 	bool otherEditorSwitch_ = false;
 
+	/// <summary>準備完了フラグ。</summary>
 	bool isReady_ = true;
+	/// <summary>準備カウントダウン。</summary>
 	int readyCount_ = 0;
+	/// <summary>開始時カメラ位置。</summary>
 	Vector3 startCameraPos_{};
+	/// <summary>開始時カメラ回転。</summary>
 	Vector3 startCameraRot_{};
+	/// <summary>開始カメラ演出タイマー。</summary>
 	float startCameraTimer_ = 0;
+	/// <summary>前回のステート経過時間。</summary>
 	float prevStateElapsed_ = 0.0f;
 
 
+	/// <summary>ゲームUI用JSONマネージャ。</summary>
 	jx::JsonManager gameUIJM_;
+	/// <summary>UI設定エラーメッセージ。</summary>
 	std::string errUI_;
+	/// <summary>設定用JSONマネージャ。</summary>
 	jx::JsonManager configJM_;
+	/// <summary>設定エラーメッセージ。</summary>
 	std::string errConfig_;
 
 private: // シーン内のState関連関数

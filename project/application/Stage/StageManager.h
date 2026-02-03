@@ -8,19 +8,39 @@
 #include "imgui.h"
 #endif
 class Camera;
+/// <summary>
+/// ステージ管理クラス。
+/// 複数のステージデータの編集・切り替え・保存・読み込みを行う。
+/// </summary>
 class StageManager
 {
 public:
     StageManager(Camera* camera) : camera_(camera) {};
+    
+    /// <summary>初期化処理。</summary>
     void Init();
+    /// <summary>更新処理。</summary>
     void Update();
+    /// <summary>描画処理。</summary>
     void Draw();
+    
+    /// <summary>
+    /// エディタ用更新処理。
+    /// ImGuiによるステージ編集機能を提供する。
+    /// </summary>
     void EditUpdate();
 
+    /// <summary>現在のステージをリセットする。</summary>
     void Reset(){ GetCurrentStage()->Reset(); }
 
 public:
+    /// <summary>カメラを設定する。</summary>
     void SetCamera(Camera* camera) { camera_ = camera; }
+    
+    /// <summary>
+    /// レール終端に到達したか判定する。
+    /// </summary>
+    /// <returns>終端なら true。</returns>
     bool EndRail() { return GetCurrentStage()->EndRail(); }
 
     ComboManager* GetComboManager() 

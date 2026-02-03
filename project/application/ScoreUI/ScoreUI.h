@@ -4,17 +4,33 @@
 #include "Utils/Json/JsonManager.h"
 
 #include <memory>
+/// <summary>
+/// スコア表示UIの管理クラス。
+/// 桁ごとのスプライト管理やスコア加算時のアニメーション制御を行う。
+/// </summary>
 class ScoreUI
 {
 public:
+	/// <summary>初期化処理。</summary>
 	void Init();
 
+	/// <summary>更新処理。</summary>
 	void Update();
 
+	/// <summary>描画処理。</summary>
 	void Draw();
 
+	/// <summary>
+	/// リザルト画面用の演出更新処理。
+	/// </summary>
+	/// <param name="currentTime">現在のアニメーション時間。</param>
 	void UpdateResult(float currentTime);
 
+	/// <summary>
+	/// 表示するスコアを設定する。
+	/// 現在値と異なる場合、カウントアップ演出が開始される。
+	/// </summary>
+	/// <param name="score">目標スコア。</param>
 	void SetScore(int32_t score)
 	{
 		// 追加：現在の目標スコアと同じなら何もしない
@@ -25,7 +41,9 @@ public:
 		currentScore_ = score;
 	}
 
-	// 仮対応
+	/// <summary>
+	/// 仮対応：リザルト表示モードを設定する。
+	/// </summary>
 	void SetResult();
 
 

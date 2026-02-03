@@ -67,6 +67,10 @@ private:
 // 音源の同時再生数
 static const size_t kMaxPlayWave = 100;
 
+/// <summary>
+/// オーディオ再生・管理を行うシングルトンクラス。
+/// XAudio2 を使用してWAVファイルの読み込み、再生、ストリーミング、エフェクト適用を行う。
+/// </summary>
 class Audio :
 	public SingletonObject<Audio>
 {
@@ -230,83 +234,105 @@ private:
 #pragma endregion
 
 public:
-	// 初期化
+	/// <summary>
+	/// 初期化処理。
+	/// XAudio2エンジンの初期化、マスターボイスの生成を行う。
+	/// </summary>
+	/// <param name="directoryPath">サウンドファイルのデフォルトディレクトリパス。</param>
 	void Initialize(const std::string& directoryPath = "Resources/Sound/");
 	
+	/// <summary>
+	/// オーディオエンジンの開始処理。
+	/// </summary>
 	void Start();
 
-	/**
-	 * @brief 音源の停止
-	 * @param resourceNum BGMのリソース番号
-	 */
+	/// <summary>
+	/// 指定したリソース番号のBGM（音源）を停止する。
+	/// </summary>
+	/// <param name="resourceNum">停止対象のBGMリソース番号。</param>
 	void StopBGM(int resourceNum);
 
 
 	void Update();                  // ★ 無音バッファ供給
 	void EnableSilentFeed(bool enable);
 
-	/**
-	 * @brief 音源のポーズ
-	 * @param resourceNum サウンドのリソース番号
-	 */
+	/// <summary>
+	/// 音源を一時停止する。
+	/// </summary>
+	/// <param name="resourceNum">対象のサウンドリソース番号。</param>
 	void Pause(int resourceNum);
 
-	/**
-	 * @brief 音源の再開
-	 * @param resourceNum サウンドのリソース番号
-	 */
+	/// <summary>
+	/// 一時停止中の音源を再開する。
+	/// </summary>
+	/// <param name="resourceNum">対象のサウンドリソース番号。</param>
 	void ReStart(int resourceNum);
 
-	/**
-	 * @brief 全体音量調整
-	 */
+	/// <summary>
+	/// マスターボリューム（全体の音量）を設定する。
+	/// </summary>
+	/// <param name="volume">音量（0.0f ~ 1.0f）。</param>
 	void SetMasterVolume(float volume);
 
-	/**
-	 * @brief カテゴリー別音量調整
-	 * @param soundCategory サウンドのカテゴリー
-	 */
+	/// <summary>
+	/// 指定カテゴリーの音量を設定する（BGM, SE など）。
+	/// </summary>
+	/// <param name="soundCategory">カテゴリー名。</param>
+	/// <param name="volume">音量。</param>
 	void SetCategoryVolume(const std::string& soundCategory, float volume);
 
-	/**
-	 * @brief 個別音量調整
-	 * @param resourceNum サウンドのリソース番号
-	 */
+	/// <summary>
+	/// 個別の音源の音量を設定する。
+	/// </summary>
+	/// <param name="resourceNum">リソース番号。</param>
+	/// <param name="volume">音量。</param>
 	void SetSoundVolume(int resourceNum, float volume);
 
-	/**
-	 * @brief 全体音量
-	 */
+	/// <summary>
+	/// 現在のマスターボリュームを取得する。
+	/// </summary>
+	/// <returns>現在の音量。</returns>
 	float GetMasterVolume();
 
-	/**
-	 * @brief カテゴリー別音量
-	 * @param soundCategory サウンドのカテゴリー
-	 */
+	/// <summary>
+	/// カテゴリーごとの音量を取得する。
+	/// </summary>
+	/// <param name="soundCategory">カテゴリー名。</param>
+	/// <returns>音量。</returns>
 	float GetCategoryVolume(const std::string& soundCategory);
 
-	/**
-	 * @brief 個別音量
-	 * @param resourceNum サウンドのリソース番号
-	 */
+	/// <summary>
+	/// 個別音源の音量を取得する。
+	/// </summary>
+	/// <param name="resourceNum">リソース番号。</param>
+	/// <returns>音量。</returns>
 	float GetSoundVolume(int resourceNum);
 
-	// 音声読み込み
+	/// <summary>
+	/// WAVファイルを読み込み、メモリにキャッシュする。
+	/// </summary>
+	/// <param name="filename">ファイル名（パス含む）。</param>
 	void LoadWave(const std::string& filename);
 
-	// 音声データ解放
+	/// <summary>
+	/// 指定したファイルの音声データをメモリから解放する。
+	/// </summary>
+	/// <param name="filename">解放するファイル名。</param>
 	void SoundUnload(const std::string& filename);
 
-	// サウンドカテゴリー追加
+	/// <summary>
+	/// 新しいサウンドカテゴリーを追加する（BGM, SEなど）。
+	/// </summary>
+	/// <param name="soundCategory">カテゴリー名。</param>
 	void AddSoundCategory(const std::string& soundCategory);
 
-	/**
-	 * @brief 音源の再生
-	 * @param soundData 音源データ
-	 * @param isLoop ループするか　default : false
-	 * @param soundCategory サウンドのカテゴリー
-	 * @return int BGMのリソース番号
-	 */
+	/// <summary>
+	/// 音源を再生する。
+	/// </summary>
+	/// <param name="filename">再生するファイル名。</param>
+	/// <param name="isLoop">ループ再生を行うか（デフォルト: false）。</param>
+	/// <param name="soundCategory">再生するカテゴリー（省略時は無し）。</param>
+	/// <returns>再生ハンドル（リソース番号）。エラー時は -1。</returns>
 	int Play(const std::string& filename, const bool isLoop = false, std::string soundCategory = "");
 
 	Microsoft::WRL::ComPtr<MyAnalyzerXAPO> GetAnalyzerXAPO() { return analyzerXAPO_; }
@@ -321,41 +347,62 @@ public:
 
 
 private:
-	// 利用可能なソースボイスを検索
+private:
+	/// <summary>
+	/// 利用可能な（再生中でない）ソースボイスを検索する。
+	/// </summary>
+	/// <param name="sourceVoices">検索対象のソースボイス配列。</param>
+	/// <returns>利用可能なインデックス。見つからない場合は -1。</returns>
 	int SearchSourceVoice(IXAudio2SourceVoice** sourceVoices);
 
+	/// <summary>
+	/// XAudio2用のバッファ構造体を設定する。
+	/// </summary>
+	/// <param name="loop">ループ再生するか。</param>
+	/// <param name="sound">設定するサウンドデータ。</param>
+	/// <returns>設定済み XAUDIO2_BUFFER。</returns>
 	XAUDIO2_BUFFER SetBuffer(bool loop, const SoundData& sound);
 
+	/// <summary>
+	/// 波形解析用のサブミックスボイスを作成・接続する。
+	/// </summary>
 	void CreateAnalyzerSubmix();
 
 private:
+	/// <summary>XAudio2 エンジン本体。</summary>
 	Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
+	/// <summary>マスターボイス。</summary>
 	IXAudio2MasteringVoice* masterVoice_;
 
+	/// <summary>サウンドカテゴリごとのサブミックスボイス。</summary>
 	std::unordered_map<std::string, IXAudio2SubmixVoice*> soundCategorySubmixVoices_;
 
-	// サウンドデータ格納コンテナ
+	/// <summary>ロード済みサウンドデータ格納コンテナ。</summary>
 	std::unordered_map<std::string, Audio::SoundData> soundDataMap_;
 
-	// 再生中データコンテナ
+	/// <summary>再生中のソースボイス配列（同時再生管理用）。</summary>
 	std::array<IXAudio2SourceVoice*, kMaxPlayWave> sourceVoices_ = { nullptr };
 
 
 
 
-	// サウンド格納ディレクトリ
+	/// <summary>サウンドファイルのルートディレクトリパス。</summary>
 	std::string directoryPath_;
 
-	// XAPO のインスタンス
+	/// <summary>波形解析用 XAPO インスタンス。</summary>
 	Microsoft::WRL::ComPtr<MyAnalyzerXAPO> analyzerXAPO_;
 
-	// 全体解析用 Submix
+	/// <summary>全体解析用サブミックスボイス。</summary>
 	IXAudio2SubmixVoice* analyzerSubmix_ = nullptr;
 
 	// ---- 無音バッファ用 Voice ----
+	/// <summary>無音再生用ソースボイス（オーディオエンジン維持用）。</summary>
 	IXAudio2SourceVoice* silentVoice_ = nullptr;
+	/// <summary>無音フォーマット。</summary>
 	WAVEFORMATEX silentFormat_{};
+	/// <summary>無音バッファデータ。</summary>
 	std::vector<float> silentBuffer_;
+	/// <summary>無音フィードが有効かどうか。</summary>
 	bool silentFeedEnabled_ = false;
 
 private: // 削除予定

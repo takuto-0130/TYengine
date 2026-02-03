@@ -47,7 +47,6 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
-	Audio::GetInstance()->StopStreaming();
 }
 
 void GameScene::Init()

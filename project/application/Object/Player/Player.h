@@ -79,7 +79,7 @@ public:
 	void TakeDamage();
 
 	/// <summary>現在のHPを取得する。</summary>
-	int GetHP() { return hitpoint_; }
+	int GetHP() { return hitPoint_; }
 
 	/// <summary>現在の画面内オフセットを取得する。</summary>
 	Vector2 GetScreenOffset() { return screenOffset_; }
@@ -125,13 +125,14 @@ private:
 	// Debug
 	/// <summary>デバッグ用GUIの表示。</summary>
 	void DebugGUI();
-	// test
-	/// <summary>テスト用レティクル初期化。</summary>
-	void TestReticleInit();
-	/// <summary>テスト用レティクル更新。</summary>
-	void TestReticleUpdate();
-	/// <summary>テスト用レティクル描画。</summary>
-	void TestReticleDraw();
+
+	// Reticle
+	/// <summary>レティクル初期化。</summary>
+	void ReticleInit();
+	/// <summary>レティクル更新。</summary>
+	void ReticleUpdate();
+	/// <summary>レティクル描画。</summary>
+	void ReticleDraw();
 
 private:
 	/// <summary>入力管理クラス。</summary>
@@ -169,7 +170,7 @@ private:
 
 	// hp
 	/// <summary>ヒットポイント。</summary>
-	int hitpoint_ = 30;
+	int hitPoint_ = 30;
 
 
 	// 姿勢

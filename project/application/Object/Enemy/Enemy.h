@@ -203,7 +203,7 @@ private:
 	float lifeTime_ = 4.0f;
 
 	/// <summary>体力。</summary>
-	int32_t hitpoint_ = 3;
+	int32_t hitPoint_ = 3;
 
 	/// <summary>ロール回転角度。</summary>
 	float roll_ = 0.0f;

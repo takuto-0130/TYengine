@@ -186,7 +186,9 @@ void PauseClass::Update()
 	back_->Update();
 	text_->Update();
 
+	// 音量調節バーの操作更新
 	VolumeChange();
+	// メニューボタン（再開・タイトルへ）操作更新
 	ButtonProcess();
 
 	for (auto& vol : volumeControl_)
@@ -196,7 +198,7 @@ void PauseClass::Update()
 		vol.slide->Update();
 		vol.text->Update();
 	}
-	for (auto&& button : menuButtons_)
+	for (auto& button : menuButtons_)
 	{
 		button.button->Update();
 	}
@@ -230,7 +232,7 @@ void PauseClass::DebugJMApply()
 
 void PauseClass::ButtonProcess()
 {
-	if (isPush_) return;
+	if (isPush_) return; // スライドバー操作中はボタン反応しない
 
 	Vector2 mousePos = input_->GetMousePosition();
 	float deltaTime = Timer::GetInstance()->GetDeltaTime();
@@ -242,11 +244,11 @@ void PauseClass::ButtonProcess()
 
 	for (auto&& button : menuButtons_)
 	{
-		// 当たり判定
+		// マウスカーソルとの当たり判定
 		bool isHovered = (std::abs(mousePos.x - button.pos.x) <= button.size.x / 2.0f) &&
 			(std::abs(mousePos.y - button.pos.y) <= button.size.y / 2.0f);
 
-		// タイマー（進捗度）の更新
+		// ホバー演出: タイマー（進捗度）の更新
 		if (isHovered)
 		{
 			button.hoverProgress += kAnimeSpeed * deltaTime;
@@ -260,14 +262,14 @@ void PauseClass::ButtonProcess()
 		// 0.0f ～ 1.0f の間にクランプ
 		button.hoverProgress = std::clamp<float>(button.hoverProgress, 0.0f, 1.0f);
 
-		// イージングを適用してサイズを計算
+		// イージングを適用してサイズを計算（拡縮演出）
 		float t = EaseFixed::OutBack(button.hoverProgress);
 
 		// 線形補間でスケール値を決定 (1.0f から kMaxScale への補間)
 		float currentScale = 1.0f + (kMaxScale - 1.0f) * t;
 		button.button->SetSize(button.size * currentScale);
 
-		// クリック処理
+		// クリック処理：ステート遷移指示を設定
 		if (isHovered && input_->IsTriggerMouse(0))
 		{
 			elements_ = button.elements;

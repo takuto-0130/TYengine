@@ -22,12 +22,14 @@ void TitleScene::Init()
 {
 	//========== ロード ==========//
 
+	// タイトル用JSONデータのロード
 	titleJM.Load("Title.json", true, &err);
 #ifdef _DEBUG
 	Logger::Log(err);
 	Audio::GetInstance()->LoadWave("gameBGM");
 #endif // _DEBUG
 
+	// 必要なサウンドリソースの読み込み
 	GameAudio::GetInstance()->LoadSound("open");
 	GameAudio::GetInstance()->LoadSound("close");
 	GameAudio::GetInstance()->LoadSound("slide");
@@ -86,17 +88,20 @@ void TitleScene::Init()
 
 	//========== カメラ初期化 ==========//
 
+	// JSONから設定された初期位置・角度を反映
 	camera_->SetRotate(titleJM.Get<Vector3>("config.Camera.Rotate"));
 	camera_->SetTranslate(titleJM.Get<Vector3>("config.Camera.Position"));
 
 
 	//========== キャラクター初期化 ==========//
 
+	// タイトル画面の演出用プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->SetCamera(camera_);
 	player_->Init();
 	player_->SetScreenOffset(titleJM.Get<Vector2>("config.Player.ScreenOffset"));
 
+	// タイトル画面の演出用敵マネージャ
 	enemyMgr_.Init(camera_);
 }
 
@@ -113,6 +118,7 @@ void TitleScene::DebugJMApply()
 }
 
 void TitleScene::Update() {
+	// シーン遷移更新
 	Transition();
 	enemyMgr_.SetCamera(camera_);
 #ifdef _DEBUG
@@ -138,19 +144,25 @@ void TitleScene::Update() {
 #else // Release
 
 #endif // _DEBUG
+	// UI更新
 	spaceSpr_->Update();
 	text_->Update();
 	operation_->Update();
 	reticle_->Update();
 
+	// 演出用プレイヤー更新
 	player_->Update();
 
 	skybox_->Update();
 
+	// エイム用照準位置の更新
 	Vector3 pos = player_->GetWorldPosition();
 	enemyMgr_.SetTargetPos(&pos);
 
+	// 敵管理更新
 	enemyMgr_.Update();
+	
+	// 地面の回転演出
 	Vector3 rotate = groundWT_.GetRotate();
 	rotate.y -= rotateSpeed_ * Timer::GetInstance()->GetDeltaTime();
 	groundWT_.SetRotate(rotate);
@@ -193,7 +205,10 @@ void TitleScene::Transition()
 #else
 	if (input_->TriggerKey(DIK_RETURN))
 	{
+		// 決定音再生
 		GameAudio::GetInstance()->Play("enter", false, SoundCategory::UI);
+		
+		// ブロックフェード演出を開始してゲームシーンへ遷移
 		BlockFadeConfig cfg;
 		auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
 		transition->SetOnFinishCallback([this]()

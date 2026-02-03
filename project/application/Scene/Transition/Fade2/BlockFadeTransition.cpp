@@ -210,12 +210,16 @@ void BlockFadeTransition::InitEntering()
 }
 void BlockFadeTransition::UpdateEntering()
 {
+	// イージングを適用した進行度tを計算
 	float t = std::powf(saturate(GetStateElapsedTime() / cfg_.inSec), cfg_.easePow);
+	
+	// 左から右への波及計算
 	float shiftF = std::lerp(float(-(cfg_.cols + cfg_.headCols + 0)), 0.0f, t);
 	int   shiftCols = int(std::floor(shiftF));
 
 	bool rightOK = (shiftCols >= (cfg_.cols - cfg_.bodyCols));
 
+	// 画面全体が覆われたらHOLDへ
 	if (rightOK)
 	{
 		ChangeState(TransitionStage::HOLD);

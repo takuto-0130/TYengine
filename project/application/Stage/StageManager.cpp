@@ -9,9 +9,14 @@ void StageManager::Init()
     stages_.clear();
     AddStage(); // 初期ステージを1つ追加
     GetCurrentStage()->Init();
+    
+    // ステージデータを外部ファイルからロード
     LoadStageFromFile("Resources/JSON/stage_data.json");
+    // ロード後に状態をリセット
     GetCurrentStage()->Reset();
-    Update(); // 1フレーム更新
+    
+    // 依存関係などの解決のため1フレーム更新
+    Update(); 
 }
 
 void StageManager::Update() 
@@ -32,19 +37,23 @@ void StageManager::Draw()
 
 void StageManager::EditUpdate() 
 {
+    // エディタUIの描画と入力処理
     DrawEditorUI();
     if (!stages_.empty()) 
     {
+        // 編集中のステージの更新
         GetCurrentStage()->EditUpdate();
     }
 }
 
 void StageManager::AddStage()
 {
+    // 新規ステージの生成と初期化
     auto stage = std::make_unique<Stage>();
     stage->SetCamera(camera_);
     stage->Init();
     stages_.push_back(std::move(stage));
+    // 追加したステージを選択状態に
     currentStageIndex_ = stages_.size() - 1;
 }
 
@@ -89,6 +98,7 @@ void StageManager::SaveStageToFile(size_t index, const std::string& path)
 {
     if (index < stages_.size())
     {
+        // 指定ステージをJSONへシリアライズしてファイル書き出し
         json j = stages_[index]->ToJson();
         std::ofstream ofs(path);
         ofs << j.dump(4);
@@ -103,12 +113,13 @@ void StageManager::LoadStageFromFile(const std::string& path)
     nlohmann::json j;
     ifs >> j;
 
-    // 上書き対象ステージを取得
+    // 上書き対象ステージを取得（なければ作成）
     if (stages_.empty()) 
     {
         AddStage(); // 空の場合は追加
     }
 
+    // カレントステージへデータを流し込む
     Stage* stage = GetCurrentStage();
     stage->FromJson(j);
 }

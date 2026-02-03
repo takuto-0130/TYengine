@@ -11,6 +11,7 @@ void GameScene::UpdateFadeIn()
 	if (readyCount_ < 2)
 	{
 		++readyCount_;
+		// UIやプレイヤーの初期更新を数フレーム回して安定させる
 		ComboUIUpdate();
 		PlayUIUpdate();
 		stageManager_->GetPlayer()->Update();
@@ -18,6 +19,7 @@ void GameScene::UpdateFadeIn()
 	if(readyCount_ == 2)
 	{
 		++readyCount_;
+		// オープニングカメラ演出の開始
 		StartCamera();
 	}
 

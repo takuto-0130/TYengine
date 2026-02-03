@@ -63,29 +63,30 @@ void ConfettiSystem::Update(float dt)
         // 回転
         p.angle += p.angularVel * dt;
 
-        // 寿命
+        // 寿命減算
         p.life -= dt;
 
+        // 画面外または寿命尽きたら非アクティブ化
         if (p.life <= 0.0f || p.pos.y > screenH_ + 50.0f)
         {
             p.active = false;
             continue;
         }
 
-        // 生存率 0〜1
+        // 生存率 0〜1 based on life
         float t = p.life / p.maxLife;
         t = std::clamp(t, 0.0f, 1.0f);
 
-        // フワっと消えるα
+        // フワっと消えるα (イージング)
         float alpha = EaseFixed::OutQuad(t);
 
-        // 風の左右揺れ：sin波でオフセット
+        // 風の左右揺れ：sin波でオフセット加算
         float swayX = std::sin(p.swayTime * p.swayFreq + p.swayPhase) * p.swayAmp;
 
         // 実際に描画する位置（基準 + 風オフセット）
         Vector2 drawPos = { p.pos.x + swayX, p.pos.y };
 
-        // UI と衝突チェック → 当たったら分裂して return
+        // UI と衝突チェック → 当たったら分裂して消える
         if (CheckAndHandleHitUI(p, drawPos))
         {
             continue; // このパーティクルは消えているので次へ
@@ -120,6 +121,7 @@ void ConfettiSystem::Draw()
 
 void ConfettiSystem::SpawnOne()
 {
+    // 非アクティブなスロットを探す
     auto it = std::find_if(particles_.begin(), particles_.end(),
         [](const ConfettiParticle& pt) { return !pt.active; });
     if (it == particles_.end())

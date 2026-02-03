@@ -36,16 +36,19 @@ Liner::~Liner()
 
 void Liner::Init()
 {
-
+	// 3Dモデル生成
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("unitSphere.obj");
 	obj_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
 	obj_->SetIsLighting(true);
+	
+	// トランスフォーム初期化
 	worldTransform_.Initialize();
 	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
 	worldTransform_.Update();
 
+	// コライダー生成・登録
 	collider_ = std::make_unique<EBulletCollider>(
 		static_cast<uint32_t>(ColliderTypeID::E_BULLET),
 		GetWorldPosition(),
@@ -53,6 +56,8 @@ void Liner::Init()
 		this
 	);
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
+	
+	// 初期ステートをSHOT（発射中）に
 	ChangeState(LinerState::SHOT);
 
 	defaultSpeed_ = 20.0f;

@@ -34,22 +34,32 @@ Player::~Player()
 
 void Player::Init()
 {
+	// ステートマシンの初期化
 	RegisterFromDefaultTable(this);
+	
+	// 入力マネージャ取得
 	input_ = Input::GetInstance();
+	
+	// 3Dオブジェクトの生成と初期化
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("jett.obj");
 	obj_->SetIsLighting(false);
 	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+
+	// ワールドトランスフォームの設定
 	worldTransform_.Initialize();
 	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
-	worldTransform_.SetUseQuaternion(true); // プレイヤーではQuaternion使うようにする
-	worldTransform_.SetParentMatrix(&camera_->GetWorldMatrix());
+	worldTransform_.SetUseQuaternion(true); // クォータニオンを使用
+	worldTransform_.SetParentMatrix(&camera_->GetWorldMatrix()); // 親行列をカメラに設定
+
+	// 初期位置設定（画面手前への配置）
 	Vector3 pos = worldTransform_.GetTranslation();
 	pos.z = 4.0f;
 	worldTransform_.SetTranslation(pos);
-	worldTransform_.Update(); // 一度初期化後に worldTransform の更新をしておく
+	worldTransform_.Update();
 
+	// 通常コライダーの生成と登録
 	collider_ = std::make_unique<PlayerCollider>(
 		static_cast<uint32_t>(ColliderTypeID::PLAYER), 
 		GetWorldPosition(), 
@@ -58,6 +68,7 @@ void Player::Init()
 	);
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 
+	// ジャスト回避用コライダーの生成と登録
 	justCollider_ = std::make_unique<JustCollider>(
 		static_cast<uint32_t>(ColliderTypeID::JUST_AREA),
 		GetWorldPosition(),
@@ -67,18 +78,22 @@ void Player::Init()
 	ColliderManager::GetInstance()->AddCollider(justCollider_.get());
 
 
+	// 初期ステートをROOTに設定
 	ChangeState(PlayerState::ROOT);
 
+	// 自弾マネージャの初期化
 	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
 	bulletManager_->SetCamera(camera_);
 	bulletManager_->Init();
 	
+	// レティクルの初期化
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
 
+	// HP設定
 	hitpoint_ = 9;
 
-	// test
+	// デバッグ用レティクル初期化
 	TestReticleInit();
 }
 
@@ -86,10 +101,14 @@ void Player::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 
+	// 色のリセット（被弾などで赤くなっている場合があるため）
 	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
+	// ステートマシンの更新
 	UpdateState(deltaTime_);
 
+	// エンジン噴射パーティクルの生成
+	// プレイヤー後方にパーティクルを発生させる
 	Vector3 back = -Normalize(Vector3(worldTransform_.GetMatWorld().m[2][0], worldTransform_.GetMatWorld().m[2][1], worldTransform_.GetMatWorld().m[2][2]));
 	IParticleRenderer::Emitter e;
 	e.transform.translate = GetWorldPosition() + back * 0.3f;
@@ -101,6 +120,7 @@ void Player::Update()
 	ParticleManager::GetInstance()->SetEmitter(3, e);
 	ParticleManager::GetInstance()->TriggerEmit(3, true);
 
+	// ステート更新後の追加処理（移動反映や攻撃など）
 	PostStateUpdate();
 }
 
@@ -121,20 +141,21 @@ void Player::Draw()
 void Player::TakeDamage()
 {
 #ifdef _DEBUG
-	// デバッグ時ダメージ処理
-
+	// デバッグ時ダメージ処理（現在はなし）
 #else
-	// 通常ダメージ処理
+	// 通常ダメージ処理：HP減少
 	--hitpoint_;
 #endif // _DEBUG
 
 	if (hitpoint_ > 0)
 	{
+		// 生存していれば被弾音声再生・被弾ステートへ遷移
 		GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
 		ChangeState(PlayerState::TAKE_DAMAGE);
 	}
 	else
 	{
+		// HP0なら死亡処理
 		OnCollision();
 	}
 }
@@ -159,19 +180,29 @@ void Player::OnCollision()
 
 void Player::PostStateUpdate()
 {
-	//RotationOffset();
+	// 回転・位置の更新
 	RotationOffsetLocal();
+	
+	// カメラシェイクの影響を適用（シェイク分だけ位置をずらす）
 	if(camera_->ShakeActive()) worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetShake());
+	
+	// 行列更新
 	worldTransform_.Update();
+	
+	// コライダー位置の同期
 	collider_->Update(GetWorldPosition());
 	justCollider_->Update(GetWorldPosition());
 
+	// 攻撃処理
 	Attack();
+	
+	// 弾マネージャの更新
 	bulletManager_->Update();
 
+	// レティクルの更新
 	reticle_->Update();
 
-	// test
+	// デバッグ用レティクルの更新
 	TestReticleUpdate();
 
 	DebugGUI();
@@ -179,16 +210,27 @@ void Player::PostStateUpdate()
 
 void Player::Attack()
 {
+	// クールタイムの減算
 	if (bulletTimer_ > 0)
 	{
 		bulletTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
 	}
+	
+	// 攻撃入力があり、クールタイムが解消されていれば発射
 	if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bulletTimer_ <= 0)
 	{
 		currentBulletType_ = PlayerBulletType::NORMAL;
+		
+		// レティクル方向への発射ベクトル計算
 		Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
+		
+		// 弾発射
 		bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+		
+		// 射撃音再生
 		GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+		
+		// クールタイム設定
 		bulletTimer_ = bulletCoolTime_;
 	}
 }
@@ -199,29 +241,38 @@ void Player::Move()
 	roll = 0.0f;
 	movePitch = 0.0f;
 
+	// 入力に応じた移動方向と姿勢傾きの設定
 	if (input_->PushKey(DIK_W)) { inputDir_.y += 1.0f; movePitch = -0.1f; }
 	if (input_->PushKey(DIK_S)) { inputDir_.y -= 1.0f; movePitch = 0.1f; }
 	if (input_->PushKey(DIK_A)) { inputDir_.x -= 1.0f; roll = 0.1f; }
 	if (input_->PushKey(DIK_D)) { inputDir_.x += 1.0f; roll = -0.1f; }
 
+	// 移動入力がある場合
 	if (Length(inputDir_) != 0.0f)
 	{
 		inputDir_ = Normalize(inputDir_);
+		
+		// 画面アスペクト比を考慮した移動速度補正
 		speed_.x = defaultSpeed_;
 		speed_.y = defaultSpeed_ * (xRange / yRange);
+		
+		// スクリーン上のオフセット座標を更新
 		screenOffset_ += inputDir_ * speed_ * deltaTime_;
 	}
+	
+	// 移動範囲の制限
 	ClampOffset();
 
-	// ===== ここが一番の変更点：ローカル座標で直接指定 =====
-	// 親はカメラなので、+Z がカメラ前方（エンジンによっては -Z）になる
+	// 座標反映（ローカル座標系）
+	// 親はカメラなので、+Z がカメラ前方
 	worldTransform_.SetTranslation({
-		screenOffset_.x * xRange,
-		screenOffset_.y * yRange,
+		screenOffset_.x * xRange,	// 横位置
+		screenOffset_.y * yRange,	// 縦位置
 		playerDepthFromCamera_      // 画面からの奥行き(カメラ前方)
 		});
 
-	RotationOffsetLocal();  // ←下の関数に差し替え
+	// 回転の更新
+	RotationOffsetLocal();
 }
 
 void Player::ClampOffset()

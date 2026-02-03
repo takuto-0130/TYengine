@@ -83,6 +83,7 @@ void FadeTransition::InitEntering()
 
 void FadeTransition::UpdateEntering()
 {
+	// フェードイン：不透明(1.0) -> 透明(0.0)
 	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f - std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
 	if (GetStateElapsedTime() >= duration_)
 	{
@@ -103,6 +104,7 @@ void FadeTransition::InitExiting()
 
 void FadeTransition::UpdateExiting()
 {
+	// フェードアウト：透明(0.0) -> 不透明(1.0)
 	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
 	if (GetStateElapsedTime() >= duration_)
 	{

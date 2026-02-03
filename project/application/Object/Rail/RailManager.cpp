@@ -6,8 +6,10 @@
 
 void RailManager::Init()
 {
+	// JSONからレールデータをロード
 	RailEditor::Instance()->Load("Resources/JSON/RailEditor.json");
 	
+	// ロードしたデータで初期化・再構築
 	Reset();
 	ResetRailCamera();
 
@@ -122,6 +124,7 @@ void RailManager::StageEdit()
 
 void RailManager::RailReDraw()
 {
+	// 制御点からCatmull-Romスプライン曲線上の点を生成
 	pointsDrawing_.clear();
 	for (size_t i = 0; i < segmentCount + 1; ++i)
 	{
@@ -129,12 +132,15 @@ void RailManager::RailReDraw()
 		Vector3 pos = CatmullRomPosition(controlPoints_, t);
 		pointsDrawing_.push_back(pos);
 	}
+
+	// 描画用のRailオブジェクトを生成・配置
 	rails_.clear();
 	size_t i = 0;
 	for (Vector3& v : pointsDrawing_)
 	{
 		if (pointsDrawing_[i] == pointsDrawing_.back()) break;
 		++i;
+		// 次の点への向きに合わせて回転を設定
 		Vector3 forward = pointsDrawing_[i] - v;
 		Vector3 rotate{};
 		rotate.y = std::atan2(forward.x, forward.z);
@@ -142,6 +148,8 @@ void RailManager::RailReDraw()
 		rotate.x = std::atan2(-forward.y, len);
 		PopRail(v, rotate);
 	}
+	
+	// 弧長（Arc Length）マップの構築（等速移動のため）
 	arcMap_ = BuildPolylineArc(pointsDrawing_);
 	eyeS_ = 0.0f;
 	forwardS_ = std::min(arcMap_.total, lookAhead_);
@@ -163,30 +171,32 @@ void RailManager::RailCameraMove()
 	// 前フレーム弧長を保持
 	prevEyeS_ = eyeS_;
 
-	// 時間更新
+	// 時間更新（現在の速度設定に応じて進める距離を加算）
 	const float ds = speedMps_ * speedMultiply_ * deltaTime_;
 	eyeS_ = std::min(eyeS_ + ds, arcMap_.total);
 	forwardS_ = std::min(eyeS_ + lookAhead_, arcMap_.total);
 
-	// 距離→t
+	// 距離→t（スプライン全体でのt値）へ変換
 	const float eyeT = DistanceToT_Hybrid(arcMap_, eyeS_);
 	const float forwardT = DistanceToT_Hybrid(arcMap_, forwardS_);
 
-	// 位置・向き
+	// 位置・向きの計算
 	Vector3 eye = CatmullRomPosition(controlPoints_, eyeT);
 	Vector3 target = CatmullRomPosition(controlPoints_, forwardT);
 	Vector3 forward = target - eye;
 
+	// 進行方向ベクトルからオイラー角を算出 (Y-up)
 	Vector3 rot{};
 	rot.y = std::atan2(forward.x, forward.z);
 	const float lenXZ = Length({ forward.x, 0.0f, forward.z });
 	rot.x = std::atan2(-forward.y, lenXZ);
 
-	// オフセット追従
+	// カメラオフセットを回転させて現在位置に加算
 	Matrix4x4 rotMat = MakeRotateXYZMatrix(rot);
 	Vector3   upOffset = TransformNormal(offsetCameraPos_, rotMat);
 	eye += upOffset;
 
+	// カメラへの反映
 	camera_->SetRotate(rot);
 	camera_->SetTranslate(eye);
 
@@ -218,13 +228,14 @@ bool RailManager::RailTrigger()
 	bool firedAny = false;
 
 	// 昇順になっているので前から見るだけでOK
+	// 登録されたトリガー位置（距離s）が今回の移動区間内にあるかチェック
 	for (size_t i = 0; i < triggerS_.size(); ++i)
 	{
 		if (triggerFired_[i]) continue;
 
 		const float s = triggerS_[i];
 		if (s > s1) break;                 // これより先はまだ到達していない
-		if (s >= s0 && s <= s1)            // 区間内に入ったらエッジ発火
+		if (s >= s0 && s <= s1)            // 区間内に入ったらイベント発火
 		{
 			triggerFired_[i] = true;
 			firedAny = true;
@@ -311,10 +322,12 @@ void RailManager::RebuildTriggerSFromSegments()
 	const size_t Nctrl = controlPoints_.size();
 	const size_t Npoly = pointsDrawing_.size();
 
+	// 制御点に対応する弧長（距離）を計算しトリガーリストに追加
 	for (size_t i = 0; i < Nctrl && i < segments.size(); ++i)
 	{
 		if (!segments[i].triggerEvent) continue;
 
+		// 制御点のインデックスからスプライン全体のtを算出（近似）
 		float t = (Nctrl <= 1) ? 0.0f : static_cast<float>(i) / static_cast<float>(Nctrl - 1);
 		size_t idx = static_cast<size_t>(std::round(t * static_cast<float>(Npoly - 1)));
 		idx = std::min(idx, arcMap_.S.size() - 1);

@@ -20,17 +20,21 @@ void EnemyManager::MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* s
 
 void EnemyManager::Update()
 {
+	// 死亡した敵をリストから削除
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& e) { return e->IsDead(); });
 
+	// 各敵の更新
 	for (auto& enemy : enemies_)
 	{
 		enemy->Update();
 	}
 
+	// 定期的な敵のスポーン処理
 	timer_ += Timer::GetInstance()->GetDeltaTime();
 	if (timer_ > spawnReadyTimer_)
 	{
 		timer_ = 0.0f;
+		// 上限数未満なら新規スポーン
 		if (enemies_.size() < spawnNum_)
 		{
 			Pop();
@@ -80,15 +84,22 @@ void EnemyManager::Pop()
 	std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
 	enemy->Init();
 
+	// 画面座標系でのランダムな出現位置決定
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
 	enemy->SetScreenPos({ dist(gen), dist(gen) });
+	// スクリーン座標をワールド座標へ変換して設定
 	enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
+	
+	// 出現演出開始等
 	enemy->Pop();
+	
+	// 依存関係の注入
 	enemy->SetEnemyBulletManager(&bulletManager_);
 	enemy->SetEventListener(comboAndScoreHandler_.get());
 	enemy->SetIsInGame(true);
+	
 	enemies_.push_back(std::move(enemy));
 }
 

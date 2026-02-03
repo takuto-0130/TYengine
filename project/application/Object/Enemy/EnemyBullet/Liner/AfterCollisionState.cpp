@@ -2,6 +2,7 @@
 
 void EnemyBullet::Liner::InitAfterCollision()
 {
+	// 着弾後は即座に死亡
 	isDead_ = true;
 }
 

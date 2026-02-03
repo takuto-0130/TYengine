@@ -37,14 +37,27 @@ Audio::~Audio()
 			SourceVoice = nullptr;
 		}
 	}
+
+	// カテゴリ用 SubmixVoices の破棄
+	for (auto& [name, voice] : soundCategorySubmixVoices_)
+	{
+		if (voice)
+		{
+			voice->DestroyVoice();
+		}
+	}
+	soundCategorySubmixVoices_.clear();
+
+	// 解析用 SubmixVoice の破棄
+	if (analyzerSubmix_)
+	{
+		analyzerSubmix_->DestroyVoice();
+		analyzerSubmix_ = nullptr;
+	}
+
 	if (streamVoice_ != nullptr) {
 		streamVoice_->DestroyVoice();
 		streamVoice_ = nullptr;
-	}
-	if (analyzerXAPO_)
-	{
-		analyzerXAPO_->Release();
-		analyzerXAPO_ = nullptr;
 	}
 	if (masterVoice_ != nullptr)
 	{
@@ -52,16 +65,7 @@ Audio::~Audio()
 		masterVoice_ = nullptr;
 	}
 
-	// 読み込んだサウンドデータを全部解放
-	for (auto& [name, soundData] : soundDataMap_)
-	{
-		delete[] soundData.pBuffer;
-		soundData.pBuffer = nullptr;
-		soundData.bufferSize = 0;
-		soundData.wfex = {};
-	}
 	soundDataMap_.clear();
-
 	xAudio2_.Reset();
 }
 
@@ -438,39 +442,28 @@ void Audio::LoadWave(const std::string& filename)
 	}
 
 	// Dataチャンクのデータ部 (波形のデータ) の読み込み
-	char* pBuffer = new char[data.size];
-	file.read(pBuffer, data.size);
+	// SoundDataの生成
+	SoundData soundData = {};
+	soundData.wfex = format.fmt;
+	soundData.playSoundLength = data.size / format.fmt.nBlockAlign;
+
+	// vectorをリサイズして直接読み込む
+	soundData.buffer.resize(data.size);
+	file.read(reinterpret_cast<char*>(soundData.buffer.data()), data.size);
+
 
 	// ファイルクローズ
 	file.close();
 
-	// SoundDataの生成
-	SoundData soundData = {};
-
-	soundData.wfex = format.fmt;
-	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
-	soundData.bufferSize = data.size;
-	soundData.playSoundLength = data.size / format.fmt.nBlockAlign;
-
-	soundDataMap_[filename] = soundData;
+	soundDataMap_[filename] = std::move(soundData);
 }
 
 void Audio::SoundUnload(const std::string& filename)
 {
-	auto it = soundDataMap_.find(filename);
-	if (it == soundDataMap_.end())
+	if (soundDataMap_.erase(filename) == 0)
 	{
 		Logger::Log("Sound not loaded.\n");
-		return;
 	}
-	SoundData* soundData = &it->second;
-
-	// バッファのメモリを解放
-	delete[] soundData->pBuffer;
-
-	soundData->pBuffer = 0;
-	soundData->bufferSize = 0;
-	soundData->wfex = {};
 }
 
 void Audio::AddSoundCategory(const std::string& soundCategory)
@@ -635,13 +628,12 @@ int Audio::SearchSourceVoice(IXAudio2SourceVoice** sourceVoices)
 
 XAUDIO2_BUFFER Audio::SetBuffer(bool loop, const SoundData& sound)
 {
-	// バッファ設定
-	XAUDIO2_BUFFER buffer;
-
 	// バッファの初期化
-	memset(&buffer, 0x00, sizeof(buffer));
-	buffer.pAudioData = sound.pBuffer;
-	buffer.AudioBytes = sound.bufferSize;
+	XAUDIO2_BUFFER buffer = {};
+
+	// バッファ設定
+	buffer.pAudioData = sound.buffer.data(); // vectorの先頭アドレス
+	buffer.AudioBytes = static_cast<UINT32>(sound.buffer.size());
 	buffer.PlayBegin = 0;
 	buffer.PlayLength = sound.playSoundLength;
 

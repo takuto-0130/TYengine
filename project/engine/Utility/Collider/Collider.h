@@ -5,48 +5,64 @@
 #include <cstdint>
 #include "mathFunc.h"
 
+/// <summary>
+/// コライダーの形状タイプ定義
+/// </summary>
 enum class ColliderShape 
 {
-    SPHERE,
-    LINE,
-    RAY,
-    SEGMENT,
-    PLANE,
-    TRIANGLE,
-    AABB,
-    OBB,
+    SPHERE,     ///< 球
+    LINE,       ///< 直線
+    RAY,        ///< レイ
+    SEGMENT,    ///< 線分
+    PLANE,      ///< 平面
+    TRIANGLE,   ///< 三角形
+    AABB,       ///< AABB
+    OBB,        ///< OBB
 };
 
+/// <summary>
+/// 衝突状態の定義
+/// </summary>
 enum class CollisionState 
 {
-    ENTER,
-    ON,
-    EXIT
+    ENTER,  ///< 接触開始
+    ON,     ///< 接触中
+    EXIT    ///< 接触終了
 };
 
+/// <summary>
+/// 衝突情報を保持する構造体
+/// </summary>
 struct CollisionInfo 
 {
-    uint32_t selfID;
-    uint32_t otherID;
-    Vector3 contactPoint;
-    Vector3 direction;
-    float distance;
+    uint32_t selfID;        ///< 自身のID
+    uint32_t otherID;       ///< 相手のID
+    Vector3 contactPoint;   ///< 接点
+    Vector3 direction;      ///< 押し出し方向など
+    float distance;         ///< 距離
 };
 
-// コライダー基底クラス
+/// <summary>
+/// コライダーの基底クラス。
+/// 形状に関わらず共通のID管理やコールバック機能を提供する。
+/// </summary>
 class Collider 
 {
 public:
     using ID = uint32_t;
     using CollisionCallback = std::function<void(const CollisionInfo&)>;
 
-    // コンストラクタ
+    /// <summary>コンストラクタ。</summary>
     Collider(uint32_t typeID)
         : id_(GenerateID()), typeID_(typeID) {}
-    // デストラクタ
+    /// <summary>デストラクタ。</summary>
     virtual ~Collider() = default;
 
-    // 更新
+    /// <summary>
+    /// 更新処理。
+    /// オブジェクトの位置に追従させる場合などに使用する。
+    /// </summary>
+    /// <param name="pos">現在の位置。</param>
     virtual void Update(const Vector3& pos) = 0;
 
     // getter / setter

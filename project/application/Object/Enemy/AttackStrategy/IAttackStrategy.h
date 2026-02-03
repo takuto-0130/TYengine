@@ -6,17 +6,20 @@ class EnemyBulletManager;
 // 敵の攻撃
 namespace EnemyAttack
 {
-    /// 攻撃行動の抽象インターフェース
+    /// <summary>
+    /// 敵の攻撃行動（ストラテジーパターン）の基底インターフェース。
+    /// </summary>
     class IAttackStrategy
     {
     public:
         virtual ~IAttackStrategy() = default;
-        /**
-         * @brief 攻撃を実行する
-         * @param origin 発射位置（敵の座標）
-         * @param target 目標位置（プレイヤー座標など）
-         * @param manager 弾管理マネージャ
-         */
+        
+        /// <summary>
+        /// 攻撃を実行する。
+        /// </summary>
+        /// <param name="origin">発射位置（敵の座標）。</param>
+        /// <param name="target">目標位置（プレイヤー座標など）。</param>
+        /// <param name="manager">弾管理マネージャ。</param>
         virtual void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) = 0;
     };
 }

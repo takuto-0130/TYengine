@@ -53,14 +53,20 @@ public:
         }
     }
 
-    // 更新
+    /// <summary>
+    /// 全コライダーの衝突判定更新処理を行う。
+    /// 登録されたコライダー同士の総当たり（最適化あり）判定を行う。
+    /// </summary>
     void Update();
 
 private: // メンバ関数
     /// <summary>
-    /// 2つのコライダーIDをソートしてペアを作成する  
-    /// （順序に依存しない衝突ペア判定のため）
+    /// 2つのコライダーIDをソートしてペアを作成する。
+    /// 順序に依存しない一意な衝突ペアキーを生成するために使用する。
     /// </summary>
+    /// <param name="a">ID A。</param>
+    /// <param name="b">ID B。</param>
+    /// <returns>ソート済みのコライダーペア。</returns>
     ColliderPair MakeSortedPair(uint32_t a, uint32_t b) const
     {
         return (a < b) ? ColliderPair{ a, b } : ColliderPair{ b, a };

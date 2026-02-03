@@ -2,22 +2,32 @@
 #include "mathFunc.h"
 #include <random>
 
+/// <summary>
+/// カメラのシェイク（振動）効果を管理するクラス。
+/// パーリンノイズ風のランダム振動を生成し、減衰させる。
+/// </summary>
 class CameraShake
 {
 public:
     // パラメータ
+    /// <summary>
+    /// シェイク（画面揺れ）のパラメータ構造体。
+    /// </summary>
     struct ShakeParams
     {
-        float duration = 0.5f;     // シェイク継続時間
-        float amplitude = 0.5f;    // 揺れの強さ
-        float frequency = 20.0f;   // ノイズ周波数（1秒あたりの揺れ更新回数）
-        bool decay = true;         // 時間経過で減衰するか
+        float duration = 0.5f;     ///< シェイク継続時間（秒）
+        float amplitude = 0.5f;    ///< 揺れの最大強度
+        float frequency = 20.0f;   ///< ノイズ周波数（揺れの速さ）
+        bool decay = true;         ///< 時間経過で減衰するかどうか
     };
 
 public:
     CameraShake() = default;
 
-    // シェイク開始
+    /// <summary>
+    /// シェイクを開始する。
+    /// </summary>
+    /// <param name="params">シェイク設定パラメータ。</param>
     void Start(const ShakeParams& params)
     {
         params_ = params;
@@ -25,7 +35,10 @@ public:
         active_ = true;
     }
 
-    // 更新
+    /// <summary>
+    /// シェイク状態を更新する。
+    /// </summary>
+    /// <param name="deltaTime">経過時間。</param>
     void Update(float deltaTime)
     {
         if (!active_) return;
@@ -43,6 +56,7 @@ public:
         float amplitude = params_.decay ? params_.amplitude * (1.0f - progress) : params_.amplitude;
         float t = progress * params_.frequency;
 
+        // 簡易的な疑似乱数振動（周波数を変えてxyzを合成）
         offset_.x = amplitude * sinf(t * 13.0f + RandomOffset(0));
         offset_.y = amplitude * sinf(t * 17.0f + RandomOffset(1));
         offset_.z = amplitude * sinf(t * 11.0f + RandomOffset(2));

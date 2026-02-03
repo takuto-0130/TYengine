@@ -59,12 +59,12 @@ bool IsCollision(const Segment& segment, const Plane& plane)
 
 bool IsCollision(const Segment& segment, const Triangle& triangle) 
 {
-	Vector3 v01 = triangle.vertixces[1] - triangle.vertixces[0];
-	Vector3 v12 = triangle.vertixces[2] - triangle.vertixces[1];
-	Vector3 v20 = triangle.vertixces[0] - triangle.vertixces[2];
+	Vector3 v01 = triangle.vertices[1] - triangle.vertices[0];
+	Vector3 v12 = triangle.vertices[2] - triangle.vertices[1];
+	Vector3 v20 = triangle.vertices[0] - triangle.vertices[2];
 
 	Vector3 normal = Cross(v01, v12);
-	float distance = Dot(triangle.vertixces[0], normal);
+	float distance = Dot(triangle.vertices[0], normal);
 	Plane plane = 
 	{
 		normal,
@@ -78,9 +78,9 @@ bool IsCollision(const Segment& segment, const Triangle& triangle)
 	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
 	Vector3 point = ((segment.diff) * t) + segment.origin;
 
-	Vector3 v1p = point - triangle.vertixces[1];
-	Vector3 v2p = point - triangle.vertixces[2];
-	Vector3 v0p = point - triangle.vertixces[0];
+	Vector3 v1p = point - triangle.vertices[1];
+	Vector3 v2p = point - triangle.vertices[2];
+	Vector3 v0p = point - triangle.vertices[0];
 
 	Vector3 corss01 = Cross(v01, v1p);
 	Vector3 corss12 = Cross(v12, v2p);
@@ -209,17 +209,17 @@ bool IsCollision(const AABB& a, const Segment& segment)
 bool IsCollision(const OBB& obb, const Sphere& sphere)
 {
 	Matrix4x4 obbMat = {};
-	obbMat.m[0][0] = obb.oriientations[0].x;
-	obbMat.m[0][1] = obb.oriientations[0].y;
-	obbMat.m[0][2] = obb.oriientations[0].z;
+	obbMat.m[0][0] = obb.orientations[0].x;
+	obbMat.m[0][1] = obb.orientations[0].y;
+	obbMat.m[0][2] = obb.orientations[0].z;
 
-	obbMat.m[1][0] = obb.oriientations[1].x;
-	obbMat.m[1][1] = obb.oriientations[1].y;
-	obbMat.m[1][2] = obb.oriientations[1].z;
+	obbMat.m[1][0] = obb.orientations[1].x;
+	obbMat.m[1][1] = obb.orientations[1].y;
+	obbMat.m[1][2] = obb.orientations[1].z;
 
-	obbMat.m[2][0] = obb.oriientations[2].x;
-	obbMat.m[2][1] = obb.oriientations[2].y;
-	obbMat.m[2][2] = obb.oriientations[2].z;
+	obbMat.m[2][0] = obb.orientations[2].x;
+	obbMat.m[2][1] = obb.orientations[2].y;
+	obbMat.m[2][2] = obb.orientations[2].z;
 
 	obbMat.m[3][0] = obb.center.x;
 	obbMat.m[3][1] = obb.center.y;
@@ -238,17 +238,17 @@ bool IsCollision(const OBB& obb, const Sphere& sphere)
 bool IsCollision(const OBB& obb, const Segment& segment) 
 {
 	Matrix4x4 obbMat = {};
-	obbMat.m[0][0] = obb.oriientations[0].x;
-	obbMat.m[0][1] = obb.oriientations[0].y;
-	obbMat.m[0][2] = obb.oriientations[0].z;
+	obbMat.m[0][0] = obb.orientations[0].x;
+	obbMat.m[0][1] = obb.orientations[0].y;
+	obbMat.m[0][2] = obb.orientations[0].z;
 
-	obbMat.m[1][0] = obb.oriientations[1].x;
-	obbMat.m[1][1] = obb.oriientations[1].y;
-	obbMat.m[1][2] = obb.oriientations[1].z;
+	obbMat.m[1][0] = obb.orientations[1].x;
+	obbMat.m[1][1] = obb.orientations[1].y;
+	obbMat.m[1][2] = obb.orientations[1].z;
 
-	obbMat.m[2][0] = obb.oriientations[2].x;
-	obbMat.m[2][1] = obb.oriientations[2].y;
-	obbMat.m[2][2] = obb.oriientations[2].z;
+	obbMat.m[2][0] = obb.orientations[2].x;
+	obbMat.m[2][1] = obb.orientations[2].y;
+	obbMat.m[2][2] = obb.orientations[2].z;
 
 	obbMat.m[3][0] = obb.center.x;
 	obbMat.m[3][1] = obb.center.y;
@@ -265,27 +265,27 @@ bool IsCollision(const OBB& obb, const Segment& segment)
 	return IsCollision(aabbOBBLocal, localSegment);
 }
 
-void OBBVertex(const OBB& obb, Vector3* vertixces) 
+void OBBVertex(const OBB& obb, Vector3* vertices) 
 {
-	Vector3 sizeX = (obb.oriientations[0]) * obb.size.x;
-	Vector3 sizeY = (obb.oriientations[1]) * obb.size.y;
-	Vector3 sizeZ = (obb.oriientations[2]) * obb.size.z;
-	vertixces[0] = -sizeX - sizeY - sizeZ + obb.center;
-	vertixces[1] = -sizeX + sizeY - sizeZ + obb.center;
-	vertixces[2] = sizeX - sizeY - sizeZ + obb.center;
-	vertixces[3] = sizeX + sizeY - sizeZ + obb.center;
-	vertixces[4] = -sizeX - sizeY + sizeZ + obb.center;
-	vertixces[5] = -sizeX + sizeY + sizeZ + obb.center;
-	vertixces[6] = sizeX - sizeY + sizeZ + obb.center;
-	vertixces[7] = sizeX + sizeY + sizeZ + obb.center;
+	Vector3 sizeX = (obb.orientations[0]) * obb.size.x;
+	Vector3 sizeY = (obb.orientations[1]) * obb.size.y;
+	Vector3 sizeZ = (obb.orientations[2]) * obb.size.z;
+	vertices[0] = -sizeX - sizeY - sizeZ + obb.center;
+	vertices[1] = -sizeX + sizeY - sizeZ + obb.center;
+	vertices[2] = sizeX - sizeY - sizeZ + obb.center;
+	vertices[3] = sizeX + sizeY - sizeZ + obb.center;
+	vertices[4] = -sizeX - sizeY + sizeZ + obb.center;
+	vertices[5] = -sizeX + sizeY + sizeZ + obb.center;
+	vertices[6] = sizeX - sizeY + sizeZ + obb.center;
+	vertices[7] = sizeX + sizeY + sizeZ + obb.center;
 }
 
-bool isHST(const Vector3& normal, const  Vector3* vertixces1, const  Vector3* vertixces2) 
+bool isHST(const Vector3& normal, const  Vector3* vertices1, const  Vector3* vertices2) 
 {
 	float t[8];
 	for (size_t i = 0; i < 8; i++) 
 	{
-		t[i] = Dot(normal, vertixces1[i]);
+		t[i] = Dot(normal, vertices1[i]);
 	}
 	float minT1 = t[0], maxT1 = t[0];
 	for (size_t i = 1; i < 8; i++)
@@ -297,7 +297,7 @@ bool isHST(const Vector3& normal, const  Vector3* vertixces1, const  Vector3* ve
 
 	for (size_t i = 0; i < 8; i++)
 	{
-		t[i] = Dot(normal, vertixces2[i]);
+		t[i] = Dot(normal, vertices2[i]);
 	}
 	float minT2 = t[0], maxT2 = t[0];
 	for (size_t i = 1; i < 8; i++) 
@@ -320,11 +320,11 @@ bool IsCollision(const OBB& obb1, const OBB& obb2)
 	OBBVertex(obb2, obb2Vertices);
 	for (size_t i = 0; i < 3; i++) 
 	{
-		if (isHST(obb1.oriientations[i], obb1Vertices, obb2Vertices))
+		if (isHST(obb1.orientations[i], obb1Vertices, obb2Vertices))
 		{
 			return false;
 		}
-		if (isHST(obb2.oriientations[i], obb1Vertices, obb2Vertices)) 
+		if (isHST(obb2.orientations[i], obb1Vertices, obb2Vertices)) 
 		{
 			return false;
 		}
@@ -334,7 +334,7 @@ bool IsCollision(const OBB& obb1, const OBB& obb2)
 	{
 		for (size_t j = 0; j < 3; j++) 
 		{
-			cross = Cross(obb1.oriientations[i], obb2.oriientations[j]);
+			cross = Cross(obb1.orientations[i], obb2.orientations[j]);
 			cross = Normalize(cross);
 			if (isHST(cross, obb1Vertices, obb2Vertices)) 
 			{

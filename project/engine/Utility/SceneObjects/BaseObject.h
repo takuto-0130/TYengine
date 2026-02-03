@@ -2,23 +2,29 @@
 #include "Object3d.h"
 #include "WorldTransform.h"
 
-// オブジェクトのベースクラス
+/// <summary>
+/// オブジェクトの基底クラス。
+/// 3Dモデル、ワールド変換行列を保持し、基本的な更新・描画インターフェースを提供する。
+/// </summary>
 class BaseObject
 {
 public:
-	// デストラクタ
+	/// <summary>デストラクタ。</summary>
 	virtual ~BaseObject() {};
 
-	// 初期化
+	/// <summary>初期化処理。</summary>
 	virtual void Init() = 0;
 
-	// 更新
+	/// <summary>更新処理。</summary>
 	virtual void Update() = 0;
 
-	// 描画
+	/// <summary>描画処理。</summary>
 	virtual void Draw() = 0;
 
-	// ワールド座標を取得
+	/// <summary>
+	/// ワールド座標を取得する。
+	/// </summary>
+	/// <returns>ワールド座標。</returns>
 	virtual Vector3 GetWorldPosition()
 	{
 		Vector3 worldPos;
@@ -28,13 +34,22 @@ public:
 		return worldPos;
 	}
 
-	// ローカルスケールをセット
+	/// <summary>
+	/// ローカルスケールを設定する。
+	/// </summary>
+	/// <param name="scale">スケール値。</param>
 	virtual void SetScale(const Vector3& scale) { worldTransform_.SetScale(scale); }
 
-	// ローカル回転をセット
-	virtual void SetRotate(const Vector3& rota) { worldTransform_.SetRotate(rota); }
+	/// <summary>
+	/// ローカル回転を設定する。
+	/// </summary>
+	/// <param name="rotate">回転角（ラジアン）。</param>
+	virtual void SetRotate(const Vector3& rotate) { worldTransform_.SetRotate(rotate); }
 
-	// ローカル座標をセット
+	/// <summary>
+	/// ローカル座標を設定する。
+	/// </summary>
+	/// <param name="pos">位置座標。</param>
 	virtual void SetTranslation(const Vector3& pos) { worldTransform_.SetTranslation(pos); }
 
 protected:

@@ -18,6 +18,10 @@ class Audio;
 // ===================================
 
 
+/// <summary>
+/// ストリーミング再生を管理するクラス。
+/// 長時間のBGMなどを別スレッドでバッファリングしながら再生する。
+/// </summary>
 class StreamingAudio
 {
 private:
@@ -82,27 +86,30 @@ public:
 
 	void SetPitch(float pitch);
 
-	/**
-	 * @brief エフェクトチェーンの設定
-	 * @param effectsNum 設定したいエフェクトの数
-	 * @param effects エフェクトの設定の配列
-	 */
+	/// <summary>
+	/// エフェクトチェーンの設定を行う。
+	/// </summary>
+	/// <param name="effectsNum">設定したいエフェクトの数。</param>
+	/// <param name="effects">エフェクト設定配列へのポインタ。</param>
 	void SetEffectChain(uint32_t effectsNum, XAUDIO2_EFFECT_DESCRIPTOR* effects) {
 		effectChain_.EffectCount = effectsNum;
 		effectChain_.pEffectDescriptors = effects;
 	}
 
-	/**
-	 * @brief エフェクトチェーンの適用
-	 */
+	/// <summary>
+	/// 設定されたエフェクトチェーンをボイスに適用する。
+	/// </summary>
 	void ApplyEffectChain();
 
-	/**
-	 * @brief エフェクトの設定と有効化（現状一つのみ対応）
-	 * @param parameters プリセット、"XAUDIO2FX_I3DL2_PRESET_~" を入れるか自力で設定
-	 */
+	/// <summary>
+	/// リバーブエフェクトの設定と有効化を行う（現状1つのみ対応）。
+	/// </summary>
+	/// <param name="parameters">リバーブパラメータ（プリセットを使用可能）。</param>
 	void SetEffect(const XAUDIO2FX_REVERB_I3DL2_PARAMETERS parameters = {});
 
+	/// <summary>
+	/// エフェクトを無効化する。
+	/// </summary>
 	void DisableEffect();
 
 private:

@@ -4,7 +4,10 @@
 #include <unordered_map>
 #include <cassert>
 
-// Template引数でユーザー定義のEnumを受け取る
+/// <summary>
+/// アプリケーション固有のサウンドカテゴリ（BGM, SEなど）を管理するための基底クラス。
+/// ユーザー定義のEnumをテンプレート引数にとり、Enumと文字列キーの変換を行う。
+/// </summary>
 template<typename CategoryEnum>
 class AudioSystemBase
 {
@@ -36,12 +39,12 @@ public:
 		audio_->LoadWave(filename);
 	}
 
-	/**
-	 * @brief カテゴリーの登録（初期化時に呼ぶ）
-	 * @param type アプリ側で使うEnum
-	 * @param name Audioクラスに登録する文字列
-	 * @param defaultVolume 初期音量
-	 */
+	/// <summary>
+	/// カテゴリーを登録する（初期化時に呼ぶ）。
+	/// </summary>
+	/// <param name="type">アプリ側で定義したEnum。</param>
+	/// <param name="name">Audio内部で識別する文字列（キー）。</param>
+	/// <param name="defaultVolume">初期音量。</param>
 	void CreateCategory(CategoryEnum type, const std::string& name, float defaultVolume = 1.0f)
 	{
 		// マップに登録
@@ -52,9 +55,13 @@ public:
 		audio_->SetCategoryVolume(name, defaultVolume);
 	}
 
-	/**
-	 * @brief Enum指定で再生
-	 */
+	/// <summary>
+	/// Enumを指定してサウンドを再生する。
+	/// </summary>
+	/// <param name="filename">再生するファイルパス。</param>
+	/// <param name="isLoop">ループするかどうか。</param>
+	/// <param name="category">所属するカテゴリEnum。</param>
+	/// <returns>再生ハンドル（ボイスID）。失敗時はエラーコード。</returns>
 	int Play(const std::string& filename, bool isLoop, CategoryEnum category)
 	{
 		// 登録されていないカテゴリーならエラー（またはデフォルト扱い）
@@ -69,17 +76,17 @@ public:
 		return audio_->Play(filename, isLoop, categoryMap_[category]);
 	}
 
-	/**
-	 * @brief リソース番号指定で音量設定
-	 */
+	/// <summary>
+	/// リソース番号（ハンドル）を指定して音量を設定する。
+	/// </summary>
 	void SetSoundVolume(int resourceNum, float volume)
 	{
 		audio_->SetSoundVolume(resourceNum, volume);
 	}
 
-	/**
-	 * @brief Enum指定で音量設定
-	 */
+	/// <summary>
+	/// カテゴリ単位で音量を一括設定する。
+	/// </summary>
 	void SetCategoryVolume(CategoryEnum category, float volume)
 	{
 		if (categoryMap_.find(category) != categoryMap_.end())
@@ -95,17 +102,17 @@ public:
 	}
 
 
-	/**
-	 * @brief リソース番号指定で音量設定
-	 */
+	/// <summary>
+	/// リソース番号（ハンドル）を指定して現在の音量を取得する。
+	/// </summary>
 	float GetSoundVolume(int resourceNum)
 	{
 		return audio_->GetSoundVolume(resourceNum);
 	}
 
-	/**
-	 * @brief Enum指定で音量設定
-	 */
+	/// <summary>
+	/// カテゴリの現在の音量設定を取得する。
+	/// </summary>
 	float GetCategoryVolume(CategoryEnum category)
 	{
 		if (categoryMap_.find(category) != categoryMap_.end())

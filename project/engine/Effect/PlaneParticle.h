@@ -1,6 +1,9 @@
 #pragma once
 #include "IParticleRenderer.h"
 
+/// <summary>
+/// 板ポリゴンを使用した標準的なパーティクルレンダラー。
+/// </summary>
 class PlaneParticle : public IParticleRenderer {
 public:
 private:

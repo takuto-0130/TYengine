@@ -2,14 +2,22 @@
 #include "AudioSystemBase.h"
 #include "SingletonObject.h"
 
+/// <summary>
+/// サウンドのカテゴリ定義。
+/// BGM, SE, UIなどの種類を管理する。
+/// </summary>
 enum class SoundCategory
 {
-    BGM,
-    SE,
-    UI,
+    BGM,    ///< BGM（背景音楽）
+    SE,     ///< SE（効果音）
+    UI,     ///< UI音（決定音、キャンセル音など）
     CategoryNum
 };
 
+/// <summary>
+/// ゲーム内オーディオ管理の具体的な実装クラス。
+/// AudioSystemBase を継承し、BGM, SE, UI の3カテゴリを登録する。
+/// </summary>
 class GameAudio :
     public AudioSystemBase<SoundCategory>,
     public SingletonObject<GameAudio>

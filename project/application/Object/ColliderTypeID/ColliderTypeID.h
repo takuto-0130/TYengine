@@ -1,5 +1,6 @@
 #pragma once
 
+// 当たり判定のタイプ
 enum class ColliderTypeID {
     NONE,
     PLAYER,

@@ -5,16 +5,21 @@
 
 using EaseFunc = std::function<float(float)>;
 
+/// <summary> バレットタイム（スローモーション）の状態定義。 </summary>
 enum class BulletTimeState
 {
-	NONE,
+	NONE,	// 通常（等倍速）
 	ENTER,	// 補間でスローに入る
-	HOLD,	// スロー中
-	EXIT,	// 補間で元に戻る
+	HOLD,	// スロー中（低速維持）
+	EXIT,	// 補間で元に戻る（スロー解除）
 };
 
 class Timer;
 // バレットタイム制御用クラス
+/// <summary>
+/// 時間の流れ（タイムスケール）を制御するクラス。
+/// バレットタイム（スローモーション）への遷移・維持・解除をイージング付きで管理する。
+/// </summary>
 class BulletTimeController
 	: public StateMachine<BulletTimeController, BulletTimeState>,
 	public SingletonObject<BulletTimeController>
@@ -31,26 +36,34 @@ public: // 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public: // メンバ関数
-	// 更新
+	/// <summary>
+	/// 毎フレームの更新処理。
+	/// 状態に応じて TimeManager のタイムスケールを変動させる。
+	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// スローを発生させるためのトリガー
+	/// スローモーションを開始（トリガー）する。
 	/// </summary>
-	/// <param name="slowScale">	：スロー倍率</param>
-	/// <param name="enterDuration">：設定倍率まで到達する時間</param>
-	/// <param name="holdDuration">	：スローを維持する時間</param>
-	/// <param name="exitDuration">	：等倍まで戻す時間</param>
-	/// <param name="enterEase">	：スローに入る際のイージング</param>
-	/// <param name="exitEase">		：スロー終了の際のイージング</param>
+	/// <param name="slowScale">目標とするスロー倍率（例：0.1 なら10分の1の速度）。</param>
+	/// <param name="enterDuration">設定倍率まで到達するのにかける時間（秒）。</param>
+	/// <param name="holdDuration">スローを維持する時間（秒）。</param>
+	/// <param name="exitDuration">等倍まで戻す際にかける時間（秒）。</param>
+	/// <param name="enterEase">スロー突入時のイージング関数。</param>
+	/// <param name="exitEase">スロー解除時のイージング関数。</param>
 	void Trigger(float slowScale, float enterDuration, float holdDuration, float exitDuration, 
 		EaseFunc enterEase, EaseFunc exitEase);
 	// ↑今後、開始や終了のトリガーを個別でも設定できるようにする
 
-	// 終了処理の呼び出し
+	/// <summary>
+	/// 現在の状態を終了させる（次の状態へ遷移）。
+	/// StateMachine の Exit 呼び出しなどで使用。
+	/// </summary>
 	void CallStateExit();
 
-	// タイムスケールを等倍にして強制中断
+	/// <summary>
+	/// バレットタイムを強制的に中断し、タイムスケールを等倍(1.0)に戻す。
+	/// </summary>
 	void ForceExitNow();
 
 private: // メンバ変数

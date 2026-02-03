@@ -4,19 +4,46 @@
 #include "Collision2D.h"
 #include <vector>
 
+/// <summary>
+/// 紙吹雪パーティクルシステム。
+/// 大量の紙吹雪を生成、更新、描画し、物理挙動やUIとの衝突を処理する。
+/// </summary>
 class ConfettiSystem
 {
 public:
+    /// <summary>
+    /// 初期化処理。
+    /// </summary>
+    /// <param name="maxCount">最大パーティクル数。</param>
+    /// <param name="texturePath">テクスチャファイルパス。</param>
+    /// <param name="screenW">画面幅。</param>
+    /// <param name="screenH">画面高さ。</param>
     void Init(int maxCount, const std::string& texturePath,
         int screenW, int screenH);
 
+    /// <summary>
+    /// 指定数を一度に放出する（バースト）。
+    /// </summary>
     void Burst(int count);
+
+    /// <summary>
+    /// 毎フレーム少しずつ放出する。
+    /// </summary>
     void Emit(int countPerFrame);
 
+    /// <summary>
+    /// 更新処理。
+    /// </summary>
+    /// <param name="dt">デルタタイム。</param>
     void Update(float dt);
+
+    /// <summary>描画処理。</summary>
     void Draw();
 
-    // UI AABB を登録（ポインタで受けて参照だけ持つ）
+    /// <summary>
+    /// UIの衝突判定用AABBリストを登録する。
+    /// </summary>
+    /// <param name="uiAABBs">AABBリストへの参照。</param>
     void SetUIColliders(const std::vector<AABB2D>& uiAABBs)
     {
         uiAABBs_ = &uiAABBs;

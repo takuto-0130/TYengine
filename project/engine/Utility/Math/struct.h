@@ -170,7 +170,7 @@ struct Plane {
 };
 
 struct Triangle {
-	Vector3 vertixces[3];
+	Vector3 vertices[3];
 };
 
 struct AABB {
@@ -180,6 +180,6 @@ struct AABB {
 
 struct OBB {
 	Vector3 center;
-	Vector3 oriientations[3];
+	Vector3 orientations[3];
 	Vector3 size;
 };

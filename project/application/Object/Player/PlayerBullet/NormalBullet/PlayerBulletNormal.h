@@ -4,12 +4,19 @@
 
 #include "../PBulletCollider.h"
 
+/// <summary>
+/// 通常弾の状態定数。
+/// </summary>
 enum class NormalBulletState
 {
-    LINER,
-    AFTER_COLLISION,
+    LINER,           ///< 直進状態
+    AFTER_COLLISION, ///< 衝突後（着弾エフェクト等）
 };
 
+/// <summary>
+/// プレイヤーの通常弾クラス。
+/// 直進挙動と衝突後の挙動をステートマシンで管理する。
+/// </summary>
 class PlayerBulletNormal :
     public BaseBullet, StateMachine<PlayerBulletNormal, NormalBulletState>
 {

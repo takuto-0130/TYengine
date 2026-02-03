@@ -5,12 +5,19 @@
 
 namespace EnemyBullet
 {
+	/// <summary>
+	/// 直線弾の状態定数。
+	/// </summary>
 	enum class LinerState
 	{
-		SHOT,
-		AFTER_COLLISION,
+		SHOT,            ///< 発射・移動中
+		AFTER_COLLISION, ///< 衝突後（着弾）
 	};
 
+	/// <summary>
+	/// 直線軌道の敵弾クラス。
+	/// 発射ステートと衝突後ステートを持つ。
+	/// </summary>
 	class Liner :
 		public BaseBullet, StateMachine<Liner, LinerState>
 	{

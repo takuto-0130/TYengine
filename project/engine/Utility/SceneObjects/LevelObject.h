@@ -1,15 +1,21 @@
 #pragma once
 #include "BaseObject.h"
 
-// blenderで作成したレベルエディタの配置オブジェクトを受け取るクラス
+/// <summary>
+/// Blender等のDCCツールで配置されたレベルオブジェクト。
+/// モデル名やトランスフォーム情報を保持し、描画を行う。
+/// </summary>
 class LevelObject :
     public BaseObject
 {
 public:
+    /// <summary>初期化処理。</summary>
     void Init() override;
 
+    /// <summary>更新処理。</summary>
     void Update()override;
 
+    /// <summary>描画処理。</summary>
     void Draw()override;
 
 public:

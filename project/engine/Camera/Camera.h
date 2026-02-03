@@ -4,48 +4,78 @@
 #include "WindowsApp.h"
 #include "CameraShake.h"
 
+/// <summary>
+/// ゲーム内カメラを管理するクラス。
+/// ビュー行列・プロジェクション行列の計算、カメラシェイク、追従機能などを提供する。
+/// </summary>
 class Camera
 {
 public: // メンバ関数
 	Camera();
 
-	// 更新
+	/// <summary>
+	/// 毎フレームの更新処理。
+	/// シェイクの更新、行列の再計算を行う。
+	/// </summary>
 	void Update();
 
-	// フォローカメラ
-	// Update前での呼び出し推奨
+	/// <summary>
+	/// 指定したターゲット（追従対象）の位置に合わせてカメラ位置を更新する。
+	/// Update の前に呼び出すことを推奨。
+	/// </summary>
+	/// <param name="target">追従対象のワールド座標。</param>
 	void FollowCamera(const Vector3& target);
 
+	/// <summary>
+	/// 現在カメラシェイクが有効かどうかを判定する。
+	/// </summary>
+	/// <returns>シェイク中なら true。</returns>
 	bool ShakeActive() { return shakeController_.IsActive(); }
 
 private: // メンバ変数
+	/// <summary>カメラのトランスフォーム（位置・回転・スケール）。</summary>
 	Transform transform_;
+	/// <summary>ワールド行列。</summary>
 	Matrix4x4 worldMatrix_;
+	/// <summary>ビュー行列。</summary>
 	Matrix4x4 viewMatrix_;
+	/// <summary>プロジェクション行列。</summary>
 	Matrix4x4 projectionMatrix_;
+	/// <summary>ビュープロジェクション行列。</summary>
 	Matrix4x4 worldViewProjectionMatrix_;
+	
+	/// <summary>水平視野角（FOV）。</summary>
 	float horizontalFOV_;
+	/// <summary>アスペクト比。</summary>
 	float aspectRatio_;
-	// ニアクリップ距離
+	/// <summary>ニアクリップ平面までの距離。</summary>
 	float nearClip_;
-	// ファークリップ距離
+	/// <summary>ファークリップ平面までの距離。</summary>
 	float farClip_;
 
-	// 前フレームのカメラ位置（ワールド）
+	/// <summary>前フレームのカメラ位置（ワールド座標）。</summary>
 	Vector3 prevTranslate_ = {};
 
-	// 今フレームのカメラ移動量（ワールド差分）
+	/// <summary>今フレームのカメラ移動量（ワールド座標差分）。</summary>
 	Vector3 deltaTranslate_ = {};
 
+	/// <summary>追従カメラ時のターゲットからのオフセット位置。</summary>
 	Vector3 followCameraOffsetPosition_ = Vector3(0.0f, 20.0f, -35.0f);
 
+	/// <summary>追従カメラ時のオフセット回転。</summary>
 	Vector3 followCameraOffsetRotate_ = Vector3(0.51f, 0.0f, 0.0f);
 
+	/// <summary>現在のシェイクによるオフセット量。</summary>
 	Vector3 shake_ = {};
 
+	/// <summary>カメラシェイク制御クラス。</summary>
 	CameraShake shakeController_;
 
 public: // メンバ関数
+	/// <summary>
+	/// カメラシェイクを開始する。
+	/// </summary>
+	/// <param name="params">シェイクのパラメータ（強度・時間など）。</param>
 	void StartShake(const CameraShake::ShakeParams& params)
 	{
 		shakeController_.Start(params);

@@ -1,33 +1,9 @@
 #include "Audio.h"
 #include <cassert>
-#include <algorithm>
-#include <queue>
-
-constexpr UINT kSubmixChannels = 8;
-constexpr UINT kSubmixSampleRate = 48000;
-
-// ファイルからデータを読み込む関数
-bool ReadAudioData(std::ifstream& file, std::vector<BYTE>& buffer) {
-	if (!file.read(reinterpret_cast<char*>(buffer.data()), buffer.size())) {
-		return false; // EOF またはエラー
-	}
-	return true;
-}
-
-// WAVファイルのヘッダーを読み込む
-bool ReadWavHeader(std::string filename, WAVHeader& header) {
-	std::ifstream file(filename, std::ios::binary);
-	if (!file) return false;
-
-	file.read(reinterpret_cast<char*>(&header), sizeof(WAVHeader));
-	return (header.riff[0] == 'R' && header.riff[1] == 'I' && header.riff[2] == 'F' && header.riff[3] == 'F') &&
-		(header.wave[0] == 'W' && header.wave[1] == 'A' && header.wave[2] == 'V' && header.wave[3] == 'E') &&
-		(header.fmt[0] == 'f' && header.fmt[1] == 'm' && header.fmt[2] == 't' && header.fmt[3] == ' ');  // 'fmt 'チャンク
-}
+#include <Logger.h>
 
 Audio::~Audio()
 {
-	StopStreaming();
 	// BGMリソースの解放
 	for (auto SourceVoice : sourceVoices_)
 	{
@@ -55,10 +31,6 @@ Audio::~Audio()
 		analyzerSubmix_ = nullptr;
 	}
 
-	if (streamVoice_ != nullptr) {
-		streamVoice_->DestroyVoice();
-		streamVoice_ = nullptr;
-	}
 	if (masterVoice_ != nullptr)
 	{
 		masterVoice_->DestroyVoice();
@@ -67,115 +39,6 @@ Audio::~Audio()
 
 	soundDataMap_.clear();
 	xAudio2_.Reset();
-}
-
-void Audio::StreamAudio(const char* filename) {
-
-	std::string filePath = directoryPath_;
-	filePath += filename;
-
-	// WAVヘッダーの読み込み
-	WAVHeader header;
-	if (!ReadWavHeader(filePath, header)) {
-		Logger::Log("Error reading WAV header.\n");
-		return;
-	}
-
-	// WAVEFORMATEXの設定
-	WAVEFORMATEX waveFormat = {};
-	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
-	waveFormat.nChannels = header.numChannels;
-	waveFormat.nSamplesPerSec = header.sampleRate;
-	waveFormat.wBitsPerSample = header.bitsPerSample;
-	waveFormat.nBlockAlign = header.numChannels * (header.bitsPerSample / 8);
-	waveFormat.nAvgBytesPerSec = header.sampleRate * waveFormat.nBlockAlign;
-	waveFormat.cbSize = 0; // PCMでは0
-
-	// ストリーミング用のファイルを開く
-	std::ifstream audioFile(filePath, std::ios::binary);
-	if (!audioFile) {
-		Logger::Log("Error opening file.\n");
-		return;
-	}
-
-	// WAVファイルのデータ部分にシーク
-	audioFile.seekg(sizeof(WAVHeader));
-
-	// ストリーミング用のバッファを複数作成
-	constexpr int BUFFER_COUNT = 3; // バッファ数
-	BUFFER_SIZE = header.sampleRate * waveFormat.nBlockAlign; // バッファサイズ
-	audioBuffers_.resize(BUFFER_COUNT, std::vector<BYTE>(BUFFER_SIZE));
-	XAUDIO2_BUFFER xAudioBuffers[BUFFER_COUNT] = {};
-	StreamingVoiceCallback callback;
-
-
-	// ソースボイスを作成し、コールバックを渡す
-	if (FAILED(xAudio2_->CreateSourceVoice(&streamVoice_, &waveFormat, XAUDIO2_VOICE_USEFILTER, XAUDIO2_MAX_FREQ_RATIO, &callback, nullptr))) {
-		Logger::Log("Failed to create source voice.\n");
-		return;
-	}
-
-	InitEffectChain(); 
-	
-	
-	// ソースボイスを開始
-	streamVoice_->Start(0);
-	// バッファリング処理
-	int currentBufferIndex = 0;
-
-	while (isStreaming_.load()) {
-		std::vector<BYTE>& currentBuffer = audioBuffers_[currentBufferIndex];
-		if (!ReadAudioData(audioFile, currentBuffer)) {
-			// EOF
-			if(isLoopStreaming_.load()) { 
-				// EOF に達した場合、ファイルを先頭に戻してループ
-				audioFile.clear();  // EOF flag をクリア
-				audioFile.seekg(sizeof(WAVHeader), std::ios::beg);  // ヘッダーをスキップして再読み込み
-				if (!ReadAudioData(audioFile, currentBuffer)) {
-					break; // それでも読み込み失敗の場合はループ終了
-				}
-			}
-			else if (!isLoopStreaming_.load()) {
-				break; // EOF
-			}
-			else {
-				Logger::Log("Failed to ReadAudioData.\n");
-				break; // 読み込みエラー
-			}
-		}
-
-		// 現在のバッファを設定
-		XAUDIO2_BUFFER& xBuffer = xAudioBuffers[currentBufferIndex];
-		xBuffer.AudioBytes = static_cast<UINT32>(currentBuffer.size());
-		xBuffer.pAudioData = currentBuffer.data();
-		xBuffer.Flags = 0;
-
-		// 最後のデータにはフラグを追加
-		if (audioFile.eof()) {
-			xBuffer.Flags = XAUDIO2_END_OF_STREAM;
-		}
-
-		// ソースボイスにバッファを送信
-		if (FAILED(streamVoice_->SubmitSourceBuffer(&xBuffer))) {
-			Logger::Log("Failed to submit buffer.\n");
-			break;
-		}
-
-		Logger::Log("Buffer submitted.\n");
-
-		// 次のバッファを使用
-		currentBufferIndex = (currentBufferIndex + 1) % BUFFER_COUNT;
-
-		// コールバックで次のバッファの処理完了を待機
-		callback.WaitForBuffer();
-	}
-
-	// クリーンアップ
-	audioFile.close();
-	streamVoice_->Stop(0);
-	streamVoice_->DestroyVoice();
-	streamVoice_ = nullptr;
-	Logger::Log("Streaming finished.\n");
 }
 
 void Audio::Initialize(const std::string& directoryPath)
@@ -214,8 +77,8 @@ void Audio::CreateAnalyzerSubmix()
 
 	result = xAudio2_->CreateSubmixVoice(
 		&analyzerSubmix_,
-		kSubmixChannels,
-		kSubmixSampleRate,
+		details.InputChannels,
+		details.InputSampleRate,
 		0, 
 		kAnalyzer // ProcessingStage (下から上へ)
 	);
@@ -243,7 +106,7 @@ void Audio::CreateAnalyzerSubmix()
 	// Effect desc
 	XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
 	effectDesc.InitialState = TRUE;
-	effectDesc.OutputChannels = kSubmixChannels;
+	effectDesc.OutputChannels = details.InputChannels;
 	effectDesc.pEffect = static_cast<IXAPO*>(analyzerXAPO_.Get());
 
 	// Effect chain
@@ -260,19 +123,22 @@ void Audio::Start()
 {
 	xAudio2_->StartEngine();
 
+	XAUDIO2_VOICE_DETAILS details = {};
+	analyzerSubmix_->GetVoiceDetails(&details);
+
 	HRESULT result;
 
 	// ---- ★無音バッファ用 Voice を作成 ----
 	silentFormat_.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
 	silentFormat_.nChannels = 1;
-	silentFormat_.nSamplesPerSec = kSubmixSampleRate;
+	silentFormat_.nSamplesPerSec = details.InputSampleRate;
 	silentFormat_.wBitsPerSample = 32;
 	silentFormat_.nBlockAlign = 4;
-	silentFormat_.nAvgBytesPerSec = kSubmixSampleRate * 4;
+	silentFormat_.nAvgBytesPerSec = details.InputSampleRate * 4;
 	silentFormat_.cbSize = 0;
 
 	// 無音バッファ（50ms程度）
-	int silentSamples = int(kSubmixSampleRate * 0.05f);
+	int silentSamples = int(details.InputSampleRate * 0.05f);
 	silentBuffer_.assign(silentSamples, 0.0f);
 
 	XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
@@ -493,8 +359,8 @@ void Audio::AddSoundCategory(const std::string& soundCategory)
 
 	result = xAudio2_->CreateSubmixVoice(
 		&voice,
-		kSubmixChannels,
-		kSubmixSampleRate,
+		details.InputChannels,
+		details.InputSampleRate,
 		0,          
 		kCategory,          // ProcessingStage (下から上へ)
 		&sends,     

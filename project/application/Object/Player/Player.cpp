@@ -17,7 +17,7 @@ const std::vector<StateMachine<Player, PlayerState>::StateFunctionSet>& Player::
 	static const std::vector<StateFunctionSet> stateTable = 
 	{
 		PLAYER_STATE_ENTRY(IDLE, Idle),
-		PLAYER_STATE_ENTRY(ROUTE, Root),
+		PLAYER_STATE_ENTRY(ROUTE, Route),
 		PLAYER_STATE_ENTRY(BOOST, Boost),
 		PLAYER_STATE_ENTRY(BARREL_ROLL, BarrelRoll),
 		PLAYER_STATE_ENTRY(TAKE_DAMAGE, TakeDamage),

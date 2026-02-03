@@ -54,13 +54,13 @@ private: // シーン内のState関連関数
 	}
 
 	// 直線移動
-	// NormalBulletLiner.cpp
+	// LinearState.cpp
 	void InitLinear();
 	void UpdateLinear();
 	void ExitLinear();
 
 	// 衝突後処理
-	// NormalBulletAfterCollision.cpp
+	// AfterCollisionState.cpp
 	void InitAfterCollision();
 	void UpdateAfterCollision();
 	void ExitAfterCollision();

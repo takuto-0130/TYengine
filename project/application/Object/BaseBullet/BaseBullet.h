@@ -33,7 +33,6 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 protected:
-protected:
 	/// <summary>死亡（消滅）フラグ。</summary>
 	bool isDead_ = false;
 

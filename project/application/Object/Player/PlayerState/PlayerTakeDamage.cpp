@@ -2,8 +2,10 @@
 
 void Player::InitTakeDamage()
 {
+	// 被弾時に色を加算（白く光らせる）
 	obj_->SetAddColor({ 1,1,1,1 });
 
+	// カメラシェイクを開始
 	CameraShake::ShakeParams params;
 	params.duration = 0.1f;
 	params.amplitude = 0.1f;
@@ -13,12 +15,15 @@ void Player::InitTakeDamage()
 
 void Player::UpdateTakeDamage()
 {
+	// 一定時間経過後にROOTステートへ復帰
 	if (GetStateElapsedTime() > 0.1f) ChangeState(PlayerState::ROOT);
 
+	// 被弾中でもバレルロールは可能にする
 	StartBarrelRoll();
 }
 
 void Player::ExitTakeDamage()
 {
+	// 色加算をリセット
 	obj_->SetAddColor({ 0,0,0,0 });
 }

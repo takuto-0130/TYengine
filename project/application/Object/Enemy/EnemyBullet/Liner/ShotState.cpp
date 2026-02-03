@@ -12,7 +12,9 @@ void EnemyBullet::Liner::UpdateShot()
 		isDead_ = true;
 	}
 
+	// 移動処理
 	Move();
+	// 回転処理
 	RotationDirection();
 
 	worldTransform_.Update();
@@ -24,8 +26,10 @@ void EnemyBullet::Liner::ExitShot()
 
 void EnemyBullet::Liner::Move()
 {
+	// 速度ベクトル算出
 	velocity_ = direction_ * defaultSpeed_ * deltaTime_;
 
+	// 座標更新
 	worldTransform_.SetTranslation(worldTransform_.GetTranslation() + velocity_);
 }
 

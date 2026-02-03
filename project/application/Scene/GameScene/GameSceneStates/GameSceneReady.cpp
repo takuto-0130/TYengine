@@ -51,15 +51,16 @@ void GameScene::StartCamera()
 	// カメラワークを適用
 	std::function<void(Vector3&)> applyCameraWork = [&](Vector3& pos)
 		{
-			// 真後ろから始まるように
+			// 真後ろから始まるように調整
 			Matrix4x4 rotAjust = MakeRotateYMatrix((3.9f) / 5.0f);
 			pos = TransformM(pos, rotAjust);
 
-
+			// プレイヤー位置を基準とした相対位置計算
 			Vector3 vec = Normalize(startCameraPos_ - stageManager_->GetPlayer()->GetWorldPosition());
 			pos = pos * vec;
 			pos = pos + stageManager_->GetPlayer()->GetWorldPosition();
 
+			// 常にプレイヤーを見るように回転を設定
 			Vector3 dir = Normalize(stageManager_->GetPlayer()->GetWorldPosition() - pos);
 
 			Vector3 rot;
@@ -67,7 +68,7 @@ void GameScene::StartCamera()
 			rot.x = -std::asin(dir.y);
 			rot.z = 0.0f;
 
-
+			// カメラへ適用
 			camera_->SetTranslate(pos);
 			camera_->SetRotate(rot);
 		};
@@ -78,6 +79,7 @@ void GameScene::StartCamera()
 	resetTimer(10.0f);
 	resetTimer(13.0f);
 
+	// カメラ旋回演出
 	if (GetStateElapsedTime() <= 3.0f)
 	{
 		Matrix4x4 rotY = MakeRotateYMatrix((startCameraTimer_ - 7.0f) / 3.0f);

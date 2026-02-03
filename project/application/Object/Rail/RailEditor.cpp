@@ -19,6 +19,7 @@ void RailEditor::Load(const std::string& filename) {
     controlPoints_.clear();
     railSegments_.clear();
 
+    // JSONから制御点データとセグメント情報を読み込み
     for (const auto& pointJson : j["controlPoints"]) {
         Vector3 p;
         p.x = pointJson["x"];
@@ -42,12 +43,14 @@ void RailEditor::DrawEditorUI() {
     ImGui::Begin("Rail Editor");
 
     ImGui::SameLine();
+    // プレビュー更新フラグを立てるボタン
     if (ImGui::Button("Preview")) {
         needsPreviewUpdate_ = true;
     }
 
     ImGui::Separator();
 
+    // 各制御点の編集UI
     for (size_t idx = 0; idx < controlPoints_.size(); ++idx) {
         Vector3& p = controlPoints_[idx];
         RailSegment& seg = railSegments_[idx];
@@ -59,16 +62,19 @@ void RailEditor::DrawEditorUI() {
             ImGui::DragFloat("Speed", &seg.speed, 0.1f, 0.1f, 10.0f);
             ImGui::Checkbox("Trigger Event", &seg.triggerEvent);
 
+            // 順番入れ替え（上へ）
             if (ImGui::Button("Up") && idx > 0) {
                 std::swap(controlPoints_[idx], controlPoints_[idx - 1]);
                 std::swap(railSegments_[idx], railSegments_[idx - 1]);
             }
             ImGui::SameLine();
+            // 順番入れ替え（下へ）
             if (ImGui::Button("Down") && idx < controlPoints_.size() - 1) {
                 std::swap(controlPoints_[idx], controlPoints_[idx + 1]);
                 std::swap(railSegments_[idx], railSegments_[idx + 1]);
             }
             ImGui::SameLine();
+            // ポイント削除
             if (ImGui::Button("Delete")) {
                 controlPoints_.erase(controlPoints_.begin() + idx);
                 railSegments_.erase(railSegments_.begin() + idx);
@@ -79,6 +85,7 @@ void RailEditor::DrawEditorUI() {
         }
     }
 
+    // 新規ポイント追加
     if (ImGui::Button("Add Point")) {
         Vector3 newPoint = controlPoints_.empty() ? Vector3{ 0, 0, 0 } : controlPoints_.back();
         controlPoints_.push_back(newPoint);

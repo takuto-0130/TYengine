@@ -45,12 +45,12 @@ void Stage::Update()
     // カメラ情報の更新
     enemyMgr_.SetCamera(camera_);
 
-    // レール更新
+    // レール更新（カメラ移動・トリガー判定）
     railManager_->Update();
 
     if (railManager_->RailTrigger())
     {
-        // トリガーに到達したとき
+        // トリガーに到達したとき（敵出現など）
     }
 
     // プレイヤー更新
@@ -60,7 +60,7 @@ void Stage::Update()
     Vector3 pos = player_->GetWorldPosition();
     enemyMgr_.SetTargetPos(&pos);
 
-    // 敵更新
+    // 敵群の更新
     enemyMgr_.Update();
 
     // コンボシステム更新
@@ -81,8 +81,11 @@ void Stage::Draw()
 void Stage::EditUpdate()
 {
     isEdit_ = true;
+    
+    // レールの編集モード更新
     railManager_->UpdateEdit();
 
+    // プレイヤーの更新（編集モード中も表示・動作確認のため）
     player_->Update();
 }
 
@@ -93,6 +96,9 @@ nlohmann::json Stage::ToJson() const {
 }
 
 void Stage::FromJson(const nlohmann::json& j) {
+    // レールデータをJSONからデシリアライズ
     RailEditor::Instance()->FromJson(j["rail"]);
+    
+    // ロード後にレールマネージャを再初期化
     railManager_->Reset();
 }

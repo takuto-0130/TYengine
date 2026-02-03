@@ -29,14 +29,18 @@ PlayerBulletNormal::~PlayerBulletNormal()
 
 void PlayerBulletNormal::Init()
 {
+	// 3Dモデル生成
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("unitSphere.obj");
 	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
+	
+	// トランスフォーム初期化
 	worldTransform_.Initialize();
 	worldTransform_.SetScale({ scale_, scale_, scale_ });
 	worldTransform_.Update();
 
+	// コライダー生成（Ray判定用など、適切な型を指定）
 	collider_ = std::make_unique<PBulletCollider>(
 		static_cast<uint32_t>(ColliderTypeID::P_BULLET),
 		GetWorldPosition(),
@@ -44,6 +48,8 @@ void PlayerBulletNormal::Init()
 		this
 	);
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
+	
+	// 初期状態を直線移動（LINER）に設定
 	ChangeState(NormalBulletState::LINER);
 
 	defaultSpeed_ = 25.0f;
@@ -52,8 +58,14 @@ void PlayerBulletNormal::Init()
 void PlayerBulletNormal::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+	
+	// カメラ移動分の補正（必要に応じて）
 	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
+	
+	// ステート更新（移動処理などはここで行われる）
 	UpdateState(deltaTime_);
+	
+	// コライダー同期
 	collider_->Update(GetWorldPosition());
 }
 

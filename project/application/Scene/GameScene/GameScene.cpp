@@ -52,6 +52,7 @@ GameScene::~GameScene()
 void GameScene::Init()
 {
 	//========== ロード ==========//
+	// UI定義と設定ファイルのJSONロード
 	gameUIJM_.Load("GameUI.json", true, &errUI_);
 	configJM_.Load("Config.json", true, &errConfig_);
 #ifdef _DEBUG
@@ -66,20 +67,26 @@ void GameScene::Init()
 	input_ = Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 
+	// スカイボックス設定
 	Object3dBasis::GetInstance()->SetSkyboxFilePath("Resources/Texture/output_skybox.dds");
 	skybox_ = std::make_unique<ObjectCubemap>();
 	skybox_->Initialize("Resources/Texture/output_skybox.dds");
 
+	// ステージデータ（レール・敵配置など）の管理クラス生成と初期化
 	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
 
+	// 開始時のカメラ位置などを保持
 	startCameraPos_ = camera_->GetPosition();
 	startCameraRot_ = camera_->GetRotate();
 	isReady_ = true;
 	readyCount_ = 0;
 
+	// エフェクト関連・UI関連の初期化
 	EmitterInit();
 	UIInit();
+	
+	// フェードインから開始
 	ChangeState(GameSceneState::FADE_IN);
 
 	bulletTime_ = BulletTimeController::GetInstance();
@@ -103,10 +110,13 @@ void GameScene::Update()
 	ImGui::End();
 #endif // _DEBUG
 
+	// バレットタイム（スローモーション等）の更新
 	bulletTime_->Update();
 
+	// 現在のシーンステートの更新処理を実行
 	UpdateState(Timer::GetInstance()->GetDeltaTime());
 	
+	// デバッグ用エディタ切り替え処理（デバッグビルドのみ）
 	SwitchEdit();
 
 	skybox_->Update();

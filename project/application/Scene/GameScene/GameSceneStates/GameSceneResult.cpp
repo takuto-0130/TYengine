@@ -9,13 +9,17 @@ void GameScene::InitResult()
 {
 	gameAudio_->Play("fanfare", false, SoundCategory::BGM);
 
+	// ブラーエフェクトを有効化
 	PostEffectManager::GetInstance()->SetEffectEnabled("Gaussian", true);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetKernelSize(13);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(0.0f);
+	
+	// リザルトUIの初期化・開始
 	resultMenu_->Start();
 	scoreDraw_->SetResult();
 	scoreDraw_->UpdateResult(0.0f);
 
+	// 紙吹雪（Confetti）の衝突判定用にUIスプライトを登録
 	std::vector<Sprite*> setSpr;
 	setSpr.insert(setSpr.end(), resultMenu_->GetSprite().begin(), resultMenu_->GetSprite().end());
 	setSpr.insert(setSpr.end(), scoreDraw_->GetSprite().begin(), scoreDraw_->GetSprite().end());
@@ -39,6 +43,7 @@ void GameScene::UpdateResult()
 	resultMenu_->Update();
 	scoreDraw_->UpdateResult(GetStateElapsedTime());
 
+	// UIとの衝突判定を更新
 	uiCollider_.BuildAABBs(false);
 
 	if(GetStateElapsedTime() > 1.0f)
@@ -48,6 +53,7 @@ void GameScene::UpdateResult()
 		confetti_.Update(Timer::GetInstance()->GetDeltaTime());
 	}
 
+	// 時間経過でブラー強度を変化、その後入力待ち
 	if (GetStateElapsedTime() < 4.0f)
 	{
 		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((GetStateElapsedTime()) / 4.0f) * 13.0f);

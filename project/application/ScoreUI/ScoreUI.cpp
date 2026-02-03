@@ -18,7 +18,7 @@ void ScoreUI::Init()
 		sprite->SetSize(jm_->Get<Vector2>("ScoreUI.Texture.number.Size"));
 		setColliderSpr_.push_back(sprite.get());
 	}
-	// オフセット
+	// 桁ごとの表示位置オフセット計算
 	OffsetPos(jm_->Get<Vector2>("ScoreUI.Texture.number.offsetPlayPos"));
 
 	scoreViewTime_ = jm_->Get<float>("ScoreUI.ScoreViewTime");
@@ -79,6 +79,7 @@ void ScoreUI::UpdateResult(float currentTime)
 {
 	(void)currentTime;
 
+	// 現在のスコアを各桁へ分解
 	int32_t view = currentScore_;
 	scoreDisplay_.num[THOUSANDS] = view / 1000;
 	view = view % 1000;
@@ -91,6 +92,7 @@ void ScoreUI::UpdateResult(float currentTime)
 
 	scoreDisplay_.num[ONES] = view;
 
+	// フェードイン演出
 	if (currentTime < jm_->Get<float>("ScoreUI.ResultTimer.AlphaTimer"))
 	{
 		currentTime += Timer::GetInstance()->GetDeltaTime();
@@ -103,7 +105,7 @@ void ScoreUI::UpdateResult(float currentTime)
 		}
 	}
 
-	// タイマーに到達するまで0~9のランダムな数字を描画
+	// タイマーに到達するまで0~9のランダムな数字を描画（ドラムロール演出）
 	if (currentTime < jm_->Get<float>("ScoreUI.ResultTimer.ConfirmedTimer0"))
 	{
 		scoreDisplay_.num[THOUSANDS] = Random::GetInstance()->Int09();
@@ -121,6 +123,7 @@ void ScoreUI::UpdateResult(float currentTime)
 		scoreDisplay_.num[ONES] = Random::GetInstance()->Int09();
 	}
 
+	// 各桁のテクスチャUV設定
 	for (int i = 0; i < SpriteNum; ++i)
 	{
 		sprites_[i]->SetTextureLeftTop({ sprites_[i]->GetTextureSize().x * scoreDisplay_.num[i],0 });
@@ -141,6 +144,7 @@ void ScoreUI::SetResult()
 void ScoreUI::ScoreViewSetting()
 {
 	float t = scoreViewTimer_ / scoreViewTime_;
+	// スコア上昇のアニメーション（線形補間）
 	viewScore_ = int(Lerp(float(prevScore_), float(currentScore_), t));
 
 	int32_t view = viewScore_;

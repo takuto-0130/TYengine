@@ -148,11 +148,13 @@ void PlayUI::ComboTexUpdate()
 	Vector2 mouse = input_->GetMousePosition();
 	reticle_->SetPosition(mouse);
 
+	// コンボ表示の透明度制御
 	float t = comboTimer_ / kComboTime_;
 	t = 1.0f - powf(1.0f - t, 4.0f);
 	sprites_[COMBO_TEXT]->SetAlpha(t);
 	sprites_[COMBO_NUM_TEXT]->SetAlpha(t);
 
+	// コンボ終了間際のシェイク演出
 	t = (comboTimer_ - (kComboTime_ - shakeTime_)) / (kComboTime_ - (kComboTime_ - shakeTime_));
 	if (t > 0)
 	{

@@ -271,9 +271,9 @@ if exist "externals\dxil.dll" (
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\ComboAndScoreHandler.h" />
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener.h" />
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
     <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h" />
-    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h" />
     <ClInclude Include="application\Object\Enemy\AttackStrategy\AttackStrategies.h" />
     <ClInclude Include="application\Object\Enemy\AttackStrategy\IAttackStrategy.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />

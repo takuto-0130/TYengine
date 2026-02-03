@@ -20,10 +20,13 @@ concept HasStateTable = requires
     { C::GetStateTable() } -> std::same_as<const std::vector<typename C::StateFunctionSet>&>;
 };
 
-// 汎用ステートマシンクラス（テンプレート）
-// 'Class' = 継承先クラス  
-// 'StateEnum' = 継承先ごと固有のステートのenumClass
-// 使い方はStateMachine.hに
+/// <summary>
+/// 汎用ステートマシンクラス（テンプレート）。
+/// 各ステートの初期化・更新・終了処理を関数ポインタ（メンバ関数）で管理する。
+/// 使用方法ははStateMachine.hに記載
+/// </summary>
+/// <typeparam name="Class">継承先のクラス型。</typeparam>
+/// <typeparam name="StateEnum">ステートを定義するEnum型。</typeparam>
 template<typename Class, typename StateEnum>
 class StateMachine
 {

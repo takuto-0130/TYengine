@@ -1,6 +1,10 @@
 #pragma once
 #include "IParticleRenderer.h"
 
+/// <summary>
+/// リング形状のパーティクルレンダラー。
+/// 衝撃波やエフェクトのアクセントとしてリング状のメッシュを描画する。
+/// </summary>
 class RingParticle : public IParticleRenderer {
 protected:
     void CreateResources() override;

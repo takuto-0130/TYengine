@@ -593,9 +593,6 @@
     <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h">
       <Filter>application\Object\ColliderTypeID</Filter>
     </ClInclude>
-    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener .h">
-      <Filter>application\AppSystem\EventListener\EnemyEvent</Filter>
-    </ClInclude>
     <ClInclude Include="application\Object\Enemy\AttackStrategy\AttackStrategies.h">
       <Filter>application\Object\Enemy\AttackStrategy</Filter>
     </ClInclude>
@@ -986,6 +983,7 @@
     <ClInclude Include="application\AppSystem\Audio\GameAudio.h">
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

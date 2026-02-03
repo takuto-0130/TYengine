@@ -174,11 +174,11 @@ private:
 
 
 	// 姿勢
-	/// <summary>Yaw（Y軸回転）。</summary>
+	/// <summary>Yaw：Y軸周りの回転（左右の振り向き）。</summary>
 	float yaw = 0.0f;
-	/// <summary>Pitch（上下回転）。</summary>
+	/// <summary>Pitch：X軸周りの回転（上下の仰角）。</summary>
 	float pitch = 0.0f;
-	/// <summary>Roll（横傾き）。</summary>
+	/// <summary>Roll：Z軸周りの回転（傾き）。</summary>
 	float roll = 0.0f;
 
 	/// <summary>移動に伴うPitch傾斜。</summary>

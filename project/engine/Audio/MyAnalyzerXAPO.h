@@ -10,19 +10,35 @@ class Audio;
 /// オーディオストリームに挿入し、解析用データ（波形、FFT）を取得する。
 /// </summary>
 class __declspec(uuid("2dde0a3b-45d5-4a48-a9e6-a3a8129ef91a"))
-    MyAnalyzerXAPO : public CXAPOParametersBase
+    MyAnalyzerXAPO : public Microsoft::WRL::RuntimeClass<
+    Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::ClassicCom>,
+    Microsoft::WRL::FtmBase>, // IXAPO 等をここから削除
+    public CXAPOParametersBase
 {
-public:
-    static const UINT32 FFT_SIZE = 1024;     ///< FFTサンプルサイズ
-    static const UINT32 DELAY_FRAMES = 5;    ///< 遅延フレーム数
-    static const UINT32 WAVEFORM_SIZE = 441; ///< 波形バッファサイズ
 private:
+    friend class Audio;
+    friend class Microsoft::WRL::Details::MakeAllocator<MyAnalyzerXAPO>;
+public:
+    // あいまいさを解決するため、IUnknown のメソッドを明示的に委譲する
+    STDMETHOD(QueryInterface)(REFIID riid, _COM_Outptr_ void** ppvObject) override
+    {
+        return CXAPOParametersBase::QueryInterface(riid, ppvObject);
+    }
+    STDMETHOD_(ULONG, AddRef)() override
+    {
+        return CXAPOParametersBase::AddRef();
+    }
+    STDMETHOD_(ULONG, Release)() override
+    {
+        return CXAPOParametersBase::Release();
+    }
     MyAnalyzerXAPO();
     ~MyAnalyzerXAPO();
 
-    friend class Audio;
+    static const UINT32 FFT_SIZE = 1024;     ///< FFTサンプルサイズ
+    static const UINT32 DELAY_FRAMES = 5;    ///< 遅延フレーム数
+    static const UINT32 WAVEFORM_SIZE = 441; ///< 波形バッファサイズ
 
-public:
 public:
     /// <summary>
     /// プロセス前のロック処理。

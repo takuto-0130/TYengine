@@ -8,7 +8,7 @@ namespace EnemyBullet
 	/// <summary>
 	/// 直線弾の状態定数。
 	/// </summary>
-	enum class LinerState
+	enum class LinearState
 	{
 		SHOT,            ///< 発射・移動中
 		AFTER_COLLISION, ///< 衝突後（着弾）
@@ -18,15 +18,15 @@ namespace EnemyBullet
 	/// 直線軌道の敵弾クラス。
 	/// 発射ステートと衝突後ステートを持つ。
 	/// </summary>
-	class Liner :
-		public BaseBullet, StateMachine<Liner, LinerState>
+	class Linear :
+		public BaseBullet, StateMachine<Linear, LinearState>
 	{
 	public: // 関数テーブル
 		static const std::vector<StateFunctionSet>& GetStateTable();
 
 	public:
-		Liner();
-		~Liner();
+		Linear();
+		~Linear();
 		void Init()override;
 		void Update()override;
 		void Draw()override;

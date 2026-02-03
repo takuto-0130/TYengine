@@ -207,16 +207,16 @@
     <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp">
       <Filter>application\AppSystem\Combo</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\AfterCollisionState.cpp">
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp">
       <Filter>application\Object\Enemy\EnemyBullet\Liner</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\ShotState.cpp">
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp">
       <Filter>application\Object\Enemy\EnemyBullet\Liner</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp">
       <Filter>application\Object\Player\PlayerBullet\NormalBullet</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinerState.cpp">
+    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinearState.cpp">
       <Filter>application\Object\Player\PlayerBullet\NormalBullet</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp">
@@ -561,7 +561,7 @@
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp">
       <Filter>engine\OffScreen\PostEffect</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Enemy\EnemyBullet\Liner\Liner.cpp">
+    <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\Linear.cpp">
       <Filter>application\Object\Enemy\EnemyBullet\Liner</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\JustCollider.cpp">
@@ -962,7 +962,7 @@
     <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h">
       <Filter>engine\OffScreen\PostEffect</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Enemy\EnemyBullet\Liner\Liner.h">
+    <ClInclude Include="application\Object\Enemy\EnemyBullet\Linear\Linear.h">
       <Filter>application\Object\Enemy\EnemyBullet\Liner</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Player\JustCollider.h">

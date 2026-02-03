@@ -47,7 +47,7 @@ void StreamingAudio::SetPitch(float pitch)
 		streamVoice_->SetFrequencyRatio(pitch);
 	}
 	else {
-		Logger::Log("UnInitialized streamVoice.");
+		Logger::Log("Uninitialized streamVoice.");
 	}
 }
 
@@ -61,7 +61,7 @@ void StreamingAudio::ApplyEffectChain()
 		}
 	}
 	else {
-		Logger::Log("UnInitialized streamVoice.");
+		Logger::Log("Uninitialized streamVoice.");
 	}
 }
 
@@ -76,7 +76,7 @@ void StreamingAudio::SetEffect(const XAUDIO2FX_REVERB_I3DL2_PARAMETERS parameter
 		streamVoice_->EnableEffect(0);
 	}
 	else {
-		Logger::Log("UnInitialized streamVoice.");
+		Logger::Log("Uninitialized streamVoice.");
 	}
 }
 
@@ -210,7 +210,7 @@ void StreamingAudio::InitEffectChain()
 		Logger::Log("Failed to create reverb effect.");
 	}
 	else {
-		Logger::Log("succece to create reverb effect.");
+		Logger::Log("Succeeded to create reverb effect.");
 	}
 	// エフェクトチェーンの設定
 	effect_[0].pEffect = reverbEffect;  // リバーブエフェクトのインターフェース

@@ -11,7 +11,7 @@ const std::vector<StateMachine<PlayerBulletNormal, NormalBulletState>::StateFunc
 {
 	using enum NormalBulletState;
 	static const std::vector<StateFunctionSet> stateTable = {
-		NORMAL_BULLET_ENTRY(LINER, Liner),
+		NORMAL_BULLET_ENTRY(LINEAR, Linear),
 		NORMAL_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
 	};
 	return stateTable;
@@ -50,7 +50,7 @@ void PlayerBulletNormal::Init()
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 	
 	// 初期状態を直線移動（LINER）に設定
-	ChangeState(NormalBulletState::LINER);
+	ChangeState(NormalBulletState::LINEAR);
 
 	defaultSpeed_ = 25.0f;
 }

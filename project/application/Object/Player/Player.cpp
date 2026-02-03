@@ -17,7 +17,7 @@ const std::vector<StateMachine<Player, PlayerState>::StateFunctionSet>& Player::
 	static const std::vector<StateFunctionSet> stateTable = 
 	{
 		PLAYER_STATE_ENTRY(IDLE, Idle),
-		PLAYER_STATE_ENTRY(ROOT, Root),
+		PLAYER_STATE_ENTRY(ROUTE, Root),
 		PLAYER_STATE_ENTRY(BOOST, Boost),
 		PLAYER_STATE_ENTRY(BARREL_ROLL, BarrelRoll),
 		PLAYER_STATE_ENTRY(TAKE_DAMAGE, TakeDamage),
@@ -79,7 +79,7 @@ void Player::Init()
 
 
 	// 初期ステートをROOTに設定
-	ChangeState(PlayerState::ROOT);
+	ChangeState(PlayerState::ROUTE);
 
 	// 自弾マネージャの初期化
 	bulletManager_ = std::make_unique<PlayerBulletManager>(this);

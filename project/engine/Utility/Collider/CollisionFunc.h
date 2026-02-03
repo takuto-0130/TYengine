@@ -64,12 +64,12 @@ bool IsCollision(const OBB& obb, const Segment& segment);
 /// <summary>
 /// OBB の8頂点を算出する
 /// </summary>
-void OBBVertex(const OBB& obb, Vector3* vertixces);
+void OBBVertex(const OBB& obb, Vector3* vertices);
 
 /// <summary>
 /// 分離軸（Separating Axis Theorem, SAT）に基づき、2つの形状が投影上で重なっているかを判定する
 /// </summary>
-bool isHST(const Vector3& normal, const Vector3* vertixces1, const Vector3* vertixces2);
+bool isHST(const Vector3& normal, const Vector3* vertices1, const Vector3* vertices2);
 
 /// <summary>
 /// OBB 同士の衝突判定を行う

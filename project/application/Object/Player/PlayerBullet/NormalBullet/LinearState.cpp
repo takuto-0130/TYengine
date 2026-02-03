@@ -1,10 +1,10 @@
 #include "PlayerBulletNormal.h"
 
-void PlayerBulletNormal::InitLiner()
+void PlayerBulletNormal::InitLinear()
 {
 }
 
-void PlayerBulletNormal::UpdateLiner()
+void PlayerBulletNormal::UpdateLinear()
 {
 	// 寿命を超えたら死亡フラグをtrueにし、削除対象とする
 	if (GetStateElapsedTime() > lifeTime_) 
@@ -20,7 +20,7 @@ void PlayerBulletNormal::UpdateLiner()
 	worldTransform_.Update();
 }
 
-void PlayerBulletNormal::ExitLiner()
+void PlayerBulletNormal::ExitLinear()
 {
 }
 

@@ -9,7 +9,7 @@
 /// </summary>
 enum class NormalBulletState
 {
-    LINER,           ///< 直進状態
+    LINEAR,           ///< 直進状態
     AFTER_COLLISION, ///< 衝突後（着弾エフェクト等）
 };
 
@@ -47,7 +47,7 @@ private: // シーン内のState関連関数
 	{
 		switch (state) 
 		{
-		case State::LINER: return "LINER";
+		case State::LINEAR: return "LINEAR";
 		case State::AFTER_COLLISION: return "AFTER_COLLISION";
 		default: return "Unknown";
 		}
@@ -55,9 +55,9 @@ private: // シーン内のState関連関数
 
 	// 直線移動
 	// NormalBulletLiner.cpp
-	void InitLiner();
-	void UpdateLiner();
-	void ExitLiner();
+	void InitLinear();
+	void UpdateLinear();
+	void ExitLinear();
 
 	// 衝突後処理
 	// NormalBulletAfterCollision.cpp

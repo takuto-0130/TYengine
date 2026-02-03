@@ -5,7 +5,9 @@
 #endif // _DEBUG
 
 void OutlinePass::Initialize(DirectXBasis* dx, SrvManager* srvMgr) {
+    // シェーダ（CopyImage.VSとDepthBasedOutline.PS）を使う
     copyPass_.Initialize(dx, srvMgr, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/DepthBasedOutline.PS.hlsl");
+    // アウトライン用パラメータバッファ確保
     outlineParam_ = copyPass_.AddExtraConstantBuffer<OutlinePassParam>(4);
 }
 

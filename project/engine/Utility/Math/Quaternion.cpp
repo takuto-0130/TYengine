@@ -142,7 +142,7 @@ Quaternion MakeLookRotation(const Vector3& forward, const Vector3& up)
 	Vector3 u = Cross(f, r);
 
 	// --- 行ベース回転行列（DirectX）---
-	//  X行 = right
+	//  X行 = right (side)
 	//  Y行 = up
 	//  Z行 = forward
 	Matrix4x4 rot = MakeIdentity4x4();

@@ -74,11 +74,11 @@ void Input::Update()
     keyPre_ = key_;
     mousePre_ = mouse_;
 
-    // キーボード
+    // キーボード状態取得
     HRESULT hr = devKeyboard_->GetDeviceState(sizeof(key_), key_.data());
     if (FAILED(hr))
     {
-        devKeyboard_->Acquire();  // 再取得
+        devKeyboard_->Acquire();  // 取得失敗時は再Acquire
         devKeyboard_->GetDeviceState(sizeof(key_), key_.data());
     }
 

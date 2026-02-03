@@ -15,21 +15,24 @@ void ImGuiManager::Initialize(WindowsApp* winApp, DirectXBasis* dxBasis)
 	ImGuiIO& io = ImGui::GetIO();
 	io.IniFilename = nullptr;
 #endif
-	// ImGuiのスタイルを設定
+	// ImGuiのスタイルを設定（ダークテーマ）
 	ImGui::StyleColorsDark();
 
+	// Win32用初期化
 	ImGui_ImplWin32_Init(winApp_->GetHwnd());
 
-	// デスクリプタヒープの設定
+	// デスクリプタヒープの設定（ImGui用フォントテクスチャ用に1つ確保）
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	desc.NumDescriptors = 1;
 	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	
 	// デスクリプタ―ヒープ生成
 	HRESULT result = dxBasis_->GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&srvHeap_));
 	(void)result;
 	assert(SUCCEEDED(result));
 
+	// DX12用初期化
 	ImGui_ImplDX12_Init(
 		dxBasis_->GetDevice(),
 		static_cast<int>(dxBasis_->GetBackBufferCount()),
@@ -55,10 +58,11 @@ void ImGuiManager::Draw()
 {
 	ID3D12GraphicsCommandList* commandList = dxBasis_->GetCommandList();
 
-	// デスクリプタ―ヒープの配列をセットするコマンド
+	// ImGui用のデスクリプタヒープを設定
 	ID3D12DescriptorHeap* ppHeaps[] = { srvHeap_.Get() };
 	commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-	// 描画コマンド発行
+	
+	// 描画データに基づいてコマンド発行（UI描画）
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
 }
 

@@ -14,6 +14,7 @@ void Sprite::Initialize(std::string textureFilePath)
 	CreateVertexData();
 	CreateMaterialResource();
 	CreateTransformationMatrixResource();
+	// 画像サイズに合わせてスプライトサイズを調整
 	AdjustTextureSize();
 }
 
@@ -35,17 +36,20 @@ void Sprite::Update()
 
 void Sprite::Draw()
 {
+	// コマンドリスト設定
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->IASetIndexBuffer(&indexBufferView_);
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
+	// テクスチャセットして描画
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
 void Sprite::DrawRect(const Vector2& lt, const Vector2& rt, const Vector2& lb, const Vector2& rb)
 {
+	// 頂点座標を直接指定して更新
 	// 左下
 	vertexData_[0].position = { lb.x, lb.y, 0.0f, 1.0f };
 	// 左上
@@ -55,7 +59,7 @@ void Sprite::DrawRect(const Vector2& lt, const Vector2& rt, const Vector2& lb, c
 	// 右上
 	vertexData_[3].position = { rt.x, rt.y, 0.0f, 1.0f }; 
 
-	// 書き込むためのアドレスを取得
+	// インデックスバッファ更新（書き込むためのアドレスを取得）
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
 	indexData_[0] = 0;
 	indexData_[1] = 1;
@@ -68,13 +72,14 @@ void Sprite::DrawRect(const Vector2& lt, const Vector2& rt, const Vector2& lb, c
 	transform_.rotate = { 0, 0, 0 };
 	transform_.scale = { 1.0f,  1.0f, 1.0f };
 
-	// Transform情報を作る
+	// Transform情報を作る (正射影)
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
 	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsApp::kClientWidth), float(WindowsApp::kClientHeight), 0.0f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 	transformationMatrixData_->WVP = worldViewProjectionMatrix;
 
+	// 描画コマンド発行
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	spriteBasis_->GetDirectXBasis()->GetCommandList()->IASetIndexBuffer(&indexBufferView_);

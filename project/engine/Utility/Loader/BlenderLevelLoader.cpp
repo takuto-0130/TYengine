@@ -23,7 +23,7 @@ LevelData* BlenderLevelLoader::Load(const std::string& filename)
     // レベルデータ格納用インスタンスの生成
     levelData_ = std::make_unique<LevelData>();
 
-    // "objects"の全オブジェクトを走査
+    // "objects"の全オブジェクトを走査（再帰的に読み込む）
     ObjectTraversal(levelData_.get(), j, "objects");
 
     return levelData_.get();

@@ -6,6 +6,7 @@
 
 bool IsCollision(const Sphere& sphereA, const Sphere& sphereB)
 {
+	// 球と球の衝突判定（中心距離 <= 半径の和）
 	float distance = Length(sphereA.center - sphereB.center);
 	return distance <= sphereA.radius + sphereB.radius;
 }
@@ -18,10 +19,12 @@ bool IsCollision(const Sphere& sphere, const Plane& plane)
 
 bool IsCollision(const Sphere& sphere, const Ray& ray)
 {
+	// 球とレイの衝突判定
 	Vector3 m = ray.origin - sphere.center;
 	float b = Dot(m, ray.diff);
 	float c = Dot(m, m) - sphere.radius * sphere.radius;
 
+	// レイの始点が球の外側にあり、レイが球から遠ざかっている場合
 	if (c > 0.0f && b > 0.0f) 
 	{
 		return false;
@@ -97,6 +100,7 @@ bool IsCollision(const Segment& segment, const Triangle& triangle)
 
 bool IsCollision(const AABB& a, const AABB& b) 
 {
+	// AABB同士の衝突判定
 	if ((a.min.x <= b.max.x && a.max.x >= b.min.x) &&
 		(a.min.y <= b.max.y && a.max.y >= b.min.y) &&
 		(a.min.z <= b.max.z && a.max.z >= b.min.z)) 
@@ -314,12 +318,14 @@ bool isHST(const Vector3& normal, const  Vector3* vertices1, const  Vector3* ver
 
 bool IsCollision(const OBB& obb1, const OBB& obb2)
 {
+	// OBB同士の衝突判定 (分離軸定理: Separating Axis Theorem)
 	Vector3 obb1Vertices[8]{};
 	OBBVertex(obb1, obb1Vertices);
 	Vector3 obb2Vertices[8]{};
 	OBBVertex(obb2, obb2Vertices);
 	for (size_t i = 0; i < 3; i++) 
 	{
+		// 各軸について分離平面があるかチェック
 		if (isHST(obb1.orientations[i], obb1Vertices, obb2Vertices))
 		{
 			return false;
@@ -334,6 +340,7 @@ bool IsCollision(const OBB& obb1, const OBB& obb2)
 	{
 		for (size_t j = 0; j < 3; j++) 
 		{
+			// 軸の外積方向についてもチェック
 			cross = Cross(obb1.orientations[i], obb2.orientations[j]);
 			cross = Normalize(cross);
 			if (isHST(cross, obb1Vertices, obb2Vertices)) 

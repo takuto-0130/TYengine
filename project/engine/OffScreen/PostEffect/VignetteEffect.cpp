@@ -9,7 +9,9 @@
 void VignetteEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
+    // シェーダ（CopyImage.VSとVignette.PS）を使う
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Vignette.PS.hlsl");
+    // パラメータバッファ確保
     param_ = copyPass_.AddExtraConstantBuffer<VignetteParam>(4);
 }
 

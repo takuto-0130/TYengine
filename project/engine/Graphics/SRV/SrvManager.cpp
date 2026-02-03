@@ -30,12 +30,14 @@ bool SrvManager::CanAllocate() const {
 void SrvManager::CreateSRVForTexture2D(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels) {
     assert(index < maxIndex_);
 
+    // SRV記述子設定
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
     srvDesc.Format = format;
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     srvDesc.Texture2D.MipLevels = mipLevels;
 
+    // ヒープ上の場所を計算してSRV作成を行う
     D3D12_CPU_DESCRIPTOR_HANDLE handle = srvHeap_->GetCPUDescriptorHandleForHeapStart();
     handle.ptr += index * descriptorSize_;
 
@@ -45,6 +47,7 @@ void SrvManager::CreateSRVForTexture2D(uint32_t index, ID3D12Resource* resource,
 void SrvManager::CreateSRVForStructuredBuffer(uint32_t index, ID3D12Resource* resource, UINT elementCount, UINT elementSize) {
     assert(index < maxIndex_);
 
+    // StructuredBuffer用SRV記述子
     D3D12_SHADER_RESOURCE_VIEW_DESC desc{};
     desc.Format = DXGI_FORMAT_UNKNOWN;
     desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
@@ -53,6 +56,7 @@ void SrvManager::CreateSRVForStructuredBuffer(uint32_t index, ID3D12Resource* re
     desc.Buffer.StructureByteStride = elementSize;
     desc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
+    // 作成
     D3D12_CPU_DESCRIPTOR_HANDLE handle = srvHeap_->GetCPUDescriptorHandleForHeapStart();
     handle.ptr += index * descriptorSize_;
 
@@ -97,5 +101,6 @@ void SrvManager::CreateSRVForTextureCube(uint32_t index, ID3D12Resource* resourc
     srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 
     D3D12_CPU_DESCRIPTOR_HANDLE handle = GetCPUDescriptorHandle(index);
+    // Cubemap用SRV作成
     dxBasis_->GetDevice()->CreateShaderResourceView(resource, &srvDesc, handle);
 }

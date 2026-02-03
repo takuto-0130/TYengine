@@ -9,8 +9,11 @@
 void DissolveEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
+    // シェーダ（CopyImage.VSとDissolve.PS）を使う
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Dissolve.PS.hlsl");
+    // ノイズテクスチャ読み込み
     copyPass_.LoadAndSetMaskTexture("Resources/Texture/noise1.png");
+    // パラメータバッファ確保
     param_ = copyPass_.AddExtraConstantBuffer<DissolveParam>(4);
 }
 

@@ -6,10 +6,12 @@
 
 void DoFPass::Initialize(DirectXBasis* dx, SrvManager* srvMgr)
 {
+    // シェーダ（CopyImage.VSとDepthOfField.PS）を使う
     copyPass_.Initialize(dx, srvMgr,
         L"Resources/Shaders/CopyImage.VS.hlsl",
         L"Resources/Shaders/DepthOfField.PS.hlsl");
 
+    // DoF用パラメータバッファ確保
     dofParam_ = copyPass_.AddExtraConstantBuffer<DoFPassParam>(4);
 }
 

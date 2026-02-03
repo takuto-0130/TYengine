@@ -9,7 +9,9 @@
 void GaussianEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
+    // シェーダ（CopyImage.VSとGaussian.PS）を使う
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Gaussian.PS.hlsl");
+    // パラメータバッファ確保
     param_ = copyPass_.AddExtraConstantBuffer<GaussianParam>(4);
 }
 

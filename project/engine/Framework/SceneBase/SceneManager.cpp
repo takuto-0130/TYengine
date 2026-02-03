@@ -9,6 +9,7 @@ SceneManager::~SceneManager()
 void SceneManager::ChangeScene(const std::string& sceneName)
 {
 	assert(sceneFactory_);
+	// 次のシーンを生成して予約
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
 }
 

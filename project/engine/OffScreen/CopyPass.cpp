@@ -85,6 +85,7 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
     };
     cmdList->SetDescriptorHeaps(_countof(heaps), heaps);
 
+    // テクスチャセット
     cmdList->SetGraphicsRootDescriptorTable(0, srvHandle);
     if (useExtraTexture_)
     {
@@ -93,10 +94,12 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
     cmdList->SetGraphicsRootDescriptorTable(1, dxBasis_->GetSamplerDescriptorHandle());
     cmdList->SetGraphicsRootConstantBufferView(2, copyParamBuffer_->GetGPUVirtualAddress());
 
+    // 追加バッファセット
     for (const auto& extra : extraBuffers_) {
         cmdList->SetGraphicsRootConstantBufferView(extra.registerIndex, extra.resource->GetGPUVirtualAddress());
     }
 
+    // スワップチェーンへの描画ならビューポート設定
     if (toSwapChain) {
         D3D12_VIEWPORT vp = dxBasis_->GetViewport();
         D3D12_RECT scissor = dxBasis_->GetScissorRect();
@@ -104,6 +107,7 @@ void CopyPass::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HAN
         cmdList->RSSetScissorRects(1, &scissor);
     }
 
+    // 画面全体への描画（大きな三角形1枚など）
     cmdList->DrawInstanced(3, 1, 0, 0);
 }
 

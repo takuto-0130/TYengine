@@ -14,7 +14,7 @@ StreamingAudio::~StreamingAudio()
 
 void StreamingAudio::StartStreaming(const char* filename, bool isLoop)
 {
-	// すでにストリーミング中の場合は終了
+	// すでにストリーミング中の場合は一旦終了
 	if (isStreaming_.load()) {
 		StopStreaming();
 	}
@@ -24,7 +24,7 @@ void StreamingAudio::StartStreaming(const char* filename, bool isLoop)
 
 	isStreaming_.store(true);
 
-	// デタッチ可能なスレッドでストリーミングを開始
+	// ストリーミングスレッドでストリーミング再生を開始
 	audioThread_ = std::make_unique<std::thread>(&StreamingAudio::StreamAudio, this, filename);
 }
 
@@ -93,7 +93,7 @@ void StreamingAudio::StreamAudio(const char* filename)
 	std::string filePath = directoryPath_;
 	filePath += filename;
 
-	// WAVヘッダーの読み込み
+	// WAVヘッダーの解析と読み込み
 	WAVHeader header;
 	if (!ReadWavHeader(filePath, header)) {
 		Logger::Log("Error reading WAV header.\n");
@@ -117,18 +117,18 @@ void StreamingAudio::StreamAudio(const char* filename)
 		return;
 	}
 
-	// WAVファイルのデータ部分にシーク
+	// データ部分へシーク
 	audioFile.seekg(sizeof(WAVHeader));
 
-	// ストリーミング用のバッファを複数作成
-	constexpr int BUFFER_COUNT = 3; // バッファ数
-	BUFFER_SIZE = header.sampleRate * waveFormat.nBlockAlign; // バッファサイズ
+	// バッファの準備（トリプルバッファリング）
+	constexpr int BUFFER_COUNT = 3; 
+	BUFFER_SIZE = header.sampleRate * waveFormat.nBlockAlign; // 1秒分のサイズ
 	audioBuffers_.resize(BUFFER_COUNT, std::vector<BYTE>(BUFFER_SIZE));
 	XAUDIO2_BUFFER xAudioBuffers[BUFFER_COUNT] = {};
 	StreamingVoiceCallback callback;
 
 
-	// ソースボイスを作成し、コールバックを渡す
+	// ソースボイスを作成し、コールバックを登録
 	if (FAILED(xAudio2_->CreateSourceVoice(&streamVoice_, &waveFormat, XAUDIO2_VOICE_USEFILTER, XAUDIO2_MAX_FREQ_RATIO, &callback, nullptr))) {
 		Logger::Log("Failed to create source voice.\n");
 		return;
@@ -137,33 +137,37 @@ void StreamingAudio::StreamAudio(const char* filename)
 	InitEffectChain();
 
 
-	// ソースボイスを開始
+	// 再生開始
 	streamVoice_->Start(0);
-	// バッファリング処理
+	
 	int currentBufferIndex = 0;
 
+	// ストリーミングループ（別スレッドで実行）
+	// isStreaming_ が true であり続ける限りループ
 	while (isStreaming_.load()) {
 		std::vector<BYTE>& currentBuffer = audioBuffers_[currentBufferIndex];
+		
+		// 音声データの読み込み
 		if (!ReadAudioData(audioFile, currentBuffer)) {
-			// EOF
+			// EOF到達時の処理
 			if (isLoopStreaming_.load()) {
-				// EOF に達した場合、ファイルを先頭に戻してループ
-				audioFile.clear();  // EOF flag をクリア
-				audioFile.seekg(sizeof(WAVHeader), std::ios::beg);  // ヘッダーをスキップして再読み込み
+				// ループ再生：先頭に戻って再読み込み
+				audioFile.clear();  // EOFフラグクリア
+				audioFile.seekg(sizeof(WAVHeader), std::ios::beg);
 				if (!ReadAudioData(audioFile, currentBuffer)) {
-					break; // それでも読み込み失敗の場合はループ終了
+					break; // 読み込み失敗なら終了
 				}
 			}
 			else if (!isLoopStreaming_.load()) {
-				break; // EOF
+				break; // ループなしなら終了
 			}
 			else {
 				Logger::Log("Failed to ReadAudioData.\n");
-				break; // 読み込みエラー
+				break;
 			}
 		}
 
-		// 現在のバッファを設定
+		// XAudio2バッファの設定
 		XAUDIO2_BUFFER& xBuffer = xAudioBuffers[currentBufferIndex];
 		xBuffer.AudioBytes = static_cast<UINT32>(currentBuffer.size());
 		xBuffer.pAudioData = currentBuffer.data();
@@ -174,7 +178,7 @@ void StreamingAudio::StreamAudio(const char* filename)
 			xBuffer.Flags = XAUDIO2_END_OF_STREAM;
 		}
 
-		// ソースボイスにバッファを送信
+		// バッファをキューに送信
 		if (FAILED(streamVoice_->SubmitSourceBuffer(&xBuffer))) {
 			Logger::Log("Failed to submit buffer.\n");
 			break;
@@ -182,10 +186,10 @@ void StreamingAudio::StreamAudio(const char* filename)
 
 		Logger::Log("Buffer submitted.\n");
 
-		// 次のバッファを使用
+		// 次のバッファへ切り替え
 		currentBufferIndex = (currentBufferIndex + 1) % BUFFER_COUNT;
 
-		// コールバックで次のバッファの処理完了を待機
+		// 前のバッファの再生完了を待機（同期制御: コールバック活用）
 		callback.WaitForBuffer();
 	}
 

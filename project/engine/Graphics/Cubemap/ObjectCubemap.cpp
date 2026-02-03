@@ -14,10 +14,10 @@ void ObjectCubemap::Initialize(const std::string& textureFilePath)
 
 void ObjectCubemap::Update()
 {
+    // カメラのView行列から平行移動成分を除去（スカイボックスは無限遠として扱うため）
     if (camera_) 
     {
         Matrix4x4 view = camera_->GetViewMatrix();
-        // カメラの位置成分（平行移動）を取り除く
         view.m[3][0] = 0.0f;
         view.m[3][1] = 0.0f;
         view.m[3][2] = 0.0f;
@@ -26,8 +26,8 @@ void ObjectCubemap::Update()
     }
     else
     {
+        // デフォルトカメラを使用
         Matrix4x4 view = CubemapBasis::GetInstance()->GetDefaultCamera()->GetViewMatrix();
-        // カメラの位置成分（平行移動）を取り除く
         view.m[3][0] = 0.0f;
         view.m[3][1] = 0.0f;
         view.m[3][2] = 0.0f;

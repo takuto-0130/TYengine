@@ -13,19 +13,20 @@ void Model::Initialize(ModelLoader* modelManager, const std::string& directoryPa
 {
 	modelLoader_ = modelManager;
 
-	// モデルの読み込み
+	// モデルデータの読み込み（Assimp利用）
 	modelData_ = LoadModelFile(directoryPath, fileName);
 	CreateVertexResource();
 
-	// テクスチャファイルの読み込み
+	// マテリアル用テクスチャ読み込み
 	std::filesystem::path texturePath = modelData_.material.textureFilePath;
 	TextureManager::GetInstance()->LoadTexture(texturePath.string());
-	// 番号を取得
+	// テクスチャインデックス取得
 	modelData_.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(texturePath.string());
 }
 
 void Model::Draw(WorldTransform& transform, Camera* camera)
 {
+	// WVP行列計算
 	Matrix4x4 worldViewProjectionMatrix;
 	if (camera) {
 		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
@@ -37,15 +38,19 @@ void Model::Draw(WorldTransform& transform, Camera* camera)
 	transform.SetMapWVP(modelData_.rootNode.localMatrix * worldViewProjectionMatrix);
 	transform.SetMapWorld(modelData_.rootNode.localMatrix * transform.GetMatWorld());
 
+	// ディスクリプタヒープの設定
 	ID3D12DescriptorHeap* heaps[] = {
 	TextureManager::GetInstance()->GetSrvManager()->GetHeap(),
 	modelLoader_->GetDirectXBasis()->GetSamplerHeap()
 	};
 	modelLoader_->GetDirectXBasis()->GetCommandList()->SetDescriptorHeaps(_countof(heaps), heaps);
 
+	// RootParameters設定
 	modelLoader_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transform.GetConstBuffer()->GetGPUVirtualAddress());
 	modelLoader_->GetDirectXBasis()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	modelLoader_->GetSrvManager()->SetGraphicsRootDescriptorTable(modelLoader_->GetDirectXBasis()->GetCommandList(), 2, modelData_.material.textureIndex);
+	
+	// スカイボックス（環境マップ）の設定
 	if(Object3dBasis::GetInstance()->GetSkyboxFilePath().size() > 4)
 	{
 		modelLoader_->GetDirectXBasis()->GetCommandList()->SetGraphicsRootDescriptorTable(
@@ -57,6 +62,7 @@ void Model::Draw(WorldTransform& transform, Camera* camera)
 			5, TextureManager::GetInstance()->GetDummyCubemapHandleGPU());
 	}
 	
+	// 描画実行
 	modelLoader_->GetDirectXBasis()->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
 }
 

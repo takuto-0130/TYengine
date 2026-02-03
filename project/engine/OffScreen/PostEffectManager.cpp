@@ -13,9 +13,11 @@ void PostEffectManager::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dxBasis_ = dx;
     srvMgr_ = srv;
+    // コピーパス初期化（最終的なSWAPCHAINへの書き込み用）
     copyImage_ = std::make_unique<CopyImageEffect>();
     copyImage_->Initialize(dxBasis_, srvMgr_);
 
+    // 固定パス初期化
     outlinePass = std::make_unique<OutlinePass>();
     outlinePass->Initialize(dxBasis_, srvMgr_);
 
@@ -148,12 +150,14 @@ RenderTexture* PostEffectManager::ApplyOutlineAndDoF(RenderTexture* source)
         // ---------- アウトライン適用 ----------
         outlineRt_->BeginRender(); // 中間結果用
 
+        // DepthをSRVとして使う準備
         source->TransitionDepthToSRV();
 
         outlinePass->SetDepthSrv(source->GetDepthSRVHandle());
         outlinePass->Draw(dxBasis_->GetCommandList(), source->GetGPUHandle());
         outlineRt_->EndRender();
 
+        // Depthを書き込み用に戻す
         source->TransitionDepthToWrite();
     }
 
@@ -167,10 +171,12 @@ RenderTexture* PostEffectManager::ApplyOutlineAndDoF(RenderTexture* source)
         dofPass->SetDepthSrv(source->GetDepthSRVHandle());
         if(enabledOutline_)
         {
+            // アウトライン結果を入力にする
             dofPass->Draw(dxBasis_->GetCommandList(), outlineRt_->GetGPUHandle());
         }
         else
         {
+            // ソースをそのまま入力にする
             dofPass->Draw(dxBasis_->GetCommandList(), source->GetGPUHandle());
         }
         tempRt_->EndRender();
@@ -188,6 +194,7 @@ void PostEffectManager::Apply(RenderTexture* source, RenderTexture* target)
     RenderTexture* ping = source;
     RenderTexture* pong = tempRt_.get();
 
+    // 固定パス（Outline/DoF）適用
     ping = ApplyOutlineAndDoF(ping);
 
     // 有効なエフェクトだけ抽出
@@ -201,18 +208,21 @@ void PostEffectManager::Apply(RenderTexture* source, RenderTexture* target)
     const size_t count = enabledEffects.size();
     if (count == 0)
     {
+        // エフェクトなしならそのまま画面へコピー
         D3D12_CPU_DESCRIPTOR_HANDLE rtv = dxBasis_->GetBackBufferRTV();
         dxBasis_->GetCommandList()->OMSetRenderTargets(1, &rtv, FALSE, nullptr);
         copyImage_->Apply(ping);
     }
     else
     {
+        // Ping-Pong 方式でエフェクト適用
         for (size_t i = 0; i < enabledEffects.size(); ++i) {
             if (!enabledEffects[i]->IsEnabled()) continue;
             bool isLast = (i == enabledEffects.size() - 1);
             RenderTexture* dst = isLast ? target : pong;
 
             if (dst) {
+                // 中間バッファへ描画
                 dst->BeginRender();
                 enabledEffects[i]->Apply(ping);
                 dst->EndRender();

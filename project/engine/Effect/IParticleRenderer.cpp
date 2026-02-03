@@ -13,10 +13,12 @@ void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, Camera* ca
     srvManager_ = srv;
     camera_ = cam;
 
+    // デフォルトのエミッタ設定
     emitter_.transform.scale = { 1,1,1 };
     emitter_.count = 5;
     emitter_.frequency = 0.5f;
 
+    // リソース、Pipeline生成
     CreateResources();
     CreateRootSignature();
     LoadShader();
@@ -26,6 +28,7 @@ void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, Camera* ca
 void IParticleRenderer::Update() {
     std::mt19937 random(seedGene_());
 
+    // ビルボード用行列計算（カメラの逆ビュー行列をもとに回転だけ抽出）
     Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
     Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, camera_->GetWorldMatrix());
     billboardMatrix.m[3][0] = 0.0f;
@@ -36,38 +39,45 @@ void IParticleRenderer::Update() {
 
     kDeltaTime = Timer::GetInstance()->GetDeltaTime();
 
+    // エミッタ更新（発生処理）
     emitter_.frequencyTime += kDeltaTime;
     if (!useTrigger_ &&  emitter_.frequencyTime >= emitter_.frequency) {
         particles_.splice(particles_.end(), Emit(random));
         emitter_.frequencyTime -= emitter_.frequency;
     }
 
+    // 各パーティクル更新
     for (auto it = particles_.begin(); it != particles_.end();) {
         it->currentTime += kDeltaTime;
         it->transform.translate += it->velocity * kDeltaTime;
 
+        // 寿命チェック
         if (it->currentTime >= it->lifeTime) {
             it = particles_.erase(it);
             continue;
         }
 
+        // 個別振る舞い更新
         if (behaviour_)
         {
             behaviour_->Update(*it, kDeltaTime);
         }
 
+        // インスタンシングデータ構築
         if (numInstance_ < kMaxInstance) {
             Matrix4x4 world = MakeAffineMatrix(it->transform.scale, it->transform.rotate, it->transform.translate);
             if (useBillboard_) {
+                // ビルボード処理：カメラの向きに合わせて回転
                 world = MakeScaleMatrix(it->transform.scale) 
                     * billboardMatrix
-                    * MakeRotateZMatrix(it->transform.rotate.z)
+                    * MakeRotateZMatrix(it->transform.rotate.z) // Z回転は許容
                     * MakeTranslateMatrix(it->transform.translate);
             }
             Matrix4x4 WVP = world * camera_->GetViewProjectionMatrix();
             instancingData_[numInstance_].WVP = WVP;
             instancingData_[numInstance_].World = world;
             instancingData_[numInstance_].color = it->color;
+            // 寿命に応じてフェードアウト
             instancingData_[numInstance_].color.w *= (1.0f - (it->currentTime / it->lifeTime));
             ++numInstance_;
         }
@@ -80,17 +90,20 @@ void IParticleRenderer::Draw() {
 
     auto cmd = dxBasis_->GetCommandList();
 
+    // Pipeline設定
     cmd->SetGraphicsRootSignature(rootSignature_.Get());
     cmd->SetPipelineState(pipelineState_.Get());
 
     cmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     cmd->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
+    // SRV, CBV設定
     srvManager_->SetGraphicsRootDescriptorTable(cmd, 1, srvIndex_);
     srvManager_->SetGraphicsRootDescriptorTable(cmd, 2, textureIndex_);
     cmd->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
     cmd->SetGraphicsRootConstantBufferView(3, cameraResource_->GetGPUVirtualAddress());
 
+    // インスタンシング描画（頂点数 * インスタンス数）
     cmd->DrawInstanced(vertexCount_, numInstance_, 0, 0);
 }
 

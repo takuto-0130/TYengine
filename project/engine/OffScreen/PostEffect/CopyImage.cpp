@@ -6,6 +6,7 @@
 void CopyImageEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
+    // シェーダ（CopyImage.VSとCopyImage.PS）を使う（単純コピー）
     copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
 }
 

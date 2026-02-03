@@ -15,9 +15,12 @@ void CubemapBasis::Initialize(DirectXBasis* directXBasis)
 
 void CubemapBasis::DrawBegin()
 {
+	// スカイボックスパイプライン設定
 	directXBasis_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	directXBasis_->GetCommandList()->SetPipelineState(graphicsPipelineState_.Get());
 	directXBasis_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
+	// ディスクリプタヒープセット (TextureManager経由)
 	ID3D12DescriptorHeap* heaps[] = 
 	{
 	TextureManager::GetInstance()->GetSrvManager()->GetHeap()

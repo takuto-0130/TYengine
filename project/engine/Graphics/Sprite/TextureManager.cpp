@@ -30,6 +30,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
     }
     assert(SUCCEEDED(hr));
 
+    // ミップマップ生成
     DirectX::ScratchImage mipImages;
     if (DirectX::IsCompressed(image.GetMetadata().format))
     {
@@ -40,7 +41,8 @@ void TextureManager::LoadTexture(const std::string& filePath) {
         hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
     }
     assert(SUCCEEDED(hr));
-
+    
+    // SRVインデックス確保
     uint32_t index = srvManager_->Allocate();
 
     TextureData textureData;
@@ -76,9 +78,11 @@ void TextureManager::LoadTexture(const std::string& filePath) {
         srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
     }
 
+    // SRV作成
     dxBasis_->GetDevice()->CreateShaderResourceView(
         textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 
+    // 読み込み済みリストに追加
     textureData_[filePath] = textureData;
     OutputDebugStringA(("Already loaded: " + filePath + "\n").c_str());
 }

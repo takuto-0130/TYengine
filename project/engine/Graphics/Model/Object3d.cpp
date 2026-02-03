@@ -8,6 +8,7 @@ void Object3d::Initialize()
 {
 	objectManager_ = Object3dBasis::GetInstance();
 
+	// マテリアル、カメラ用定数バッファ生成
 	CreateMaterialResource();
 	CreateCameraResource();
 }
@@ -53,7 +54,7 @@ void Object3d::CreateCameraResource()
 
 void Object3d::SetModel(const std::string& filePath)
 {
-	// モデルを検索してセットする
+	// モデルを検索してセットする（読み込み済みかのチェック）
 	model_ = ModelManager::GetInstance()->FindModel(filePath);
 
 	// 該当モデルがロードされていなければロードしてセット

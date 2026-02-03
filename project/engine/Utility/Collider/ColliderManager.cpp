@@ -5,8 +5,10 @@
 
 void ColliderManager::Update()
 {
+    // 現在の衝突状態リスト
     std::unordered_set<ColliderPair, ColliderPairHash> currentCollisions;
 
+    // 全ペア総当たり（ナイーブ実装）
     for (size_t i = 0; i < colliders_.size(); ++i) {
 		for (size_t j = i + 1; j < colliders_.size(); ++j) {
 			auto& a = *colliders_[i];
@@ -14,17 +16,19 @@ void ColliderManager::Update()
 
 			if (a.GetID() == 0 || b.GetID() == 0)
 			{
-
+                // ID未設定は無視
 			}
 			else if (CheckCollisionDispatcher(&a, &b)) {
 				ColliderPair pair = MakeSortedPair(a.GetID(), b.GetID());
 				currentCollisions.insert(pair);
 
+				// 衝突情報生成
 				CollisionInfo infoAtoB = GenerateInfo(a, b);
 				CollisionInfo infoBtoA = infoAtoB;
 				std::swap(infoBtoA.selfID, infoBtoA.otherID);
 				infoBtoA.direction = -infoAtoB.direction;
 
+                // 新規衝突ならEnter, 継続ならStay
 				if (previousCollisions_.find(pair) == previousCollisions_.end()) {
 					a.OnCollisionEnter(b, infoAtoB);
 					b.OnCollisionEnter(a, infoBtoA);
@@ -41,6 +45,7 @@ void ColliderManager::Update()
 		}
     }
 
+    // 衝突から外れたペアはExit
     for (const auto& pair : previousCollisions_) {
         if (currentCollisions.find(pair) == currentCollisions.end()) {
             auto* a = FindColliderByID(pair.first);
@@ -59,6 +64,7 @@ void ColliderManager::Update()
         }
     }
 
+    // 更新
     previousCollisions_ = std::move(currentCollisions);
 }
 

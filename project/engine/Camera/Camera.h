@@ -65,10 +65,10 @@ namespace TYEngine
 			Utility::Vector3 deltaTranslate_ = {};
 
 			/// <summary>追従カメラ時のターゲットからのオフセット位置。</summary>
-			Utility::Vector3 followCameraOffsetPosition_ = Vector3(0.0f, 20.0f, -35.0f);
+			Utility::Vector3 followCameraOffsetPosition_ = Utility::Vector3(0.0f, 20.0f, -35.0f);
 
 			/// <summary>追従カメラ時のオフセット回転。</summary>
-			Utility::Vector3 followCameraOffsetRotate_ = Vector3(0.51f, 0.0f, 0.0f);
+			Utility::Vector3 followCameraOffsetRotate_ = Utility::Vector3(0.51f, 0.0f, 0.0f);
 
 			/// <summary>現在のシェイクによるオフセット量。</summary>
 			Utility::Vector3 shake_ = {};

@@ -92,8 +92,8 @@ void PlayUI::DebugJMApply()
 
 void PlayUI::SetShiftPos(const Vector2& pos)
 {
-	float windowWidth = 1280.0f;
-	float windowHeight = 720.0f;
+	float windowWidth = WindowsApp::kClientWidth;
+	float windowHeight = WindowsApp::kClientHeight;
 
 	Vector2 pixelPos;
 	pixelPos.x = (pos.x + 1.0f) * 0.5f * windowWidth;

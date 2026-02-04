@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "EngineConfig.h"
 #include "Timer.h"
 #include "../../../application/Scene/Transition/TransitionManager.h"
 
@@ -32,7 +33,7 @@ void SceneManager::Update()
 	scene_->Update();
 
 	// 画面遷移は固定フレームで進行
-	TransitionManager::GetInstance()->Update(1.0f / 60.0f);
+	TransitionManager::GetInstance()->Update(1.0f / EngineConfig::fps_);
 }
 
 void SceneManager::Draw()

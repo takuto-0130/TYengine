@@ -1,7 +1,7 @@
 #include "Ease.h"
 #include <algorithm>
 
-namespace EaseFixed
+namespace Ease
 {
     float In(float t, float n)
     {

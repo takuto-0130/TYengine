@@ -56,7 +56,7 @@ private:
 	std::vector<Sprite> sprites_;   // タイル＝スプライト
 	std::vector<float> viewSprites_;
 
-	float baseW_ = 1280.0f, baseH_ = 720.0f;
+	float baseW_ = 0.0f, baseH_ = 0.0f;
 
 	float duration_ = 0.0f;
 	bool finished_ = false;

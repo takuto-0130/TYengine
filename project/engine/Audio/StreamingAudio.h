@@ -54,6 +54,7 @@ private:
 
 		void STDMETHODCALLTYPE OnBufferEnd(void* pBufferContext) override
 		{
+			(void)pBufferContext;
 			std::lock_guard<std::mutex> lock(mutex_);
 			freeBufferCount_++; // 再生が終わったので空きを増やす
 			cv_.notify_one();

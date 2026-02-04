@@ -87,7 +87,10 @@ private:
 	/// </summary>
 	struct OutlinePassParam
 	{
-		Vector2 texelSize = { 1.0f / 1280.0f, 1.0f / 720.0f };	///< レンダリングターゲットの解像度に基づくテクセルサイズ。
+		Vector2 texelSize = 
+		{ 
+			1.0f / WindowsApp::kClientWidth, 1.0f / WindowsApp::kClientHeight 
+		};														///< レンダリングターゲットの解像度に基づくテクセルサイズ。
 		float depthThreshold = 0.001f;							///< 深度差によるエッジ検出の閾値。
 		float pad0;												///< アライメント用パディング。
 		Vector3 outlineColor = { 0.0f, 0.0f, 0.0f };			///< 輪郭線の色。

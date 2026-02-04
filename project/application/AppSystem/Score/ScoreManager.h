@@ -27,12 +27,14 @@ public:
 	/// <summary>
 	/// 敵撃破時の基本スコアを取得する。
 	/// </summary>
-	int32_t GetBasicScore() const { return kBasicScore_; }
+	int32_t GetBasicScore() const { return basicScore_; }
 
 private:
 	/// <summary>現在のスコア。</summary>
 	int32_t score_ = 0;
 	/// <summary>基本スコア（定数）。</summary>
-	const int32_t kBasicScore_ = 20;
+	int32_t basicScore_ = 0;
+	/// <summary>基本スコア（定数）。</summary>
+	int32_t maxScore_ = 0;
 };
 

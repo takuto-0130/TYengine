@@ -36,10 +36,10 @@ private:
 	/// <summary>現在のコンボ数。</summary>
 	int comboCount_ = 0;
 	/// <summary>コンボ持続の残り時間。</summary>
-	float comboTimer_ = 0;
+	float comboTimer_ = 0.0f;
 	/// <summary>コンボの基本受付時間（定数）。</summary>
-	float kComboTime_ = 3.0f;
+	float kComboTime_ = 0.0f;
 	/// <summary>コンボ時のシェイク演出時間。</summary>
-	float shakeTime_ = 0.4f;
+	float shakeTime_ = 0.0f;
 };
 

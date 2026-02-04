@@ -1,7 +1,8 @@
 #pragma once
 
 // イージング関数
-namespace Ease {
+namespace Ease 
+{
 
     /// <summary>
     /// 加速 : t^n

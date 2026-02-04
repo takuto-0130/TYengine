@@ -1,9 +1,10 @@
 #include "Input.h"
+#include "WindowsApp.h"
 #include <stdexcept>
 #include <assert.h>
 
-constexpr float kBaseWidth = 1280.0f;
-constexpr float kBaseHeight = 720.0f;
+constexpr float kBaseWidth = WindowsApp::kClientWidth;
+constexpr float kBaseHeight = WindowsApp::kClientHeight;
 
 // 初期化処理
 void Input::Initialize(const HWND& hwnd) 

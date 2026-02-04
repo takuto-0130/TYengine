@@ -151,7 +151,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBoost.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerDead.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerIdle.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerState\PlayerRoot.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerState\PlayerRoute.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerTakeDamage.cpp" />
     <ClCompile Include="application\Scene\GameScene\EmitterInit.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameScene.cpp" />
@@ -297,6 +297,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Effect\ExplosionRingBehaviour.h" />
     <ClInclude Include="engine\Effect\IParticleBehaviour.h" />
     <ClInclude Include="engine\Effect\ParticleParam.h" />
+    <ClInclude Include="engine\EngineCore\EngineConfig.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\CopyImage.h" />
     <ClInclude Include="engine\OffScreen\PostEffect\DissolveEffect.h" />

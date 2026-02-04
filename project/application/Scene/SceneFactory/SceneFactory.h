@@ -7,7 +7,7 @@
 /// 文字列（シーン名）に応じて具体的なシーンインスタンスを生成する。
 /// </summary>
 class SceneFactory :
-    public AbstractSceneFactory
+    public TYEngine::Framework::AbstractSceneFactory
 {
 public:
     /// <summary>
@@ -15,6 +15,6 @@ public:
     /// </summary>
     /// <param name="sceneName">生成するシーンの名前。</param>
     /// <returns>生成されたシーンのユニークポインタ。</returns>
-    std::unique_ptr<IScene> CreateScene(const std::string& sceneName) override;
+    std::unique_ptr<TYEngine::Framework::IScene> CreateScene(const std::string& sceneName) override;
 };
 

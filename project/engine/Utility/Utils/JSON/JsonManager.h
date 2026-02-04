@@ -32,8 +32,6 @@
 namespace TYEngine {
 namespace Utility {
 
-{
-
     using json = nlohmann::json;
 
     // ==========================

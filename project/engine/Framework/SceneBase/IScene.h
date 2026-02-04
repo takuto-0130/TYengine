@@ -2,12 +2,13 @@
 #include "Input.h"
 #include "Camera.h"
 
-class SceneManager;
 
 namespace TYEngine
 {
 	namespace Framework
 	{
+
+		class SceneManager;
 
 		/// <summary>
 		/// シーンの共通インターフェースを定義する純粋仮想クラス。  
@@ -61,7 +62,7 @@ namespace TYEngine
 			/// カメラを設定する。
 			/// </summary>
 			/// <param name="camera">使用するカメラインスタンス。</param>
-			void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; };
+			void SetCamera(CameraSystem::Camera* camera) { camera_ = camera; };
 
 			/// <summary>仮想デストラクタ。</summary>
 			virtual ~IScene() = default;

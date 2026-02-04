@@ -147,18 +147,18 @@ private:
 	std::unique_ptr<JustCollider> justCollider_;
 
 	/// <summary>コライダーのスケール。</summary>
-	float colliderScale_ = 0.2f;
+	float colliderScale_ = 0.0f;
 	/// <summary>カメラからの深度距離。</summary>
-	float playerDepthFromCamera_ = 4.0f;
+	float playerDepthFromCamera_ = 0.0f;
 	/// <summary>横移動の最大幅（画面内の物理スケール）。</summary>
-	float xRange = 16.0f * 0.09f;
+	float xRange = 0.0f;
 	/// <summary>縦移動の最大高さ。</summary>
-	float yRange = 9.0f * 0.085f;
+	float yRange = 0.0f;
 
 	/// <summary>基本移動速度。</summary>
-	float defaultSpeed_ = 0.3f;
+	float defaultSpeed_ = 0.0f;
 	/// <summary>現在の移動速度。</summary>
-	Vector2 speed_{ defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
+	Vector2 speed_{};
 	/// <summary>入力方向。</summary>
 	Vector2 inputDir_{};
 
@@ -166,11 +166,10 @@ private:
 	Vector2 rollDir_{};
 
 	/// <summary>デルタタイム。</summary>
-	float deltaTime_ = 1.0f / 60.0f;
+	float deltaTime_ = 0.0f;
 
-	// hp
 	/// <summary>ヒットポイント。</summary>
-	int hitPoint_ = 30;
+	int hitPoint_ = 0;
 
 
 	// 姿勢
@@ -186,13 +185,13 @@ private:
 
 	// バレルロール
 	/// <summary>ロール所要時間。</summary>
-	float rollTime_ = 0.6f;
+	float rollTime_ = 0.0f;
 	/// <summary>ロール移動範囲。</summary>
-	float rollRange_ = 0.3f;
+	float rollRange_ = 0.0f;
 	/// <summary>左ロール目標角度。</summary>
-	float leftRoll_ = 2.0f * std::numbers::pi_v<float>;
+	float leftRoll_ = 0.0f;
 	/// <summary>右ロール目標角度。</summary>
-	float rightRoll_ = -2.0f * std::numbers::pi_v<float>;
+	float rightRoll_ = 0.0f;
 	/// <summary>ロール開始位置。</summary>
 	Vector2 startRollPos_{};
 	/// <summary>ロール終了位置。</summary>
@@ -206,7 +205,7 @@ private:
 	/// <summary>ジャスト回避ロール中かどうか。</summary>
 	bool justRoll_ = false;
 	/// <summary>ジャスト回避時のスケール倍率。</summary>
-	float justScale_ = 3.0f;
+	float justScale_ = 0.0f;
 
 
 	// 弾関連
@@ -215,7 +214,7 @@ private:
 	/// <summary>現在の弾タイプ。</summary>
 	PlayerBulletType currentBulletType_ = PlayerBulletType::NORMAL;
 	/// <summary>発射クールタイム。</summary>
-	float bulletCoolTime_ = 0.1f;
+	float bulletCoolTime_ = 0.0f;
 	/// <summary>発射タイマー。</summary>
 	float bulletTimer_ = 0.0f;
 

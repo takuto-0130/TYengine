@@ -42,7 +42,7 @@ namespace EnemyBullet
 		std::unique_ptr<EBulletCollider> collider_;
 
 		/// <summary>固定タイムステップ。</summary>
-		float deltaTime_ = 1.0f / 60.0f;
+		float deltaTime_ = 0.0f;
 
 
 	private: // シーン内のState関連関数

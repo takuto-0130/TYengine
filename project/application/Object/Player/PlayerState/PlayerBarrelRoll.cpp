@@ -65,7 +65,7 @@ void Player::ExitBarrelRoll()
 }
 
 
-
+// magic
 void Player::StartBarrelRoll()
 {
 	// LShiftキーでバレルロール開始
@@ -86,6 +86,7 @@ void Player::StartBarrelRoll()
 	}
 }
 
+// magic
 void Player::BarrelRoll()
 {
     // 入力方向に応じて左右（または上下）ロール

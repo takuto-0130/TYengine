@@ -36,8 +36,18 @@ void Enemy::Init()
 {
 	RegisterFromDefaultTable(this);
 
+	// 数値を適用
+	popTime_ = 1.0f;
+	bulletCoolTime_ = 2.0f;
+	bulletTimer_ = 0.0f;
+	defaultScale_ = { 0.3f, 0.3f, 0.3f };
+	upScale_ = { 0.45f, 0.45f, 0.45f };
+	lifeTime_ = 4.0f;
+
+
+
 	// 敵タイプをランダムに決定（現在は4種類）
-	enemyType_ = Random::GetInstance()->Int(0, 3);
+	enemyType_ = Random::GetInstance()->Int(0, Triangle);
 
 	// 3Dオブジェクト生成
 	obj_ = std::make_unique<Object3d>();
@@ -46,25 +56,25 @@ void Enemy::Init()
 	using namespace EnemyAttack;
 
 	// タイプに応じたモデルと攻撃パターンの設定
-	if (enemyType_ == 0)
+	if (enemyType_ == Normal)
 	{
 		// 通常ショット
 		obj_->SetModel("crystal1.obj");
 		SetAttackStrategy(std::make_unique<NormalAttackStrategy>());
 	}
-	else if (enemyType_ == 1)
+	else if (enemyType_ == Vertical)
 	{
 		// 垂直2点
 		obj_->SetModel("crystal2.obj");
 		SetAttackStrategy(std::make_unique<VerticalSplitAttackStrategy>());
 	}
-	else if (enemyType_ == 2)
+	else if (enemyType_ == Horizontal)
 	{
 		// 水平4点
 		obj_->SetModel("crystal4.obj");
 		SetAttackStrategy(std::make_unique<HorizontalSplitAttackStrategy>());
 	}
-	else if (enemyType_ == 3)
+	else if (enemyType_ == Triangle)
 	{
 		// 3角形
 		obj_->SetModel("crystal.obj");
@@ -167,7 +177,7 @@ void Enemy::OnCollision()
 void Enemy::IsShot()
 {
 	// 攻撃クールタイムのリセット
-	bulletTimer_ = kBulletCoolTime_;
+	bulletTimer_ = bulletCoolTime_;
 	if (!isInGame_) return;
 
 	// 攻撃音再生
@@ -257,4 +267,102 @@ void Enemy::InitDespawned()
 	eD.randomVel = true;
 	ParticleManager::GetInstance()->SetEmitter(5, eD);
 	ParticleManager::GetInstance()->TriggerEmit(5, true);
+}
+
+void Enemy::UpdateEntering()
+{
+	float t = GetStateElapsedTime() / popTime_;
+	if (t <= 1.0f)
+	{
+		worldTransform_.SetScale(Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t)));
+	}
+	else
+	{
+		ChangeState(EnemyState::ACTIVE);
+	}
+}
+
+void Enemy::UpdateActive()
+{
+	if (bulletTimer_ > 0.0f)
+	{
+		bulletTimer_ -= deltaTime_;
+		if (bulletTimer_ >= 1.5f)
+		{
+			float t = bulletTimer_;
+			if (t < 1.5f)
+			{
+				t = 1.5f;
+			}
+			worldTransform_.SetScale(Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f)));
+		}
+
+		if (bulletTimer_ <= 0.5f)
+		{
+			float t = 1.0f - (bulletTimer_ / 0.5f);
+			if (enemyType_ == 1)
+			{
+				// 垂直2点
+				shotPitch_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
+			}
+			else if (enemyType_ == 2)
+			{
+				// 水平4点
+				shotYaw_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
+			}
+			else if (enemyType_ == 3)
+			{
+				// 3角形
+				shotRoll_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
+			}
+		}
+	}
+	else if (bulletTimer_ <= 0.0f)
+	{
+		shotYaw_ = 0;
+		shotPitch_ = 0;
+		shotRoll_ = 0;
+		IsShot();
+	}
+}
+
+void Enemy::InitDamaged()
+{
+	obj_->SetAddColor({ 1,1,1,1 });
+	roll_ = 0.1f;
+}
+
+void Enemy::UpdateDamaged()
+{
+	if (GetStateElapsedTime() > 0.05f)
+		ChangeState(EnemyState::ACTIVE);
+}
+
+void Enemy::ExitDamaged()
+{
+	obj_->SetAddColor({ 0,0,0,0 });
+	roll_ = 0.0f;
+}
+
+void Enemy::UpdateDespawned()
+{
+	if (GetStateElapsedTime() < 2.0f)
+	{
+		roll_ += 0.02f;
+		Vector3 pos = worldTransform_.GetTranslation();
+		pos.y -= 0.02f;
+		worldTransform_.SetTranslation(pos);
+		float t = 1.0f - (GetStateElapsedTime() / 2.0f);
+		obj_->SetAlpha(t / 2.0f);
+		worldTransform_.SetScale(defaultScale_ * t);
+	}
+	else
+	{
+		ChangeState(EnemyState::EXITING);
+	}
+}
+
+void Enemy::ExitDespawned()
+{
+	isDead_ = true;
 }

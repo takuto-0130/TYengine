@@ -25,6 +25,17 @@ enum class EnemyState
 };
 
 /// <summary>
+/// 敵のタイプ。
+/// </summary>
+enum EnemyType
+{
+	Normal,
+	Vertical,
+	Horizontal,
+	Triangle
+};
+
+/// <summary>
 /// 敵キャラクターのクラス。
 /// 状態マシンにより行動を制御し、出現・攻撃・被弾・死亡などのライフサイクルを管理する。
 /// </summary>
@@ -148,7 +159,7 @@ private:
 	IParticleRenderer::Emitter emitter;
 
 	/// <summary>出現演出にかかる時間（秒）。</summary>
-	const float kPopTime_ = 1.0f;
+	float popTime_ = 0.0f;
 
 	/// <summary>敵の種類ID。</summary>
 	int enemyType_ = 0;
@@ -158,18 +169,18 @@ private:
 
 
 	/// <summary>弾発射のクールタイム（秒）。</summary>
-	float kBulletCoolTime_ = 2.0f;
+	float bulletCoolTime_ = 0.0f;
 	/// <summary>弾発射用タイマー。</summary>
 	float bulletTimer_ = 0.0f;
 
 
 	/// <summary>1フレームの時間。</summary>
-	float deltaTime_ = 1.0f / 60.0f;
+	float deltaTime_ = 0.0f;
 
 	/// <summary>通常スケール。</summary>
-	Vector3 defaultScale_ = { 0.3f, 0.3f, 0.3f };
+	Vector3 defaultScale_ = { 1, 1, 1 };
 	/// <summary>拡大スケール（演出用）。</summary>
-	Vector3 upScale_ = { 0.45f, 0.45f, 0.45f };
+	Vector3 upScale_ = { 1, 1, 1 };
 	/// <summary>ゼロスケール（出現前）。</summary>
 	const Vector3 ZeroScale = {};
 
@@ -200,10 +211,10 @@ private:
 	bool isInGame_ = true;
 
 	/// <summary>寿命（秒）。</summary>
-	float lifeTime_ = 4.0f;
+	float lifeTime_ = 0.0f;
 
 	/// <summary>体力。</summary>
-	int32_t hitPoint_ = 3;
+	int32_t hitPoint_ = 0;
 
 	/// <summary>ロール回転角度。</summary>
 	float roll_ = 0.0f;
@@ -236,65 +247,12 @@ private: // シーン内のState関連関数
 
 	// スポーン
 	void InitEntering() {};
-	void UpdateEntering() 
-	{
-		float t = GetStateElapsedTime() / kPopTime_;
-		if (t <= 1.0f)
-		{
-			worldTransform_.SetScale(Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t)));
-		}
-		else
-		{
-			ChangeState(EnemyState::ACTIVE);
-		}
-	};
+	void UpdateEntering();
 	void ExitEntering() { worldTransform_.SetScale(defaultScale_); }
 
 	// 通常行動
 	void InitActive() {}
-	void UpdateActive() 
-	{
-		if (bulletTimer_ > 0.0f)
-		{
-			bulletTimer_ -= deltaTime_;
-			if (bulletTimer_ >= 1.5f)
-			{
-				float t = bulletTimer_;
-				if (t < 1.5f)
-				{
-					t = 1.5f;
-				}
-				worldTransform_.SetScale(Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f)));
-			}
-
-			if (bulletTimer_ <= 0.5f)
-			{
-				float t = 1.0f - (bulletTimer_ / 0.5f);
-				if (enemyType_ == 1)
-				{
-					// 垂直2点
-					shotPitch_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
-				}
-				else if (enemyType_ == 2)
-				{
-					// 水平4点
-					shotYaw_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
-				}
-				else if (enemyType_ == 3)
-				{
-					// 3角形
-					shotRoll_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
-				}
-			}
-		}
-		else if (bulletTimer_ <= 0.0f)
-		{
-			shotYaw_ = 0;
-			shotPitch_ = 0;
-			shotRoll_ = 0;
-			IsShot();
-		}
-	}
+	void UpdateActive();
 	void ExitActive() {}
 
 	// 退場演出
@@ -303,44 +261,13 @@ private: // シーン内のState関連関数
 	void ExitExiting() {}
 
 	// 被弾
-	void InitDamaged() 
-	{
-		obj_->SetAddColor({ 1,1,1,1 });
-		roll_ = 0.1f;
-	}
-	void UpdateDamaged() 
-	{
-		if(GetStateElapsedTime() > 0.05f)
-		ChangeState(EnemyState::ACTIVE);
-	}
-	void ExitDamaged() 
-	{
-		obj_->SetAddColor({ 0,0,0,0 });
-		roll_ = 0.0f;
-	}
+	void InitDamaged();
+	void UpdateDamaged();
+	void ExitDamaged();
 
 	// 死亡
 	void InitDespawned();
-	void UpdateDespawned() 
-	{
-		if (GetStateElapsedTime() < 2.0f)
-		{
-			roll_ += 0.02f;
-			Vector3 pos = worldTransform_.GetTranslation();
-			pos.y -= 0.02f;
-			worldTransform_.SetTranslation(pos);
-			float t = 1.0f - (GetStateElapsedTime() / 2.0f);
-			obj_->SetAlpha(t / 2.0f);
-			worldTransform_.SetScale(defaultScale_ * t);
-		}
-		else
-		{
-			ChangeState(EnemyState::EXITING);
-		}
-	}
-	void ExitDespawned()
-	{
-		isDead_ = true;
-	}
+	void UpdateDespawned();
+	void ExitDespawned();
 #pragma endregion
 };

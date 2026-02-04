@@ -10,11 +10,11 @@
 
 namespace TYEngine
 {
+	namespace Utility { class WorldTransform; }
 	namespace Graphics
 	{
 
 		class Object3dBasis;
-		class WorldTransform;
 
 		/// <summary>ライティングの種類。</summary>
 		enum class Lighting

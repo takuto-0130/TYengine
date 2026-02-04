@@ -46,7 +46,7 @@ namespace TYEngine
 			/// </summary>
 			struct Emitter
 			{
-				Transform transform{        ///< 発生源のトランスフォーム（位置・回転・スケール）
+				Utility::Transform transform{        ///< 発生源のトランスフォーム（位置・回転・スケール）
 					{1.0f, 1.0f, 1.0f},
 					{0.0f, 0.0f, 0.0f},
 					{0.0f, 0.0f, 0.0f}
@@ -54,8 +54,8 @@ namespace TYEngine
 				uint32_t count = 5;         ///< 一度の発生数
 				float frequency = 0.5f;     ///< 発生頻度（秒）
 				float frequencyTime = 0.0f; ///< 発生タイマー
-				Vector4 color = { 1,1,1,1 };///< 基本カラー
-				Vector3 velocity = { 0.0f, 0.0f, 0.0f }; ///< 基本初速度
+				Utility::Vector4 color = { 1,1,1,1 };///< 基本カラー
+				Utility::Vector3 velocity = { 0.0f, 0.0f, 0.0f }; ///< 基本初速度
 				bool randomVel = false;     ///<速度をランダムにするか
 			};
 
@@ -70,9 +70,9 @@ namespace TYEngine
 
 			struct ParticleP
 			{
-				Transform transform;
-				Vector3 velocity;
-				Vector4 color;
+				Utility::Transform transform;
+				Utility::Vector3 velocity;
+				Utility::Vector4 color;
 				float lifeTime;
 				float currentTime;
 			};
@@ -80,28 +80,28 @@ namespace TYEngine
 
 			struct ParticleForGPU
 			{
-				Matrix4x4 WVP;
-				Matrix4x4 World;
-				Vector4 color;
+				Utility::Matrix4x4 WVP;
+				Utility::Matrix4x4 World;
+				Utility::Vector4 color;
 			};
 
 			struct CameraForGPUP
 			{
-				Vector3 worldPosition;
+				Utility::Vector3 worldPosition;
 			};
 
 			struct VertexData
 			{
-				Vector4 position;
-				Vector2 texCoord;
-				Vector3 normal;
+				Utility::Vector4 position;
+				Utility::Vector2 texCoord;
+				Utility::Vector3 normal;
 			};
 			struct Material
 			{
-				Vector4 color;
+				Utility::Vector4 color;
 				int32_t enableLighting;
 				float padding[3];
-				Matrix4x4 uvTransform;
+				Utility::Matrix4x4 uvTransform;
 			};
 
 			virtual void CreateResources() = 0;
@@ -147,7 +147,7 @@ namespace TYEngine
 
 			Emitter emitter_;
 
-			Transform transform_{};
+			Utility::Transform transform_{};
 
 			Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
 			Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState_;

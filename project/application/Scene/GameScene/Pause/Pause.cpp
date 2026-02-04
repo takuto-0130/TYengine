@@ -141,6 +141,7 @@ void PauseClass::Init()
 		button.pos = button.button->GetPosition();
 	}
 }
+
 void PauseClass::Reset()
 {
 	elements_ = ButtonElements::Num;

@@ -8,6 +8,8 @@ void PlayUI::Init()
 {
 	input_ = Input::GetInstance();
 
+	shakeTime_ = 0.4f;
+
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");

@@ -38,12 +38,12 @@ public:
 	/// <summary>コンボの最大時間を設定（ゲージ表示用）。</summary>
 	void SetComboTime(float time) { kComboTime_ = time; }
 	/// <summary>コンボ数の表示値を設定。</summary>
-	void SetComboNum(int comboNum) { sprites_[COMBO_NUM_TEXT]->SetTextureLeftTop({ 64.0f * float(comboNum),0 }); }
+	void SetComboNum(int comboNum) { sprites_[COMBO_NUM_TEXT]->SetTextureLeftTop({ sprites_[COMBO_NUM_TEXT]->GetSize().x * float(comboNum),0 }); }
 	/// <summary>スコア描画クラスへの参照を設定。</summary>
 	void SetScoreDraw(ScoreUI* scoreDraw) { scoreDraw_ = scoreDraw; }
 
 	/// <summary>HPの数値表示を設定。</summary>
-	void SetHPNum(int hp = 0) { sprites_[HP_NUM_TEXT]->SetTextureLeftTop({ 64.0f * float(hp),0 }); }
+	void SetHPNum(int hp = 0) { sprites_[HP_NUM_TEXT]->SetTextureLeftTop({ sprites_[HP_NUM_TEXT]->GetSize().x * float(hp),0 }); }
 
 	/// <summary>シフトガイドの位置を設定。</summary>
 	void SetShiftPos(const Vector2& pos);
@@ -95,7 +95,7 @@ private:
 	/// <summary>乱数生成器。</summary>
 	std::random_device seedGene_;
 	/// <summary>シェイク時間。</summary>
-	float shakeTime_ = 0.4f;
+	float shakeTime_ = 0.0f;
 
 	/// <summary>JSONマネージャ。</summary>
 	jx::JsonManager* jm_;

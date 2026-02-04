@@ -15,7 +15,7 @@
 
 namespace TYEngine
 {
-	namespace Audio
+	namespace AudioSystem
 	{
 
 		// 音源の同時再生数

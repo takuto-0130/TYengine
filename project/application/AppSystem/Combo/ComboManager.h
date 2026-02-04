@@ -35,6 +35,8 @@ public:
 private:
 	/// <summary>現在のコンボ数。</summary>
 	int comboCount_ = 0;
+	/// <summary>コンボ最大数。</summary>
+	int comboCap_ = 0;
 	/// <summary>コンボ持続の残り時間。</summary>
 	float comboTimer_ = 0.0f;
 	/// <summary>コンボの基本受付時間（定数）。</summary>

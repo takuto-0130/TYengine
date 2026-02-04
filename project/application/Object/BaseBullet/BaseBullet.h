@@ -8,6 +8,14 @@ class BaseBullet :
     public BaseObject
 {
 public:
+	BaseBullet()
+	{
+		colliderScale_ = 0.1f;
+		scale_ = 0.05f;
+		defaultSpeed_ = 1.0f;
+		direction_ = { 0,0,1 };
+		lifeTime_ = 5.0f;
+	}
 	/// <summary>
 	/// 弾の進行方向（発射方向）を設定する。
 	/// </summary>
@@ -37,22 +45,22 @@ protected:
 	bool isDead_ = false;
 
 	/// <summary>コライダーの半径スケール。</summary>
-	float colliderScale_ = 0.1f;
+	float colliderScale_ = 0.0f;
 
 	/// <summary>描画スケール。</summary>
-	float scale_ = 0.05f;
+	float scale_ = 0.0f;
 
 	/// <summary>現在の速度ベクトル。</summary>
 	Vector3 velocity_ = {};
 
 	/// <summary>基本移動速度。</summary>
-	float defaultSpeed_ = 1.0f;
+	float defaultSpeed_ = 0.0f;
 
 	/// <summary>移動方向ベクトル。</summary>
-	Vector3 direction_ = { 0,0,1 };
+	Vector3 direction_ = {};
 
 	/// <summary>弾の生存寿命（秒）。0以下で消滅。</summary>
-	float lifeTime_ = 5.0f;
+	float lifeTime_ = 0.0f;
 
 	/// <summary>参照用カメラポインタ。</summary>
 	Camera* camera_ = nullptr;

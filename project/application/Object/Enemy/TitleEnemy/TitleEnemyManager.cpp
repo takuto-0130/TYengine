@@ -6,6 +6,12 @@ void EnemyManager::Init(Camera* camera)
 {
 	camera_ = camera;
 	bulletManager_.Init();
+	enemyPopDepthMin_ = 12.0f;
+	enemyPopDepthMax_ = 17.0f;
+	xRange = 16.0f * 0.09f * 2.0f;
+	yRange = 9.0f * 0.085f * 2.0f;
+	spawnReadyTimer_ = 2.0f;
+	spawnNum_ = 5;
 }
 
 void EnemyManager::Reset()

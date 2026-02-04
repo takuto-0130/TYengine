@@ -6,6 +6,7 @@ void ComboManager::Init()
 	// 各変数を初期値にリセット
 	comboCount_ = 0;
 	comboTimer_ = 0;
+	comboCap_ = 9;
 	// コンボ受付時間のデフォルト設定
 	kComboTime_ = 3.0f;
 	// シェイク演出時間の設定
@@ -30,8 +31,8 @@ void ComboManager::Update()
 
 void ComboManager::OnEnemyDefeated()
 {
-	// コンボ数を加算（最大9コンボまででキャップ）
-	if(comboCount_ < 9)
+	// コンボ数を加算（comboCap_まででキャップ）
+	if(comboCount_ < comboCap_)
 	{
 		comboCount_++;
 	}

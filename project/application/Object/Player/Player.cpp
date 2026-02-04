@@ -39,6 +39,26 @@ void Player::Init()
 	
 	// 入力マネージャ取得
 	input_ = Input::GetInstance();
+
+	// 数値を適用
+	colliderScale_ = 0.2f;
+	playerDepthFromCamera_ = 4.0f;
+	xRange = 16.0f * 0.09f;
+	yRange = 9.0f * 0.085f;
+	defaultSpeed_ = 0.3f;
+	speed_ = { defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
+
+	// HP設定
+	hitPoint_ = 9;
+
+	// バレルロール
+	rollTime_ = 0.6f;
+	rollRange_ = 0.3f;
+	leftRoll_ = 2.0f * std::numbers::pi_v<float>;
+	rightRoll_ = -2.0f * std::numbers::pi_v<float>;
+	justScale_ = 3.0f;
+	bulletCoolTime_ = 0.1f;
+
 	
 	// 3Dオブジェクトの生成と初期化
 	obj_ = std::make_unique<Object3d>();
@@ -90,8 +110,6 @@ void Player::Init()
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
 
-	// HP設定
-	hitPoint_ = 9;
 
 	// デバッグ用レティクル初期化
 	ReticleInit();

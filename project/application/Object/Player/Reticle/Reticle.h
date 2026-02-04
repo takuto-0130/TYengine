@@ -44,6 +44,6 @@ private:
 	std::unique_ptr<ReticleCollider> collider_;
 	float targetDistance_ = 0.0f;
 	float frameDistance_ = 0.0f;
-	const float defaultDistance_ = 50.0f;
+	const float defaultDistance_ = 50.0f; // 非調整項目のため const float
 };
 

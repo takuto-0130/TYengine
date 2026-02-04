@@ -41,7 +41,7 @@ private:
     std::unique_ptr<PBulletCollider> collider_;
 
     /// <summary>固定タイムステップ（60FPS想定）。</summary>
-	float deltaTime_ = 1.0f / 60.0f;
+	float deltaTime_ = 0.0f;
 
 
 private: // シーン内のState関連関数

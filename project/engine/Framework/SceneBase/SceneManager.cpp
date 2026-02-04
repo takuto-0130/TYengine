@@ -3,6 +3,11 @@
 #include "Timer.h"
 #include "../../../application/Scene/Transition/TransitionManager.h"
 
+namespace TYEngine {
+namespace Framework {
+
+using namespace Utility;
+
 SceneManager::~SceneManager()
 {
 }
@@ -46,3 +51,6 @@ void SceneManager::UIDraw()
 	if (scene_) scene_->UIDraw();
 	TransitionManager::GetInstance()->Draw();
 }
+
+} // namespace Framework
+} // namespace TYEngine

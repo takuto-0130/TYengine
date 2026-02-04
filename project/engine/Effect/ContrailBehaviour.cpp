@@ -2,6 +2,11 @@
 #include "IParticleRenderer.h"
 #include "Ease.h"
 
+namespace TYEngine {
+namespace Effect {
+
+using namespace Utility;
+
 void ContrailBehaviour::Update(ParticleParam& p, float dt)
 {
     float t = p.currentTime / p.lifeTime;
@@ -33,3 +38,6 @@ void ContrailBehaviour::Update(ParticleParam& p, float dt)
     // フェードアウト
     p.color.w *= (1.0f - t);
 }
+
+} // namespace Effect
+} // namespace TYEngine

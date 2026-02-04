@@ -3,6 +3,11 @@
 #include <stdexcept>
 #include <assert.h>
 
+namespace TYEngine {
+namespace Framework {
+
+using namespace Core; // For WindowsApp::kClientWidth ?? No, WindowsApp class.
+
 constexpr float kBaseWidth = WindowsApp::kClientWidth;
 constexpr float kBaseHeight = WindowsApp::kClientHeight;
 
@@ -271,3 +276,6 @@ BOOL CALLBACK Input::EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance,
 
     return DIENUM_CONTINUE;
 }
+
+} // namespace Framework
+} // namespace TYEngine

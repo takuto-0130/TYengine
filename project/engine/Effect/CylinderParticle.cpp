@@ -1,6 +1,11 @@
 #include "CylinderParticle.h"
 #include <numbers>
 
+namespace TYEngine {
+namespace Effect {
+
+using namespace Utility;
+
 void CylinderParticle::CreateResources() {
     // 円柱の頂点生成（側面のみ）
     const uint32_t kDivide = 32;
@@ -79,3 +84,6 @@ ParticleParam CylinderParticle::MakeNewParticle(std::mt19937& random, const Emit
 
     return parti;
 }
+
+} // namespace Effect
+} // namespace TYEngine

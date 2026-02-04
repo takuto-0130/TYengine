@@ -3,6 +3,9 @@
 #include "Matrix4x4Func.h"
 #include <cmath>
 
+namespace TYEngine {
+namespace Utility {
+
 Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs)
 {
 	Quaternion qr{};
@@ -193,3 +196,5 @@ Quaternion MakeLookRotation(const Vector3& forward, const Vector3& up)
 	return Normalize(q);
 }
 
+} // namespace Utility
+} // namespace TYEngine

@@ -4,6 +4,10 @@
 #include <cmath>
 #include <algorithm>
 
+namespace TYEngine {
+namespace Utility {
+
+
 bool IsCollision(const Sphere& sphereA, const Sphere& sphereB)
 {
 	// 球と球の衝突判定（中心距離 <= 半径の和）
@@ -351,3 +355,6 @@ bool IsCollision(const OBB& obb1, const OBB& obb2)
 	}
 	return true;
 }
+
+} // namespace Utility
+} // namespace TYEngine

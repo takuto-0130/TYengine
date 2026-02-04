@@ -13,6 +13,9 @@
 #include "StreamingAudio.h"
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Audio {
+
 // 音源の同時再生数
 static const size_t kMaxPlayWave = 100;
 
@@ -21,9 +24,9 @@ static const size_t kMaxPlayWave = 100;
 /// XAudio2 を使用してWAVファイルの読み込み、再生、ストリーミング、エフェクト適用を行う。
 /// </summary>
 class Audio :
-	public SingletonObject<Audio>
+	public Utility::SingletonObject<Audio>
 {
-	friend class SingletonObject<Audio>;
+	friend class Utility::SingletonObject<Audio>;
 	friend struct std::default_delete<Audio>;
 
 private:
@@ -237,3 +240,6 @@ private:
 	/// <summary>サウンドファイルのルートディレクトリパス。</summary>
 	std::string directoryPath_;
 };
+
+} // namespace Audio
+} // namespace TYEngine

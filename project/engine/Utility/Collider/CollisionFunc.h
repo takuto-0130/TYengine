@@ -1,6 +1,10 @@
 #pragma once
 #include "struct.h"
 
+namespace TYEngine {
+namespace Utility {
+
+
 /// <summary>
 /// 球と球の衝突判定を行う
 /// </summary>
@@ -75,4 +79,7 @@ bool isHST(const Vector3& normal, const Vector3* vertices1, const Vector3* verti
 /// OBB 同士の衝突判定を行う
 /// </summary>
 bool IsCollision(const OBB& obb1, const OBB& obb2);
+
+} // namespace Utility
+} // namespace TYEngine
 

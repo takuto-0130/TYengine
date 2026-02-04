@@ -2,6 +2,9 @@
 #include <random>
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Utility {
+
 /// <summary>
 /// 乱数生成クラス（シングルトン）。
 /// メルセンヌ・ツイスタ（std::mt19937）を使用した高品質な乱数を提供する。
@@ -54,3 +57,6 @@ private:
     /// <summary>メルセンヌ・ツイスタ乱数生成器。</summary>
     std::mt19937 mt_;
 };
+
+} // namespace Utility
+} // namespace TYEngine

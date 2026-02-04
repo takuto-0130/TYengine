@@ -5,7 +5,12 @@
 #include <cstdint>
 #include <unordered_map>
 
-class DirectXBasis;
+namespace TYEngine {
+namespace Core { class DirectXBasis; } // Forward declaration with namespace
+
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
 
 /// <summary>
 /// SRV（Shader Resource View）を一括管理するクラス。  
@@ -109,3 +114,6 @@ private:
     uint32_t currentIndex_ = 0;                                         ///< 次に割り当てるインデックス。
     uint32_t maxIndex_ = 0;                                             ///< 確保済みスロット上限。
 };
+
+} // namespace Graphics
+} // namespace TYEngine

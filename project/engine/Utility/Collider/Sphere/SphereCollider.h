@@ -2,6 +2,10 @@
 #include "Collider.h"
 #include "struct.h"
 
+namespace TYEngine {
+namespace Utility {
+
+
 /// <summary>
 /// 球状コライダークラス
 /// </summary>
@@ -37,4 +41,7 @@ public: // メンバ関数
 private: // メンバ変数
     Sphere sphere_;
 };
+
+} // namespace Utility
+} // namespace TYEngine
 

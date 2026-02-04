@@ -5,6 +5,15 @@
 /// 被写界深度（Depth of Field, DoF）効果を適用するポストエフェクトパス。  
 /// カメラの焦点距離に基づいて、前景・背景のぼかしを表現する。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
+/// <summary>
+/// 被写界深度（Depth of Field, DoF）効果を適用するポストエフェクトパス。  
+/// カメラの焦点距離に基づいて、前景・背景のぼかしを表現する。
+/// </summary>
 class DoFPass
 {
 public:
@@ -78,4 +87,7 @@ private:
     /// <summary>コピー処理を担当する CopyPass。</summary>
     CopyPass copyPass_;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 

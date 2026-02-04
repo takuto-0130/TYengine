@@ -5,6 +5,15 @@
 /// ランダムノイズ（フィルムグレイン）効果を適用するポストエフェクトクラス。  
 /// 画面全体に粒状のノイズを重ねることで、映像の質感を演出する。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
+/// <summary>
+/// ランダムノイズ（フィルムグレイン）効果を適用するポストエフェクトクラス。  
+/// 画面全体に粒状のノイズを重ねることで、映像の質感を演出する。
+/// </summary>
 class RandomEffect :
     public PostEffectBase
 {
@@ -75,5 +84,8 @@ private:
     /// <summary>ノイズ用のパラメータを保持する共有ポインタ</summary>
     std::shared_ptr<RandomParam> param_;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 
 

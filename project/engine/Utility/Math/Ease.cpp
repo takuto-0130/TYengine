@@ -1,6 +1,9 @@
 #include "Ease.h"
 #include <algorithm>
 
+namespace TYEngine {
+namespace Utility {
+
 namespace Ease
 {
     float In(float t, float n)
@@ -129,3 +132,6 @@ namespace EaseFixed
             : (1.0f + BounceOut(2.0f * t - 1.0f)) * 0.5f;
     }
 }
+
+} // namespace Utility
+} // namespace TYEngine

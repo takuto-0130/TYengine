@@ -9,6 +9,11 @@
 #endif // _DEBUG
 
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
 void PostEffectManager::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dxBasis_ = dx;
@@ -278,3 +283,6 @@ void PostEffectManager::EffectAllDisable()
 		entry.effect_->SetEnabled(false);
 	}
 }
+
+} // namespace OffScreen
+} // namespace TYEngine

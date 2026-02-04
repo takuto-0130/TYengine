@@ -1,5 +1,9 @@
 #include "LevelObject.h"
 
+namespace TYEngine {
+namespace Utility {
+
+
 void LevelObject::Init()
 {
 	worldTransform_.Initialize();
@@ -19,3 +23,6 @@ void LevelObject::Draw()
 {
 	obj_->Draw(worldTransform_);
 }
+
+} // namespace Utility
+} // namespace TYEngine

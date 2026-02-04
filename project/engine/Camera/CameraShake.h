@@ -2,6 +2,11 @@
 #include "mathFunc.h"
 #include <random>
 
+namespace TYEngine {
+namespace Camera {
+
+using namespace Utility;
+
 /// <summary>
 /// カメラのシェイク（振動）効果を管理するクラス。
 /// パーリンノイズ風のランダム振動を生成し、減衰させる。
@@ -83,3 +88,6 @@ private:
     bool active_ = false;
     Vector3 offset_ = {};
 };
+
+} // namespace Camera
+} // namespace TYEngine

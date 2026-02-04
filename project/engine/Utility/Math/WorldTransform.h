@@ -6,6 +6,9 @@
 #include <type_traits>
 #include <wrl.h>
 
+namespace TYEngine {
+namespace Utility {
+
 /// <summary>
 /// ワールド変換データ
 /// </summary>
@@ -127,4 +130,7 @@ private:
 };
 
 static_assert(!std::is_copy_assignable_v<WorldTransform>);
+
+} // namespace Utility
+} // namespace TYEngine
 

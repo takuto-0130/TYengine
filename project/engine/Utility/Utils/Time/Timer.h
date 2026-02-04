@@ -2,6 +2,9 @@
 #include <Windows.h>
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Utility {
+
 /// <summary>
 /// 時間管理クラス（シングルトン）。
 /// デルタタイムの計測、FPS計算、タイムスケール機能を提供する。
@@ -67,3 +70,6 @@ private: // メンバ変数
     /// <summary>現在のFPS（Frames Per Second）。</summary>
     int fps_ = 0;
 };
+
+} // namespace Utility
+} // namespace TYEngine

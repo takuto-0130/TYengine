@@ -3,6 +3,9 @@
 #include <cstring>
 #include <numbers>
 
+namespace TYEngine {
+namespace Audio {
+
 // XAPO registration
 static XAPO_REGISTRATION_PROPERTIES regProps =
 {
@@ -176,3 +179,6 @@ void __stdcall MyAnalyzerXAPO::Process(
 
     ComputeFFT();
 }
+
+} // namespace Audio
+} // namespace TYEngine

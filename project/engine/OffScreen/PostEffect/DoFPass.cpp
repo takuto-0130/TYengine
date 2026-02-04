@@ -4,6 +4,11 @@
 #include "imgui.h"
 #endif
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
 void DoFPass::Initialize(DirectXBasis* dx, SrvManager* srvMgr)
 {
     // シェーダ（CopyImage.VSとDepthOfField.PS）を使う
@@ -41,3 +46,6 @@ void DoFPass::Update()
     ImGui::End();
 #endif
 }
+
+} // namespace OffScreen
+} // namespace TYEngine

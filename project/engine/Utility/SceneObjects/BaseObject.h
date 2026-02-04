@@ -2,6 +2,10 @@
 #include "Object3d.h"
 #include "WorldTransform.h"
 
+namespace TYEngine {
+namespace Utility {
+
+
 /// <summary>
 /// オブジェクトの基底クラス。
 /// 3Dモデル、ワールド変換行列を保持し、基本的な更新・描画インターフェースを提供する。
@@ -59,4 +63,7 @@ protected:
 	// ワールド行列
 	WorldTransform worldTransform_;
 };
+
+} // namespace Utility
+} // namespace TYEngine
 

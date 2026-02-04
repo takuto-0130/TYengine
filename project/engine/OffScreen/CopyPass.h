@@ -9,6 +9,11 @@
 
 class SrvManager;
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
 /// <summary>
 /// コピー用の定数バッファパラメータ。
 /// オフセットとスケールを指定することで、描画範囲を調整できる。
@@ -130,5 +135,8 @@ private:
     /// <summary>追加 SRV を使用するかどうかのフラグ</summary>
     bool useExtraTexture_ = false;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 
 

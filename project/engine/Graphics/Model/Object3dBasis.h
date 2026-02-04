@@ -3,6 +3,12 @@
 #include "DirectXBasis.h"
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+using namespace Camera; // For Camera
+
 /// <summary>
 /// 3D オブジェクト描画の共通設定（ルートシグネチャ／グラフィックスパイプライン／ライト等）を一元管理するクラス。  
 /// シングルトンとして提供し、3D 描画時の共通セットアップやデフォルトカメラ・スカイボックスの管理を行う。
@@ -45,11 +51,11 @@ public:
 
     /// <summary>デフォルトカメラを設定する。</summary>
     /// <param name="camera">デフォルトで使用するカメラ。</param>
-    void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
+    void SetDefaultCamera(Camera::Camera* camera) { defaultCamera_ = camera; }
 
     /// <summary>デフォルトカメラを取得する。</summary>
     /// <returns>デフォルトカメラ。</returns>
-    Camera* GetDefaultCamera() const { return defaultCamera_; }
+    Camera::Camera* GetDefaultCamera() const { return defaultCamera_; }
 
     /// <summary>スカイボックス用テクスチャのファイルパスを設定する。</summary>
     /// <param name="textureFilePath">スカイボックスのテクスチャパス。</param>
@@ -81,7 +87,7 @@ private: // メンバ変数
     };
 
     DirectXBasis* directXBasis_ = nullptr;                 ///< DirectX 基盤。
-    Camera* defaultCamera_ = nullptr;                      ///< デフォルトカメラ。
+    Camera::Camera* defaultCamera_ = nullptr;                      ///< デフォルトカメラ。
 
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;   ///< 3D 描画用ルートシグネチャ。
     Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_; ///< 3D 描画用 PSO。
@@ -100,3 +106,6 @@ private: // メンバ変数
 
     std::string skyboxTextureFilePath_ = ""; ///< スカイボックス用テクスチャパス。
 };
+
+} // namespace Graphics
+} // namespace TYEngine

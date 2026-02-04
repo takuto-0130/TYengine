@@ -7,6 +7,11 @@
 class DirectXBasis;
 class SrvManager;
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
 /// <summary>
 /// 描画結果をテクスチャとして保持するためのレンダーターゲットクラス。  
 /// 主にポストエフェクトやオフスクリーン描画に使用する。
@@ -123,4 +128,7 @@ private:
     /// <summary>深度用SRVのインデックス</summary>
     uint32_t depthSRVIndex_ = 0;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 

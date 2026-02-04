@@ -1,6 +1,9 @@
 #include "Matrix4x4Func.h"
 #include "Quaternion.h"
 
+namespace TYEngine {
+namespace Utility {
+
 Matrix4x4 Add(const Matrix4x4& matrix1, const Matrix4x4& matrix2) {
 	Matrix4x4 result{};
 	for (int row = 0; row < 4; row++) {
@@ -325,3 +328,6 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotationQ, co
 
 	return Multiply(Multiply(scaleMat, rot), transMat);
 }
+
+} // namespace Utility
+} // namespace TYEngine

@@ -11,6 +11,12 @@
 #include <wrl.h>
 #include <numbers>
 
+namespace TYEngine {
+namespace Effect {
+
+using namespace Utility;
+using namespace Camera;
+
 /// <summary>
 /// パーティクル描画の基底クラス。
 /// GPUリソース管理、インスタンシング描画、エミッター制御の共通機能を提供する。
@@ -26,7 +32,7 @@ public:
     /// <param name="dx">DirectX基盤。</param>
     /// <param name="srv">SRVマネージャ。</param>
     /// <param name="cam">カメラ。</param>
-    virtual void Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam);
+    virtual void Initialize(DirectXBasis* dx, SrvManager* srv, Camera::Camera* cam);
 
     /// <summary>更新処理。</summary>
     virtual void Update();
@@ -114,7 +120,7 @@ protected:
 
     DirectXBasis* dxBasis_ = nullptr;
     SrvManager* srvManager_ = nullptr;
-    Camera* camera_ = nullptr;
+    Camera::Camera* camera_ = nullptr;
 
     Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource_;
     Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
@@ -148,3 +154,6 @@ protected:
 
     std::unique_ptr<IParticleBehaviour> behaviour_;
 };
+
+} // namespace Effect
+} // namespace TYEngine

@@ -5,6 +5,15 @@
 /// 入力テクスチャをそのまま（または最小限の処理で）出力へコピーするポストエフェクト。  
 /// デバッグ用途やポストエフェクトチェーンの基底パスとして使用する。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
+/// <summary>
+/// 入力テクスチャをそのまま（または最小限の処理で）出力へコピーするポストエフェクト。  
+/// デバッグ用途やポストエフェクトチェーンの基底パスとして使用する。
+/// </summary>
 class CopyImageEffect :
     public PostEffectBase
 {
@@ -35,3 +44,6 @@ public:
     /// <param name="input">コピー元のレンダーターゲット。</param>
     void Apply(RenderTexture* input) override;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine

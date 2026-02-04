@@ -1,8 +1,8 @@
 #include "Logger.h"
 #include "windows.h"
 
-namespace Logger
-{
+namespace TYEngine {
+namespace Debugger {
 	void Log(const std::string & message) {
 		(void)message;
 #ifdef _DEBUG
@@ -10,4 +10,5 @@ namespace Logger
 		OutputDebugStringA(message.c_str());
 #endif // _DEBUG
 	}
+}
 }

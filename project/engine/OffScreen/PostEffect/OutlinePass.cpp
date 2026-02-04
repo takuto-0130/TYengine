@@ -4,6 +4,11 @@
 #include "imgui.h"
 #endif // _DEBUG
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
 void OutlinePass::Initialize(DirectXBasis* dx, SrvManager* srvMgr) {
     // シェーダ（CopyImage.VSとDepthBasedOutline.PS）を使う
     copyPass_.Initialize(dx, srvMgr, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/DepthBasedOutline.PS.hlsl");
@@ -35,3 +40,6 @@ void OutlinePass::Update()
     ImGui::End();
 #endif // _DEBUG
 }
+
+} // namespace OffScreen
+} // namespace TYEngine

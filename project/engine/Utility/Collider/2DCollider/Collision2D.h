@@ -1,6 +1,10 @@
 #pragma once
 #include "struct.h"
 
+namespace TYEngine {
+namespace Utility {
+
+
 /// <summary>
 /// 2Dの軸平行境界ボックス（Axis-Aligned Bounding Box）。
 /// 左上座標(min)と右下座標(max)で定義される。
@@ -23,3 +27,6 @@ inline bool IntersectAABB(const AABB2D& a, const AABB2D& b)
     if (a.max.y < b.min.y || a.min.y > b.max.y) return false;
     return true;
 }
+
+} // namespace Utility
+} // namespace TYEngine

@@ -1,5 +1,10 @@
 #include "StreamingAudio.h"
 
+namespace TYEngine {
+namespace Audio {
+
+using namespace TYEngine::Core;
+
 uint32_t StreamingAudio::nextID_ = 0;
 
 StreamingAudio::~StreamingAudio()
@@ -256,3 +261,6 @@ bool StreamingAudio::ReadWavHeader(std::string filename, WAVHeader& header)
 		(header.wave[0] == 'W' && header.wave[1] == 'A' && header.wave[2] == 'V' && header.wave[3] == 'E') &&
 		(header.fmt[0] == 'f' && header.fmt[1] == 'm' && header.fmt[2] == 't' && header.fmt[3] == ' ');
 }
+
+} // namespace Audio
+} // namespace TYEngine

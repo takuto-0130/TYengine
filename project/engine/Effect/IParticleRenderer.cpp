@@ -6,9 +6,15 @@
 #include <imgui.h>
 #endif // _DEBUG
 
+namespace TYEngine {
+namespace Effect {
+
+using namespace Utility;
+using namespace Camera;
+
 IParticleRenderer::~IParticleRenderer() = default;
 
-void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, Camera* cam) {
+void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, Camera::Camera* cam) {
     dxBasis_ = dx;
     srvManager_ = srv;
     camera_ = cam;
@@ -87,6 +93,7 @@ void IParticleRenderer::Update() {
 
 void IParticleRenderer::Draw() {
     if (numInstance_ == 0) return;
+    if (!dxBasis_) return;
 
     auto cmd = dxBasis_->GetCommandList();
 
@@ -235,3 +242,6 @@ void IParticleRenderer::CreatePipelineState() {
     (void)hr;
     assert(SUCCEEDED(hr));
 }
+
+} // namespace Effect
+} // namespace TYEngine

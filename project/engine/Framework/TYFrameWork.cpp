@@ -1,5 +1,14 @@
 #include "TYFrameWork.h"
 
+namespace TYEngine {
+namespace Framework {
+
+using namespace Utility; 
+using namespace Debugger;
+using namespace Core; // For WindowsApp, DirectXBasis
+using namespace Graphics; // For SrvManager, TextureManager
+// using namespace Input; // If Input is in a namespace, adding it. Checking Input.h content first.
+
 void TYFrameWork::run()
 {
 	// 初期化
@@ -56,3 +65,6 @@ void TYFrameWork::Update()
 	input_->Update();
 	sceneManager_->Update();
 }
+
+} // namespace Framework
+} // namespace TYEngine

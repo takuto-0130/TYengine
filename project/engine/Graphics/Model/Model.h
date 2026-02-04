@@ -10,6 +10,13 @@
 
 class WorldTransform;
 
+using namespace TYEngine::Camera;
+
+namespace TYEngine {
+namespace Graphics {
+
+class ModelLoader; // Forward declaration
+
 /// <summary>
 /// 単一の 3D モデルを表すクラス。  
 /// モデルデータ（頂点・マテリアル・ノード階層）を保持し、描画処理を提供する。
@@ -32,7 +39,7 @@ public: // メンバ関数
     /// </summary>
     /// <param name="transform">オブジェクトのワールド変換情報。</param>
     /// <param name="camera">描画に使用するカメラ。</param>
-    void Draw(WorldTransform& transform, Camera* camera);
+    void Draw(WorldTransform& transform, Camera::Camera* camera);
 
     /// <summary>
     /// モデルの頂点データから頂点バッファを生成する。  
@@ -138,3 +145,6 @@ public:
     /// <param name="filePath">テクスチャファイルへのパス。</param>
     void SetTexturePath(const std::string& filePath) { modelData_.material.textureFilePath = filePath; }
 };
+
+} // namespace Graphics
+} // namespace TYEngine

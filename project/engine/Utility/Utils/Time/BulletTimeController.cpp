@@ -6,6 +6,10 @@
 #define BULLET_TIME_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(BulletTimeController, stateEnum, funcName)
 
+namespace TYEngine {
+namespace Utility {
+
+
 const std::vector<StateMachine<BulletTimeController, BulletTimeState>::StateFunctionSet>& BulletTimeController::GetStateTable()
 {
 	using enum BulletTimeState;
@@ -133,3 +137,6 @@ void BulletTimeController::UpdateExit()
 	}
 }
 void BulletTimeController::ExitExit() {}
+
+} // namespace Utility
+} // namespace TYEngine

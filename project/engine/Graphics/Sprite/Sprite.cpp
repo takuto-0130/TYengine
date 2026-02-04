@@ -5,6 +5,13 @@
 #include "TextureManager.h"
 
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For WindowsApp
+using namespace Utility::Math; // For Matrix4x4Func
+using namespace Utility::SceneObjects; // For Transform
+
 void Sprite::Initialize(std::string textureFilePath)
 {
 	spriteBasis_ = SpriteBasis::GetInstance();
@@ -180,3 +187,6 @@ void Sprite::AdjustTextureSize()
 	// 画像サイズをテクスチャサイズに合わせる
 	size_ = textureSize_;
 }
+
+} // namespace Graphics
+} // namespace TYEngine

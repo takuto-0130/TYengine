@@ -1,6 +1,9 @@
 #pragma once
 #include "struct.h"
 
+namespace TYEngine {
+namespace Utility {
+
 /// <summary>
 /// クォータニオン同士の積を求める。
 /// lhs の回転の後に rhs の回転を適用する。
@@ -122,5 +125,8 @@ Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t);
 /// <param name="up">上方向ベクトル。</param>
 /// <returns>姿勢を表すクォータニオン。</returns>
 Quaternion MakeLookRotation(const Vector3& forward, const Vector3& up);
+
+} // namespace Utility
+} // namespace TYEngine
 
 

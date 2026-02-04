@@ -1,6 +1,11 @@
 #include "Object3dBasis.h"
+#include "Logger.h"
 
-using namespace Logger;
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Debugger;
+using namespace Core; // For DirectXBasis
 
 void Object3dBasis::Initialize(DirectXBasis* directXBasis)
 {
@@ -190,4 +195,7 @@ void Object3dBasis::CreateGraphicsPipeline()
 		IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(hr));
 }
+
+} // namespace Graphics
+} // namespace TYEngine
 

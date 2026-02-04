@@ -29,7 +29,9 @@
 
 #include "struct.h"
 
-namespace jx
+namespace TYEngine {
+namespace Utility {
+
 {
 
     using json = nlohmann::json;
@@ -1016,7 +1018,8 @@ namespace jx
         JsonManager& mgr_; ///< 関連付けられた JsonManager インスタンスへの参照。
     };
 #endif // JSONMGR_WITH_IMGUI
-} // namespace jx
+} // namespace Utility
+} // namespace TYEngine
 
 
 

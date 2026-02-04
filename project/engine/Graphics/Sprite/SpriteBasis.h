@@ -2,6 +2,11 @@
 #include "DirectXBasis.h"
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+
 /// <summary>
 /// スプライト描画の共通設定（ルートシグネチャ／グラフィックスパイプライン等）を一元管理するクラス。  
 /// シングルトンとして提供し、スプライト描画時の共通セットアップを行う。
@@ -83,3 +88,6 @@ private: // メンバ変数
     /// <summary>ルートシグネチャ生成時のエラーメッセージ出力。</summary>
     Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
 };
+
+} // namespace Graphics
+} // namespace TYEngine

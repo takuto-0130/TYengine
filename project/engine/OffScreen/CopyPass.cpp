@@ -4,6 +4,18 @@
 #include "imgui.h"
 #include <cassert>
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+using namespace Graphics; // For TextureManager (Likely in TYEngine::Graphics if moved, otherwise global or standard) 
+// Wait, TextureManager header might be in graphics? No, found it previously?
+// Assuming TextureManager is global or imported. The include is "TextureManager.h".
+// If TextureManager is not yet refactored, it's global.
+// I'll add 'using namespace Graphics;' IF TextureManager is there. But I haven't refactored TextureManager yet.
+// So I shouldn't add 'using namespace Graphics;' yet unless it breaks.
+// SAFE: Global TextureManager.
+
 void CopyPass::Initialize(DirectXBasis* dxBasis, SrvManager* srvMgr, const std::wstring& vsPath, const std::wstring& psPath) {
     dxBasis_ = dxBasis;
     srvMgr_ = srvMgr;
@@ -118,3 +130,6 @@ void CopyPass::LoadAndSetMaskTexture(const std::string& filePath)
     extraSrvHandle_ = texMgr->GetSrvHandleGPU(filePath);
     useExtraTexture_ = true;
 }
+
+} // namespace OffScreen
+} // namespace TYEngine

@@ -1,6 +1,11 @@
 #include "ObjectCubemap.h"
 #include "mathFunc.h"
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Utility::Math; // For mathFunc methods
+
 void ObjectCubemap::Initialize(const std::string& textureFilePath)
 {
     CreateCameraResource();
@@ -142,3 +147,6 @@ void ObjectCubemap::CreateTransformationMatrixResource()
     transformationMatrixData_->World = MakeIdentity4x4();
     transformationMatrixData_->WorldInverseTranspose = MakeIdentity4x4();
 }
+
+} // namespace Graphics
+} // namespace TYEngine

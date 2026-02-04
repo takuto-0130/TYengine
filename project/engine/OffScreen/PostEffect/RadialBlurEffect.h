@@ -5,6 +5,15 @@
 /// 放射状ブラー（ラディアルブラー）効果を適用するポストエフェクトクラス。  
 /// 指定した中心点から外側に向かってブラーをかけることで、速度感や集中線効果を演出する。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
+/// <summary>
+/// 放射状ブラー（ラディアルブラー）効果を適用するポストエフェクトクラス。  
+/// 指定した中心点から外側に向かってブラーをかけることで、速度感や集中線効果を演出する。
+/// </summary>
 class RadialBlurEffect :
     public PostEffectBase
 {
@@ -75,5 +84,8 @@ private:
     /// <summary>放射ブラー用パラメータを保持する共有ポインタ</summary>
     std::shared_ptr<RadialBlurParam> param_;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 
 

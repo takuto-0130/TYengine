@@ -3,6 +3,9 @@
 #include <array>
 #include <imgui.h>
 
+namespace TYEngine {
+namespace Audio {
+
 /// <summary>
 /// オーディオ解析クラス。
 /// 波形データ、FFT解析、RMS（音圧）計測を行い、ビジュアライザリング用のデータを提供する。
@@ -101,3 +104,6 @@ private:
     float midGray_ = 0.0f;
     float highGray_ = 0.0f;
 };
+
+} // namespace Audio
+} // namespace TYEngine

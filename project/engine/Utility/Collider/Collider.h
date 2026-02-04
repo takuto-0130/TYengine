@@ -5,6 +5,10 @@
 #include <cstdint>
 #include "mathFunc.h"
 
+namespace TYEngine {
+namespace Utility {
+
+
 /// <summary>
 /// コライダーの形状タイプ定義
 /// </summary>
@@ -100,4 +104,7 @@ private:
         return nextID++;
     }
 };
+
+} // namespace Utility
+} // namespace TYEngine
 

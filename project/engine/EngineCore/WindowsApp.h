@@ -2,6 +2,9 @@
 #include <Windows.h>
 #include <cstdint>
 
+namespace TYEngine {
+namespace Core {
+
 /// <summary>
 /// Windows API をラップしてウィンドウ生成・管理を行うクラス。
 /// メッセージプロシージャの制御やウィンドウクラスの登録を担当する。
@@ -56,10 +59,14 @@ public:// 定数
 	static const int32_t kClientWidth = 1280;
 	/// <summary>クライアント領域の高さ（ピクセル）。</summary>
 	static const int32_t kClientHeight = 720;
+	
 private:
 	/// <summary>管理しているウィンドウハンドル。</summary>
 	HWND hwnd = nullptr;
 	/// <summary>ウィンドウクラス設定構造体。</summary>
 	WNDCLASS wc{};
 };
+
+} // namespace Core
+} // namespace TYEngine
 

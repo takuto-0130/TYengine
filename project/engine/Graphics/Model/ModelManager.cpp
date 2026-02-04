@@ -1,5 +1,10 @@
 #include "ModelManager.h"
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+
 void ModelManager::Initialize(DirectXBasis* dxManager, SrvManager* srvManager)
 {
 	modelLoader_ = std::make_unique<ModelLoader>();
@@ -24,3 +29,6 @@ Model* ModelManager::FindModel(const std::string& filePath)
 	// ファイル名が一致しなければ null
 	return nullptr;
 }
+
+} // namespace Graphics
+} // namespace TYEngine

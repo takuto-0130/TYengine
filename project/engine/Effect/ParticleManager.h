@@ -6,14 +6,20 @@
 
 
 
+namespace TYEngine {
+namespace Effect {
+
+using namespace Utility;
+using namespace Camera;
+
 /// <summary>
 /// パーティクルシステムの管理クラス（シングルトン）。
 /// 複数のパーティクルレンダラー（IParticleRenderer）を保持・更新・描画する。
 /// </summary>
 class ParticleManager :
-    public SingletonObject<ParticleManager>
+    public Utility::SingletonObject<ParticleManager>
 {
-    friend class SingletonObject<ParticleManager>;
+    friend class Utility::SingletonObject<ParticleManager>;
     friend struct std::default_delete<ParticleManager>;
 
 private:
@@ -35,7 +41,7 @@ public:
     /// <param name="dx">DirectX 基盤。</param>
     /// <param name="srv">SRV 管理クラス。</param>
     /// <param name="cam">カメラ。</param>
-    void InitializeAll(DirectXBasis* dx, SrvManager* srv, Camera* cam);
+    void InitializeAll(DirectXBasis* dx, SrvManager* srv, Camera::Camera* cam);
 
     /// <summary>
     /// 全てのパーティクルレンダラーを更新する。
@@ -66,3 +72,6 @@ private:
     /// <summary>管理下のパーティクルレンダラー配列。</summary>
     std::vector<std::unique_ptr<IParticleRenderer>> particles_;
 };
+
+} // namespace Effect
+} // namespace TYEngine

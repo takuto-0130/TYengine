@@ -4,6 +4,9 @@
 #include <unordered_map>
 #include <cassert>
 
+namespace TYEngine {
+namespace Audio {
+
 /// <summary>
 /// アプリケーション固有のサウンドカテゴリ（BGM, SEなど）を管理するための基底クラス。
 /// ユーザー定義のEnumをテンプレート引数にとり、Enumと文字列キーの変換を行う。
@@ -142,4 +145,7 @@ private:
 	/// <summary>初期化済みかどうか。</summary>
 	bool isInit_ = false;
 };
+
+} // namespace Audio
+} // namespace TYEngine
 

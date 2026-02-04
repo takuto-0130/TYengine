@@ -7,6 +7,9 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 #pragma comment(lib, "winmm.lib")
 
 
+namespace TYEngine {
+namespace Core {
+
 LRESULT WindowsApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 
@@ -86,3 +89,6 @@ void WindowsApp::Finalize()
 	CloseWindow(hwnd);
 	CoUninitialize();
 }
+
+} // namespace Core
+} // namespace TYEngine

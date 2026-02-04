@@ -2,6 +2,11 @@
 #include <cassert>
 #include <Logger.h>
 
+namespace TYEngine {
+namespace Audio {
+
+using namespace TYEngine::Core;
+
 Audio::~Audio()
 {
 	// BGMリソースの解放
@@ -501,3 +506,6 @@ XAUDIO2_BUFFER Audio::SetBuffer(bool loop, const SoundData& sound)
 
 	return buffer;
 }
+
+} // namespace Audio
+} // namespace TYEngine

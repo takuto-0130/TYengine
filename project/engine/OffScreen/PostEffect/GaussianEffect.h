@@ -5,6 +5,15 @@
 /// ガウシアンブラー（Gaussian Blur）効果を適用するポストエフェクトクラス。  
 /// 画像をぼかすことで、被写界深度や柔らかな光の表現などに使用される。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis if needed
+
+/// <summary>
+/// ガウシアンブラー（Gaussian Blur）効果を適用するポストエフェクトクラス。  
+/// 画像をぼかすことで、被写界深度や柔らかな光の表現などに使用される。
+/// </summary>
 class GaussianEffect :
     public PostEffectBase
 {
@@ -70,4 +79,7 @@ private:
     /// <summary>ブラー処理用のパラメータ。</summary>
     std::shared_ptr<GaussianParam> param_;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 

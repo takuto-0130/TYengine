@@ -56,8 +56,11 @@ private:
 	virtual void ExitExiting();
 
 private:
+	/// <summary>フェード用スプライト（全画面矩形）。</summary>
 	std::unique_ptr<Sprite> sprites_;
+	/// <summary>フェード時間。</summary>
 	float duration_ = 0.0f;
+	/// <summary>完了フラグ。</summary>
 	bool finished_ = false;
 };
 

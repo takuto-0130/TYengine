@@ -16,10 +16,15 @@ protected:
 
 
 	// Audioクラスへの生アクセスが必要な場合
+	/// <summary>Audioサブシステムへのアクセスを取得する。</summary>
 	Audio* GetAudio() { return audio_; }
 
 private:
 	// 子クラスで必ず実装（カテゴリ登録など）
+	/// <summary>
+	/// 初期化時のコールバック。
+	/// 継承クラスでカテゴリ登録や初期ロードを実装する。
+	/// </summary>
 	virtual void OnInit() = 0;
 
 public:
@@ -129,9 +134,12 @@ public:
 	}
 
 private:
+	/// <summary>オーディオ管理クラスへの参照。</summary>
 	Audio* audio_ = nullptr;
+	/// <summary>カテゴリEnumと文字列キーの対応マップ。</summary>
 	std::unordered_map<CategoryEnum, std::string> categoryMap_;
 
+	/// <summary>初期化済みかどうか。</summary>
 	bool isInit_ = false;
 };
 

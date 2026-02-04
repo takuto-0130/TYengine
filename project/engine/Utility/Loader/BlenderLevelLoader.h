@@ -66,8 +66,10 @@ private:
 	void ObjectTraversal(LevelData* levelData, nlohmann::json& j, std::string contains);
 
 private:
+	/// <summary>モデルファイルのベースディレクトリパス。</summary>
 	std::string kBaseDirectoryName_;
 
+	/// <summary>ロードされたレベルデータ。</summary>
 	std::unique_ptr<LevelData> levelData_;
 };
 

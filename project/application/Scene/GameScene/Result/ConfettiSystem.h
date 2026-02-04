@@ -55,12 +55,17 @@ private:
     bool CheckAndHandleHitUI(ConfettiParticle& p, const Vector2& drawPos);
 
 private:
+    /// <summary>パーティクルリスト。</summary>
     std::vector<ConfettiParticle> particles_;
 
+    /// <summary>画面幅。</summary>
     int screenW_ = 0;
+    /// <summary>画面高さ。</summary>
     int screenH_ = 0;
+    /// <summary>テクスチャパス。</summary>
     std::string texturePath_;
 
+    /// <summary>風揺れ用の経過時間。</summary>
     float globalTime_ = 0.0f; // 風揺れ用の経過時間
 
     // UI との衝突用

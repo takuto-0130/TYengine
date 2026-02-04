@@ -163,20 +163,26 @@ public: // メンバ関数
 	size_t GetNumberOfJoysticks();
 
 private:
+	/// <summary>
+	/// ジョイスティック列挙コールバック関数。
+	/// 接続されたデバイスごとに呼び出される。
+	/// </summary>
 	static BOOL CALLBACK
 		EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) noexcept;
 
 public:
+	/// <summary>パッドの種類。</summary>
 	enum class PadType
 	{
-		DirectInput,
-		XInput,
+		DirectInput, ///< DirectInput形式。
+		XInput,      ///< XInput形式。
 	};
 
+	/// <summary>入力状態共用体（DirectInput / XInput）。</summary>
 	union State
 	{
-		XINPUT_STATE xInput_;
-		DIJOYSTATE2 directInput_;
+		XINPUT_STATE xInput_;       ///< XInput用状態。
+		DIJOYSTATE2 directInput_;   ///< DirectInput用状態。
 	};
 
 	struct Joystick

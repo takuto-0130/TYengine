@@ -184,40 +184,68 @@ private: // メンバ変数
     WindowsApp* windowsApp_ = nullptr; ///< ウィンドウ管理。
 
     // Direct3D / DXGI 関連
+	/// <summary>DXGIファクトリ。</summary>
     Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
+	/// <summary>D3D12デバイス。</summary>
     Microsoft::WRL::ComPtr<ID3D12Device> device_;
+	/// <summary>コマンドアロケータ。</summary>
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_;
+	/// <summary>コマンドリスト。</summary>
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
+	/// <summary>コマンドキュー。</summary>
     Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue_;
+	/// <summary>スワップチェーン。</summary>
     Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
+	/// <summary>深度バッファリソース。</summary>
     Microsoft::WRL::ComPtr<ID3D12Resource> depthBuffer_;
 
+	/// <summary>RTV用ディスクリプタヒープ。</summary>
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	/// <summary>SRV用ディスクリプタヒープ。</summary>
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
+	/// <summary>DSV用ディスクリプタヒープ。</summary>
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
+	/// <summary>Sampler用ディスクリプタヒープ。</summary>
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> samplerHeap_;
 
+	/// <summary>スワップチェーン設定。</summary>
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc_{};
+	/// <summary>RTV設定。</summary>
     D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};
+	/// <summary>バックバッファ配列。</summary>
     std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> backBuffers_;
+	/// <summary>RTVハンドル。</summary>
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2] = {};
+	/// <summary>DSVハンドル。</summary>
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_ = {};
 
+	/// <summary>フェンス。</summary>
     Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
+	/// <summary>現在のフェンス値。</summary>
     uint32_t fenceValue_ = 0;
+	/// <summary>フェンスイベント。</summary>
     HANDLE fenceEvent_ = {};
 
+	/// <summary>DXCユーティリティ。</summary>
     Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils_;
+	/// <summary>DXCコンパイラ。</summary>
     Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler_;
+	/// <summary>インクルードハンドラ。</summary>
     Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler_;
 
+	/// <summary>リソースバリア。</summary>
     D3D12_RESOURCE_BARRIER barrier_{};
 
+	/// <summary>ビューポート。</summary>
     D3D12_VIEWPORT viewportRect_{};
+	/// <summary>シザー矩形。</summary>
     D3D12_RECT     scissorRect_{};
 
+	/// <summary>SRVのディスクリプタサイズ。</summary>
     uint32_t descriptorSizeSRV_ = 0;
+	/// <summary>RTVのディスクリプタサイズ。</summary>
     uint32_t descriptorSizeRTV_ = 0;
+	/// <summary>DSVのディスクリプタサイズ。</summary>
     uint32_t descriptorSizeDSV_ = 0;
 
     /// <summary>固定 FPS 用の基準時間。</summary>

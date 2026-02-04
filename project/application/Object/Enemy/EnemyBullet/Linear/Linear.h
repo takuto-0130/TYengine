@@ -32,12 +32,16 @@ namespace EnemyBullet
 		void Draw()override;
 
 	private:
+		/// <summary>移動処理（直進）。</summary>
 		void Move();
+		/// <summary>進行方向に合わせた回転更新。</summary>
 		void RotationDirection();
 
 	private:
+		/// <summary>敵弾用コライダー。</summary>
 		std::unique_ptr<EBulletCollider> collider_;
 
+		/// <summary>固定タイムステップ。</summary>
 		float deltaTime_ = 1.0f / 60.0f;
 
 

@@ -61,6 +61,7 @@ private:
 		void STDMETHODCALLTYPE OnLoopEnd(void*) override {}
 		void STDMETHODCALLTYPE OnVoiceError(void*, HRESULT) override {}
 
+		/// <summary>バッファ処理の完了を待機する。</summary>
 		void WaitForBuffer() {
 			std::unique_lock<std::mutex> lock(mutex);
 			cv.wait(lock, [this] { return bufferAvailable; });
@@ -107,7 +108,9 @@ public:
 	void DisableEffect();
 
 private:
-
+	/// <summary>
+	/// 実際のストリーミング処理。
+	/// </summary>
 	void StreamAudio(const char* filename);
 
 	/**
@@ -138,14 +141,23 @@ private:
 
 
 	// ストリーミング再生
+	/// <summary>ストリーミング再生中フラグ。</summary>
 	std::atomic<bool> isStreaming_;
+	/// <summary>ループ再生フラグ。</summary>
 	std::atomic<bool> isLoopStreaming_;
+	/// <summary>ストリーミング用スレッド。</summary>
 	std::unique_ptr<std::thread> audioThread_;
+	/// <summary>ストリーミング用ソースボイス。</summary>
 	IXAudio2SourceVoice* streamVoice_ = nullptr;
+	/// <summary>ダブルバッファリング用バッファ。</summary>
 	std::vector<std::vector<BYTE>> audioBuffers_;
+	/// <summary>バッファサイズ。</summary>
 	size_t BUFFER_SIZE;
+	/// <summary>リバーブパラメータ。</summary>
 	XAUDIO2FX_REVERB_PARAMETERS reverbParameters_ = {};
+	/// <summary>エフェクトチェーン設定。</summary>
 	XAUDIO2_EFFECT_CHAIN effectChain_ = {};
+	/// <summary>エフェクトディスクリプタ。</summary>
 	XAUDIO2_EFFECT_DESCRIPTOR effect_[1] = {};
 };
 

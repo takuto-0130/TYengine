@@ -72,16 +72,25 @@ private:
     void ComputeFFT();
 
 private:
+    /// <summary>入力チャンネル数。</summary>
     UINT32 channels_ = 0;
 
+    /// <summary>遅延バッファ（時間差計測用）。</summary>
     std::vector<std::vector<float>> delayBuffer_;
+    /// <summary>遅延バッファの書き込みインデックス。</summary>
     UINT32 delayIndex_ = 0;
 
+    /// <summary>FFT入力バッファ。</summary>
     std::vector<float> fftInput_;
+    /// <summary>FFT実部。</summary>
     std::vector<float> fftReal_;
+    /// <summary>FFT虚部。</summary>
     std::vector<float> fftImag_;
 
+    /// <summary>最新のRMS（音圧）値。</summary>
     float latestRMS_ = 0.0f;
+    /// <summary>最新のFFT解析結果。</summary>
     std::vector<float> latestFFT_;
+    /// <summary>最新の波形データ（UI表示用）。</summary>
     std::vector<float> latestWaveform_;  // タイムドメイン用
 };

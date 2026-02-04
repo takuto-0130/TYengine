@@ -68,7 +68,7 @@ public:
     }
 
     // 現在のオフセットを取得
-    const Vector3& GetOffset() const { return offset_; }
+    const TYEngine::Utility::Vector3& GetOffset() const { return offset_; }
 
     // アクティブかどうか
     bool IsActive() const { return active_; }
@@ -86,7 +86,7 @@ private:
     ShakeParams params_;
     float time_ = 0.0f;
     bool active_ = false;
-    Vector3 offset_ = {};
+    TYEngine::Utility::Vector3 offset_ = {};
 };
 
 } // namespace Camera

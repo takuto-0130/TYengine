@@ -6,8 +6,7 @@
 namespace TYEngine {
 namespace Graphics {
 
-using namespace Core; // For DirectXBasis
-using namespace Core; // For DirectXBasis
+// using namespace Core;
 // using namespace Camera; // Removed to avoid ambiguity
 
 /// <summary>
@@ -16,9 +15,9 @@ using namespace Core; // For DirectXBasis
 /// スカイボックスの描画を簡単に実行できるようにするシングルトンクラス。
 /// </summary>
 class CubemapBasis :
-    public SingletonObject<CubemapBasis>
+    public TYEngine::Utility::SingletonObject<CubemapBasis>
 {
-    friend class SingletonObject<CubemapBasis>;
+    friend class TYEngine::Utility::SingletonObject<CubemapBasis>;
     friend struct std::default_delete<CubemapBasis>;
 
 private:
@@ -32,7 +31,7 @@ public:
     /// DirectX 基盤を登録し、キューブマップ描画に必要なリソースを生成する。
     /// </summary>
     /// <param name="dxBasis">DirectX の基盤クラス。</param>
-    void Initialize(DirectXBasis* dxBasis);
+    void Initialize(TYEngine::Core::DirectXBasis* dxBasis);
 
     /// <summary>
     /// キューブマップ描画の前処理を行う。  
@@ -68,7 +67,7 @@ public:
     /// 登録されている DirectX 基盤を取得する。
     /// </summary>
     /// <returns>DirectXBasis ポインタ。</returns>
-    DirectXBasis* GetDirectXBasis() const { return directXBasis_; }
+    TYEngine::Core::DirectXBasis* GetDirectXBasis() const { return directXBasis_; }
 
 private: // 内部関数
     /// <summary>
@@ -84,7 +83,7 @@ private: // 内部関数
     void CreateGraphicsPipeline();
 
 private: // メンバ変数
-    DirectXBasis* directXBasis_ = nullptr; ///< DirectX の基盤。
+    TYEngine::Core::DirectXBasis* directXBasis_ = nullptr; ///< DirectX の基盤。
     TYEngine::Camera::Camera* defaultCamera_ = nullptr;      ///< デフォルトカメラ。
 
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;       ///< ルートシグネチャ。

@@ -20,9 +20,9 @@ namespace Graphics {
 /// ファイルパスをキーに Model をキャッシュし、重複読み込みを防ぐ。
 /// </summary>
 class ModelManager :
-    public SingletonObject<ModelManager>
+    public TYEngine::Utility::SingletonObject<ModelManager>
 {
-    friend class SingletonObject<ModelManager>;
+    friend class TYEngine::Utility::SingletonObject<ModelManager>;
     friend struct std::default_delete<ModelManager>;
 
 private:

@@ -6,47 +6,50 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-namespace TYEngine {
-namespace OffScreen {
-
-using namespace Core; // For DirectXBasis
-
-void LuminanceBasedOutlineEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+namespace TYEngine
 {
-    dx_ = dx;
-    // シェーダ（CopyImage.VSとLuminanceBasedOutline.PS）を使う
-    copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/LuminanceBasedOutline.PS.hlsl");
-    // パラメータバッファ確保
-    param_ = copyPass_.AddExtraConstantBuffer<LuminanceOutlineParam>(4);
-}
+	namespace OffScreen
+	{
 
-void LuminanceBasedOutlineEffect::Update()
-{
+		using namespace Core;
+		using namespace Graphics;
+
+		void LuminanceBasedOutlineEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+		{
+			dx_ = dx;
+			// シェーダ（CopyImage.VSとLuminanceBasedOutline.PS）を使う
+			copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/LuminanceBasedOutline.PS.hlsl");
+			// パラメータバッファ確保
+			param_ = copyPass_.AddExtraConstantBuffer<LuminanceOutlineParam>(4);
+		}
+
+		void LuminanceBasedOutlineEffect::Update()
+		{
 #ifdef _DEBUG
-    ImGui::Begin("LuminanceBasedOutline");
-    ImGuiUpdate();
-    ImGui::End();
+			ImGui::Begin("LuminanceBasedOutline");
+			ImGuiUpdate();
+			ImGui::End();
 #endif // _DEBUG
-}
+		}
 
-void LuminanceBasedOutlineEffect::ImGuiUpdate()
-{
+		void LuminanceBasedOutlineEffect::ImGuiUpdate()
+		{
 #ifdef _DEBUG
-    if (ImGui::TreeNode("LuminanceBasedOutline"))
-    {
-        ImGui::SliderFloat("Threshold", &param_->threshold, 0.0f, 1.0f);
-        ImGui::SliderFloat("EdgeWidth", &param_->edgeWidth, 0.5f, 3.0f);
-        ImGui::SliderFloat("Intensity", &param_->edgeIntensity, 0.0f, 2.0f);
-        ImGui::ColorEdit3("EdgeColor", &param_->edgeColor.x);
-        ImGui::TreePop();
-    }
+			if (ImGui::TreeNode("LuminanceBasedOutline"))
+			{
+				ImGui::SliderFloat("Threshold", &param_->threshold, 0.0f, 1.0f);
+				ImGui::SliderFloat("EdgeWidth", &param_->edgeWidth, 0.5f, 3.0f);
+				ImGui::SliderFloat("Intensity", &param_->edgeIntensity, 0.0f, 2.0f);
+				ImGui::ColorEdit3("EdgeColor", &param_->edgeColor.x);
+				ImGui::TreePop();
+			}
 #endif // _DEBUG
-}
+		}
 
-void LuminanceBasedOutlineEffect::Apply(RenderTexture* input)
-{
-    copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
-}
+		void LuminanceBasedOutlineEffect::Apply(RenderTexture* input)
+		{
+			copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
+		}
 
-} // namespace OffScreen
+	} // namespace OffScreen
 } // namespace TYEngine

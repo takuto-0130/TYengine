@@ -6,51 +6,55 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-namespace TYEngine {
-namespace OffScreen {
-
-using namespace Core; // For DirectXBasis
-
-void DissolveEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+namespace TYEngine
 {
-    dx_ = dx;
-    // シェーダ（CopyImage.VSとDissolve.PS）を使う
-    copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Dissolve.PS.hlsl");
-    // ノイズテクスチャ読み込み
-    copyPass_.LoadAndSetMaskTexture("Resources/Texture/noise1.png");
-    // パラメータバッファ確保
-    param_ = copyPass_.AddExtraConstantBuffer<DissolveParam>(4);
-}
+	namespace OffScreen
+	{
 
-void DissolveEffect::Update()
-{
+		using namespace Core;
+		using namespace Graphics;
+
+		void DissolveEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+		{
+			dx_ = dx;
+			// シェーダ（CopyImage.VSとDissolve.PS）を使う
+			copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Dissolve.PS.hlsl");
+			// ノイズテクスチャ読み込み
+			copyPass_.LoadAndSetMaskTexture("Resources/Texture/noise1.png");
+			// パラメータバッファ確保
+			param_ = copyPass_.AddExtraConstantBuffer<DissolveParam>(4);
+		}
+
+		void DissolveEffect::Update()
+		{
 #ifdef _DEBUG
-    ImGui::Begin("Dissolve");
-    ImGuiUpdate();
-    ImGui::End();
+			ImGui::Begin("Dissolve");
+			ImGuiUpdate();
+			ImGui::End();
 #endif // _DEBUG
-}
+		}
 
-void DissolveEffect::ImGuiUpdate()
-{
+		void DissolveEffect::ImGuiUpdate()
+		{
 #ifdef _DEBUG
-    if (ImGui::TreeNode("Dissolve"))
-    {
-        ImGui::SliderFloat("threshold", &param_->threshold, 0.0f, 1.0f);
-        bool useEdge = (param_->useEdge != 0);
-        if (ImGui::Checkbox("useEdge", &useEdge)) {
-            param_->useEdge = useEdge ? 1 : 0;
-        }
-        ImGui::ColorEdit3("edgeColor", &param_->edgeColor.x);
-        ImGui::TreePop();
-    }
+			if (ImGui::TreeNode("Dissolve"))
+			{
+				ImGui::SliderFloat("threshold", &param_->threshold, 0.0f, 1.0f);
+				bool useEdge = (param_->useEdge != 0);
+				if (ImGui::Checkbox("useEdge", &useEdge))
+				{
+					param_->useEdge = useEdge ? 1 : 0;
+				}
+				ImGui::ColorEdit3("edgeColor", &param_->edgeColor.x);
+				ImGui::TreePop();
+			}
 #endif // _DEBUG
-}
+		}
 
-void DissolveEffect::Apply(RenderTexture* input)
-{
-    copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
-}
+		void DissolveEffect::Apply(RenderTexture* input)
+		{
+			copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
+		}
 
-} // namespace OffScreen
+	} // namespace OffScreen
 } // namespace TYEngine

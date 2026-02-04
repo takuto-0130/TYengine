@@ -3,30 +3,31 @@
 #include "SrvManager.h"
 #include "RenderTexture.h"
 
-namespace TYEngine {
-namespace OffScreen {
-
-using namespace Core; // For DirectXBasis
-
-void CopyImageEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+namespace TYEngine
 {
-    dx_ = dx;
-    // シェーダ（CopyImage.VSとCopyImage.PS）を使う（単純コピー）
-    copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
-}
+	namespace OffScreen
+	{
 
-void CopyImageEffect::Update()
-{
-}
+		using namespace Core;
+		using namespace Graphics;
 
-void CopyImageEffect::ImGuiUpdate()
-{
-}
+		void CopyImageEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+		{
+			dx_ = dx;
+			// シェーダ（CopyImage.VSとCopyImage.PS）を使う（単純コピー）
+			copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/CopyImage.PS.hlsl");
+		}
 
-void CopyImageEffect::Apply(RenderTexture* input)
-{
-    copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
-}
+		void CopyImageEffect::Update()
+		{}
 
-} // namespace OffScreen
+		void CopyImageEffect::ImGuiUpdate()
+		{}
+
+		void CopyImageEffect::Apply(RenderTexture* input)
+		{
+			copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
+		}
+
+	} // namespace OffScreen
 } // namespace TYEngine

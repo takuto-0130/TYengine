@@ -29,118 +29,114 @@
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")
 
-namespace TYEngine {
-namespace Framework {
-
-// using namespace Debugger;
-// using namespace Camera;
-// using namespace Core;
-// using namespace Graphics;
-// using namespace Utility;
-
-/// <summary>
-/// エンジン全体の実行サイクルを管理するフレームワーク基底クラス。  
-/// 各種マネージャ（DirectX・描画・入力・シーンなど）を統括し、  
-/// ゲームアプリケーションのライフサイクルを制御する。
-/// </summary>
-class TYFrameWork
+namespace TYEngine
 {
-public:
-    /// <summary>仮想デストラクタ。</summary>
-    virtual ~TYFrameWork() = default;
+	namespace Framework
+	{
 
-    /// <summary>
-    /// メインループを実行する。  
-    /// Initialize → Update → Draw → Finalize の順に処理を行う。
-    /// </summary>
-    void run();
+		/// <summary>
+		/// エンジン全体の実行サイクルを管理するフレームワーク基底クラス。  
+		/// 各種マネージャ（DirectX・描画・入力・シーンなど）を統括し、  
+		/// ゲームアプリケーションのライフサイクルを制御する。
+		/// </summary>
+		class TYFrameWork
+		{
+		public:
+			/// <summary>仮想デストラクタ。</summary>
+			virtual ~TYFrameWork() = default;
 
-    /// <summary>
-    /// 初期化処理。  
-    /// 各マネージャや基盤システムを構築する。
-    /// </summary>
-    virtual void Initialize();
+			/// <summary>
+			/// メインループを実行する。  
+			/// Initialize → Update → Draw → Finalize の順に処理を行う。
+			/// </summary>
+			void run();
 
-    /// <summary>
-    /// 終了処理。  
-    /// 使用したリソースやインスタンスを解放する。
-    /// </summary>
-    virtual void Finalize();
+			/// <summary>
+			/// 初期化処理。  
+			/// 各マネージャや基盤システムを構築する。
+			/// </summary>
+			virtual void Initialize();
 
-    /// <summary>
-    /// 毎フレーム更新処理。  
-    /// 入力、シーン遷移、ポストエフェクトなどを更新する。
-    /// </summary>
-    virtual void Update();
+			/// <summary>
+			/// 終了処理。  
+			/// 使用したリソースやインスタンスを解放する。
+			/// </summary>
+			virtual void Finalize();
 
-    /// <summary>
-    /// 描画処理（純粋仮想関数）。  
-    /// 派生クラス側で具体的な描画を実装する。
-    /// </summary>
-    virtual void Draw() = 0;
+			/// <summary>
+			/// 毎フレーム更新処理。  
+			/// 入力、シーン遷移、ポストエフェクトなどを更新する。
+			/// </summary>
+			virtual void Update();
 
-    /// <summary>
-    /// 終了リクエストフラグを取得する。
-    /// </summary>
-    /// <returns>終了要求が出ていれば true。</returns>
-    virtual bool IsEndRequest() { return endRequest_; };
+			/// <summary>
+			/// 描画処理（純粋仮想関数）。  
+			/// 派生クラス側で具体的な描画を実装する。
+			/// </summary>
+			virtual void Draw() = 0;
 
-protected:
+			/// <summary>
+			/// 終了リクエストフラグを取得する。
+			/// </summary>
+			/// <returns>終了要求が出ていれば true。</returns>
+			virtual bool IsEndRequest() { return endRequest_; };
+
+		protected:
 #ifdef _DEBUG
-    /// <summary>
-    /// DirectX リソースリーク検出用（デバッグビルド専用）。
-    /// </summary>
-    std::unique_ptr<TYEngine::Core::D3DResourceLeakChecker> leakCheck_;
+			/// <summary>
+			/// DirectX リソースリーク検出用（デバッグビルド専用）。
+			/// </summary>
+			std::unique_ptr<TYEngine::Core::D3DResourceLeakChecker> leakCheck_;
 #endif // _DEBUG
 
-    /// <summary>Windows アプリケーション管理クラス。</summary>
-    std::unique_ptr<TYEngine::Core::WindowsApp> windowsApp_ = nullptr;
+			/// <summary>Windows アプリケーション管理クラス。</summary>
+			std::unique_ptr<TYEngine::Core::WindowsApp> windowsApp_ = nullptr;
 
-    /// <summary>DirectX の基盤管理クラス。</summary>
-    TYEngine::Core::DirectXBasis* directXBasis_ = nullptr;
+			/// <summary>DirectX の基盤管理クラス。</summary>
+			TYEngine::Core::DirectXBasis* directXBasis_ = nullptr;
 
-    /// <summary>SRV 管理クラス。</summary>
-    std::unique_ptr<TYEngine::Graphics::SrvManager> srvManager_ = nullptr;
+			/// <summary>SRV 管理クラス。</summary>
+			std::unique_ptr<TYEngine::Graphics::SrvManager> srvManager_ = nullptr;
 
-    /// <summary>2D スプライト描画の基盤クラス。</summary>
-    TYEngine::Graphics::SpriteBasis* spriteBasis_ = nullptr;
+			/// <summary>2D スプライト描画の基盤クラス。</summary>
+			TYEngine::Graphics::SpriteBasis* spriteBasis_ = nullptr;
 
-    /// <summary>3D オブジェクト描画の基盤クラス。</summary>
-    TYEngine::Graphics::Object3dBasis* object3dBasis_ = nullptr;
+			/// <summary>3D オブジェクト描画の基盤クラス。</summary>
+			TYEngine::Graphics::Object3dBasis* object3dBasis_ = nullptr;
 
-    /// <summary>3D モデル管理クラス。</summary>
-    TYEngine::Graphics::ModelManager* modelManager_ = nullptr;
+			/// <summary>3D モデル管理クラス。</summary>
+			TYEngine::Graphics::ModelManager* modelManager_ = nullptr;
 
-    /// <summary>入力（キーボード・マウス・パッド）管理クラス。</summary>
-    Input* input_ = nullptr;
+			/// <summary>入力（キーボード・マウス・パッド）管理クラス。</summary>
+			Input* input_ = nullptr;
 
-    /// <summary>ImGui デバッグ UI 管理クラス。</summary>
-    TYEngine::Debugger::ImGuiManager* imgui_ = nullptr;
+			/// <summary>ImGui デバッグ UI 管理クラス。</summary>
+			TYEngine::Debugger::ImGuiManager* imgui_ = nullptr;
 
-    /// <summary>カメラクラス。</summary>
-    std::unique_ptr<TYEngine::Camera::Camera> camera_ = nullptr;
+			/// <summary>カメラクラス。</summary>
+			std::unique_ptr<TYEngine::CameraSystem::Camera> camera_ = nullptr;
 
-    /// <summary>シーン管理クラス。</summary>
-    SceneManager* sceneManager_ = nullptr;
+			/// <summary>シーン管理クラス。</summary>
+			SceneManager* sceneManager_ = nullptr;
 
-    /// <summary>シーン生成ファクトリ。</summary>
-    std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
+			/// <summary>シーン生成ファクトリ。</summary>
+			std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 
-    /// <summary>アプリケーション終了要求フラグ。</summary>
-    bool endRequest_ = false;
+			/// <summary>アプリケーション終了要求フラグ。</summary>
+			bool endRequest_ = false;
 
-    /// <summary>メインレンダーターゲット。</summary>
-    std::unique_ptr<TYEngine::OffScreen::RenderTexture> renderTexture_;
+			/// <summary>メインレンダーターゲット。</summary>
+			std::unique_ptr<TYEngine::OffScreen::RenderTexture> renderTexture_;
 
-    /// <summary>一時的なレンダーターゲット（ping-pong 用）。</summary>
-    std::unique_ptr<TYEngine::OffScreen::RenderTexture> tempTexture_;
+			/// <summary>一時的なレンダーターゲット（ping-pong 用）。</summary>
+			std::unique_ptr<TYEngine::OffScreen::RenderTexture> tempTexture_;
 
-    /// <summary>アウトライン描画用のレンダーターゲット。</summary>
-    std::unique_ptr<TYEngine::OffScreen::RenderTexture> outlineTexture_;
+			/// <summary>アウトライン描画用のレンダーターゲット。</summary>
+			std::unique_ptr<TYEngine::OffScreen::RenderTexture> outlineTexture_;
 
-    /// <summary>ポストエフェクト管理クラス。</summary>
-    TYEngine::OffScreen::PostEffectManager* postEffectManager_;
-};
+			/// <summary>ポストエフェクト管理クラス。</summary>
+			TYEngine::OffScreen::PostEffectManager* postEffectManager_;
+		};
 
-} // namespace Framework
+	} // namespace Framework
 } // namespace TYEngine

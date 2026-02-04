@@ -4,188 +4,214 @@
 #include <vector>
 #include <array>
 
-namespace TYEngine {
-namespace Utility {
-
-// 2次元ベクトル
-struct Vector2 {
-	float x;
-	float y;
-
-	Vector2& operator+=(const Vector2& a) {
-		x = a.x + x;
-		y = a.y + y;
-		return *this;
-	}
-
-	Vector2& operator-=(const Vector2& a) {
-		x = x - a.x;
-		y = y - a.y;
-		return *this;
-	}
-
-	Vector2& operator*=(float a) {
-		x = x * a;
-		y = y * a;
-		return *this;
-	}
-
-	Vector2& operator/=(float a) {
-		x = x / a;
-		y = y / a;
-		return *this;
-	}
-
-	bool operator==(const Vector2& a) const {
-		return (x == a.x && y == a.y);
-	}
-};
-
-// 3次元ベクトル
-struct Vector3 {
-	float x;
-	float y;
-	float z;
-
-	Vector3& operator+=(const Vector3& a) {
-		x = a.x + x;
-		y = a.y + y;
-		z = a.z + z;
-		return *this;
-	}
-
-	Vector3& operator-=(const Vector3& a) {
-		x = x - a.x;
-		y = y - a.y;
-		z = z - a.z;
-		return *this;
-	}
-
-	Vector3& operator*=(float a) {
-		x = x * a;
-		y = y * a;
-		z = z * a;
-		return *this;
-	}
-
-	Vector3& operator/=(float a) {
-		x = x / a;
-		y = y / a;
-		z = z / a;
-		return *this;
-	}
-
-	bool operator==(const Vector3& a) const {
-		return (x == a.x && y == a.y && z == a.z);
-	}
-};
-
-
-// 4次元ベクトル
-struct Vector4 {
-	float x;
-	float y;
-	float z;
-	float w;
-
-	Vector4& operator+=(const Vector4& a)
+namespace TYEngine
+{
+	namespace Utility
 	{
-		x = a.x + x;
-		y = a.y + y;
-		z = a.z + z;
-		w = a.w + w;
-		return *this;
-	}
 
-	Vector4& operator-=(const Vector4& a)
-	{
-		x = x - a.x;
-		y = y - a.y;
-		z = z - a.z;
-		w = w - a.w;
-		return *this;
-	}
+		// 2次元ベクトル
+		struct Vector2
+		{
+			float x;
+			float y;
 
-	Vector4& operator*=(float a)
-	{
-		x = x * a;
-		y = y * a;
-		z = z * a;
-		w = w * a;
-		return *this;
-	}
+			Vector2& operator+=(const Vector2& a)
+			{
+				x = a.x + x;
+				y = a.y + y;
+				return *this;
+			}
 
-	Vector4& operator/=(float a)
-	{
-		x = x / a;
-		y = y / a;
-		z = z / a;
-		w = w / a;
-		return *this;
-	}
+			Vector2& operator-=(const Vector2& a)
+			{
+				x = x - a.x;
+				y = y - a.y;
+				return *this;
+			}
 
-	bool operator==(const Vector4& a) const
-	{
-		return (x == a.x && y == a.y && z == a.z && w == a.w);
-	}
-};
+			Vector2& operator*=(float a)
+			{
+				x = x * a;
+				y = y * a;
+				return *this;
+			}
 
-struct Matrix4x4 {
-	std::array<std::array<float,4>, 4> m;
-};
+			Vector2& operator/=(float a)
+			{
+				x = x / a;
+				y = y / a;
+				return *this;
+			}
 
-struct Quaternion {
-	float x;
-	float y;
-	float z;
-	float w;
-};
+			bool operator==(const Vector2& a) const
+			{
+				return (x == a.x && y == a.y);
+			}
+		};
 
-struct Transform {
-	Vector3 scale;
-	Vector3 rotate;
-	Vector3 translate;
-};
+		// 3次元ベクトル
+		struct Vector3
+		{
+			float x;
+			float y;
+			float z;
 
-struct Sphere {
-	Vector3 center;
-	float radius;
-};
+			Vector3& operator+=(const Vector3& a)
+			{
+				x = a.x + x;
+				y = a.y + y;
+				z = a.z + z;
+				return *this;
+			}
 
-struct Line {
-	Vector3 origin;
-	Vector3 diff;
-};
+			Vector3& operator-=(const Vector3& a)
+			{
+				x = x - a.x;
+				y = y - a.y;
+				z = z - a.z;
+				return *this;
+			}
 
-struct Ray {
-	Vector3 origin;
-	Vector3 diff;
-};
+			Vector3& operator*=(float a)
+			{
+				x = x * a;
+				y = y * a;
+				z = z * a;
+				return *this;
+			}
 
-struct Segment {
-	Vector3 origin;
-	Vector3 diff;
-};
+			Vector3& operator/=(float a)
+			{
+				x = x / a;
+				y = y / a;
+				z = z / a;
+				return *this;
+			}
 
-struct Plane {
-	Vector3 normal;
-	float distance;
-};
+			bool operator==(const Vector3& a) const
+			{
+				return (x == a.x && y == a.y && z == a.z);
+			}
+		};
 
-struct Triangle {
-	Vector3 vertices[3];
-};
 
-struct AABB {
-	Vector3 min;
-	Vector3 max;
-};
+		// 4次元ベクトル
+		struct Vector4
+		{
+			float x;
+			float y;
+			float z;
+			float w;
 
-struct OBB {
-	Vector3 center;
-	Vector3 orientations[3];
-	Vector3 size;
-};
+			Vector4& operator+=(const Vector4& a)
+			{
+				x = a.x + x;
+				y = a.y + y;
+				z = a.z + z;
+				w = a.w + w;
+				return *this;
+			}
 
-} // namespace Utility
+			Vector4& operator-=(const Vector4& a)
+			{
+				x = x - a.x;
+				y = y - a.y;
+				z = z - a.z;
+				w = w - a.w;
+				return *this;
+			}
+
+			Vector4& operator*=(float a)
+			{
+				x = x * a;
+				y = y * a;
+				z = z * a;
+				w = w * a;
+				return *this;
+			}
+
+			Vector4& operator/=(float a)
+			{
+				x = x / a;
+				y = y / a;
+				z = z / a;
+				w = w / a;
+				return *this;
+			}
+
+			bool operator==(const Vector4& a) const
+			{
+				return (x == a.x && y == a.y && z == a.z && w == a.w);
+			}
+		};
+
+		struct Matrix4x4
+		{
+			std::array<std::array<float, 4>, 4> m;
+		};
+
+		struct Quaternion
+		{
+			float x;
+			float y;
+			float z;
+			float w;
+		};
+
+		struct Transform
+		{
+			Vector3 scale;
+			Vector3 rotate;
+			Vector3 translate;
+		};
+
+		struct Sphere
+		{
+			Vector3 center;
+			float radius;
+		};
+
+		struct Line
+		{
+			Vector3 origin;
+			Vector3 diff;
+		};
+
+		struct Ray
+		{
+			Vector3 origin;
+			Vector3 diff;
+		};
+
+		struct Segment
+		{
+			Vector3 origin;
+			Vector3 diff;
+		};
+
+		struct Plane
+		{
+			Vector3 normal;
+			float distance;
+		};
+
+		struct Triangle
+		{
+			Vector3 vertices[3];
+		};
+
+		struct AABB
+		{
+			Vector3 min;
+			Vector3 max;
+		};
+
+		struct OBB
+		{
+			Vector3 center;
+			Vector3 orientations[3];
+			Vector3 size;
+		};
+
+	} // namespace Utility
 } // namespace TYEngine

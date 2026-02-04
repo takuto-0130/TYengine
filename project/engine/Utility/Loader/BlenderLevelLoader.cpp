@@ -5,104 +5,106 @@
 
 using json = nlohmann::json;
 
-namespace TYEngine {
-namespace Utility {
-
-
-LevelData* BlenderLevelLoader::Load(const std::string& filename)
+namespace TYEngine
 {
-    std::ifstream file(kBaseDirectoryName_ + filename);
-    if (!file.is_open()) assert(0);
+	namespace Utility
+	{
 
-    json j;
-    file >> j;
 
-    // 正しいレベルデータファイルかをチェックする
-    assert(j.is_object());
-    assert(j.contains("name"));
-    assert(j["name"].is_string());
-    std::string name = j["name"].get<std::string>();
-    assert(name.compare("scene") == 0);
+		LevelData* BlenderLevelLoader::Load(const std::string& filename)
+		{
+			std::ifstream file(kBaseDirectoryName_ + filename);
+			if (!file.is_open()) assert(0);
 
-    // レベルデータ格納用インスタンスの生成
-    levelData_ = std::make_unique<LevelData>();
+			json j;
+			file >> j;
 
-    // "objects"の全オブジェクトを走査（再帰的に読み込む）
-    ObjectTraversal(levelData_.get(), j, "objects");
+			// 正しいレベルデータファイルかをチェックする
+			assert(j.is_object());
+			assert(j.contains("name"));
+			assert(j["name"].is_string());
+			std::string name = j["name"].get<std::string>();
+			assert(name.compare("scene") == 0);
 
-    return levelData_.get();
-}
+			// レベルデータ格納用インスタンスの生成
+			levelData_ = std::make_unique<LevelData>();
 
-void BlenderLevelLoader::DataToObject(LevelData* data, std::vector<std::unique_ptr<LevelObject>>& objects)
-{
-    for (auto& objectData : data->objects)
-    {
-        std::string modelName = objectData.fileName + ".obj";
-        std::unique_ptr<LevelObject> object = std::make_unique<LevelObject>();
-        object->SetModelName(modelName);
-        object->Init();
-        object->SetPosition(objectData.translation);
-        object->SetRotation(objectData.rotation);
-        object->SetScale(objectData.scaling);
-        objects.push_back(std::move(object));
-    }
-}
+			// "objects"の全オブジェクトを走査（再帰的に読み込む）
+			ObjectTraversal(levelData_.get(), j, "objects");
 
-void BlenderLevelLoader::ObjectTraversal(LevelData* levelData, json& j, std::string contains)
-{
-    for (json& object : j[contains])
-    {
-        assert(object.contains("type"));
+			return levelData_.get();
+		}
 
-        // 種類を取得
-        std::string type = object["type"].get<std::string>();
+		void BlenderLevelLoader::DataToObject(LevelData* data, std::vector<std::unique_ptr<LevelObject>>& objects)
+		{
+			for (auto& objectData : data->objects)
+			{
+				std::string modelName = objectData.fileName + ".obj";
+				std::unique_ptr<LevelObject> object = std::make_unique<LevelObject>();
+				object->SetModelName(modelName);
+				object->Init();
+				object->SetPosition(objectData.translation);
+				object->SetRotation(objectData.rotation);
+				object->SetScale(objectData.scaling);
+				objects.push_back(std::move(object));
+			}
+		}
 
-        if (type.compare("MESH") == 0)
-        {
-            // 要素追加
-            levelData->objects.emplace_back(LevelData::ObjectData{});
-            // 追加した要素の参照を得る
-            LevelData::ObjectData& objectData = levelData->objects.back();
+		void BlenderLevelLoader::ObjectTraversal(LevelData* levelData, json& j, std::string contains)
+		{
+			for (json& object : j[contains])
+			{
+				assert(object.contains("type"));
 
-            if (object.contains("file_name"))
-            {
-                objectData.fileName = object["file_name"];
-            }
+				// 種類を取得
+				std::string type = object["type"].get<std::string>();
 
-            json& transform = object["transform"];
-            // 平行移動
-            if (transform.contains("translation") && transform["translation"].size() >= 3)
-            {
-                objectData.translation.x = static_cast<float>(transform["translation"][0]);
-                objectData.translation.y = static_cast<float>(transform["translation"][2]);
-                objectData.translation.z = static_cast<float>(transform["translation"][1]);
-            }
+				if (type.compare("MESH") == 0)
+				{
+					// 要素追加
+					levelData->objects.emplace_back(LevelData::ObjectData{});
+					// 追加した要素の参照を得る
+					LevelData::ObjectData& objectData = levelData->objects.back();
 
-            // 回転角
-            if (transform.contains("rotation") && transform["rotation"].size() >= 3)
-            {
-                objectData.rotation.x = static_cast<float>(transform["rotation"][0]);
-                objectData.rotation.y = static_cast<float>(transform["rotation"][2]);
-                objectData.rotation.z = static_cast<float>(transform["rotation"][1]);
-            }
+					if (object.contains("file_name"))
+					{
+						objectData.fileName = object["file_name"];
+					}
 
-            // スケーリング
-            if (transform.contains("scaling") && transform["scaling"].size() >= 3)
-            {
-                objectData.scaling.x = static_cast<float>(transform["scaling"][0]);
-                objectData.scaling.y = static_cast<float>(transform["scaling"][2]);
-                objectData.scaling.z = static_cast<float>(transform["scaling"][1]);
-            }
+					json& transform = object["transform"];
+					// 平行移動
+					if (transform.contains("translation") && transform["translation"].size() >= 3)
+					{
+						objectData.translation.x = static_cast<float>(transform["translation"][0]);
+						objectData.translation.y = static_cast<float>(transform["translation"][2]);
+						objectData.translation.z = static_cast<float>(transform["translation"][1]);
+					}
 
-            // 再帰的に枝を走査する
-            if (object.contains("children"))
-            {
-                //levelData->objects.reserve(LevelData);
-                ObjectTraversal(levelData, object, "children");
-            }
-        }
-    }
-}
+					// 回転角
+					if (transform.contains("rotation") && transform["rotation"].size() >= 3)
+					{
+						objectData.rotation.x = static_cast<float>(transform["rotation"][0]);
+						objectData.rotation.y = static_cast<float>(transform["rotation"][2]);
+						objectData.rotation.z = static_cast<float>(transform["rotation"][1]);
+					}
 
-} // namespace Utility
+					// スケーリング
+					if (transform.contains("scaling") && transform["scaling"].size() >= 3)
+					{
+						objectData.scaling.x = static_cast<float>(transform["scaling"][0]);
+						objectData.scaling.y = static_cast<float>(transform["scaling"][2]);
+						objectData.scaling.z = static_cast<float>(transform["scaling"][1]);
+					}
+
+					// 再帰的に枝を走査する
+					if (object.contains("children"))
+					{
+						//levelData->objects.reserve(LevelData);
+						ObjectTraversal(levelData, object, "children");
+					}
+				}
+			}
+		}
+
+	} // namespace Utility
 } // namespace TYEngine

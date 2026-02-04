@@ -5,66 +5,66 @@
 #include <mutex>
 #include "SingletonObject.h"
 
-namespace TYEngine {
-namespace Debugger {
-
-// using namespace TYEngine::Core;
-
-/// <summary>
-/// ImGuiの管理クラス。
-/// 初期化、フレーム開始・終了処理、描画実行を担当する。
-/// </summary>
-class ImGuiManager :
-	public TYEngine::Utility::SingletonObject<ImGuiManager>
+namespace TYEngine
 {
-	friend class TYEngine::Utility::SingletonObject<ImGuiManager>;
-	friend struct std::default_delete<ImGuiManager>;
+	namespace Debugger
+	{
 
-private:
-	// 外部からの new/delete を禁止
-	ImGuiManager() = default;
-	~ImGuiManager() = default;
+		/// <summary>
+		/// ImGuiの管理クラス。
+		/// 初期化、フレーム開始・終了処理、描画実行を担当する。
+		/// </summary>
+		class ImGuiManager :
+			public Utility::SingletonObject<ImGuiManager>
+		{
+			friend class Utility::SingletonObject<ImGuiManager>;
+			friend struct std::default_delete<ImGuiManager>;
 
-public:
-	/// <summary>
-	/// 初期化処理。
-	/// DirectXデバイスやウィンドウハンドルとの紐付けを行う。
-	/// </summary>
-	/// <param name="winApp">Windowsアプリケーション基盤クラス。</param>
-	/// <param name="dxBasis">DirectX基盤クラス。</param>
-	void Initialize(TYEngine::Core::WindowsApp* winApp, TYEngine::Core::DirectXBasis* dxBasis);
+		private:
+			// 外部からの new/delete を禁止
+			ImGuiManager() = default;
+			~ImGuiManager() = default;
 
-	/// <summary>
-	/// ImGuiのフレーム受付開始。
-	/// 毎フレームの描画処理の最初に呼び出す。
-	/// </summary>
-	void Begin();
+		public:
+			/// <summary>
+			/// 初期化処理。
+			/// DirectXデバイスやウィンドウハンドルとの紐付けを行う。
+			/// </summary>
+			/// <param name="winApp">Windowsアプリケーション基盤クラス。</param>
+			/// <param name="dxBasis">DirectX基盤クラス。</param>
+			void Initialize(Core::WindowsApp* winApp, Core::DirectXBasis* dxBasis);
 
-	/// <summary>
-	/// ImGuiのフレーム受付終了。
-	/// 描画コマンドの生成を行う。
-	/// </summary>
-	void End();
+			/// <summary>
+			/// ImGuiのフレーム受付開始。
+			/// 毎フレームの描画処理の最初に呼び出す。
+			/// </summary>
+			void Begin();
 
-	/// <summary>
-	/// 実際の描画コマンドを発行する。
-	/// </summary>
-	void Draw();
+			/// <summary>
+			/// ImGuiのフレーム受付終了。
+			/// 描画コマンドの生成を行う。
+			/// </summary>
+			void End();
 
-	/// <summary>
-	/// 終了処理。リソースの開放など。
-	/// </summary>
-	void Finalize();
-private:
-	/// <summary>Windowsアプリケーション基盤クラス。</summary>
-	TYEngine::Core::WindowsApp* winApp_ = nullptr;
-	/// <summary>DirectX基盤クラス。</summary>
-	TYEngine::Core::DirectXBasis* dxBasis_ = nullptr;
+			/// <summary>
+			/// 実際の描画コマンドを発行する。
+			/// </summary>
+			void Draw();
 
-	/// <summary>ImGui用SRVディスクリプタヒープ。</summary>
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
-};
+			/// <summary>
+			/// 終了処理。リソースの開放など。
+			/// </summary>
+			void Finalize();
+		private:
+			/// <summary>Windowsアプリケーション基盤クラス。</summary>
+			Core::WindowsApp* winApp_ = nullptr;
+			/// <summary>DirectX基盤クラス。</summary>
+			Core::DirectXBasis* dxBasis_ = nullptr;
 
-} // namespace Debugger
+			/// <summary>ImGui用SRVディスクリプタヒープ。</summary>
+			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
+		};
+
+	} // namespace Debugger
 } // namespace TYEngine
 

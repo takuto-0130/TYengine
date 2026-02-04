@@ -10,7 +10,7 @@
 
 class WorldTransform;
 
-using namespace TYEngine::Camera;
+// using namespace TYEngine::Camera;
 
 namespace TYEngine {
 namespace Graphics {
@@ -39,7 +39,7 @@ public: // メンバ関数
     /// </summary>
     /// <param name="transform">オブジェクトのワールド変換情報。</param>
     /// <param name="camera">描画に使用するカメラ。</param>
-    void Draw(WorldTransform& transform, Camera::Camera* camera);
+    void Draw(WorldTransform& transform, TYEngine::Camera::Camera* camera);
 
     /// <summary>
     /// モデルの頂点データから頂点バッファを生成する。  

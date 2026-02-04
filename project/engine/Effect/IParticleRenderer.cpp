@@ -10,11 +10,11 @@ namespace TYEngine {
 namespace Effect {
 
 using namespace Utility;
-using namespace Camera;
+// using namespace Camera; // Removed to avoid ambiguity
 
 IParticleRenderer::~IParticleRenderer() = default;
 
-void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, Camera::Camera* cam) {
+void IParticleRenderer::Initialize(DirectXBasis* dx, SrvManager* srv, TYEngine::Camera::Camera* cam) {
     dxBasis_ = dx;
     srvManager_ = srv;
     camera_ = cam;

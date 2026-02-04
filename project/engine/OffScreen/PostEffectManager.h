@@ -7,16 +7,22 @@
 #include <vector>
 #include <memory>
 
-class DirectXBasis;
-class SrvManager;
-class RenderTexture;
-class IPostEffect;
+namespace TYEngine {
+    namespace Core {
+        class DirectXBasis;
+    }
+    namespace Graphics {
+        class SrvManager;
+    }
+}
+// class RenderTexture; // Inside TYEngine::OffScreen so forward declaration works if inside namespace. But here global? No, RenderTexture is in OffScreen.
+// But check RenderTexture class definition above? No, it's forward declared.
 
 namespace TYEngine {
 namespace OffScreen {
 
-using namespace Core; // For DirectXBasis
-using namespace Utility; // For SingletonObject
+// using namespace Core;
+// using namespace Utility;
 
 /// <summary>
 /// ポストエフェクト全体を統括管理するマネージャークラス。
@@ -39,7 +45,7 @@ public:
     /// </summary>
     /// <param name="dx">DirectX 基盤。</param>
     /// <param name="srv">SRV マネージャ。</param>
-    void Initialize(DirectXBasis* dx, SrvManager* srv);
+    void Initialize(TYEngine::Core::DirectXBasis* dx, TYEngine::Graphics::SrvManager* srv);
 
     /// <summary>
     /// ポストエフェクトを追加する。
@@ -130,8 +136,8 @@ public:
     }
 
 private:
-    DirectXBasis* dxBasis_ = nullptr;   ///< DirectX 基盤ポインタ。
-    SrvManager* srvMgr_ = nullptr;      ///< SRV 管理クラスへの参照。
+    TYEngine::Core::DirectXBasis* dxBasis_ = nullptr;   ///< DirectX 基盤ポインタ。
+    TYEngine::Graphics::SrvManager* srvMgr_ = nullptr;      ///< SRV 管理クラスへの参照。
 
     /// <summary>
     /// エフェクト情報構造体。

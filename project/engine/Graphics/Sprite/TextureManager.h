@@ -14,7 +14,7 @@ static constexpr size_t FrameCount = 3;
 namespace TYEngine {
 namespace Graphics {
 
-using namespace Core; // For DirectXBasis
+// using namespace Core;
 
 /// <summary>
 /// テクスチャの読み込み・管理を一元化するクラス。  
@@ -37,7 +37,7 @@ public:
     /// </summary>
     /// <param name="dxBasis">DirectX 基盤。</param>
     /// <param name="srvManager">SRV 管理クラス。</param>
-    void Initialize(DirectXBasis* dxBasis, SrvManager* srvManager);
+    void Initialize(TYEngine::Core::DirectXBasis* dxBasis, SrvManager* srvManager);
 
     /// <summary>
     /// テクスチャをファイルから読み込み、SRV を作成して管理対象に追加する。  
@@ -105,7 +105,7 @@ private:
         D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU{};       ///< CPU SRV ハンドル。
         D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU{};       ///< GPU SRV ハンドル。
     };
-    DirectXBasis* dxBasis_ = nullptr;   ///< DirectX 基盤。
+    TYEngine::Core::DirectXBasis* dxBasis_ = nullptr;   ///< DirectX 基盤。
     SrvManager* srvManager_ = nullptr;  ///< SRV 管理クラス。
 
     std::unordered_map<std::string, TextureData> textureData_; ///< ファイルパスをキーにしたテクスチャデータ管理。

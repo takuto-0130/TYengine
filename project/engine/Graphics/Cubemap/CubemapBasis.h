@@ -7,7 +7,8 @@ namespace TYEngine {
 namespace Graphics {
 
 using namespace Core; // For DirectXBasis
-using namespace Camera; // For Camera
+using namespace Core; // For DirectXBasis
+// using namespace Camera; // Removed to avoid ambiguity
 
 /// <summary>
 /// キューブマップ（スカイボックス）描画の基盤クラス。  
@@ -55,13 +56,13 @@ public:
     /// デフォルトカメラを設定する。
     /// </summary>
     /// <param name="camera">使用するカメラへのポインタ。</param>
-    void SetDefaultCamera(Camera::Camera* camera) { defaultCamera_ = camera; }
+    void SetDefaultCamera(TYEngine::Camera::Camera* camera) { defaultCamera_ = camera; }
 
     /// <summary>
     /// 現在設定されているデフォルトカメラを取得する。
     /// </summary>
     /// <returns>カメラへのポインタ。</returns>
-    Camera::Camera* GetDefaultCamera() const { return defaultCamera_; }
+    TYEngine::Camera::Camera* GetDefaultCamera() const { return defaultCamera_; }
 
     /// <summary>
     /// 登録されている DirectX 基盤を取得する。
@@ -84,7 +85,7 @@ private: // 内部関数
 
 private: // メンバ変数
     DirectXBasis* directXBasis_ = nullptr; ///< DirectX の基盤。
-    Camera::Camera* defaultCamera_ = nullptr;      ///< デフォルトカメラ。
+    TYEngine::Camera::Camera* defaultCamera_ = nullptr;      ///< デフォルトカメラ。
 
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;       ///< ルートシグネチャ。
     Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_; ///< パイプラインステート。

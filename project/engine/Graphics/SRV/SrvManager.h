@@ -10,7 +10,7 @@ namespace Core { class DirectXBasis; } // Forward declaration with namespace
 
 namespace Graphics {
 
-using namespace Core; // For DirectXBasis
+// using namespace Core;
 
 /// <summary>
 /// SRV（Shader Resource View）を一括管理するクラス。  
@@ -24,7 +24,7 @@ public:
     /// </summary>
     /// <param name="dxBasis">DirectX 基盤（デバイス取得に使用）。</param>
     /// <param name="maxDescriptors">確保するディスクリプタ数（既定：256）。</param>
-    void Initialize(DirectXBasis* dxBasis, uint32_t maxDescriptors = 256);
+    void Initialize(TYEngine::Core::DirectXBasis* dxBasis, uint32_t maxDescriptors = 256);
 
     /// <summary>
     /// SRV スロットを 1 つ確保し、そのインデックスを返す。
@@ -108,7 +108,7 @@ public:
     void CreateSRVForTextureCube(uint32_t index, ID3D12Resource* resource, DXGI_FORMAT format, uint32_t mipLevels);
 
 private:
-    DirectXBasis* dxBasis_ = nullptr;                                   ///< DirectX 基盤。
+    TYEngine::Core::DirectXBasis* dxBasis_ = nullptr;                                   ///< DirectX 基盤。
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;              ///< CBV/SRV/UAV ディスクリプタヒープ。
     uint32_t descriptorSize_ = 0;                                       ///< ディスクリプタインクリメントサイズ。
     uint32_t currentIndex_ = 0;                                         ///< 次に割り当てるインデックス。

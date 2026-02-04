@@ -8,7 +8,7 @@
 namespace TYEngine {
 namespace Debugger {
 
-using namespace TYEngine::Core;
+// using namespace TYEngine::Core;
 
 /// <summary>
 /// ImGuiの管理クラス。
@@ -32,7 +32,7 @@ public:
 	/// </summary>
 	/// <param name="winApp">Windowsアプリケーション基盤クラス。</param>
 	/// <param name="dxBasis">DirectX基盤クラス。</param>
-	void Initialize(WindowsApp* winApp, DirectXBasis* dxBasis);
+	void Initialize(TYEngine::Core::WindowsApp* winApp, TYEngine::Core::DirectXBasis* dxBasis);
 
 	/// <summary>
 	/// ImGuiのフレーム受付開始。
@@ -57,9 +57,9 @@ public:
 	void Finalize();
 private:
 	/// <summary>Windowsアプリケーション基盤クラス。</summary>
-	WindowsApp* winApp_ = nullptr;
+	TYEngine::Core::WindowsApp* winApp_ = nullptr;
 	/// <summary>DirectX基盤クラス。</summary>
-	DirectXBasis* dxBasis_ = nullptr;
+	TYEngine::Core::DirectXBasis* dxBasis_ = nullptr;
 
 	/// <summary>ImGui用SRVディスクリプタヒープ。</summary>
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;

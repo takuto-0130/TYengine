@@ -4,13 +4,19 @@
 #include <cstdint>
 #include "struct.h"
 
-class DirectXBasis;
-class SrvManager;
+namespace TYEngine {
+    namespace Core {
+        class DirectXBasis;
+    }
+    namespace Graphics {
+        class SrvManager;
+    }
+}
 
 namespace TYEngine {
 namespace OffScreen {
 
-using namespace Core; // For DirectXBasis
+// using namespace Core;
 
 /// <summary>
 /// 描画結果をテクスチャとして保持するためのレンダーターゲットクラス。  
@@ -29,7 +35,7 @@ public:
     /// <param name="height">テクスチャ高さ</param>
     /// <param name="format">カラーフォーマット（例：DXGI_FORMAT_R8G8B8A8_UNORM）</param>
     /// <param name="clearColor">クリアカラー</param>
-    void Initialize(DirectXBasis* dxBasis, SrvManager* srvManager,
+    void Initialize(TYEngine::Core::DirectXBasis* dxBasis, TYEngine::Graphics::SrvManager* srvManager,
         uint32_t width, uint32_t height,
         DXGI_FORMAT format, const Vector4& clearColor);
 
@@ -84,10 +90,10 @@ private:
 
 private:
     /// <summary>DirectX基盤クラス（デバイス、コマンド管理）</summary>
-    DirectXBasis* dxBasis_ = nullptr;
+    TYEngine::Core::DirectXBasis* dxBasis_ = nullptr;
 
     /// <summary>SRVを管理するマネージャ</summary>
-    SrvManager* srvManager_ = nullptr;
+    TYEngine::Graphics::SrvManager* srvManager_ = nullptr;
 
     /// <summary>テクスチャリソース</summary>
     Microsoft::WRL::ComPtr<ID3D12Resource> texture_;

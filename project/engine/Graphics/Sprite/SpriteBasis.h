@@ -12,9 +12,9 @@ using namespace Core; // For DirectXBasis
 /// シングルトンとして提供し、スプライト描画時の共通セットアップを行う。
 /// </summary>
 class SpriteBasis :
-    public SingletonObject<SpriteBasis>
+    public TYEngine::Utility::SingletonObject<SpriteBasis>
 {
-    friend class SingletonObject<SpriteBasis>;
+    friend class TYEngine::Utility::SingletonObject<SpriteBasis>;
     friend struct std::default_delete<SpriteBasis>;
 
 private:
@@ -28,7 +28,7 @@ public:
     /// 初期化処理。DirectX 基盤を登録し、必要なリソース/状態を構築する。
     /// </summary>
     /// <param name="directXBasis">DirectX 基盤（デバイス・コマンド関連）。</param>
-    void Initialize(DirectXBasis* directXBasis);
+    void Initialize(TYEngine::Core::DirectXBasis* directXBasis);
 
     /// <summary>
     /// スプライト描画の共通設定をコマンドリストへ反映する。  
@@ -38,7 +38,7 @@ public:
 
     /// <summary>登録済みの DirectX 基盤を取得する。</summary>
     /// <returns>DirectXBasis へのポインタ。</returns>
-    DirectXBasis* GetDirectXBasis() const { return directXBasis_; }
+    TYEngine::Core::DirectXBasis* GetDirectXBasis() const { return directXBasis_; }
 
     /// <summary>スプライト用ルートシグネチャを取得する。</summary>
     /// <returns>ID3D12RootSignature へのポインタ。</returns>
@@ -62,7 +62,7 @@ private: // メンバ関数
 
 private: // メンバ変数
     /// <summary>DirectX 基盤への参照。</summary>
-    DirectXBasis* directXBasis_ = nullptr;
+    TYEngine::Core::DirectXBasis* directXBasis_ = nullptr;
 
     /// <summary>スプライト描画用ルートシグネチャ。</summary>
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;

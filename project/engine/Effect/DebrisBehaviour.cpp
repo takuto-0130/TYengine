@@ -1,35 +1,37 @@
 #include "DebrisBehaviour.h"
 #include "mathFunc.h"
 
-namespace TYEngine {
-namespace Effect {
-
-using namespace Utility;
-
-void DebrisBehaviour::Update(ParticleParam& p, float dt)
+namespace TYEngine
 {
-    float t = p.currentTime / p.lifeTime;  // 0 → 1
+	namespace Effect
+	{
 
-    // ▼ 速度で飛ぶ
-    p.transform.translate += p.velocity * dt;
+		using namespace Utility;
 
-    // ▼ 空気抵抗（減速）
-    p.velocity *= (1.0f - dt * 3.0f);  // 3.0f は抵抗の強さ
+		void DebrisBehaviour::Update(ParticleParam& p, float dt)
+		{
+			float t = p.currentTime / p.lifeTime;  // 0 → 1
 
-    // ▼ 重力がかかり落下する（お好みでON/OFF）
-    p.velocity.y -= 9.8f * 0.3f * dt;  // 弱めの重力
+			// ▼ 速度で飛ぶ
+			p.transform.translate += p.velocity * dt;
 
-    // ▼ 火花の色変化（StarFox風）
-    // 黄色っぽい色から黒へ変化
-    p.color.x = 1.0f;           // R
-    p.color.y = 0.8f - t * 0.6f; // G: 0.8 → 0.2
-    p.color.z = 0.2f - t * 0.2f; // B: 0.2 → 0.0（黒）
-    p.color.w = 1.0f - t;        // Alpha フェードアウト
+			// ▼ 空気抵抗（減速）
+			p.velocity *= (1.0f - dt * 3.0f);  // 3.0f は抵抗の強さ
 
-    // ▼ 破片は少しずつ小さくなる
-    float shrink = 1.0f - dt * 1.8f;
-    p.transform.scale *= shrink;
-}
+			// ▼ 重力がかかり落下する
+			p.velocity.y -= 9.8f * 0.3f * dt;  // 弱めの重力
 
-} // namespace Effect
+			// ▼ 火花の色変化（StarFox風）
+			// 黄色っぽい色から黒へ変化
+			p.color.x = 1.0f;           // R
+			p.color.y = 0.8f - t * 0.6f; // G: 0.8 → 0.2
+			p.color.z = 0.2f - t * 0.2f; // B: 0.2 → 0.0（黒）
+			p.color.w = 1.0f - t;        // Alpha フェードアウト
+
+			// ▼ 破片は少しずつ小さくなる
+			float shrink = 1.0f - dt * 1.8f;
+			p.transform.scale *= shrink;
+		}
+
+	} // namespace Effect
 } // namespace TYEngine

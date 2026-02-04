@@ -6,72 +6,71 @@
 
 
 
-namespace TYEngine {
-namespace Effect {
-
-using namespace Utility;
-// using namespace Camera; // Removed to avoid ambiguity
-
-/// <summary>
-/// パーティクルシステムの管理クラス（シングルトン）。
-/// 複数のパーティクルレンダラー（IParticleRenderer）を保持・更新・描画する。
-/// </summary>
-class ParticleManager :
-    public Utility::SingletonObject<ParticleManager>
+namespace TYEngine
 {
-    friend class Utility::SingletonObject<ParticleManager>;
-    friend struct std::default_delete<ParticleManager>;
+	namespace Effect
+	{
 
-private:
-    // 外部からの new/delete を禁止
-    ParticleManager() = default;
-    ~ParticleManager() = default;
+		/// <summary>
+		/// パーティクルシステムの管理クラス（シングルトン）。
+		/// 複数のパーティクルレンダラー（IParticleRenderer）を保持・更新・描画する。
+		/// </summary>
+		class ParticleManager :
+			public Utility::SingletonObject<ParticleManager>
+		{
+			friend class Utility::SingletonObject<ParticleManager>;
+			friend struct std::default_delete<ParticleManager>;
 
-public:
-    /// <summary>
-    /// 新しいパーティクルレンダラーを追加・登録する。
-    /// </summary>
-    /// <param name="particle">追加するパーティクルレンダラー（所有権を移動）。</param>
-    /// <returns>登録されたインデックス。</returns>
-    int Add(std::unique_ptr<IParticleRenderer> particle);
+		private:
+			// 外部からの new/delete を禁止
+			ParticleManager() = default;
+			~ParticleManager() = default;
 
-    /// <summary>
-    /// 登録されている全てのパーティクルレンダラーを初期化する。
-    /// </summary>
-    /// <param name="dx">DirectX 基盤。</param>
-    /// <param name="srv">SRV 管理クラス。</param>
-    /// <param name="cam">カメラ。</param>
-    void InitializeAll(DirectXBasis* dx, SrvManager* srv, TYEngine::Camera::Camera* cam);
+		public:
+			/// <summary>
+			/// 新しいパーティクルレンダラーを追加・登録する。
+			/// </summary>
+			/// <param name="particle">追加するパーティクルレンダラー（所有権を移動）。</param>
+			/// <returns>登録されたインデックス。</returns>
+			int Add(std::unique_ptr<IParticleRenderer> particle);
 
-    /// <summary>
-    /// 全てのパーティクルレンダラーを更新する。
-    /// </summary>
-    void UpdateAll();
+			/// <summary>
+			/// 登録されている全てのパーティクルレンダラーを初期化する。
+			/// </summary>
+			/// <param name="dx">DirectX 基盤。</param>
+			/// <param name="srv">SRV 管理クラス。</param>
+			/// <param name="cam">カメラ。</param>
+			void InitializeAll(Core::DirectXBasis* dx, Graphics::SrvManager* srv, TYEngine::CameraSystem::Camera* cam);
 
-    /// <summary>
-    /// 全てのパーティクルを描画する。
-    /// </summary>
-    void DrawAll();
+			/// <summary>
+			/// 全てのパーティクルレンダラーを更新する。
+			/// </summary>
+			void UpdateAll();
 
-public:
-    /// <summary>
-    /// 指定インデックスのパーティクルエミッター設定を更新する。
-    /// </summary>
-    /// <param name="index">パーティクルインデックス。</param>
-    /// <param name="emitter">新しいエミッター設定。</param>
-    void SetEmitter(int index, IParticleRenderer::Emitter& emitter);
+			/// <summary>
+			/// 全てのパーティクルを描画する。
+			/// </summary>
+			void DrawAll();
 
-    /// <summary>
-    /// 指定インデックスのパーティクル放出（Emit）をトリガーする。
-    /// </summary>
-    /// <param name="index">パーティクルインデックス。</param>
-    /// <param name="flag">true なら放出処理を実行。</param>
-    void TriggerEmit(int index, bool flag);
+		public:
+			/// <summary>
+			/// 指定インデックスのパーティクルエミッター設定を更新する。
+			/// </summary>
+			/// <param name="index">パーティクルインデックス。</param>
+			/// <param name="emitter">新しいエミッター設定。</param>
+			void SetEmitter(int index, IParticleRenderer::Emitter& emitter);
 
-private:
-    /// <summary>管理下のパーティクルレンダラー配列。</summary>
-    std::vector<std::unique_ptr<IParticleRenderer>> particles_;
-};
+			/// <summary>
+			/// 指定インデックスのパーティクル放出（Emit）をトリガーする。
+			/// </summary>
+			/// <param name="index">パーティクルインデックス。</param>
+			/// <param name="flag">true なら放出処理を実行。</param>
+			void TriggerEmit(int index, bool flag);
 
-} // namespace Effect
+		private:
+			/// <summary>管理下のパーティクルレンダラー配列。</summary>
+			std::vector<std::unique_ptr<IParticleRenderer>> particles_;
+		};
+
+	} // namespace Effect
 } // namespace TYEngine

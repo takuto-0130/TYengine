@@ -5,65 +5,67 @@
 #endif // _DEBUG
 
 
-namespace TYEngine {
-namespace Camera {
-
-using namespace TYEngine::Utility;
-using namespace TYEngine::Core;
-
-Camera::Camera()
-	: transform_({ {1.0f,1.0f,1.0f},{0.3f,0.0f,0.0f},{0.0f,4.0f,-10.0f} })
-	, horizontalFOV_(0.45f)
-	, aspectRatio_(float(WindowsApp::kClientWidth) / float(WindowsApp::kClientHeight))
-	, nearClip_(2.0f)
-	, farClip_(500.0f)
-	, worldMatrix_(MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate))
-	, viewMatrix_(Inverse(worldMatrix_))
-	, projectionMatrix_(MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_))
-	, worldViewProjectionMatrix_(viewMatrix_ * projectionMatrix_)
+namespace TYEngine
 {
-	prevTranslate_ = transform_.translate;
-	deltaTranslate_ = Vector3{};
-}
+	namespace CameraSystem
+	{
 
-void Camera::Update()
-{
+		using namespace TYEngine::Utility;
+		using namespace TYEngine::Core;
+
+		Camera::Camera()
+			: transform_({ {1.0f,1.0f,1.0f},{0.3f,0.0f,0.0f},{0.0f,4.0f,-10.0f} })
+			, horizontalFOV_(0.45f)
+			, aspectRatio_(float(WindowsApp::kClientWidth) / float(WindowsApp::kClientHeight))
+			, nearClip_(2.0f)
+			, farClip_(500.0f)
+			, worldMatrix_(MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate))
+			, viewMatrix_(Inverse(worldMatrix_))
+			, projectionMatrix_(MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_))
+			, worldViewProjectionMatrix_(viewMatrix_* projectionMatrix_)
+		{
+			prevTranslate_ = transform_.translate;
+			deltaTranslate_ = Vector3{};
+		}
+
+		void Camera::Update()
+		{
 #ifdef _DEBUG
-	// デバッグ用UI：カメラパラメータの調整
-	ImGui::Begin("camera");
-	ImGui::DragFloat3("translate", &transform_.translate.x, 0.1f);
-	ImGui::DragFloat3("rotate", &transform_.rotate.x, 0.1f);
-	ImGui::DragFloat3("scale", &transform_.scale.x, 0.1f);
-	ImGui::End();
+			// デバッグ用UI：カメラパラメータの調整
+			ImGui::Begin("camera");
+			ImGui::DragFloat3("translate", &transform_.translate.x, 0.1f);
+			ImGui::DragFloat3("rotate", &transform_.rotate.x, 0.1f);
+			ImGui::DragFloat3("scale", &transform_.scale.x, 0.1f);
+			ImGui::End();
 #endif // _DEBUG
 
-	// --- カメラ移動量の算出（ワールド基準） ---
-	deltaTranslate_ = transform_.translate - prevTranslate_;
-	prevTranslate_ = transform_.translate;
+			// --- カメラ移動量の算出（ワールド基準） ---
+			deltaTranslate_ = transform_.translate - prevTranslate_;
+			prevTranslate_ = transform_.translate;
 
-	// --- シェイク（振動）効果の更新 ---
-	shakeController_.Update(Timer::GetInstance()->GetDeltaTime());
-	shake_ = shakeController_.GetOffset();
-	
-	// --- 行列更新（※視点計算には shake を含める） ---
-	// ワールド行列（移動＋振動）
-	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate + shake_);
-	// ビュー行列（ワールド行列の逆行列）
-	viewMatrix_ = Inverse(worldMatrix_);
-	// プロジェクション行列（透視投影）
-	projectionMatrix_ = MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_);
-	// 合成行列（WVP）
-	worldViewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
-}
+			// --- シェイク（振動）効果の更新 ---
+			shakeController_.Update(Timer::GetInstance()->GetDeltaTime());
+			shake_ = shakeController_.GetOffset();
 
-void Camera::FollowCamera(const Vector3& target)
-{
-	// カメラの位置を対象の後方に設定
-	transform_.rotate = followCameraOffsetRotate_;
-	transform_.translate = target + followCameraOffsetPosition_;
-	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
-	viewMatrix_ = Inverse(worldMatrix_);
-}
+			// --- 行列更新（※視点計算には shake を含める） ---
+			// ワールド行列（移動＋振動）
+			worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate + shake_);
+			// ビュー行列（ワールド行列の逆行列）
+			viewMatrix_ = Inverse(worldMatrix_);
+			// プロジェクション行列（透視投影）
+			projectionMatrix_ = MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_);
+			// 合成行列（WVP）
+			worldViewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
+		}
 
-} // namespace Camera
+		void Camera::FollowCamera(const Vector3& target)
+		{
+			// カメラの位置を対象の後方に設定
+			transform_.rotate = followCameraOffsetRotate_;
+			transform_.translate = target + followCameraOffsetPosition_;
+			worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+			viewMatrix_ = Inverse(worldMatrix_);
+		}
+
+	} // namespace Camera
 } // namespace TYEngine

@@ -63,6 +63,8 @@ void StartUI::Move()
 	{
 		timer_ += Timer::GetInstance()->GetDeltaTime();
 
+
+		// 演出を三等分
 		float demiTime = maxTime_ / 3.0f;
 		if (timer_ < demiTime)
 		{

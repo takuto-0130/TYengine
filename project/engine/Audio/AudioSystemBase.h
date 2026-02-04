@@ -6,7 +6,7 @@
 
 namespace TYEngine
 {
-	namespace Audio
+	namespace AudioSystem
 	{
 
 		/// <summary>

@@ -22,8 +22,8 @@ private:
 	// AudioのみがStreamingAudioにアクセスできるようにする
 	friend class Audio;
 
-	StreamingAudio(IXAudio2* xAudio2, const std::string& directoryPath) : xAudio2_(xAudio2), directoryPath_(directoryPath), id_(nextID_++) {
-	}
+	StreamingAudio(IXAudio2* xAudio2, const std::string& directoryPath) : xAudio2_(xAudio2), directoryPath_(directoryPath), id_(nextID_++) 
+	{}
 
 	~StreamingAudio();
 
@@ -46,14 +46,41 @@ private:
 	};
 
 	// 再生用コールバック
-	class StreamingVoiceCallback : public IXAudio2VoiceCallback {
+	class StreamingVoiceCallback : public IXAudio2VoiceCallback
+	{
 	public:
-		void STDMETHODCALLTYPE OnBufferEnd([[maybe_unused]]void* pBufferContext) override {
-			std::lock_guard<std::mutex> lock(mutex);
-			bufferAvailable = true;
-			cv.notify_one();
+		// コンストラクタで初期空きバッファ数を設定（3つ）
+		StreamingVoiceCallback() : freeBufferCount_(0) {}
+
+		void STDMETHODCALLTYPE OnBufferEnd(void* pBufferContext) override
+		{
+			std::lock_guard<std::mutex> lock(mutex_);
+			freeBufferCount_++; // 再生が終わったので空きを増やす
+			cv_.notify_one();
 		}
 
+		// 最初に空きをするためのメソッド
+		void Initialize(int count)
+		{
+			std::lock_guard<std::mutex> lock(mutex_);
+			freeBufferCount_ = count;
+		}
+
+		// 空きが出るまで待つ
+		void WaitForBuffer()
+		{
+			std::unique_lock<std::mutex> lock(mutex_);
+			cv_.wait(lock, [this] { return freeBufferCount_ > 0; }); // 空きバッファができるまで待機
+			freeBufferCount_--; // 使うので空きを減らす
+		}
+
+		// 空きを減らす
+		void ConsumeOneBuffer()
+		{
+			freeBufferCount_--;
+		}
+
+		// 他のメソッドは空実装
 		void STDMETHODCALLTYPE OnBufferStart(void*) override {}
 		void STDMETHODCALLTYPE OnVoiceProcessingPassStart(UINT32) override {}
 		void STDMETHODCALLTYPE OnVoiceProcessingPassEnd() override {}
@@ -61,17 +88,10 @@ private:
 		void STDMETHODCALLTYPE OnLoopEnd(void*) override {}
 		void STDMETHODCALLTYPE OnVoiceError(void*, HRESULT) override {}
 
-		/// <summary>バッファ処理の完了を待機する。</summary>
-		void WaitForBuffer() {
-			std::unique_lock<std::mutex> lock(mutex);
-			cv.wait(lock, [this] { return bufferAvailable; });
-			bufferAvailable = false;
-		}
-
 	private:
-		std::mutex mutex;
-		std::condition_variable cv;
-		bool bufferAvailable = false;
+		std::mutex mutex_;
+		std::condition_variable cv_;
+		int freeBufferCount_; // 空いているバッファの数
 	};
 
 public:
@@ -113,6 +133,8 @@ private:
 	/// </summary>
 	void StreamAudio(const char* filename);
 
+	void PlayStream(std::ifstream& file);
+
 	/**
 	 * @brief エフェクトチェーンの初期化
 	 */
@@ -153,11 +175,16 @@ private:
 	std::vector<std::vector<BYTE>> audioBuffers_;
 	/// <summary>バッファサイズ。</summary>
 	size_t BUFFER_SIZE;
+	/// <summary>バッファ数。</summary>
+	static constexpr int BUFFER_COUNT = 3;
 	/// <summary>リバーブパラメータ。</summary>
 	XAUDIO2FX_REVERB_PARAMETERS reverbParameters_ = {};
 	/// <summary>エフェクトチェーン設定。</summary>
 	XAUDIO2_EFFECT_CHAIN effectChain_ = {};
 	/// <summary>エフェクトディスクリプタ。</summary>
 	XAUDIO2_EFFECT_DESCRIPTOR effect_[1] = {};
+
+	/// <summary>コールバック。</summary>
+	StreamingVoiceCallback callback_;
 };
 

@@ -120,78 +120,18 @@ void StreamingAudio::StreamAudio(const char* filename)
 	// データ部分へシーク
 	audioFile.seekg(sizeof(WAVHeader));
 
-	// バッファの準備（トリプルバッファリング）
-	constexpr int BUFFER_COUNT = 3; 
 	BUFFER_SIZE = header.sampleRate * waveFormat.nBlockAlign; // 1秒分のサイズ
-	audioBuffers_.resize(BUFFER_COUNT, std::vector<BYTE>(BUFFER_SIZE));
-	XAUDIO2_BUFFER xAudioBuffers[BUFFER_COUNT] = {};
-	StreamingVoiceCallback callback;
 
 
 	// ソースボイスを作成し、コールバックを登録
-	if (FAILED(xAudio2_->CreateSourceVoice(&streamVoice_, &waveFormat, XAUDIO2_VOICE_USEFILTER, XAUDIO2_MAX_FREQ_RATIO, &callback, nullptr))) {
+	if (FAILED(xAudio2_->CreateSourceVoice(&streamVoice_, &waveFormat, XAUDIO2_VOICE_USEFILTER, XAUDIO2_MAX_FREQ_RATIO, &callback_, nullptr))) {
 		Logger::Log("Failed to create source voice.\n");
 		return;
 	}
 
 	InitEffectChain();
 
-
-	// 再生開始
-	streamVoice_->Start(0);
-	
-	int currentBufferIndex = 0;
-
-	// ストリーミングループ（別スレッドで実行）
-	// isStreaming_ が true であり続ける限りループ
-	while (isStreaming_.load()) {
-		std::vector<BYTE>& currentBuffer = audioBuffers_[currentBufferIndex];
-		
-		// 音声データの読み込み
-		if (!ReadAudioData(audioFile, currentBuffer)) {
-			// EOF到達時の処理
-			if (isLoopStreaming_.load()) {
-				// ループ再生：先頭に戻って再読み込み
-				audioFile.clear();  // EOFフラグクリア
-				audioFile.seekg(sizeof(WAVHeader), std::ios::beg);
-				if (!ReadAudioData(audioFile, currentBuffer)) {
-					break; // 読み込み失敗なら終了
-				}
-			}
-			else if (!isLoopStreaming_.load()) {
-				break; // ループなしなら終了
-			}
-			else {
-				Logger::Log("Failed to ReadAudioData.\n");
-				break;
-			}
-		}
-
-		// XAudio2バッファの設定
-		XAUDIO2_BUFFER& xBuffer = xAudioBuffers[currentBufferIndex];
-		xBuffer.AudioBytes = static_cast<UINT32>(currentBuffer.size());
-		xBuffer.pAudioData = currentBuffer.data();
-		xBuffer.Flags = 0;
-
-		// 最後のデータにはフラグを追加
-		if (audioFile.eof()) {
-			xBuffer.Flags = XAUDIO2_END_OF_STREAM;
-		}
-
-		// バッファをキューに送信
-		if (FAILED(streamVoice_->SubmitSourceBuffer(&xBuffer))) {
-			Logger::Log("Failed to submit buffer.\n");
-			break;
-		}
-
-		Logger::Log("Buffer submitted.\n");
-
-		// 次のバッファへ切り替え
-		currentBufferIndex = (currentBufferIndex + 1) % BUFFER_COUNT;
-
-		// 前のバッファの再生完了を待機（同期制御: コールバック活用）
-		callback.WaitForBuffer();
-	}
+	PlayStream(audioFile);
 
 	// クリーンアップ
 	audioFile.close();
@@ -199,6 +139,82 @@ void StreamingAudio::StreamAudio(const char* filename)
 	streamVoice_->DestroyVoice();
 	streamVoice_ = nullptr;
 	Logger::Log("Streaming finished.\n");
+}
+
+void StreamingAudio::PlayStream(std::ifstream& audioFile)
+{
+	// 1. 状態の初期化
+	callback_.Initialize(BUFFER_COUNT);
+	audioBuffers_.assign(BUFFER_COUNT, std::vector<BYTE>(BUFFER_SIZE));
+	int currentBufferIndex = 0;
+
+	Logger::Log("Streaming loop started. BufferCount: " + std::to_string(BUFFER_COUNT) + "\n");
+
+	// 2. 【初動】ループ前に3つ（BUFFER_COUNT分）すべてのバッファを先に送る
+	for (int i = 0; i < BUFFER_COUNT; ++i)
+	{
+		if (!ReadAudioData(audioFile, audioBuffers_[currentBufferIndex])) break;
+
+		XAUDIO2_BUFFER xBuffer = {};
+		xBuffer.AudioBytes = static_cast<UINT32>(audioBuffers_[currentBufferIndex].size());
+		xBuffer.pAudioData = audioBuffers_[currentBufferIndex].data();
+
+		if (FAILED(streamVoice_->SubmitSourceBuffer(&xBuffer)))
+		{
+			Logger::Log("Initial submit failed at index " + std::to_string(currentBufferIndex) + "\n");
+			return;
+		}
+
+		// 送ったので「空き」を1つ減らす
+		callback_.ConsumeOneBuffer();
+
+		Logger::Log("Initial buffer [" + std::to_string(currentBufferIndex) + "] pre-submitted.\n");
+		currentBufferIndex = (currentBufferIndex + 1) % BUFFER_COUNT;
+	}
+
+	// 3. 再生開始
+	streamVoice_->Start(0);
+
+	// 4. 【メインループ】
+	while (isStreaming_.load())
+	{
+		// 再生が1つ終わる（空きが出る）まで待機
+		callback_.WaitForBuffer();
+
+		std::vector<BYTE>& currentBuffer = audioBuffers_[currentBufferIndex];
+
+		// データの読み込み
+		if (!ReadAudioData(audioFile, currentBuffer))
+		{
+			if (isLoopStreaming_.load())
+			{
+				Logger::Log("Looping stream.\n");
+				audioFile.clear();
+				audioFile.seekg(sizeof(WAVHeader), std::ios::beg);
+				if (!ReadAudioData(audioFile, currentBuffer)) break;
+			}
+			else
+			{
+				Logger::Log("End of stream reached.\n");
+				break;
+			}
+		}
+
+		XAUDIO2_BUFFER xBuffer = {};
+		xBuffer.AudioBytes = static_cast<UINT32>(currentBuffer.size());
+		xBuffer.pAudioData = currentBuffer.data();
+
+		if (FAILED(streamVoice_->SubmitSourceBuffer(&xBuffer)))
+		{
+			Logger::Log("SubmitSourceBuffer failed.\n");
+			break;
+		}
+
+		Logger::Log("Buffer [" + std::to_string(currentBufferIndex) + "] submitted.\n");
+		currentBufferIndex = (currentBufferIndex + 1) % BUFFER_COUNT;
+	}
+
+	Logger::Log("Streaming loop finished.\n");
 }
 
 void StreamingAudio::InitEffectChain()

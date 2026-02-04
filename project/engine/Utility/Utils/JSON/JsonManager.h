@@ -1018,8 +1018,8 @@ namespace Utility {
         JsonManager& mgr_; ///< 関連付けられた JsonManager インスタンスへの参照。
     };
 #endif // JSONMGR_WITH_IMGUI
-} // namespace Utility
-} // namespace TYEngine
+// } // namespace Utility
+// } // namespace TYEngine
 
 
 

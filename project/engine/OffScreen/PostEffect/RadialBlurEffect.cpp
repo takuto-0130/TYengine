@@ -6,47 +6,50 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-namespace TYEngine {
-namespace OffScreen {
-
-using namespace Core; // For DirectXBasis
-
-void RadialBlurEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+namespace TYEngine
 {
-    dx_ = dx;
-    // シェーダ読み込み
-    copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/RadialBlur.PS.hlsl");
-    // 定数バッファ確保
-    param_ = copyPass_.AddExtraConstantBuffer<RadialBlurParam>(4);
-}
+	namespace OffScreen
+	{
 
-void RadialBlurEffect::Update()
-{
+		using namespace Core;
+		using namespace Graphics;
+
+		void RadialBlurEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+		{
+			dx_ = dx;
+			// シェーダ読み込み
+			copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/RadialBlur.PS.hlsl");
+			// 定数バッファ確保
+			param_ = copyPass_.AddExtraConstantBuffer<RadialBlurParam>(4);
+		}
+
+		void RadialBlurEffect::Update()
+		{
 #ifdef _DEBUG
-    ImGui::Begin("RadialBlur");
-    ImGuiUpdate();
-    ImGui::End();
+			ImGui::Begin("RadialBlur");
+			ImGuiUpdate();
+			ImGui::End();
 #endif // _DEBUG
-}
+		}
 
-void RadialBlurEffect::ImGuiUpdate()
-{
+		void RadialBlurEffect::ImGuiUpdate()
+		{
 #ifdef _DEBUG
-    if (ImGui::TreeNode("RadialBlur"))
-    {
-        ImGui::SliderFloat2("Center", &param_->kCenter.x, 0.0f, 1.0f);
-        ImGui::SliderFloat("BlurWidth", &param_->kBlurWidth, 0.0f, 1.0f);
-        ImGui::SliderInt("Sample", &param_->kNumSamples, 1, 50);
-        ImGui::TreePop();
-    }
+			if (ImGui::TreeNode("RadialBlur"))
+			{
+				ImGui::SliderFloat2("Center", &param_->kCenter.x, 0.0f, 1.0f);
+				ImGui::SliderFloat("BlurWidth", &param_->kBlurWidth, 0.0f, 1.0f);
+				ImGui::SliderInt("Sample", &param_->kNumSamples, 1, 50);
+				ImGui::TreePop();
+			}
 #endif // _DEBUG
-}
+		}
 
-void RadialBlurEffect::Apply(RenderTexture* input)
-{
-    // CopyPassを使って描画
-    copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
-}
+		void RadialBlurEffect::Apply(RenderTexture* input)
+		{
+			// CopyPassを使って描画
+			copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
+		}
 
-} // namespace OffScreen
+	} // namespace OffScreen
 } // namespace TYEngine

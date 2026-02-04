@@ -6,46 +6,49 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-namespace TYEngine {
-namespace OffScreen {
-
-using namespace Core; // For DirectXBasis
-
-void VignetteEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+namespace TYEngine
 {
-    dx_ = dx;
-    // シェーダ（CopyImage.VSとVignette.PS）を使う
-    copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Vignette.PS.hlsl");
-    // パラメータバッファ確保
-    param_ = copyPass_.AddExtraConstantBuffer<VignetteParam>(4);
-}
+	namespace OffScreen
+	{
 
-void VignetteEffect::Update()
-{
+		using namespace Core;
+		using namespace Graphics;
+
+		void VignetteEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+		{
+			dx_ = dx;
+			// シェーダ（CopyImage.VSとVignette.PS）を使う
+			copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Vignette.PS.hlsl");
+			// パラメータバッファ確保
+			param_ = copyPass_.AddExtraConstantBuffer<VignetteParam>(4);
+		}
+
+		void VignetteEffect::Update()
+		{
 #ifdef _DEBUG
-    ImGui::Begin("Vignette");
-    ImGuiUpdate();
-    ImGui::End();
+			ImGui::Begin("Vignette");
+			ImGuiUpdate();
+			ImGui::End();
 #endif // _DEBUG
-}
+		}
 
-void VignetteEffect::ImGuiUpdate()
-{
+		void VignetteEffect::ImGuiUpdate()
+		{
 #ifdef _DEBUG
-    if (ImGui::TreeNode("Vignette")) 
-    {
-        ImGui::SliderFloat("intensity", &param_->intensity, 2.0f, 30.0f);
-        ImGui::SliderFloat("power", &param_->power, 0.0f, 3.0f);
-        ImGui::ColorEdit3("color", &param_->vignetteColor.x);
-        ImGui::TreePop();
-    }
+			if (ImGui::TreeNode("Vignette"))
+			{
+				ImGui::SliderFloat("intensity", &param_->intensity, 2.0f, 30.0f);
+				ImGui::SliderFloat("power", &param_->power, 0.0f, 3.0f);
+				ImGui::ColorEdit3("color", &param_->vignetteColor.x);
+				ImGui::TreePop();
+			}
 #endif // _DEBUG
-}
+		}
 
-void VignetteEffect::Apply(RenderTexture* input)
-{
-    copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
-}
+		void VignetteEffect::Apply(RenderTexture* input)
+		{
+			copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
+		}
 
-} // namespace OffScreen
+	} // namespace OffScreen
 } // namespace TYEngine

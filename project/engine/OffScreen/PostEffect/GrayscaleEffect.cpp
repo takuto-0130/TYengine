@@ -6,46 +6,49 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-namespace TYEngine {
-namespace OffScreen {
-
-using namespace Core; // For DirectXBasis
-
-void GrayscaleEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+namespace TYEngine
 {
-    dx_ = dx;
-    // シェーダ読み込み
-    copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Grayscale.PS.hlsl");
-    // 定数バッファ確保
-    param_ = copyPass_.AddExtraConstantBuffer<GrayscaleParam>(4);
-}
+	namespace OffScreen
+	{
 
-void GrayscaleEffect::Update()
-{
+		using namespace Core;
+		using namespace Graphics;
+
+		void GrayscaleEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+		{
+			dx_ = dx;
+			// シェーダ読み込み
+			copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/Grayscale.PS.hlsl");
+			// 定数バッファ確保
+			param_ = copyPass_.AddExtraConstantBuffer<GrayscaleParam>(4);
+		}
+
+		void GrayscaleEffect::Update()
+		{
 #ifdef _DEBUG
-    ImGui::Begin("Grayscale");
-    ImGuiUpdate();
-    ImGui::End();
+			ImGui::Begin("Grayscale");
+			ImGuiUpdate();
+			ImGui::End();
 #endif // _DEBUG
-}
+		}
 
-void GrayscaleEffect::ImGuiUpdate()
-{
+		void GrayscaleEffect::ImGuiUpdate()
+		{
 #ifdef _DEBUG
-    if (ImGui::TreeNode("Grayscale"))
-    {
-        ImGui::SliderFloat("Strength", &param_->strength, 0.0f, 1.0f);
-        ImGui::ColorEdit3("tintColor", &param_->tintColor.x);
-        ImGui::TreePop();
-    }
+			if (ImGui::TreeNode("Grayscale"))
+			{
+				ImGui::SliderFloat("Strength", &param_->strength, 0.0f, 1.0f);
+				ImGui::ColorEdit3("tintColor", &param_->tintColor.x);
+				ImGui::TreePop();
+			}
 #endif // _DEBUG
-}
+		}
 
-void GrayscaleEffect::Apply(RenderTexture* input)
-{
-    // CopyPassを使って描画
-    copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
-}
+		void GrayscaleEffect::Apply(RenderTexture* input)
+		{
+			// CopyPassを使って描画
+			copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
+		}
 
-} // namespace OffScreen
+	} // namespace OffScreen
 } // namespace TYEngine

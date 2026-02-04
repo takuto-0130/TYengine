@@ -7,44 +7,47 @@
 #endif // _DEBUG
 
 
-namespace TYEngine {
-namespace OffScreen {
-
-using namespace Core; // For DirectXBasis
-
-void BoxFilterEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+namespace TYEngine
 {
-    dx_ = dx;
-    // シェーダ（CopyImage.VSとBoxFilter.PS）を使う
-    copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/BoxFilter.PS.hlsl");
-    // パラメータバッファ確保
-    param_ = copyPass_.AddExtraConstantBuffer<BoxFilterParam>(4);
-}
+	namespace OffScreen
+	{
 
-void BoxFilterEffect::Update()
-{
+		using namespace Core;
+		using namespace Graphics;
+
+		void BoxFilterEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
+		{
+			dx_ = dx;
+			// シェーダ（CopyImage.VSとBoxFilter.PS）を使う
+			copyPass_.Initialize(dx_, srv, L"Resources/Shaders/CopyImage.VS.hlsl", L"Resources/Shaders/BoxFilter.PS.hlsl");
+			// パラメータバッファ確保
+			param_ = copyPass_.AddExtraConstantBuffer<BoxFilterParam>(4);
+		}
+
+		void BoxFilterEffect::Update()
+		{
 #ifdef _DEBUG
-    ImGui::Begin("BoxFilter");
-    ImGuiUpdate();
-    ImGui::End();
+			ImGui::Begin("BoxFilter");
+			ImGuiUpdate();
+			ImGui::End();
 #endif // _DEBUG
-}
+		}
 
-void BoxFilterEffect::ImGuiUpdate()
-{
+		void BoxFilterEffect::ImGuiUpdate()
+		{
 #ifdef _DEBUG
-    if (ImGui::TreeNode("BoxFilter"))
-    {
-        ImGui::SliderInt("kernelSize", &param_->kernelSize, 1, 15);
-        ImGui::TreePop();
-    }
+			if (ImGui::TreeNode("BoxFilter"))
+			{
+				ImGui::SliderInt("kernelSize", &param_->kernelSize, 1, 15);
+				ImGui::TreePop();
+			}
 #endif // _DEBUG
-}
+		}
 
-void BoxFilterEffect::Apply(RenderTexture* input)
-{
-    copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
-}
+		void BoxFilterEffect::Apply(RenderTexture* input)
+		{
+			copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
+		}
 
-} // namespace OffScreen
+	} // namespace OffScreen
 } // namespace TYEngine

@@ -54,9 +54,9 @@ private: // 構造体
     /// </summary>
     struct VertexData
     {
-        Vector4 position;  ///< 頂点座標。
-        Vector2 texCoord;  ///< テクスチャ座標。
-        Vector3 normal;    ///< 法線ベクトル。
+        TYEngine::Utility::Vector4 position;  ///< 頂点座標。
+        TYEngine::Utility::Vector2 texCoord;  ///< テクスチャ座標。
+        TYEngine::Utility::Vector3 normal;    ///< 法線ベクトル。
     };
 
     /// <summary>
@@ -91,7 +91,7 @@ private: // 構造体
     /// </summary>
     struct Node
     {
-        Matrix4x4 localMatrix;          ///< ローカル変換行列。
+        TYEngine::Utility::Matrix4x4 localMatrix;          ///< ローカル変換行列。
         std::string name;               ///< ノード名。
         std::vector<Node> children;     ///< 子ノード群。
     };

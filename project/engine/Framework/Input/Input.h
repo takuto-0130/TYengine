@@ -21,9 +21,9 @@ namespace Framework {
 /// DirectInput8 および XInput を使用して入力状態を取得する。
 /// </summary>
 class Input :
-	public Utility::SingletonObject<Input>
+	public TYEngine::Utility::SingletonObject<Input>
 {
-	friend class Utility::SingletonObject<Input>;
+	friend class TYEngine::Utility::SingletonObject<Input>;
 	friend struct std::default_delete<Input>;
 
 private:
@@ -95,7 +95,7 @@ public: // メンバ関数
 	/// マウスの移動量を取得する。
 	/// </summary>
 	/// <returns>X, Y, Z（ホイール）の移動量。</returns>
-	Vector3 GetMouseMove();
+	TYEngine::Utility::Vector3 GetMouseMove();
 
 	/// <summary>
 	/// マウスホイールのスクロール量を取得する。
@@ -107,19 +107,19 @@ public: // メンバ関数
 	/// クライアント領域基準のマウス座標を取得する。
 	/// </summary>
 	/// <returns>ピクセル単位のマウス座標。</returns>
-	Vector2 GetMousePosition();
+	TYEngine::Utility::Vector2 GetMousePosition();
 
 	/// <summary>
 	/// クライアント領域内の正規化されたマウス位置を取得する。
 	/// </summary>
 	/// <returns>0.0～1.0 の範囲の相対座標。</returns>
-	Vector2 GetMousePositionRelative() const;
+	TYEngine::Utility::Vector2 GetMousePositionRelative() const;
 
 	/// <summary>
 	/// クライアント領域のサイズを取得する。
 	/// </summary>
 	/// <returns>幅と高さ。</returns>
-	Vector2 GetClientSize() const;
+	TYEngine::Utility::Vector2 GetClientSize() const;
 
 	/// <summary>
 	/// 現在のジョイスティック状態を取得する（DirectInput/XInput対応）。
@@ -239,7 +239,7 @@ private: // メンバ変数
 	HWND clientHwnd_;
 	
 	/// <summary>現在のマウスカーソル位置（クライアント座標）。</summary>
-	Vector2 mousePosition_ = {};
+	TYEngine::Utility::Vector2 mousePosition_ = {};
 };
 
 } // namespace Framework

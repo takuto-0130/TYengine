@@ -25,6 +25,7 @@ public:
     // あいまいさを解決するため、IUnknown のメソッドを明示的に委譲する
     STDMETHOD(QueryInterface)(REFIID riid, _COM_Outptr_ void** ppvObject) override
     {
+        if (!ppvObject) return E_POINTER;
         return CXAPOParametersBase::QueryInterface(riid, ppvObject);
     }
     STDMETHOD_(ULONG, AddRef)() override

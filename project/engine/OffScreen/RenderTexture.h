@@ -37,7 +37,7 @@ public:
     /// <param name="clearColor">クリアカラー</param>
     void Initialize(TYEngine::Core::DirectXBasis* dxBasis, TYEngine::Graphics::SrvManager* srvManager,
         uint32_t width, uint32_t height,
-        DXGI_FORMAT format, const Vector4& clearColor);
+        DXGI_FORMAT format, const TYEngine::Utility::Vector4& clearColor);
 
     /// <summary>
     /// このレンダーターゲットへの描画を開始する  
@@ -111,7 +111,7 @@ private:
     DXGI_FORMAT format_ = DXGI_FORMAT_R8G8B8A8_UNORM;
 
     /// <summary>クリアカラー</summary>
-    Vector4 clearColor_ = { 0, 0, 0, 1 };
+    TYEngine::Utility::Vector4 clearColor_ = { 0, 0, 0, 1 };
 
     /// <summary>テクスチャの幅</summary>
     uint32_t width_ = 0;

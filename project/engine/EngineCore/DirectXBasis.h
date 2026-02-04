@@ -23,9 +23,9 @@ namespace TYEngine
 		/// シェーダコンパイル・テクスチャロードなどの共通ユーティリティを提供する。
 		/// </summary>
 		class DirectXBasis :
-			public SingletonObject<DirectXBasis>
+			public TYEngine::Utility::SingletonObject<DirectXBasis>
 		{
-			friend class SingletonObject<DirectXBasis>;
+			friend class TYEngine::Utility::SingletonObject<DirectXBasis>;
 			friend struct std::default_delete<DirectXBasis>;
 
 		private:

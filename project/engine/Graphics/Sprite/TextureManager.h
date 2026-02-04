@@ -21,9 +21,9 @@ namespace Graphics {
 /// ファイルパスをキーにテクスチャをロード・キャッシュし、SRV を自動生成して扱いやすくする。
 /// </summary>
 class TextureManager :
-    public SingletonObject<TextureManager>
+    public TYEngine::Utility::SingletonObject<TextureManager>
 {
-    friend class SingletonObject<TextureManager>;
+    friend class TYEngine::Utility::SingletonObject<TextureManager>;
     friend struct std::default_delete<TextureManager>;
 
 private:

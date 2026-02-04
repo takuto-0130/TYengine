@@ -14,9 +14,9 @@ namespace Framework {
 /// シーン遷移時のメモリ管理や初期化を自動で行うシングルトンクラス。
 /// </summary>
 class SceneManager :
-    public Utility::SingletonObject<SceneManager>
+    public TYEngine::Utility::SingletonObject<SceneManager>
 {
-    friend class Utility::SingletonObject<SceneManager>;
+    friend class TYEngine::Utility::SingletonObject<SceneManager>;
     friend struct std::default_delete<SceneManager>;
 
 private:

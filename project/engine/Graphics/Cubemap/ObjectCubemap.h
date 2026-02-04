@@ -85,7 +85,7 @@ private:
     /// </summary>
     struct CameraForGPU
     {
-        Vector3 worldPosition;
+        TYEngine::Utility::Vector3 worldPosition;
     };
     Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_; ///< カメラ CB リソース。
     CameraForGPU* cameraData_ = nullptr;                    ///< カメラ CB マップ先。
@@ -99,7 +99,7 @@ private:
     /// </summary>
     struct CubeMaterial
     {
-        Vector4 color; ///< 乗算カラー（RGBA）。
+        TYEngine::Utility::Vector4 color; ///< 乗算カラー（RGBA）。
     };
     Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_; ///< マテリアル CB リソース。
     CubeMaterial* materialData_ = nullptr;                    ///< マテリアル CB マップ先。
@@ -110,7 +110,7 @@ private:
     /// <summary>キューブの頂点構造体（位置のみ）。</summary>
     struct CubeVertex
     {
-        Vector4 position; ///< 頂点座標（x, y, z, w）。
+        TYEngine::Utility::Vector4 position; ///< 頂点座標（x, y, z, w）。
     };
     Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_; ///< 頂点バッファ。
     CubeVertex* vertexData_ = nullptr;                      ///< 頂点データのマップ先。
@@ -128,9 +128,9 @@ private:
     /// </summary>
     struct CubeTransformationMatrix
     {
-        Matrix4x4 WVP;
-        Matrix4x4 World;
-        Matrix4x4 WorldInverseTranspose;
+        TYEngine::Utility::Matrix4x4 WVP;
+        TYEngine::Utility::Matrix4x4 World;
+        TYEngine::Utility::Matrix4x4 WorldInverseTranspose;
     };
     Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_; ///< 行列 CB リソース。
     CubeTransformationMatrix* transformationMatrixData_ = nullptr;         ///< 行列 CB マップ先。

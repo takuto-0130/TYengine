@@ -15,9 +15,9 @@ namespace Debugger {
 /// 初期化、フレーム開始・終了処理、描画実行を担当する。
 /// </summary>
 class ImGuiManager :
-	public Utility::SingletonObject<ImGuiManager>
+	public TYEngine::Utility::SingletonObject<ImGuiManager>
 {
-	friend class Utility::SingletonObject<ImGuiManager>;
+	friend class TYEngine::Utility::SingletonObject<ImGuiManager>;
 	friend struct std::default_delete<ImGuiManager>;
 
 private:

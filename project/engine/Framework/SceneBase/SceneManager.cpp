@@ -3,54 +3,57 @@
 #include "Timer.h"
 #include "../../../application/Scene/Transition/TransitionManager.h"
 
-namespace TYEngine {
-namespace Framework {
-
-using namespace Utility;
-
-SceneManager::~SceneManager()
+namespace TYEngine
 {
-}
+	namespace Framework
+	{
 
-void SceneManager::ChangeScene(const std::string& sceneName)
-{
-	assert(sceneFactory_);
-	// 次のシーンを生成して予約
-	nextScene_ = sceneFactory_->CreateScene(sceneName);
-}
+		using namespace Core;
+		using namespace Utility;
 
-void SceneManager::Update()
-{
-	// シーン切り替え機構
-	// 次シーンの予約があるなら
-	if (nextScene_) {
-		// シーン切り替え
-		scene_ = std::move(nextScene_);
+		SceneManager::~SceneManager()
+		{}
 
-		// シーンマネージャーをセット
-		scene_->SetSceneManager(this);
+		void SceneManager::ChangeScene(const std::string& sceneName)
+		{
+			assert(sceneFactory_);
+			// 次のシーンを生成して予約
+			nextScene_ = sceneFactory_->CreateScene(sceneName);
+		}
 
-		// シーンの初期化
-		scene_->Init();
-	}
+		void SceneManager::Update()
+		{
+			// シーン切り替え機構
+			// 次シーンの予約があるなら
+			if (nextScene_)
+			{
+				// シーン切り替え
+				scene_ = std::move(nextScene_);
 
-	// 実行中シーンを更新する
-	scene_->Update();
+				// シーンマネージャーをセット
+				scene_->SetSceneManager(this);
 
-	// 画面遷移は固定フレームで進行
-	TransitionManager::GetInstance()->Update(1.0f / EngineConfig::fps_);
-}
+				// シーンの初期化
+				scene_->Init();
+			}
 
-void SceneManager::Draw()
-{
-	if (scene_) scene_->Draw();
-}
+			// 実行中シーンを更新する
+			scene_->Update();
 
-void SceneManager::UIDraw()
-{
-	if (scene_) scene_->UIDraw();
-	TransitionManager::GetInstance()->Draw();
-}
+			// 画面遷移は固定フレームで進行
+			TransitionManager::GetInstance()->Update(1.0f / EngineConfig::fps_);
+		}
 
-} // namespace Framework
+		void SceneManager::Draw()
+		{
+			if (scene_) scene_->Draw();
+		}
+
+		void SceneManager::UIDraw()
+		{
+			if (scene_) scene_->UIDraw();
+			TransitionManager::GetInstance()->Draw();
+		}
+
+	} // namespace Framework
 } // namespace TYEngine

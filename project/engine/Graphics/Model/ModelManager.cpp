@@ -1,34 +1,36 @@
 #include "ModelManager.h"
 
-namespace TYEngine {
-namespace Graphics {
-
-using namespace Core; // For DirectXBasis
-
-void ModelManager::Initialize(DirectXBasis* dxManager, SrvManager* srvManager)
+namespace TYEngine
 {
-	modelLoader_ = std::make_unique<ModelLoader>();
-	modelLoader_->Initialize(dxManager, srvManager);
-}
+	namespace Graphics
+	{
 
-void ModelManager::LoadModel(const std::string& directoryPath, const std::string& fileName)
-{
-	if (models_.contains(fileName)) return;// 読み込み済みなら早期 return
+		using namespace Core;
 
-	// 新規モデル生成と読み込み
-	std::unique_ptr<Model> model = std::make_unique<Model>();
-	model->Initialize(modelLoader_.get(), directoryPath, fileName);
+		void ModelManager::Initialize(DirectXBasis* dxManager, SrvManager* srvManager)
+		{
+			modelLoader_ = std::make_unique<ModelLoader>();
+			modelLoader_->Initialize(dxManager, srvManager);
+		}
 
-	models_.insert(std::make_pair(fileName, std::move(model)));
-}
+		void ModelManager::LoadModel(const std::string& directoryPath, const std::string& fileName)
+		{
+			if (models_.contains(fileName)) return;// 読み込み済みなら早期 return
 
-Model* ModelManager::FindModel(const std::string& filePath)
-{
-	if (models_.contains(filePath)) return models_.at(filePath).get();// 読み込みモデルを戻り値として return
+			// 新規モデル生成と読み込み
+			std::unique_ptr<Model> model = std::make_unique<Model>();
+			model->Initialize(modelLoader_.get(), directoryPath, fileName);
 
-	// ファイル名が一致しなければ null
-	return nullptr;
-}
+			models_.insert(std::make_pair(fileName, std::move(model)));
+		}
 
-} // namespace Graphics
+		Model* ModelManager::FindModel(const std::string& filePath)
+		{
+			if (models_.contains(filePath)) return models_.at(filePath).get();// 読み込みモデルを戻り値として return
+
+			// ファイル名が一致しなければ null
+			return nullptr;
+		}
+
+	} // namespace Graphics
 } // namespace TYEngine

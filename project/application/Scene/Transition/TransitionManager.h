@@ -9,7 +9,7 @@
 /// キューによる連続再生、シーン切り替え時のフェードイン/アウトなどを管理する。
 /// </summary>
 class TransitionManager :
-	public SingletonObject<TransitionManager>
+	public TYEngine::Utility::SingletonObject<TransitionManager>
 {
 	friend class SingletonObject<TransitionManager>;
 	friend struct std::default_delete<TransitionManager>;

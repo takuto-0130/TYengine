@@ -3,279 +3,282 @@
 #include <stdexcept>
 #include <assert.h>
 
-namespace TYEngine {
-namespace Framework {
-
-using namespace Core; // For WindowsApp::kClientWidth ?? No, WindowsApp class.
-
-constexpr float kBaseWidth = WindowsApp::kClientWidth;
-constexpr float kBaseHeight = WindowsApp::kClientHeight;
-
-// 初期化処理
-void Input::Initialize(const HWND& hwnd) 
+namespace TYEngine
 {
-    HRESULT hr;
-    clientHwnd_ = hwnd;
+	namespace Framework
+	{
 
-    // DirectInput8 インスタンス作成
-    hr = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dInput_, nullptr);
-    assert(SUCCEEDED(hr));
+		using namespace Core;
+		using namespace Utility;
 
-    // キーボードデバイス作成
-    hr = dInput_->CreateDevice(GUID_SysKeyboard, &devKeyboard_, nullptr);
-    assert(SUCCEEDED(hr));
+		constexpr float kBaseWidth = WindowsApp::kClientWidth;
+		constexpr float kBaseHeight = WindowsApp::kClientHeight;
 
-    // マウスデバイス作成
-    hr = dInput_->CreateDevice(GUID_SysMouse, &devMouse_, nullptr);
-    assert(SUCCEEDED(hr));
+		// 初期化処理
+		void Input::Initialize(const HWND& hwnd)
+		{
+			HRESULT hr;
+			clientHwnd_ = hwnd;
 
-    // キーボードデータフォーマットと協調レベル設定
-    devKeyboard_->SetDataFormat(&c_dfDIKeyboard);
-    devKeyboard_->SetCooperativeLevel(clientHwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-    devKeyboard_->Acquire();
+			// DirectInput8 インスタンス作成
+			hr = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dInput_, nullptr);
+			assert(SUCCEEDED(hr));
 
-    // マウスデータフォーマットと協調レベル設定
-    devMouse_->SetDataFormat(&c_dfDIMouse2);
-    devMouse_->SetCooperativeLevel(clientHwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-    devMouse_->Acquire();
+			// キーボードデバイス作成
+			hr = dInput_->CreateDevice(GUID_SysKeyboard, &devKeyboard_, nullptr);
+			assert(SUCCEEDED(hr));
 
-    // ジョイスティック（パッド）の列挙
-    dInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, EnumJoysticksCallback, this, DIEDFL_ATTACHEDONLY);
-}
+			// マウスデバイス作成
+			hr = dInput_->CreateDevice(GUID_SysMouse, &devMouse_, nullptr);
+			assert(SUCCEEDED(hr));
 
-void Input::Finalize()
-{
-    // デバイスの取得解除
-    if (devKeyboard_)
-    {
-        devKeyboard_->Unacquire();
-    }
-    if (devMouse_)
-    {
-        devMouse_->Unacquire();
-    }
-    for (auto& joystick : devJoysticks_)
-    {
-        if (joystick.device_)
-        {
-            joystick.device_->Unacquire();
-        }
-    }
+			// キーボードデータフォーマットと協調レベル設定
+			devKeyboard_->SetDataFormat(&c_dfDIKeyboard);
+			devKeyboard_->SetCooperativeLevel(clientHwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+			devKeyboard_->Acquire();
 
-    // COM オブジェクト解放（ここで DirectInput のリソースを手放す）
-    devJoysticks_.clear();
-    devMouse_.Reset();
-    devKeyboard_.Reset();
-    dInput_.Reset();
-}
+			// マウスデータフォーマットと協調レベル設定
+			devMouse_->SetDataFormat(&c_dfDIMouse2);
+			devMouse_->SetCooperativeLevel(clientHwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+			devMouse_->Acquire();
 
-void Input::Update()
-{
-    if (!devKeyboard_ || !devMouse_)
-    {
-        return; // 未初期化 / 取得失敗時の安全対策
-    }
+			// ジョイスティック（パッド）の列挙
+			dInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, EnumJoysticksCallback, this, DIEDFL_ATTACHEDONLY);
+		}
 
-    // 前フレーム保存
-    keyPre_ = key_;
-    mousePre_ = mouse_;
+		void Input::Finalize()
+		{
+			// デバイスの取得解除
+			if (devKeyboard_)
+			{
+				devKeyboard_->Unacquire();
+			}
+			if (devMouse_)
+			{
+				devMouse_->Unacquire();
+			}
+			for (auto& joystick : devJoysticks_)
+			{
+				if (joystick.device_)
+				{
+					joystick.device_->Unacquire();
+				}
+			}
 
-    // キーボード状態取得
-    HRESULT hr = devKeyboard_->GetDeviceState(sizeof(key_), key_.data());
-    if (FAILED(hr))
-    {
-        devKeyboard_->Acquire();  // 取得失敗時は再Acquire
-        devKeyboard_->GetDeviceState(sizeof(key_), key_.data());
-    }
+			// COM オブジェクト解放（ここで DirectInput のリソースを手放す）
+			devJoysticks_.clear();
+			devMouse_.Reset();
+			devKeyboard_.Reset();
+			dInput_.Reset();
+		}
 
-    // マウス
-    hr = devMouse_->GetDeviceState(sizeof(DIMOUSESTATE2), &mouse_);
-    if (FAILED(hr))
-    {
-        devMouse_->Acquire();     // 再取得
-        devMouse_->GetDeviceState(sizeof(DIMOUSESTATE2), &mouse_);
-    }
+		void Input::Update()
+		{
+			if (!devKeyboard_ || !devMouse_)
+			{
+				return; // 未初期化 / 取得失敗時の安全対策
+			}
 
-    // ジョイスティック
-    for (auto& joystick : devJoysticks_)
-    {
-        joystick.statePre_ = joystick.state_;
+			// 前フレーム保存
+			keyPre_ = key_;
+			mousePre_ = mouse_;
 
-        if (joystick.type_ == PadType::XInput)
-        {
-            XInputGetState(0, &joystick.state_.xInput_);
-        }
-        else if (joystick.device_)
-        {
-            joystick.device_->Poll();
-            joystick.device_->GetDeviceState(sizeof(DIJOYSTATE2), &joystick.state_.directInput_);
-        }
-    }
-}
+			// キーボード状態取得
+			HRESULT hr = devKeyboard_->GetDeviceState(sizeof(key_), key_.data());
+			if (FAILED(hr))
+			{
+				devKeyboard_->Acquire();  // 取得失敗時は再Acquire
+				devKeyboard_->GetDeviceState(sizeof(key_), key_.data());
+			}
+
+			// マウス
+			hr = devMouse_->GetDeviceState(sizeof(DIMOUSESTATE2), &mouse_);
+			if (FAILED(hr))
+			{
+				devMouse_->Acquire();     // 再取得
+				devMouse_->GetDeviceState(sizeof(DIMOUSESTATE2), &mouse_);
+			}
+
+			// ジョイスティック
+			for (auto& joystick : devJoysticks_)
+			{
+				joystick.statePre_ = joystick.state_;
+
+				if (joystick.type_ == PadType::XInput)
+				{
+					XInputGetState(0, &joystick.state_.xInput_);
+				}
+				else if (joystick.device_)
+				{
+					joystick.device_->Poll();
+					joystick.device_->GetDeviceState(sizeof(DIJOYSTATE2), &joystick.state_.directInput_);
+				}
+			}
+		}
 
 
-bool Input::PushKey(BYTE keyNumber) const 
-{
-    return key_[keyNumber] & 0x80;
-}
+		bool Input::PushKey(BYTE keyNumber) const
+		{
+			return key_[keyNumber] & 0x80;
+		}
 
-bool Input::TriggerKey(BYTE keyNumber) const 
-{
-    return (key_[keyNumber] & 0x80) && !(keyPre_[keyNumber] & 0x80);
-}
+		bool Input::TriggerKey(BYTE keyNumber) const
+		{
+			return (key_[keyNumber] & 0x80) && !(keyPre_[keyNumber] & 0x80);
+		}
 
-const DIMOUSESTATE2& Input::GetAllMouse() const 
-{
-    return mouse_;
-}
+		const DIMOUSESTATE2& Input::GetAllMouse() const
+		{
+			return mouse_;
+		}
 
-bool Input::IsPressMouse(int32_t buttonNumber) const
-{
-    return mouse_.rgbButtons[buttonNumber] & 0x80;
-}
+		bool Input::IsPressMouse(int32_t buttonNumber) const
+		{
+			return mouse_.rgbButtons[buttonNumber] & 0x80;
+		}
 
-bool Input::IsTriggerMouse(int32_t buttonNumber) const
-{
-    return (mouse_.rgbButtons[buttonNumber] & 0x80) && !(mousePre_.rgbButtons[buttonNumber] & 0x80);
-}
+		bool Input::IsTriggerMouse(int32_t buttonNumber) const
+		{
+			return (mouse_.rgbButtons[buttonNumber] & 0x80) && !(mousePre_.rgbButtons[buttonNumber] & 0x80);
+		}
 
-Vector3 Input::GetMouseMove()
-{
-    Vector3 move = { static_cast<float>(mouse_.lX), static_cast<float>(mouse_.lY), static_cast<float>(mouse_.lZ) };
-    return move;
-}
+		Vector3 Input::GetMouseMove()
+		{
+			Vector3 move = { static_cast<float>(mouse_.lX), static_cast<float>(mouse_.lY), static_cast<float>(mouse_.lZ) };
+			return move;
+		}
 
-int32_t Input::GetWheel() const 
-{
-    return mouse_.lZ;
-}
+		int32_t Input::GetWheel() const
+		{
+			return mouse_.lZ;
+		}
 
-Vector2 Input::GetMousePosition() 
-{
-    POINT point;
-    if (GetCursorPos(&point)) 
-    {
-        if (clientHwnd_) 
-        {
-            ScreenToClient(clientHwnd_, &point);
-        }
-    }
+		Vector2 Input::GetMousePosition()
+		{
+			POINT point;
+			if (GetCursorPos(&point))
+			{
+				if (clientHwnd_)
+				{
+					ScreenToClient(clientHwnd_, &point);
+				}
+			}
 
-    RECT rect{};
-    if (clientHwnd_) 
-    {
-        GetClientRect(clientHwnd_, &rect);
-    }
-    float width = static_cast<float>(rect.right - rect.left);
-    float height = static_cast<float>(rect.bottom - rect.top);
+			RECT rect{};
+			if (clientHwnd_)
+			{
+				GetClientRect(clientHwnd_, &rect);
+			}
+			float width = static_cast<float>(rect.right - rect.left);
+			float height = static_cast<float>(rect.bottom - rect.top);
 
-    if (width <= 0.0f || height <= 0.0f)
-    {
-        return mousePosition_;
-    }
+			if (width <= 0.0f || height <= 0.0f)
+			{
+				return mousePosition_;
+			}
 
-    mousePosition_.x = (point.x / width) * kBaseWidth;
-    mousePosition_.y = (point.y / height) * kBaseHeight;
+			mousePosition_.x = (point.x / width) * kBaseWidth;
+			mousePosition_.y = (point.y / height) * kBaseHeight;
 
-    return mousePosition_;
-}
+			return mousePosition_;
+		}
 
-Vector2 Input::GetMousePositionRelative() const
-{
-    POINT point;
-    if (GetCursorPos(&point)) 
-    {
-        if (clientHwnd_) 
-        {
-            ScreenToClient(clientHwnd_, &point);
-        }
-    }
+		Vector2 Input::GetMousePositionRelative() const
+		{
+			POINT point;
+			if (GetCursorPos(&point))
+			{
+				if (clientHwnd_)
+				{
+					ScreenToClient(clientHwnd_, &point);
+				}
+			}
 
-    RECT rect{};
-    GetClientRect(clientHwnd_, &rect);
-    float width = static_cast<float>(rect.right - rect.left);
-    float height = static_cast<float>(rect.bottom - rect.top);
+			RECT rect{};
+			GetClientRect(clientHwnd_, &rect);
+			float width = static_cast<float>(rect.right - rect.left);
+			float height = static_cast<float>(rect.bottom - rect.top);
 
-    if (width <= 0.0f || height <= 0.0f)
-    {
-        return mousePosition_;
-    }
+			if (width <= 0.0f || height <= 0.0f)
+			{
+				return mousePosition_;
+			}
 
-    // 0～1 の相対座標を返す
-    return
-    {
-        point.x / width,
-        point.y / height
-    };
-}
+			// 0～1 の相対座標を返す
+			return
+			{
+				point.x / width,
+				point.y / height
+			};
+		}
 
-Vector2 Input::GetClientSize() const
-{
-    RECT rect{};
-    GetClientRect(clientHwnd_, &rect);
-    float width = static_cast<float>(rect.right - rect.left);
-    float height = static_cast<float>(rect.bottom - rect.top);
-    return { width, height };
-}
+		Vector2 Input::GetClientSize() const
+		{
+			RECT rect{};
+			GetClientRect(clientHwnd_, &rect);
+			float width = static_cast<float>(rect.right - rect.left);
+			float height = static_cast<float>(rect.bottom - rect.top);
+			return { width, height };
+		}
 
-bool Input::GetJoystickState(int32_t stickNo, DIJOYSTATE2& out) const 
-{
-    if (stickNo >= devJoysticks_.size()) return false;
-    out = devJoysticks_[stickNo].state_.directInput_;
-    return true;
-}
+		bool Input::GetJoystickState(int32_t stickNo, DIJOYSTATE2& out) const
+		{
+			if (stickNo >= devJoysticks_.size()) return false;
+			out = devJoysticks_[stickNo].state_.directInput_;
+			return true;
+		}
 
-bool Input::GetJoystickStatePrevious(int32_t stickNo, DIJOYSTATE2& out) const
-{
-    if (stickNo >= devJoysticks_.size()) return false;
-    out = devJoysticks_[stickNo].statePre_.directInput_;
-    return true;
-}
+		bool Input::GetJoystickStatePrevious(int32_t stickNo, DIJOYSTATE2& out) const
+		{
+			if (stickNo >= devJoysticks_.size()) return false;
+			out = devJoysticks_[stickNo].statePre_.directInput_;
+			return true;
+		}
 
-bool Input::GetJoystickState(int32_t stickNo, XINPUT_STATE& out) const 
-{
-    if (stickNo >= devJoysticks_.size()) return false;
-    out = devJoysticks_[stickNo].state_.xInput_;
-    return true;
-}
+		bool Input::GetJoystickState(int32_t stickNo, XINPUT_STATE& out) const
+		{
+			if (stickNo >= devJoysticks_.size()) return false;
+			out = devJoysticks_[stickNo].state_.xInput_;
+			return true;
+		}
 
-bool Input::GetJoystickStatePrevious(int32_t stickNo, XINPUT_STATE& out) const
-{
-    if (stickNo >= devJoysticks_.size()) return false;
-    out = devJoysticks_[stickNo].statePre_.xInput_;
-    return true;
-}
+		bool Input::GetJoystickStatePrevious(int32_t stickNo, XINPUT_STATE& out) const
+		{
+			if (stickNo >= devJoysticks_.size()) return false;
+			out = devJoysticks_[stickNo].statePre_.xInput_;
+			return true;
+		}
 
-void Input::SetJoystickDeadZone(int32_t stickNo, int32_t deadZoneL, int32_t deadZoneR) 
-{
-    if (stickNo >= devJoysticks_.size()) return;
-    devJoysticks_[stickNo].deadZoneL_ = deadZoneL;
-    devJoysticks_[stickNo].deadZoneR_ = deadZoneR;
-}
+		void Input::SetJoystickDeadZone(int32_t stickNo, int32_t deadZoneL, int32_t deadZoneR)
+		{
+			if (stickNo >= devJoysticks_.size()) return;
+			devJoysticks_[stickNo].deadZoneL_ = deadZoneL;
+			devJoysticks_[stickNo].deadZoneR_ = deadZoneR;
+		}
 
-// 接続されているジョイスティックの数を取得
-size_t Input::GetNumberOfJoysticks()
-{
-    return devJoysticks_.size();
-}
+		// 接続されているジョイスティックの数を取得
+		size_t Input::GetNumberOfJoysticks()
+		{
+			return devJoysticks_.size();
+		}
 
-BOOL CALLBACK Input::EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) noexcept 
-{
-    auto input = static_cast<Input*>(pContext);
-    Microsoft::WRL::ComPtr<IDirectInputDevice8> joystick;
+		BOOL CALLBACK Input::EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) noexcept
+		{
+			auto input = static_cast<Input*>(pContext);
+			Microsoft::WRL::ComPtr<IDirectInputDevice8> joystick;
 
-    if (FAILED(input->dInput_->CreateDevice(pdidInstance->guidInstance, &joystick, nullptr))) 
-    {
-        return DIENUM_CONTINUE;
-    }
+			if (FAILED(input->dInput_->CreateDevice(pdidInstance->guidInstance, &joystick, nullptr)))
+			{
+				return DIENUM_CONTINUE;
+			}
 
-    Joystick newJoystick = {};
-    newJoystick.device_ = joystick;
-    newJoystick.type_ = PadType::DirectInput;
-    input->devJoysticks_.push_back(newJoystick);
+			Joystick newJoystick = {};
+			newJoystick.device_ = joystick;
+			newJoystick.type_ = PadType::DirectInput;
+			input->devJoysticks_.push_back(newJoystick);
 
-    return DIENUM_CONTINUE;
-}
+			return DIENUM_CONTINUE;
+		}
 
-} // namespace Framework
+	} // namespace Framework
 } // namespace TYEngine

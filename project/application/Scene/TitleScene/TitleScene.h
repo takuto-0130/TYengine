@@ -14,7 +14,9 @@
 /// タイトル画面シーン。
 /// ゲーム開始前の演出、操作説明、ゲーム本編への遷移を管理する。
 /// </summary>
-class TitleScene : public IScene {
+namespace jx = TYEngine::Utility;
+
+class TitleScene : public TYEngine::Framework::IScene {
 public:
 	~TitleScene();
 

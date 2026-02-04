@@ -9,6 +9,11 @@
 /// </summary>
 class ComboAndScoreHandler : public IEnemyEventListener {
 public:
+    /// <summary>
+    /// コンストラクタ。
+    /// </summary>
+    /// <param name="combo">コンボマネージャのポインタ。</param>
+    /// <param name="score">スコアマネージャのポインタ。</param>
     ComboAndScoreHandler(ComboManager* combo, ScoreManager* score)
         : combo_(combo), score_(score) {
     }
@@ -22,6 +27,8 @@ public:
     }
 
 private:
+    /// <summary>コンボマネージャへの参照。</summary>
     ComboManager* combo_;
+    /// <summary>スコアマネージャへの参照。</summary>
     ScoreManager* score_;
 };

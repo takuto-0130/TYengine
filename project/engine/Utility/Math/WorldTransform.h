@@ -94,9 +94,9 @@ public:
 private:
 	struct TransformationMatrix
 	{
-		Matrix4x4 WVP;
-		Matrix4x4 World;
-		Matrix4x4 WorldInverseTranspose;
+		Matrix4x4 WVP;                   ///< WVP行列
+		Matrix4x4 World;                 ///< ワールド行列
+		Matrix4x4 WorldInverseTranspose; ///< ワールド逆転置行列
 	};
 
 	// ローカルスケール

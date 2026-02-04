@@ -51,9 +51,12 @@ public:
 	/// </summary>
 	void Finalize();
 private:
+	/// <summary>Windowsアプリケーション基盤クラス。</summary>
 	WindowsApp* winApp_ = nullptr;
+	/// <summary>DirectX基盤クラス。</summary>
 	DirectXBasis* dxBasis_ = nullptr;
 
+	/// <summary>ImGui用SRVディスクリプタヒープ。</summary>
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
 };
 

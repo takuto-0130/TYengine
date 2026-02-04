@@ -86,10 +86,14 @@ public:
     void TriggerExit(const CollisionInfo& info) { if (onExit_) onExit_(info); }
 
 private:
+	/// <summary>コライダーのユニークID。</summary>
     ID id_;
+	/// <summary>オブジェクト種別ID（タグなど）。</summary>
     uint32_t typeID_;
+	/// <summary>衝突コールバック（開始、維持、終了）。</summary>
     CollisionCallback onEnter_, onStay_, onExit_;
 
+	/// <summary>ユニークIDを生成する。</summary>
     static ID GenerateID()
     {
         static ID nextID = 0;

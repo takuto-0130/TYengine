@@ -31,12 +31,16 @@ public:
     void Draw()override;
 
 private:
+	/// <summary>移動処理（直進）。</summary>
 	void Move();
+	/// <summary>進行方向に合わせた回転更新。</summary>
 	void RotationDirection();
 
 private:
+    /// <summary>弾用コライダー。</summary>
     std::unique_ptr<PBulletCollider> collider_;
 
+    /// <summary>固定タイムステップ（60FPS想定）。</summary>
 	float deltaTime_ = 1.0f / 60.0f;
 
 

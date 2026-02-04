@@ -30,6 +30,10 @@ private:
     GameAudio() = default;
     ~GameAudio() = default;
 
+    /// <summary>
+    /// 初期ロード時に呼び出される。
+    /// BGM, SE, UI の各カテゴリを作成・登録する。
+    /// </summary>
     void OnInit() override
     {
         CreateCategory(SoundCategory::BGM, "BGM");

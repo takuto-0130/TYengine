@@ -38,8 +38,10 @@ public:
     // 要素：{ StateEnum, InitFunc, UpdateFunc, ExitFunc }
     struct StateFunctionSet 
     {
-        State state;
-        StateFunc init, update, exit;
+		State state;      ///<対象ステート
+		StateFunc init;   ///<初期化関数
+		StateFunc update; ///<更新関数
+		StateFunc exit;   ///<終了関数
     };
 
 public: // メンバ関数
@@ -171,15 +173,23 @@ private: // 関数テーブルsetter
     void SetExitFunction(State state, std::function<void()> func) { exitTable_[state] = func; }
 
 private: // メンバ変数
+	/// <summary>現在のステート。</summary>
     State currState_{};
+	/// <summary>前回のステート。</summary>
     State prevState_{};
+	/// <summary>変更リクエスト（次のステート）。</summary>
     std::optional<State> stateRequest_;
+	/// <summary>ステート経過時間。</summary>
     float stateTimer_ = 0.0f;
+	/// <summary>ステート脱出許可フラグ。</summary>
     bool allowExit_ = true;
 
     // 関数テーブル
+	/// <summary>初期化関数テーブル。</summary>
     std::unordered_map<State, std::function<void()>> initTable_;
+	/// <summary>更新関数テーブル。</summary>
     std::unordered_map<State, std::function<void()>> updateTable_;
+	/// <summary>終了関数テーブル。</summary>
     std::unordered_map<State, std::function<void()>> exitTable_;
 
     // ★ 追加：利用可能なステート一覧（ImGui用）

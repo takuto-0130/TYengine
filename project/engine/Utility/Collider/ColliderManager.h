@@ -8,6 +8,9 @@ using ColliderPair = std::pair<uint32_t, uint32_t>;
 
 struct ColliderPairHash 
 {
+    /// <summary>
+    /// ハッシュ値を計算する。
+    /// </summary>
     std::size_t operator()(const ColliderPair& pair) const
     {
         return std::hash<uint32_t>()(pair.first) ^ std::hash<uint32_t>()(pair.second);
@@ -121,6 +124,8 @@ private: // メンバ関数
     bool CheckCollisionDispatcher(Collider* a, Collider* b);
 
 private: // メンバ変数
+    /// <summary>登録されているコライダーのリスト。</summary>
     std::vector<Collider*> colliders_;
+    /// <summary>前回の衝突ペア（Exit判定用）。</summary>
     std::unordered_set<ColliderPair, ColliderPairHash> previousCollisions_;
 };

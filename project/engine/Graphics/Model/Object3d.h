@@ -9,11 +9,12 @@
 class Object3dBasis;
 class WorldTransform;
 
+/// <summary>ライティングの種類。</summary>
 enum class Lighting
 {
-	NONE,
-	HALF_LAMBERT,
-	LAMBERT,
+	NONE,           ///< ライティングなし。
+	HALF_LAMBERT,   ///< ハーフランバート。
+	LAMBERT,        ///< ランバート。
 };
 
 /// <summary>

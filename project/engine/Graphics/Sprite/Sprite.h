@@ -47,29 +47,48 @@ public: // メンバ関数
     //         Getter
     // ========================
 
+    /// <summary>座標を取得する。</summary>
     const Vector2& GetPosition() { return position_; }
+    /// <summary>回転角（ラジアン）を取得する。</summary>
     float GetRotation() const { return rotation_; }
+    /// <summary>色（RGBA）を取得する。</summary>
     const Vector4& GetColor() { return materialData_->color; }
+    /// <summary>サイズ（幅・高さ）を取得する。</summary>
     const Vector2& GetSize() { return size_; }
+    /// <summary>テクスチャ切り出し位置（左上）を取得する。</summary>
     const Vector2& GetTextureLeftTop() { return textureLeftTop_; }
+    /// <summary>テクスチャ切り出しサイズを取得する。</summary>
     const Vector2& GetTextureSize() { return textureSize_; }
+    /// <summary>アンカーポイント（中心点）を取得する。</summary>
     const Vector2& GetAnchorPoint() const { return anchorPoint_; }
+    /// <summary>左右反転フラグを取得する。</summary>
     const bool& GetIsFlipX() const { return isFlipX_; }
+    /// <summary>上下反転フラグを取得する。</summary>
     const bool& GetIsFlipY() const { return isFlipY_; }
 
     // ========================
     //         Setter
     // ========================
 
+    /// <summary>座標を設定する。</summary>
     void SetPosition(const Vector2& position) { position_ = position; }
+    /// <summary>回転角（ラジアン）を設定する。</summary>
     void SetRotation(const float& rotation) { rotation_ = rotation; }
+    /// <summary>色（RGBA）を設定する。</summary>
     void SetColor(const Vector4& color) { materialData_->color = color; }
+    /// <summary>透明度（Alpha）を設定する。</summary>
     void SetAlpha(const float& alpha) { materialData_->color.w = alpha; }
+    /// <summary>サイズ（幅・高さ）を設定する。</summary>
     void SetSize(const Vector2& size) { size_ = size; }
+    /// <summary>テクスチャ切り出し位置（左上）を設定する。</summary>
     void SetTextureLeftTop(Vector2 textureLeftTop) { textureLeftTop_ = textureLeftTop; }
+    /// <summary>テクスチャ切り出しサイズを設定する。</summary>
     void SetTextureSize(Vector2 textureSize) { textureSize_ = textureSize; }
+    /// <summary>アンカーポイント（中心点）を設定する。</summary>
     void SetAnchorPoint(const Vector2& anchorPoint) { anchorPoint_ = anchorPoint; }
+    /// <summary>左右反転フラグを設定する。</summary>
     void SetIsFlipX(bool isFlipX) { isFlipX_ = isFlipX; }
+    /// <summary>上下反転フラグを設定する。</summary>
     void SetIsFlipY(bool isFlipY) { isFlipY_ = isFlipY; }
 
     /// <summary>

@@ -50,13 +50,20 @@ public:
     float GetTimeScale() const { return timeScale_; }
 
 private: // メンバ変数
+    /// <summary>パフォーマンスカウンタの周波数。</summary>
     LARGE_INTEGER frequency_{};
+    /// <summary>前回計測時のカウント値。</summary>
     LARGE_INTEGER previousTime_{};
 
+    /// <summary>前フレームからの経過時間（秒）。</summary>
     float deltaTime_ = 0.0f;
+    /// <summary>タイムスケール（スローや早送り用）。</summary>
     float timeScale_ = 1.0f;
+    /// <summary>FPS計測用の累積時間。</summary>
     float timeAccumulator_ = 0.0f;
 
+    /// <summary>FPS計測用のフレームカウンタ。</summary>
     int frameCount_ = 0;
+    /// <summary>現在のFPS（Frames Per Second）。</summary>
     int fps_ = 0;
 };

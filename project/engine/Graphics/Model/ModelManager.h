@@ -13,7 +13,7 @@
 namespace TYEngine {
 namespace Graphics {
 
-using namespace Core; // For DirectXBasis
+// using namespace Core;
 
 /// <summary>
 /// 3D モデルの読み込み・管理を一元化するシングルトンクラス。  
@@ -37,7 +37,7 @@ public:
     /// </summary>
     /// <param name="dxManager">DirectX 基盤（デバイス・コマンド関連）。</param>
     /// <param name="srvManager">SRV 管理クラス。</param>
-    void Initialize(DirectXBasis* dxManager, SrvManager* srvManager);
+    void Initialize(TYEngine::Core::DirectXBasis* dxManager, SrvManager* srvManager);
     /// <summary>
     /// モデルファイルを読み込み、管理下に追加する。  
     /// 同じファイルは再読み込みせずキャッシュを使用する。

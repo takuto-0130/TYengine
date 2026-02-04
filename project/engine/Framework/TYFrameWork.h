@@ -32,11 +32,11 @@
 namespace TYEngine {
 namespace Framework {
 
-using namespace Debugger;
-using namespace Camera;
-using namespace Core;
-using namespace Graphics;
-using namespace Utility; // For other utilities if needed
+// using namespace Debugger;
+// using namespace Camera;
+// using namespace Core;
+// using namespace Graphics;
+// using namespace Utility;
 
 /// <summary>
 /// エンジン全体の実行サイクルを管理するフレームワーク基底クラス。  
@@ -90,35 +90,35 @@ protected:
     /// <summary>
     /// DirectX リソースリーク検出用（デバッグビルド専用）。
     /// </summary>
-    std::unique_ptr<D3DResourceLeakChecker> leakCheck_;
+    std::unique_ptr<TYEngine::Core::D3DResourceLeakChecker> leakCheck_;
 #endif // _DEBUG
 
     /// <summary>Windows アプリケーション管理クラス。</summary>
-    std::unique_ptr<WindowsApp> windowsApp_ = nullptr;
+    std::unique_ptr<TYEngine::Core::WindowsApp> windowsApp_ = nullptr;
 
     /// <summary>DirectX の基盤管理クラス。</summary>
-    DirectXBasis* directXBasis_ = nullptr;
+    TYEngine::Core::DirectXBasis* directXBasis_ = nullptr;
 
     /// <summary>SRV 管理クラス。</summary>
-    std::unique_ptr<SrvManager> srvManager_ = nullptr;
+    std::unique_ptr<TYEngine::Graphics::SrvManager> srvManager_ = nullptr;
 
     /// <summary>2D スプライト描画の基盤クラス。</summary>
-    SpriteBasis* spriteBasis_ = nullptr;
+    TYEngine::Graphics::SpriteBasis* spriteBasis_ = nullptr;
 
     /// <summary>3D オブジェクト描画の基盤クラス。</summary>
-    Object3dBasis* object3dBasis_ = nullptr;
+    TYEngine::Graphics::Object3dBasis* object3dBasis_ = nullptr;
 
     /// <summary>3D モデル管理クラス。</summary>
-    ModelManager* modelManager_ = nullptr;
+    TYEngine::Graphics::ModelManager* modelManager_ = nullptr;
 
     /// <summary>入力（キーボード・マウス・パッド）管理クラス。</summary>
     Input* input_ = nullptr;
 
     /// <summary>ImGui デバッグ UI 管理クラス。</summary>
-    ImGuiManager* imgui_ = nullptr;
+    TYEngine::Debugger::ImGuiManager* imgui_ = nullptr;
 
     /// <summary>カメラクラス。</summary>
-    std::unique_ptr<Camera::Camera> camera_ = nullptr;
+    std::unique_ptr<TYEngine::Camera::Camera> camera_ = nullptr;
 
     /// <summary>シーン管理クラス。</summary>
     SceneManager* sceneManager_ = nullptr;
@@ -130,16 +130,16 @@ protected:
     bool endRequest_ = false;
 
     /// <summary>メインレンダーターゲット。</summary>
-    std::unique_ptr<RenderTexture> renderTexture_;
+    std::unique_ptr<TYEngine::OffScreen::RenderTexture> renderTexture_;
 
     /// <summary>一時的なレンダーターゲット（ping-pong 用）。</summary>
-    std::unique_ptr<RenderTexture> tempTexture_;
+    std::unique_ptr<TYEngine::OffScreen::RenderTexture> tempTexture_;
 
     /// <summary>アウトライン描画用のレンダーターゲット。</summary>
-    std::unique_ptr<RenderTexture> outlineTexture_;
+    std::unique_ptr<TYEngine::OffScreen::RenderTexture> outlineTexture_;
 
     /// <summary>ポストエフェクト管理クラス。</summary>
-    PostEffectManager* postEffectManager_;
+    TYEngine::OffScreen::PostEffectManager* postEffectManager_;
 };
 
 } // namespace Framework

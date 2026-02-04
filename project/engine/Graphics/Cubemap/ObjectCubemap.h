@@ -10,8 +10,8 @@ const int indexNum = 36;
 namespace TYEngine {
 namespace Graphics {
 
-using namespace Utility::SceneObjects; // For WorldTransform
-using namespace Camera; // For Camera
+// using namespace Utility::SceneObjects; // For WorldTransform
+// using namespace Camera; // For Camera
 
 /// <summary>
 /// キューブマップ（スカイボックス）を描画するオブジェクト。  
@@ -49,7 +49,7 @@ public:
     /// 使用するカメラを設定する。
     /// </summary>
     /// <param name="camera">カメラインスタンス。</param>
-    void SetCamera(Camera::Camera* camera) { camera_ = camera; }
+    void SetCamera(TYEngine::Camera::Camera* camera) { camera_ = camera; }
 
 private:
     /// <summary>
@@ -74,7 +74,7 @@ private:
 
 private:
     /// <summary>使用するカメラ。</summary>
-    Camera::Camera* camera_ = nullptr;
+    TYEngine::Camera::Camera* camera_ = nullptr;
 
     // ========================
     //        Camera CB

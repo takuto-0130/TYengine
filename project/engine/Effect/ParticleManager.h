@@ -10,7 +10,7 @@ namespace TYEngine {
 namespace Effect {
 
 using namespace Utility;
-using namespace Camera;
+// using namespace Camera; // Removed to avoid ambiguity
 
 /// <summary>
 /// パーティクルシステムの管理クラス（シングルトン）。
@@ -41,7 +41,7 @@ public:
     /// <param name="dx">DirectX 基盤。</param>
     /// <param name="srv">SRV 管理クラス。</param>
     /// <param name="cam">カメラ。</param>
-    void InitializeAll(DirectXBasis* dx, SrvManager* srv, Camera::Camera* cam);
+    void InitializeAll(DirectXBasis* dx, SrvManager* srv, TYEngine::Camera::Camera* cam);
 
     /// <summary>
     /// 全てのパーティクルレンダラーを更新する。

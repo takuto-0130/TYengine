@@ -3,7 +3,7 @@
 namespace TYEngine {
 namespace Effect {
 
-using namespace Camera;
+// using namespace Camera; // Removed to avoid ambiguity
 
 int ParticleManager::Add(std::unique_ptr<IParticleRenderer> particle) {
     // パーティクルシステムをリストに追加して管理
@@ -12,7 +12,7 @@ int ParticleManager::Add(std::unique_ptr<IParticleRenderer> particle) {
     return static_cast<int>(particles_.size()) - int(1);
 }
 
-void ParticleManager::InitializeAll(DirectXBasis* dx, SrvManager* srv, Camera::Camera* cam) {
+void ParticleManager::InitializeAll(DirectXBasis* dx, SrvManager* srv, TYEngine::Camera::Camera* cam) {
     // 全パーティクルシステムの初期化
     for (auto& p : particles_) {
         p->Initialize(dx, srv, cam);

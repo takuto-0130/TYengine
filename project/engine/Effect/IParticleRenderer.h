@@ -15,7 +15,7 @@ namespace TYEngine {
 namespace Effect {
 
 using namespace Utility;
-using namespace Camera;
+// using namespace Camera; // Removed to avoid ambiguity
 
 /// <summary>
 /// パーティクル描画の基底クラス。
@@ -32,7 +32,7 @@ public:
     /// <param name="dx">DirectX基盤。</param>
     /// <param name="srv">SRVマネージャ。</param>
     /// <param name="cam">カメラ。</param>
-    virtual void Initialize(DirectXBasis* dx, SrvManager* srv, Camera::Camera* cam);
+    virtual void Initialize(DirectXBasis* dx, SrvManager* srv, TYEngine::Camera::Camera* cam);
 
     /// <summary>更新処理。</summary>
     virtual void Update();
@@ -120,7 +120,7 @@ protected:
 
     DirectXBasis* dxBasis_ = nullptr;
     SrvManager* srvManager_ = nullptr;
-    Camera::Camera* camera_ = nullptr;
+    TYEngine::Camera::Camera* camera_ = nullptr;
 
     Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource_;
     Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;

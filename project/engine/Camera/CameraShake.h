@@ -5,7 +5,7 @@
 namespace TYEngine {
 namespace Camera {
 
-using namespace Utility;
+// using namespace Utility;
 
 /// <summary>
 /// カメラのシェイク（振動）効果を管理するクラス。

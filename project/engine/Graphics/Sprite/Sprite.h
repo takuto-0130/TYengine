@@ -5,12 +5,13 @@
 #include <array>
 #include <d3d12.h>
 
-class SpriteBasis;
+// class SpriteBasis; // Moved to inside namespace or remove if unused here? It is used.
 
 namespace TYEngine {
 namespace Graphics {
 
-using namespace Utility::SceneObjects; // For Transform
+// using namespace Utility::SceneObjects; // For Transform
+class SpriteBasis; // Forward declaration inside namespace
 
 /// <summary>
 /// 2D スプライト描画を管理・実行するクラス。  
@@ -179,7 +180,7 @@ private: // メンバ変数
     bool isFlipX_ = false; ///< 左右反転フラグ。
     bool isFlipY_ = false; ///< 上下反転フラグ。
 
-    Transform transform_{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} }; ///< 3D変換情報。
+    TYEngine::Utility::SceneObjects::Transform transform_{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} }; ///< 3D変換情報。
     Vector2 position_ = { 0.0f, 0.0f }; ///< スプライトの描画位置。
     float rotation_ = 0.0f;             ///< 回転角度（ラジアン）。
     Vector2 size_ = { 100.0f, 100.0f }; ///< スプライトのサイズ。

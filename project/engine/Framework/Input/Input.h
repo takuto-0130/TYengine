@@ -14,7 +14,7 @@
 namespace TYEngine {
 namespace Framework {
 
-using namespace Utility;
+// using namespace Utility;
 
 /// <summary>
 /// キーボード、マウス、ジョイスティックの入力管理クラス（シングルトン）。

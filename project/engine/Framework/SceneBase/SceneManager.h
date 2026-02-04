@@ -6,7 +6,7 @@
 namespace TYEngine {
 namespace Framework {
 
-using namespace Utility;
+// using namespace Utility;
 
 /// <summary>
 /// ゲームシーンの管理を行うクラス。  

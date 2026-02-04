@@ -5,7 +5,7 @@
 namespace TYEngine {
 namespace Graphics {
 
-using namespace Core; // For DirectXBasis
+// using namespace Core;
 
 /// <summary>
 /// モデル読み込みの基盤を提供するクラス。  
@@ -21,14 +21,14 @@ public: // メンバ関数
     /// </summary>
     /// <param name="dxBasis">DirectX 基盤（デバイス・コマンド関連）。</param>
     /// <param name="srvManager">SRV 管理クラス。</param>
-    void Initialize(DirectXBasis* dxBasis, SrvManager* srvManager);
+    void Initialize(TYEngine::Core::DirectXBasis* dxBasis, SrvManager* srvManager);
 
 public:
     /// <summary>
     /// 登録されている DirectX 基盤を取得する。
     /// </summary>
     /// <returns>DirectXBasis インスタンス。</returns>
-    DirectXBasis* GetDirectXBasis() const { return dxBasis_; }
+    TYEngine::Core::DirectXBasis* GetDirectXBasis() const { return dxBasis_; }
 
     /// <summary>
     /// 登録されている SRV 管理クラスを取得する。
@@ -37,7 +37,7 @@ public:
     SrvManager* GetSrvManager() const { return srvManager_; }
 
 private:
-    DirectXBasis* dxBasis_ = nullptr; ///< DirectX 基盤（デバイス・コマンド関連）。
+    TYEngine::Core::DirectXBasis* dxBasis_ = nullptr; ///< DirectX 基盤（デバイス・コマンド関連）。
     SrvManager* srvManager_ = nullptr; ///< SRV 管理クラスへの参照。
 };
 

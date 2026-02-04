@@ -99,7 +99,7 @@ namespace TYEngine
 			{
 				Utility::Vector2 texelSize =
 				{
-					1.0f / WindowsApp::kClientWidth, 1.0f / WindowsApp::kClientHeight
+					1.0f / Core::WindowsApp::kClientWidth, 1.0f / Core::WindowsApp::kClientHeight
 				};														///< レンダリングターゲットの解像度に基づくテクセルサイズ。
 				float depthThreshold = 0.001f;							///< 深度差によるエッジ検出の閾値。
 				float pad0;												///< アライメント用パディング。

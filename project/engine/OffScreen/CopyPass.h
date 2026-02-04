@@ -7,10 +7,10 @@
 #include "DirectXBasis.h"
 #include "struct.h"
 
-class SrvManager;
 
 namespace TYEngine
 {
+	namespace Graphics { class SrvManager; }
 	namespace OffScreen
 	{
 

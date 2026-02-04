@@ -1,37 +1,39 @@
 #pragma once
 #include "BaseObject.h"
 
-namespace TYEngine {
-namespace Utility {
-
-
-/// <summary>
-/// Blender等のDCCツールで配置されたレベルオブジェクト。
-/// モデル名やトランスフォーム情報を保持し、描画を行う。
-/// </summary>
-class LevelObject :
-    public BaseObject
+namespace TYEngine
 {
-public:
-    /// <summary>初期化処理。</summary>
-    void Init() override;
+	namespace Utility
+	{
 
-    /// <summary>更新処理。</summary>
-    void Update()override;
 
-    /// <summary>描画処理。</summary>
-    void Draw()override;
+		/// <summary>
+		/// Blender等のDCCツールで配置されたレベルオブジェクト。
+		/// モデル名やトランスフォーム情報を保持し、描画を行う。
+		/// </summary>
+		class LevelObject :
+			public BaseObject
+		{
+		public:
+			/// <summary>初期化処理。</summary>
+			void Init() override;
 
-public:
-    void SetModelName(const std::string& modelName) { modelName_ = modelName; }
-    void SetPosition(const Vector3& pos) { worldTransform_.SetTranslation(pos); }
-    void SetRotation(const Vector3& rotate) { worldTransform_.SetRotate(rotate); }
-    void SetScale(const Vector3& scale) { worldTransform_.SetScale(scale); }
+			/// <summary>更新処理。</summary>
+			void Update()override;
 
-private:
-    std::string modelName_;
-};
+			/// <summary>描画処理。</summary>
+			void Draw()override;
 
-} // namespace Utility
+		public:
+			void SetModelName(const std::string& modelName) { modelName_ = modelName; }
+			void SetPosition(const Vector3& pos) { worldTransform_.SetTranslation(pos); }
+			void SetRotation(const Vector3& rotate) { worldTransform_.SetRotate(rotate); }
+			void SetScale(const Vector3& scale) { worldTransform_.SetScale(scale); }
+
+		private:
+			std::string modelName_;
+		};
+
+	} // namespace Utility
 } // namespace TYEngine
 

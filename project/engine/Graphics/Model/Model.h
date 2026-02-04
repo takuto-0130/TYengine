@@ -8,10 +8,11 @@
 #include <assimp/postprocess.h>
 #include <Camera.h>
 
-class WorldTransform;
 
 namespace TYEngine
 {
+	namespace Utility { class WorldTransform; }
+
 	namespace Graphics
 	{
 

@@ -12,195 +12,196 @@
 
 
 
-namespace TYEngine {
-namespace Utility {
-
-
-// クラスの型 'C' に 'StateFunctionSet' が定義されていて、
-// 'C::GetStateTable()' が返す型が 'std::vector<C::StateFunctionSet>' であることを要求するコンセプト
-template<typename C>
-concept HasStateTable = requires
+namespace TYEngine
 {
-    { C::GetStateTable() } -> std::same_as<const std::vector<typename C::StateFunctionSet>&>;
-};
+	namespace Utility
+	{
 
-/// <summary>
-/// 汎用ステートマシンクラス（テンプレート）。
-/// 各ステートの初期化・更新・終了処理を関数ポインタ（メンバ関数）で管理する。
-/// 使用方法ははStateMachine.hに記載
-/// </summary>
-/// <typeparam name="Class">継承先のクラス型。</typeparam>
-/// <typeparam name="StateEnum">ステートを定義するEnum型。</typeparam>
-template<typename Class, typename StateEnum>
-class StateMachine
-{
-public:
-    using State = StateEnum;
-    using StateFunc = void (Class::*)();
+		// クラスの型 'C' に 'StateFunctionSet' が定義されていて、
+		// 'C::GetStateTable()' が返す型が 'std::vector<C::StateFunctionSet>' であることを要求するコンセプト
+		template<typename C>
+		concept HasStateTable = requires
+		{
+			{ C::GetStateTable() } -> std::same_as<const std::vector<typename C::StateFunctionSet>&>;
+		};
 
-    // 関数テーブル用
-    // 要素：{ StateEnum, InitFunc, UpdateFunc, ExitFunc }
-    struct StateFunctionSet 
-    {
-		State state;      ///<対象ステート
-		StateFunc init;   ///<初期化関数
-		StateFunc update; ///<更新関数
-		StateFunc exit;   ///<終了関数
-    };
+		/// <summary>
+		/// 汎用ステートマシンクラス（テンプレート）。
+		/// 各ステートの初期化・更新・終了処理を関数ポインタ（メンバ関数）で管理する。
+		/// 使用方法ははStateMachine.hに記載
+		/// </summary>
+		/// <typeparam name="Class">継承先のクラス型。</typeparam>
+		/// <typeparam name="StateEnum">ステートを定義するEnum型。</typeparam>
+		template<typename Class, typename StateEnum>
+		class StateMachine
+		{
+		public:
+			using State = StateEnum;
+			using StateFunc = void (Class::*)();
 
-public: // メンバ関数
-    /// <summary>
-    /// 関数テーブル登録用
-    /// </summary>
-    /// <param name="instance"> 継承先時クラスのインスタンス </param>
-    template<HasStateTable C>
-    void RegisterFromDefaultTable(C* instance) 
-    {
-        stateList_.clear();
+			// 関数テーブル用
+			// 要素：{ StateEnum, InitFunc, UpdateFunc, ExitFunc }
+			struct StateFunctionSet
+			{
+				State state;      ///<対象ステート
+				StateFunc init;   ///<初期化関数
+				StateFunc update; ///<更新関数
+				StateFunc exit;   ///<終了関数
+			};
 
-        for (const auto& entry : C::GetStateTable()) 
-        {
-            stateList_.push_back(entry.state);
-            SetInitFunction(entry.state, [instance, f = entry.init]() { (instance->*f)(); });
-            SetUpdateFunction(entry.state, [instance, f = entry.update]() { (instance->*f)(); });
-            SetExitFunction(entry.state, [instance, f = entry.exit]() { (instance->*f)(); });
-        }
-    }
+		public: // メンバ関数
+			/// <summary>
+			/// 関数テーブル登録用
+			/// </summary>
+			/// <param name="instance"> 継承先時クラスのインスタンス </param>
+			template<HasStateTable C>
+			void RegisterFromDefaultTable(C* instance)
+			{
+				stateList_.clear();
 
-    // ステート変更リクエストの呼び出し
-    void ChangeState(State next) 
-    {
-        if (stateRequest_ != next) 
-        {
-            stateRequest_ = next;
-        }
-    }
+				for (const auto& entry : C::GetStateTable())
+				{
+					stateList_.push_back(entry.state);
+					SetInitFunction(entry.state, [instance, f = entry.init]() { (instance->*f)(); });
+					SetUpdateFunction(entry.state, [instance, f = entry.update]() { (instance->*f)(); });
+					SetExitFunction(entry.state, [instance, f = entry.exit]() { (instance->*f)(); });
+				}
+			}
 
-    // ステートのアップデート
-    void UpdateState(float deltaTime) 
-    {
-        if (stateRequest_ && allowExit_)
-        {
-            if (exitTable_.contains(currState_)) 
-            {
-                exitTable_[currState_]();
-            }
-            prevState_ = currState_;
-            currState_ = *stateRequest_;
-            stateRequest_ = std::nullopt;
-            stateTimer_ = 0.0f;
-            if (initTable_.contains(currState_)) 
-            {
-                initTable_[currState_]();
-            }
-        }
+			// ステート変更リクエストの呼び出し
+			void ChangeState(State next)
+			{
+				if (stateRequest_ != next)
+				{
+					stateRequest_ = next;
+				}
+			}
 
-        stateTimer_ += deltaTime;
+			// ステートのアップデート
+			void UpdateState(float deltaTime)
+			{
+				if (stateRequest_ && allowExit_)
+				{
+					if (exitTable_.contains(currState_))
+					{
+						exitTable_[currState_]();
+					}
+					prevState_ = currState_;
+					currState_ = *stateRequest_;
+					stateRequest_ = std::nullopt;
+					stateTimer_ = 0.0f;
+					if (initTable_.contains(currState_))
+					{
+						initTable_[currState_]();
+					}
+				}
 
-        if (updateTable_.contains(currState_)) 
-        {
-            updateTable_[currState_]();
-        }
-    }
+				stateTimer_ += deltaTime;
 
-    // デバッグ用のImGui表示
-    void DebugImGui(const char* labelPrefix = "State") 
-    {
-        ImGui::Text("%s: %s", labelPrefix, GetStateName(currState_).c_str());
-        ImGui::Text("Prev : %s", GetStateName(prevState_).c_str());
-        ImGui::Text("Elapsed: %.2f sec", stateTimer_);
+				if (updateTable_.contains(currState_))
+				{
+					updateTable_[currState_]();
+				}
+			}
 
-        // ステート切り替え用 Combo
-        if (!stateList_.empty())
-        {
-            // 現在のインデックスを探す
-            int currentIndex = 0;
-            for (int i = 0; i < static_cast<int>(stateList_.size()); ++i)
-            {
-                if (stateList_[i] == currState_)
-                {
-                    currentIndex = i;
-                    break;
-                }
-            }
+			// デバッグ用のImGui表示
+			void DebugImGui(const char* labelPrefix = "State")
+			{
+				ImGui::Text("%s: %s", labelPrefix, GetStateName(currState_).c_str());
+				ImGui::Text("Prev : %s", GetStateName(prevState_).c_str());
+				ImGui::Text("Elapsed: %.2f sec", stateTimer_);
 
-            std::string labelStr = GetStateName(stateList_[currentIndex]);
-            const char* currentLabel = labelStr.c_str();
-            if (ImGui::BeginCombo("State Change", currentLabel))
-            {
-                for (int i = 0; i < static_cast<int>(stateList_.size()); ++i)
-                {
-                    State s = stateList_[i];
-                    std::string name = GetStateName(s);
-                    bool isSelected = (i == currentIndex);
+				// ステート切り替え用 Combo
+				if (!stateList_.empty())
+				{
+					// 現在のインデックスを探す
+					int currentIndex = 0;
+					for (int i = 0; i < static_cast<int>(stateList_.size()); ++i)
+					{
+						if (stateList_[i] == currState_)
+						{
+							currentIndex = i;
+							break;
+						}
+					}
 
-                    if (ImGui::Selectable(name.c_str(), isSelected))
-                    {
-                        // ImGuiからステート変更リクエスト
-                        ChangeState(s);
-                    }
+					std::string labelStr = GetStateName(stateList_[currentIndex]);
+					const char* currentLabel = labelStr.c_str();
+					if (ImGui::BeginCombo("State Change", currentLabel))
+					{
+						for (int i = 0; i < static_cast<int>(stateList_.size()); ++i)
+						{
+							State s = stateList_[i];
+							std::string name = GetStateName(s);
+							bool isSelected = (i == currentIndex);
 
-                    if (isSelected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-                ImGui::EndCombo();
-            }
-        }
+							if (ImGui::Selectable(name.c_str(), isSelected))
+							{
+								// ImGuiからステート変更リクエスト
+								ChangeState(s);
+							}
 
-        // ロック状態
-        ImGui::Text("AllowExit: %s", allowExit_ ? "true" : "false");
-    }
+							if (isSelected)
+							{
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+						ImGui::EndCombo();
+					}
+				}
 
-    // 現在のステートを取得
-    State GetCurrentState() const { return currState_; }
-    // 前回のステートを取得
-    State GetPreviousState() const { return prevState_; }
-    // 現在のステートの経過時間を取得
-    float GetStateElapsedTime() const { return stateTimer_; }
+				// ロック状態
+				ImGui::Text("AllowExit: %s", allowExit_ ? "true" : "false");
+			}
 
-    // 現在のステートで固定
-    void LockState() { allowExit_ = false; }
-    // 現在のステートの固定を解除
-    void UnlockState() { allowExit_ = true; }
+			// 現在のステートを取得
+			State GetCurrentState() const { return currState_; }
+			// 前回のステートを取得
+			State GetPreviousState() const { return prevState_; }
+			// 現在のステートの経過時間を取得
+			float GetStateElapsedTime() const { return stateTimer_; }
 
-protected:
-    // オーバーライドで列挙名を文字列化（ImGui表示用）
-    virtual std::string GetStateName(State state) const = 0;
+			// 現在のステートで固定
+			void LockState() { allowExit_ = false; }
+			// 現在のステートの固定を解除
+			void UnlockState() { allowExit_ = true; }
 
-private: // 関数テーブルsetter
-    void SetInitFunction(State state, std::function<void()> func) { initTable_[state] = func; }
+		protected:
+			// オーバーライドで列挙名を文字列化（ImGui表示用）
+			virtual std::string GetStateName(State state) const = 0;
 
-    void SetUpdateFunction(State state, std::function<void()> func) { updateTable_[state] = func; }
+		private: // 関数テーブルsetter
+			void SetInitFunction(State state, std::function<void()> func) { initTable_[state] = func; }
 
-    void SetExitFunction(State state, std::function<void()> func) { exitTable_[state] = func; }
+			void SetUpdateFunction(State state, std::function<void()> func) { updateTable_[state] = func; }
 
-private: // メンバ変数
-	/// <summary>現在のステート。</summary>
-    State currState_{};
-	/// <summary>前回のステート。</summary>
-    State prevState_{};
-	/// <summary>変更リクエスト（次のステート）。</summary>
-    std::optional<State> stateRequest_;
-	/// <summary>ステート経過時間。</summary>
-    float stateTimer_ = 0.0f;
-	/// <summary>ステート脱出許可フラグ。</summary>
-    bool allowExit_ = true;
+			void SetExitFunction(State state, std::function<void()> func) { exitTable_[state] = func; }
 
-    // 関数テーブル
-	/// <summary>初期化関数テーブル。</summary>
-    std::unordered_map<State, std::function<void()>> initTable_;
-	/// <summary>更新関数テーブル。</summary>
-    std::unordered_map<State, std::function<void()>> updateTable_;
-	/// <summary>終了関数テーブル。</summary>
-    std::unordered_map<State, std::function<void()>> exitTable_;
+		private: // メンバ変数
+			/// <summary>現在のステート。</summary>
+			State currState_{};
+			/// <summary>前回のステート。</summary>
+			State prevState_{};
+			/// <summary>変更リクエスト（次のステート）。</summary>
+			std::optional<State> stateRequest_;
+			/// <summary>ステート経過時間。</summary>
+			float stateTimer_ = 0.0f;
+			/// <summary>ステート脱出許可フラグ。</summary>
+			bool allowExit_ = true;
 
-    // ★ 追加：利用可能なステート一覧（ImGui用）
-    std::vector<State> stateList_;
-};
+			// 関数テーブル
+			/// <summary>初期化関数テーブル。</summary>
+			std::unordered_map<State, std::function<void()>> initTable_;
+			/// <summary>更新関数テーブル。</summary>
+			std::unordered_map<State, std::function<void()>> updateTable_;
+			/// <summary>終了関数テーブル。</summary>
+			std::unordered_map<State, std::function<void()>> exitTable_;
 
-} // namespace Utility
+			// ★ 追加：利用可能なステート一覧（ImGui用）
+			std::vector<State> stateList_;
+		};
+
+	} // namespace Utility
 } // namespace TYEngine
 
 // StateMachine.h
@@ -218,24 +219,26 @@ private: // メンバ変数
 //.h
 enum class State
 {
-    ONE,
-    TWO,
-    THREE
+	ONE,
+	TWO,
+	THREE
 };
 
 class Class : public StateMachine<State>
 {
 public:
-    Class()
-    {
-        RegisterFromDefaultTable(this);
-    }
+	Class()
+	{
+		RegisterFromDefaultTable(this);
+	}
 
-    static const std::vector<StateFunctionSet>& GetStateTable();
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 private:
-	std::string GetStateName(State state) const override {
-		switch (state) {
+	std::string GetStateName(State state) const override
+	{
+		switch (state)
+		{
 		case State::ONE: return "ONE";
 		case State::TWO: return "TWO";
 		case State::THREE: return "THREE";
@@ -244,17 +247,17 @@ private:
 	}
 
 private:
-    void InitOne() {}
-    void UpdateOne() {}
-    void ExitOne() {}
+	void InitOne() {}
+	void UpdateOne() {}
+	void ExitOne() {}
 
-    void InitTwo() {}
-    void UpdateTwo() {}
-    void ExitTwo() {}
+	void InitTwo() {}
+	void UpdateTwo() {}
+	void ExitTwo() {}
 
-    void InitThree() {}
-    void UpdateThree() {}
-    void ExitThree() {}
+	void InitThree() {}
+	void UpdateThree() {}
+	void ExitThree() {}
 };
 
 //.cpp
@@ -263,13 +266,13 @@ private:
 
 const std::vector<StateMachine<Class, State>::StateFunctionSet>& Class::GetStateTable()
 {
-    using enum State;
-    static const std::vector<StateFunctionSet> stateTable = {
-        CLASS_ENTRY(ONE, One),
-        CLASS_ENTRY(TWO, Two),
-        CLASS_ENTRY(THREE, Three),
-    };
-    return stateTable;
+	using enum State;
+	static const std::vector<StateFunctionSet> stateTable = {
+		CLASS_ENTRY(ONE, One),
+		CLASS_ENTRY(TWO, Two),
+		CLASS_ENTRY(THREE, Three),
+	};
+	return stateTable;
 }
 
 #endif // 0

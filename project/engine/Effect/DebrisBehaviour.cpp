@@ -1,6 +1,11 @@
 #include "DebrisBehaviour.h"
 #include "mathFunc.h"
 
+namespace TYEngine {
+namespace Effect {
+
+using namespace Utility;
+
 void DebrisBehaviour::Update(ParticleParam& p, float dt)
 {
     float t = p.currentTime / p.lifeTime;  // 0 → 1
@@ -25,3 +30,6 @@ void DebrisBehaviour::Update(ParticleParam& p, float dt)
     float shrink = 1.0f - dt * 1.8f;
     p.transform.scale *= shrink;
 }
+
+} // namespace Effect
+} // namespace TYEngine

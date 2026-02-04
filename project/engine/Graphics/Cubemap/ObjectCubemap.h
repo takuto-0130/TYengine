@@ -7,6 +7,12 @@
 
 const int indexNum = 36;
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Utility::SceneObjects; // For WorldTransform
+using namespace Camera; // For Camera
+
 /// <summary>
 /// キューブマップ（スカイボックス）を描画するオブジェクト。  
 /// カメラ、マテリアル、頂点・インデックス、行列などの GPU リソースを保持し、更新・描画を行う。
@@ -43,7 +49,7 @@ public:
     /// 使用するカメラを設定する。
     /// </summary>
     /// <param name="camera">カメラインスタンス。</param>
-    void SetCamera(Camera* camera) { camera_ = camera; }
+    void SetCamera(Camera::Camera* camera) { camera_ = camera; }
 
 private:
     /// <summary>
@@ -68,7 +74,7 @@ private:
 
 private:
     /// <summary>使用するカメラ。</summary>
-    Camera* camera_ = nullptr;
+    Camera::Camera* camera_ = nullptr;
 
     // ========================
     //        Camera CB
@@ -153,3 +159,6 @@ private:
     /// <summary>代入演算子（禁止）。</summary>
     ObjectCubemap& operator=(const ObjectCubemap&) = delete;
 };
+
+} // namespace Graphics
+} // namespace TYEngine

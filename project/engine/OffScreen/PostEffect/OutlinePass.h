@@ -5,6 +5,15 @@
 /// 深度情報をもとに輪郭線（アウトライン）を描画するポストエフェクトパス。  
 /// 深度差分によるエッジ検出を行い、指定した色と幅で輪郭を描画する。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
+/// <summary>
+/// 深度情報をもとに輪郭線（アウトライン）を描画するポストエフェクトパス。  
+/// 深度差分によるエッジ検出を行い、指定した色と幅で輪郭を描画する。
+/// </summary>
 class OutlinePass
 {
 public:
@@ -102,5 +111,8 @@ private:
 
 	CopyPass copyPass_;	///< アウトライン描画に使用するコピー処理（描画転送を担当）。
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 
 

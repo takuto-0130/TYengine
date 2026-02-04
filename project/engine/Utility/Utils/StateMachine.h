@@ -12,6 +12,10 @@
 
 
 
+namespace TYEngine {
+namespace Utility {
+
+
 // クラスの型 'C' に 'StateFunctionSet' が定義されていて、
 // 'C::GetStateTable()' が返す型が 'std::vector<C::StateFunctionSet>' であることを要求するコンセプト
 template<typename C>
@@ -195,6 +199,9 @@ private: // メンバ変数
     // ★ 追加：利用可能なステート一覧（ImGui用）
     std::vector<State> stateList_;
 };
+
+} // namespace Utility
+} // namespace TYEngine
 
 // StateMachine.h
 // 関数テーブルの登録用マクロ

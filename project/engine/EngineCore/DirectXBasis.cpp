@@ -7,6 +7,8 @@
 #include "imgui/imgui_impl_dx12.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_win32.h"
+#include "Logger.h"
+#include "StringUtility.h"
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -15,8 +17,11 @@
 
 
 using namespace Microsoft::WRL;
-using namespace Logger;
-using namespace StringUtility;
+using namespace TYEngine::Debugger;
+using namespace TYEngine::Utility::StringUtility;
+
+namespace TYEngine {
+namespace Core {
 
 const uint32_t DirectXBasis::kMaxSRVCount_ = 512;
 
@@ -618,3 +623,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE DirectXBasis::GetGpuDescriptorHandle(const ComPtr<ID
 	handleGPU.ptr += (descriptorSize * index);
 	return handleGPU;
 }
+
+} // namespace Core
+} // namespace TYEngine

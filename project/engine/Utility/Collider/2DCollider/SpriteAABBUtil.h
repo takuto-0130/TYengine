@@ -3,6 +3,10 @@
 #include "Collision2D.h"
 #include <cmath>
 
+namespace TYEngine {
+namespace Utility {
+
+
 /// <summary>
 /// スプライトのAABB（回転なし）を計算する。
 /// 位置、サイズ、アンカーポイントを考慮する。
@@ -70,3 +74,6 @@ inline AABB2D ComputeSpriteAABB_WithRotation(Sprite& sprite)
     }
     return box;
 }
+
+} // namespace Utility
+} // namespace TYEngine

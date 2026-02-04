@@ -1,6 +1,11 @@
 #include "ExplosionRingBehaviour.h"
 #include "mathFunc.h"
 
+namespace TYEngine {
+namespace Effect {
+
+using namespace Utility;
+
 void ExplosionRingBehaviour::Update(ParticleParam& p, float dt)
 {
     float t = p.currentTime / p.lifeTime; // 0 → 1
@@ -25,3 +30,6 @@ void ExplosionRingBehaviour::Update(ParticleParam& p, float dt)
     // ▼ 速度は急速に減衰（リングは飛ばず、その場で広がる）
     p.velocity *= (1.0f - dt * 4.0f);
 }
+
+} // namespace Effect
+} // namespace TYEngine

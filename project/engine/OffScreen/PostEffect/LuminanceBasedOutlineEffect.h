@@ -5,6 +5,15 @@
 /// 輝度差をもとにエッジ（輪郭）を検出し、指定した色で描画するポストエフェクト。  
 /// 深度ベースではなく、画面上の明暗差に基づくアウトライン効果を実現する。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
+/// <summary>
+/// 輝度差をもとにエッジ（輪郭）を検出し、指定した色で描画するポストエフェクト。  
+/// 深度ベースではなく、画面上の明暗差に基づくアウトライン効果を実現する。
+/// </summary>
 class LuminanceBasedOutlineEffect :
     public PostEffectBase
 {
@@ -88,5 +97,8 @@ private:
 
     std::shared_ptr<LuminanceOutlineParam> param_; ///< エフェクト用パラメータ。
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 
 

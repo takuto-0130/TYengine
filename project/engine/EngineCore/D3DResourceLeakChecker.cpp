@@ -4,6 +4,9 @@
 #include <dxgi1_6.h>
 #include <wrl.h>
 
+namespace TYEngine {
+namespace Core {
+
 D3DResourceLeakChecker::~D3DResourceLeakChecker()
 {
 	Microsoft::WRL::ComPtr<IDXGIDebug1> debug;
@@ -14,3 +17,6 @@ D3DResourceLeakChecker::~D3DResourceLeakChecker()
 		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
 	}
 }
+
+} // namespace Core
+} // namespace TYEngine

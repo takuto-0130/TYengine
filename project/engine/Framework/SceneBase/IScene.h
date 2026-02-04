@@ -4,6 +4,11 @@
 
 class SceneManager;
 
+namespace TYEngine {
+namespace Framework {
+
+using namespace Camera;
+
 /// <summary>
 /// シーンの共通インターフェースを定義する純粋仮想クラス。  
 /// すべてのゲームシーン（タイトル・ゲームプレイ・リザルトなど）はこのクラスを継承して実装する。  
@@ -16,7 +21,7 @@ protected:
     Input* input_ = nullptr;
 
     /// <summary>カメラクラス。</summary>
-    Camera* camera_ = nullptr;
+    Camera::Camera* camera_ = nullptr;
 
     /// <summary>シーン管理クラス（シーン遷移や現在シーンの制御を行う）。</summary>
     SceneManager* sceneManager_ = nullptr;
@@ -56,8 +61,11 @@ public:
     /// カメラを設定する。
     /// </summary>
     /// <param name="camera">使用するカメラインスタンス。</param>
-    void SetCamera(Camera* camera) { camera_ = camera; };
+    void SetCamera(Camera::Camera* camera) { camera_ = camera; };
 
     /// <summary>仮想デストラクタ。</summary>
     virtual ~IScene() = default;
 };
+
+} // namespace Framework
+} // namespace TYEngine

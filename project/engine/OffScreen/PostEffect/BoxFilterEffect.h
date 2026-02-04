@@ -5,6 +5,16 @@
 /// ボックスフィルタ（平均化フィルタ）を適用するポストエフェクトクラス。  
 /// 指定されたカーネル範囲内の画素の平均を取り、全体的に柔らかくぼかす効果を与える。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For WindowsApp usually, but check usage. 
+// BoxFilterParam uses WindowsApp::kClientWidth. WindowsApp is in TYEngine::Core.
+
+/// <summary>
+/// ボックスフィルタ（平均化フィルタ）を適用するポストエフェクトクラス。  
+/// 指定されたカーネル範囲内の画素の平均を取り、全体的に柔らかくぼかす効果を与える。
+/// </summary>
 class BoxFilterEffect :
     public PostEffectBase
 {
@@ -78,3 +88,6 @@ private:
     /// <summary>ボックスフィルタのパラメータ。</summary>
     std::shared_ptr<BoxFilterParam> param_;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine

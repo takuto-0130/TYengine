@@ -1,7 +1,12 @@
 #include "SpriteBasis.h"
 #include "TextureManager.h"
+#include "Logger.h"
 
-using namespace Logger;
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Debugger;
+using namespace Core; // For DirectXBasis
 
 void SpriteBasis::Initialize(DirectXBasis* directXBasis)
 {
@@ -157,3 +162,6 @@ void SpriteBasis::CreateGraphicsPipeline()
 		IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(hr));
 }
+
+} // namespace Graphics
+} // namespace TYEngine

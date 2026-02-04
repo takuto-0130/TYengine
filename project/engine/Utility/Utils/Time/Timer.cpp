@@ -4,6 +4,10 @@
 #endif // _DEBUG
 
 
+namespace TYEngine {
+namespace Utility {
+
+
 void Timer::Start()
 {
     QueryPerformanceFrequency(&frequency_);
@@ -48,3 +52,6 @@ void Timer::Update()
 #endif // _DEBUG
 
 }
+
+} // namespace Utility
+} // namespace TYEngine

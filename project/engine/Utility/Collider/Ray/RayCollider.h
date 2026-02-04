@@ -2,6 +2,10 @@
 #include "Collider.h"
 #include "struct.h"
 
+namespace TYEngine {
+namespace Utility {
+
+
 /// <summary>
 /// 直線コライダークラス
 /// </summary>
@@ -34,4 +38,7 @@ public: // メンバ関数
 private: // メンバ変数
     Ray ray_;
 };
+
+} // namespace Utility
+} // namespace TYEngine
 

@@ -3,6 +3,9 @@
 #include <wrl.h>
 #include <vector>
 
+namespace TYEngine {
+namespace Audio {
+
 class Audio;
 
 /// <summary>
@@ -94,3 +97,6 @@ private:
     /// <summary>最新の波形データ（UI表示用）。</summary>
     std::vector<float> latestWaveform_;  // タイムドメイン用
 };
+
+} // namespace Audio
+} // namespace TYEngine

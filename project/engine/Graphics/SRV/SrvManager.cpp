@@ -2,6 +2,11 @@
 #include "DirectXBasis.h"
 #include <cassert>
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+
 void SrvManager::Initialize(DirectXBasis* dxBasis, uint32_t maxDescriptors) {
     dxBasis_ = dxBasis;
     maxIndex_ = maxDescriptors;
@@ -104,3 +109,6 @@ void SrvManager::CreateSRVForTextureCube(uint32_t index, ID3D12Resource* resourc
     // Cubemap用SRV作成
     dxBasis_->GetDevice()->CreateShaderResourceView(resource, &srvDesc, handle);
 }
+
+} // namespace Graphics
+} // namespace TYEngine

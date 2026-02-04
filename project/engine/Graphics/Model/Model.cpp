@@ -9,6 +9,14 @@
 #include "Object3dBasis.h"
 
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+using namespace Utility::Math; // For mathFunc, Matrix4x4Func
+using namespace Utility::SceneObjects; // For WorldTransform
+using namespace Camera; // For Camera
+
 void Model::Initialize(ModelLoader* modelManager, const std::string& directoryPath, const std::string& fileName)
 {
 	modelLoader_ = modelManager;
@@ -24,7 +32,7 @@ void Model::Initialize(ModelLoader* modelManager, const std::string& directoryPa
 	modelData_.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(texturePath.string());
 }
 
-void Model::Draw(WorldTransform& transform, Camera* camera)
+void Model::Draw(WorldTransform& transform, Camera::Camera* camera)
 {
 	// WVP行列計算
 	Matrix4x4 worldViewProjectionMatrix;
@@ -168,4 +176,7 @@ void Model::SetVertices(VertexData vertex)
 {
 	modelData_.vertices.push_back(vertex);
 }
+
+} // namespace Graphics
+} // namespace TYEngine
 

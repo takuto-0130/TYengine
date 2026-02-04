@@ -3,6 +3,12 @@
 #include "DirectXBasis.h"
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+using namespace Camera; // For Camera
+
 /// <summary>
 /// キューブマップ（スカイボックス）描画の基盤クラス。  
 /// DirectX のルートシグネチャ・パイプライン・カメラを管理し、  
@@ -49,13 +55,13 @@ public:
     /// デフォルトカメラを設定する。
     /// </summary>
     /// <param name="camera">使用するカメラへのポインタ。</param>
-    void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
+    void SetDefaultCamera(Camera::Camera* camera) { defaultCamera_ = camera; }
 
     /// <summary>
     /// 現在設定されているデフォルトカメラを取得する。
     /// </summary>
     /// <returns>カメラへのポインタ。</returns>
-    Camera* GetDefaultCamera() const { return defaultCamera_; }
+    Camera::Camera* GetDefaultCamera() const { return defaultCamera_; }
 
     /// <summary>
     /// 登録されている DirectX 基盤を取得する。
@@ -78,7 +84,7 @@ private: // 内部関数
 
 private: // メンバ変数
     DirectXBasis* directXBasis_ = nullptr; ///< DirectX の基盤。
-    Camera* defaultCamera_ = nullptr;      ///< デフォルトカメラ。
+    Camera::Camera* defaultCamera_ = nullptr;      ///< デフォルトカメラ。
 
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;       ///< ルートシグネチャ。
     Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_; ///< パイプラインステート。
@@ -92,3 +98,6 @@ private: // メンバ変数
     Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr; ///< シグネチャデータ。
     Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;     ///< エラーメッセージ格納用。
 };
+
+} // namespace Graphics
+} // namespace TYEngine

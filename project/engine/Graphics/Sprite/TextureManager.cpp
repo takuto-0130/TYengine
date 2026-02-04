@@ -3,6 +3,11 @@
 #include <cassert>
 #include <filesystem>
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+
 void TextureManager::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager) {
     dxBasis_ = dxBasis;
     srvManager_ = srvManager;
@@ -16,7 +21,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
     assert(dxBasis_ != nullptr);
     assert(srvManager_->CanAllocate());
 
-    std::wstring filePathW = StringUtility::ConvertString(filePath);
+    std::wstring filePathW = Utility::StringUtility::ConvertString(filePath);
 
     DirectX::ScratchImage image;
     HRESULT hr;
@@ -171,3 +176,6 @@ void TextureManager::CreateDummyCubemap() {
 
     srvManager_->CreateSRVForTextureCube(dummyCubemapIndex_, dummyCubemap_.Get(), DXGI_FORMAT_R8G8B8A8_UNORM, 1);
 }
+
+} // namespace Graphics
+} // namespace TYEngine

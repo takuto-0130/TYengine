@@ -2,6 +2,9 @@
 #include "struct.h"
 #include <vector>
 
+namespace TYEngine {
+namespace Utility {
+
 /// <summary>
 /// 法線ベクトルを行列で変換する
 /// </summary>
@@ -202,4 +205,7 @@ Vector4 operator*(const float& s, const Vector4& v);
 Vector4 operator/(const Vector4& a, const Vector4& b);
 
 Vector4 operator/(const Vector4& v, const float& s);
+
+} // namespace Utility
+} // namespace TYEngine
 

@@ -2,6 +2,11 @@
 #include "Timer.h"
 #include <numbers>
 
+namespace TYEngine {
+namespace Effect {
+
+using namespace Utility;
+
 void RingParticle::CreateResources() {
     const uint32_t kDivide = 32;
     const float outer = 0.4f, inner = 0.1f; // 外径と内径
@@ -91,3 +96,6 @@ std::list<ParticleParam> RingParticle::Emit(std::mt19937& random)
     }
     return result;
 }
+
+} // namespace Effect
+} // namespace TYEngine

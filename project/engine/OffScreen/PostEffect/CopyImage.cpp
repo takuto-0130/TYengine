@@ -3,6 +3,11 @@
 #include "SrvManager.h"
 #include "RenderTexture.h"
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
 void CopyImageEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
@@ -22,3 +27,6 @@ void CopyImageEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }
+
+} // namespace OffScreen
+} // namespace TYEngine

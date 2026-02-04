@@ -3,6 +3,9 @@
 #include "SingletonObject.h"
 #include <functional>
 
+namespace TYEngine {
+namespace Utility {
+
 using EaseFunc = std::function<float(float)>;
 
 /// <summary> バレットタイム（スローモーション）の状態定義。 </summary>
@@ -120,4 +123,7 @@ private: // State関連関数
 	void ExitExit();
 #pragma endregion
 };
+
+} // namespace Utility
+} // namespace TYEngine
 

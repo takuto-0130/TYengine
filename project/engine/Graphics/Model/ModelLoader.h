@@ -2,6 +2,11 @@
 #include "DirectXBasis.h"
 #include "SrvManager.h"
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+
 /// <summary>
 /// モデル読み込みの基盤を提供するクラス。  
 /// DirectX の基盤および SRV 管理クラスへの参照を保持し、  
@@ -35,3 +40,6 @@ private:
     DirectXBasis* dxBasis_ = nullptr; ///< DirectX 基盤（デバイス・コマンド関連）。
     SrvManager* srvManager_ = nullptr; ///< SRV 管理クラスへの参照。
 };
+
+} // namespace Graphics
+} // namespace TYEngine

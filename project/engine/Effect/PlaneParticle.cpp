@@ -3,6 +3,11 @@
 #include "Timer.h"
 #include <numbers>
 
+namespace TYEngine {
+namespace Effect {
+
+using namespace Utility;
+
 void PlaneParticle::CreateResources() 
 {
     // 板ポリゴンの頂点データ
@@ -79,3 +84,6 @@ ParticleParam PlaneParticle::MakeNewParticle(std::mt19937& random, const Emitter
 
     return parti;
 }
+
+} // namespace Effect
+} // namespace TYEngine

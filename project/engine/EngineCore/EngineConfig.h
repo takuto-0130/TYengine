@@ -1,6 +1,12 @@
 #pragma once
 
-namespace EngineConfig
+namespace TYEngine
 {
-	static float fps_ = 60.0f;
-}
+	namespace Core
+	{
+		namespace EngineConfig
+		{
+			static float fps_ = 60.0f;
+		}
+	} // namespace Core
+} // namespace TYEngine

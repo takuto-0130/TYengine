@@ -5,6 +5,15 @@
 /// ディゾルブ（溶解）効果を適用するポストエフェクトクラス。  
 /// マスクテクスチャやしきい値を用いて、オブジェクトが徐々に消滅・出現する演出を行う。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis if needed, or other types.
+
+/// <summary>
+/// ディゾルブ（溶解）効果を適用するポストエフェクトクラス。  
+/// マスクテクスチャやしきい値を用いて、オブジェクトが徐々に消滅・出現する演出を行う。
+/// </summary>
 class DissolveEffect :
     public PostEffectBase
 {
@@ -82,3 +91,6 @@ private:
     /// <summary>ディゾルブ用パラメータ。</summary>
     std::shared_ptr<DissolveParam> param_;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine

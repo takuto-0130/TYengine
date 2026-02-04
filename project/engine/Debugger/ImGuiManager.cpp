@@ -3,6 +3,11 @@
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
 
+namespace TYEngine {
+namespace Debugger {
+
+using namespace TYEngine::Core;
+
 void ImGuiManager::Initialize(WindowsApp* winApp, DirectXBasis* dxBasis)
 {
 	winApp_ = winApp;
@@ -72,3 +77,6 @@ void ImGuiManager::Finalize()
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 }
+
+} // namespace Debugger
+} // namespace TYEngine

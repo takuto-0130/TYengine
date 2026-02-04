@@ -3,6 +3,9 @@
 #include <string>
 #include <json.hpp>
 
+namespace TYEngine {
+namespace Utility {
+
 class LevelObject;
 
 /// <summary>
@@ -72,4 +75,7 @@ private:
 	/// <summary>ロードされたレベルデータ。</summary>
 	std::unique_ptr<LevelData> levelData_;
 };
+
+} // namespace Utility
+} // namespace TYEngine
 

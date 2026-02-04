@@ -3,6 +3,11 @@
 #include "DirectXBasis.h"
 #include "Object3dBasis.h"
 
+namespace TYEngine {
+namespace Utility {
+
+using namespace TYEngine::Core; // For DirectXBasis
+
 void WorldTransform::Initialize()
 {
     // ワールド行列の初期化
@@ -66,3 +71,6 @@ void WorldTransform::Update()
     UpdateMatrix();
     TransferMatrix();
 }
+
+} // namespace Utility
+} // namespace TYEngine

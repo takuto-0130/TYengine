@@ -11,6 +11,11 @@
 
 static constexpr size_t FrameCount = 3;
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+
 /// <summary>
 /// テクスチャの読み込み・管理を一元化するクラス。  
 /// ファイルパスをキーにテクスチャをロード・キャッシュし、SRV を自動生成して扱いやすくする。
@@ -114,3 +119,6 @@ private:
     uint32_t dummyCubemapIndex_ = 0;                                   ///< ダミーキューブマップの SRV インデックス。
     Microsoft::WRL::ComPtr<ID3D12Resource> dummyCubemapUploadBuffer_;  ///< ダミー用アップロードバッファ。
 };
+
+} // namespace Graphics
+} // namespace TYEngine

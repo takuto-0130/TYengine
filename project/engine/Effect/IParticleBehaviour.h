@@ -1,6 +1,9 @@
 #pragma once
 #include "ParticleParam.h"
 
+namespace TYEngine {
+namespace Effect {
+
 /// <summary>
 /// パーティクルの挙動（振る舞い）を定義するインターフェース。
 /// Strategyパターンにより、移動や変化のロジックを切り替えるために使用する。
@@ -17,3 +20,6 @@ public:
     /// <param name="dt">デルタタイム。</param>
     virtual void Update(ParticleParam& p, float dt) = 0;
 };
+
+} // namespace Effect
+} // namespace TYEngine

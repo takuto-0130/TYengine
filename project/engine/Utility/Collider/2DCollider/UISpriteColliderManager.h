@@ -4,6 +4,10 @@
 #include "Collision2D.h"
 #include "SpriteAABBUtil.h"
 
+namespace TYEngine {
+namespace Utility {
+
+
 /// <summary>
 /// UI用スプライトのコライダー管理クラス。
 /// 複数のスプライトのAABBを一括計算・管理する。
@@ -77,3 +81,6 @@ private:
     std::vector<Sprite*> sprites_;
     std::vector<AABB2D>  aabbs_;
 };
+
+} // namespace Utility
+} // namespace TYEngine

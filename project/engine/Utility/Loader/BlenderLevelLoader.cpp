@@ -5,6 +5,10 @@
 
 using json = nlohmann::json;
 
+namespace TYEngine {
+namespace Utility {
+
+
 LevelData* BlenderLevelLoader::Load(const std::string& filename)
 {
     std::ifstream file(kBaseDirectoryName_ + filename);
@@ -99,3 +103,6 @@ void BlenderLevelLoader::ObjectTraversal(LevelData* levelData, json& j, std::str
         }
     }
 }
+
+} // namespace Utility
+} // namespace TYEngine

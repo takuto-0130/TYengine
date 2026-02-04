@@ -7,6 +7,11 @@
 
 class SpriteBasis;
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Utility::SceneObjects; // For Transform
+
 /// <summary>
 /// 2D スプライト描画を管理・実行するクラス。  
 /// テクスチャ、サイズ、カラー、アンカーポイント、フリップなどを制御し、  
@@ -184,3 +189,6 @@ private: // メンバ変数
     Vector2 textureLeftTop_ = { 0.0f, 0.0f }; ///< テクスチャの左上 UV。
     Vector2 textureSize_ = { 100.0f, 100.0f }; ///< 使用するテクスチャ範囲のサイズ。
 };
+
+} // namespace Graphics
+} // namespace TYEngine

@@ -6,6 +6,16 @@
 /// シーン全体の彩度を下げ、モノクロ風の表現を行う。  
 /// フィルム調の演出や被ダメージ演出などにも応用可能。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis if needed
+
+/// <summary>
+/// グレースケール（白黒化）ポストエフェクト。  
+/// シーン全体の彩度を下げ、モノクロ風の表現を行う。  
+/// フィルム調の演出や被ダメージ演出などにも応用可能。
+/// </summary>
 class GrayscaleEffect
     : public PostEffectBase
 {
@@ -71,3 +81,6 @@ private:
     /// <summary>エフェクトパラメータ。</summary>
     std::shared_ptr<GrayscaleParam> param_;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine

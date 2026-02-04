@@ -4,6 +4,9 @@
 #include <vector>
 #include <array>
 
+namespace TYEngine {
+namespace Utility {
+
 // 2次元ベクトル
 struct Vector2 {
 	float x;
@@ -183,3 +186,6 @@ struct OBB {
 	Vector3 orientations[3];
 	Vector3 size;
 };
+
+} // namespace Utility
+} // namespace TYEngine

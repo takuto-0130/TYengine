@@ -5,6 +5,15 @@
 /// 周辺減光（ビネット）効果を適用するポストエフェクトクラス。  
 /// 画面の中心から外側に向けて暗くなる効果を付与する。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
+/// <summary>
+/// 周辺減光（ビネット）効果を適用するポストエフェクトクラス。  
+/// 画面の中心から外側に向けて暗くなる効果を付与する。
+/// </summary>
 class VignetteEffect
     : public PostEffectBase
 {
@@ -75,5 +84,8 @@ private:
     /// <summary>ビネット用のパラメータを保持する共有ポインタ</summary>
     std::shared_ptr<VignetteParam> param_;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 
 

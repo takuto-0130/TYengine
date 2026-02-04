@@ -10,6 +10,11 @@
 #include "TextureManager.h"
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Graphics {
+
+using namespace Core; // For DirectXBasis
+
 /// <summary>
 /// 3D モデルの読み込み・管理を一元化するシングルトンクラス。  
 /// ファイルパスをキーに Model をキャッシュし、重複読み込みを防ぐ。
@@ -64,3 +69,6 @@ private:
     /// </summary>
     std::unique_ptr<ModelLoader> modelLoader_ = nullptr;
 };
+
+} // namespace Graphics
+} // namespace TYEngine

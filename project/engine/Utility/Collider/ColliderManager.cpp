@@ -3,6 +3,10 @@
 #include "Sphere/SphereCollider.h"
 #include "Ray/RayCollider.h"
 
+namespace TYEngine {
+namespace Utility {
+
+
 void ColliderManager::Update()
 {
     // 現在の衝突状態リスト
@@ -99,3 +103,6 @@ bool ColliderManager::CheckCollisionDispatcher(Collider* a, Collider* b)
 
     return false;
 }
+
+} // namespace Utility
+} // namespace TYEngine

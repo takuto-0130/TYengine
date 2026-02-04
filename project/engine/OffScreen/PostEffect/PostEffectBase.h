@@ -6,6 +6,16 @@
 /// 各ポストエフェクト（Vignette、RadialBlur、RandomEffect など）はこのクラスを継承して実装する。  
 /// 有効・無効の切り替えや共通のコピー処理（CopyPass）を保持する。
 /// </summary>
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
+/// <summary>
+/// ポストエフェクトの共通基底クラス。  
+/// 各ポストエフェクト（Vignette、RadialBlur、RandomEffect など）はこのクラスを継承して実装する。  
+/// 有効・無効の切り替えや共通のコピー処理（CopyPass）を保持する。
+/// </summary>
 class PostEffectBase
     : public IPostEffect
 {
@@ -34,4 +44,7 @@ protected:
     DirectXBasis* dx_ = nullptr;   ///< DirectX 基盤クラスへの参照。
     CopyPass copyPass_;            ///< 描画転送や共通処理に用いる CopyPass インスタンス。
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 

@@ -5,6 +5,9 @@
 class DirectXBasis;
 class SrvManager;
 
+namespace TYEngine {
+namespace OffScreen {
+
 /// <summary>
 /// ポストエフェクト共通インターフェース。  
 /// 各種ポストプロセスエフェクト（ブラー・アウトライン・トーンマッピングなど）を  
@@ -55,4 +58,7 @@ public:
     /// <param name="enabled">true で有効、false で無効。</param>
     virtual void SetEnabled(bool enabled) = 0;
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 

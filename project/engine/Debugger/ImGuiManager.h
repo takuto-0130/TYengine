@@ -5,14 +5,19 @@
 #include <mutex>
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Debugger {
+
+using namespace TYEngine::Core;
+
 /// <summary>
 /// ImGuiの管理クラス。
 /// 初期化、フレーム開始・終了処理、描画実行を担当する。
 /// </summary>
 class ImGuiManager :
-	public SingletonObject<ImGuiManager>
+	public Utility::SingletonObject<ImGuiManager>
 {
-	friend class SingletonObject<ImGuiManager>;
+	friend class Utility::SingletonObject<ImGuiManager>;
 	friend struct std::default_delete<ImGuiManager>;
 
 private:
@@ -59,4 +64,7 @@ private:
 	/// <summary>ImGui用SRVディスクリプタヒープ。</summary>
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
 };
+
+} // namespace Debugger
+} // namespace TYEngine
 

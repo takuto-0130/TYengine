@@ -4,6 +4,10 @@
 #include <vector>
 #include <unordered_set>
 
+namespace TYEngine {
+namespace Utility {
+
+
 using ColliderPair = std::pair<uint32_t, uint32_t>;
 
 struct ColliderPairHash 
@@ -129,3 +133,6 @@ private: // メンバ変数
     /// <summary>前回の衝突ペア（Exit判定用）。</summary>
     std::unordered_set<ColliderPair, ColliderPairHash> previousCollisions_;
 };
+
+} // namespace Utility
+} // namespace TYEngine

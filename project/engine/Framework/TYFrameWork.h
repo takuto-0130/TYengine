@@ -29,6 +29,15 @@
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")
 
+namespace TYEngine {
+namespace Framework {
+
+using namespace Debugger;
+using namespace Camera;
+using namespace Core;
+using namespace Graphics;
+using namespace Utility; // For other utilities if needed
+
 /// <summary>
 /// エンジン全体の実行サイクルを管理するフレームワーク基底クラス。  
 /// 各種マネージャ（DirectX・描画・入力・シーンなど）を統括し、  
@@ -109,7 +118,7 @@ protected:
     ImGuiManager* imgui_ = nullptr;
 
     /// <summary>カメラクラス。</summary>
-    std::unique_ptr<Camera> camera_ = nullptr;
+    std::unique_ptr<Camera::Camera> camera_ = nullptr;
 
     /// <summary>シーン管理クラス。</summary>
     SceneManager* sceneManager_ = nullptr;
@@ -132,3 +141,6 @@ protected:
     /// <summary>ポストエフェクト管理クラス。</summary>
     PostEffectManager* postEffectManager_;
 };
+
+} // namespace Framework
+} // namespace TYEngine

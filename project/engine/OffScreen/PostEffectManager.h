@@ -12,14 +12,20 @@ class SrvManager;
 class RenderTexture;
 class IPostEffect;
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+using namespace Utility; // For SingletonObject
+
 /// <summary>
 /// ポストエフェクト全体を統括管理するマネージャークラス。
 /// 複数のポストエフェクト（Outline, DoF, Copy など）を登録・適用・制御する。
 /// </summary>
 class PostEffectManager :
-    public SingletonObject<PostEffectManager>
+    public Utility::SingletonObject<PostEffectManager>
 {
-    friend class SingletonObject<PostEffectManager>;
+    friend class Utility::SingletonObject<PostEffectManager>;
     friend struct std::default_delete<PostEffectManager>;
 
 private:
@@ -149,5 +155,8 @@ private:
 
     std::unique_ptr<CopyImageEffect> copyImage_; ///< コピーエフェクト（最終出力用）。
 };
+
+} // namespace OffScreen
+} // namespace TYEngine
 
 

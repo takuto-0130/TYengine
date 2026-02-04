@@ -3,6 +3,9 @@
 #include "IScene.h"
 #include <string>
 
+namespace TYEngine {
+namespace Framework {
+
 /// <summary>
 /// シーン生成ファクトリの抽象基底インターフェース。
 /// シーン名をキーにして具体的な IScene インスタンスを生成する。
@@ -20,3 +23,6 @@ public:
 	/// <returns>生成されたシーン（ユニークポインタ）。</returns>
 	virtual std::unique_ptr<IScene> CreateScene(const std::string& sceneName) = 0;
 };
+
+} // namespace Framework
+} // namespace TYEngine

@@ -3,6 +3,9 @@
 #include <cmath>
 #include <assert.h>
 
+namespace TYEngine {
+namespace Utility {
+
 /// <summary>
 /// 2つの行列の加算を行う。
 /// </summary>
@@ -183,4 +186,7 @@ Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraView);
 /// <param name="m2">右項の行列。</param>
 /// <returns>行列の積。</returns>
 Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
+
+} // namespace Utility
+} // namespace TYEngine
 

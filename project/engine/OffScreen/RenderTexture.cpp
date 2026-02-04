@@ -4,6 +4,11 @@
 #include "DirectXTex/d3dx12.h"
 #include <cassert>
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
 void RenderTexture::Initialize(DirectXBasis* dxBasis, SrvManager* srvManager, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
     dxBasis_ = dxBasis;
     srvManager_ = srvManager;
@@ -202,3 +207,6 @@ void RenderTexture::CreateDepthStencil()
         1
     );
 }
+
+} // namespace OffScreen
+} // namespace TYEngine

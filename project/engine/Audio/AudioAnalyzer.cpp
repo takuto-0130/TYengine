@@ -1,6 +1,9 @@
 #include "AudioAnalyzer.h"
 #include "Audio.h"   // ← 最新RMS / FFT を取得するため
 
+namespace TYEngine {
+namespace Audio {
+
 AudioAnalyzer::AudioAnalyzer()
 {
     spectrumSmoothed_.resize(BANDS, 0.0f);
@@ -459,3 +462,6 @@ void AudioAnalyzer::Draw()
 
 #endif // _DEBUG
 }
+
+} // namespace Audio
+} // namespace TYEngine

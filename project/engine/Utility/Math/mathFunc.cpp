@@ -5,6 +5,9 @@
 #include <algorithm>
 #include <cassert>
 
+namespace TYEngine {
+namespace Utility {
+
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) { 
 	Vector3 result{
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0], 
@@ -394,3 +397,6 @@ Vector4 operator/(const Vector4& v, const float& s)
 	result.w = v.w / s;
 	return result;
 }
+
+} // namespace Utility
+} // namespace TYEngine

@@ -6,6 +6,11 @@
 #include "imgui.h"
 #endif // _DEBUG
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
 void RandomEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
@@ -41,3 +46,6 @@ void RandomEffect::Apply(RenderTexture* input)
 {
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }
+
+} // namespace OffScreen
+} // namespace TYEngine

@@ -3,6 +3,9 @@
 #include <mutex>
 #include <cassert>
 
+namespace TYEngine {
+namespace Utility {
+
 template <typename T>
 class SingletonObject
 {
@@ -45,6 +48,9 @@ std::unique_ptr<T> SingletonObject<T>::instance_ = nullptr;
 
 template <typename T>
 std::once_flag SingletonObject<T>::initFlag_;
+
+} // namespace Utility
+} // namespace TYEngine
 
 
 #if 0

@@ -4,6 +4,12 @@
 #include "WindowsApp.h"
 #include "CameraShake.h"
 
+namespace TYEngine {
+namespace Camera {
+
+using namespace TYEngine::Utility;
+using namespace TYEngine::Core;
+
 /// <summary>
 /// ゲーム内カメラを管理するクラス。
 /// ビュー行列・プロジェクション行列の計算、カメラシェイク、追従機能などを提供する。
@@ -144,3 +150,6 @@ public: // メンバ関数
 		return Normalize(Vector3{ worldMatrix_.m[0][1], worldMatrix_.m[1][1], worldMatrix_.m[2][1] });
 	}
 };
+
+} // namespace Camera
+} // namespace TYEngine

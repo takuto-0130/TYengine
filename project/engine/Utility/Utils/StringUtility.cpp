@@ -1,6 +1,9 @@
 #include "StringUtility.h"
 #include "windows.h"
 
+namespace TYEngine {
+namespace Utility {
+
 namespace StringUtility
 {
 	std::wstring ConvertString(const std::string& str) {
@@ -37,3 +40,6 @@ namespace StringUtility
 		return result;
 	}
 }
+
+} // namespace Utility
+} // namespace TYEngine

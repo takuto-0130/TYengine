@@ -5,6 +5,12 @@
 #endif // _DEBUG
 
 
+namespace TYEngine {
+namespace Camera {
+
+using namespace TYEngine::Utility;
+using namespace TYEngine::Core;
+
 Camera::Camera()
 	: transform_({ {1.0f,1.0f,1.0f},{0.3f,0.0f,0.0f},{0.0f,4.0f,-10.0f} })
 	, horizontalFOV_(0.45f)
@@ -58,3 +64,6 @@ void Camera::FollowCamera(const Vector3& target)
 	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	viewMatrix_ = Inverse(worldMatrix_);
 }
+
+} // namespace Camera
+} // namespace TYEngine

@@ -10,6 +10,9 @@
 #include <Logger.h>
 #include <xaudio2fx.h>
 
+namespace TYEngine {
+namespace Audio {
+
 class Audio;
 
 /// <summary>
@@ -188,4 +191,7 @@ private:
 	/// <summary>コールバック。</summary>
 	StreamingVoiceCallback callback_;
 };
+
+} // namespace Audio
+} // namespace TYEngine
 

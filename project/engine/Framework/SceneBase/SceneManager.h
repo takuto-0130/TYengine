@@ -3,15 +3,20 @@
 #include "AbstractSceneFactory.h"
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Framework {
+
+using namespace Utility;
+
 /// <summary>
 /// ゲームシーンの管理を行うクラス。  
 /// 現在のシーンの更新・描画・切り替えを制御し、  
 /// シーン遷移時のメモリ管理や初期化を自動で行うシングルトンクラス。
 /// </summary>
 class SceneManager :
-    public SingletonObject<SceneManager>
+    public Utility::SingletonObject<SceneManager>
 {
-    friend class SingletonObject<SceneManager>;
+    friend class Utility::SingletonObject<SceneManager>;
     friend struct std::default_delete<SceneManager>;
 
 private:
@@ -62,3 +67,6 @@ private:
     /// <summary>シーンを生成するためのファクトリ。</summary>
     AbstractSceneFactory* sceneFactory_ = nullptr;
 };
+
+} // namespace Framework
+} // namespace TYEngine

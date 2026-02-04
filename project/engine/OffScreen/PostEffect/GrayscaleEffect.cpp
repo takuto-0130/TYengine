@@ -6,6 +6,11 @@
 #include "imgui.h"
 #endif // _DEBUG
 
+namespace TYEngine {
+namespace OffScreen {
+
+using namespace Core; // For DirectXBasis
+
 void GrayscaleEffect::Initialize(DirectXBasis* dx, SrvManager* srv)
 {
     dx_ = dx;
@@ -41,3 +46,6 @@ void GrayscaleEffect::Apply(RenderTexture* input)
     // CopyPassを使って描画
     copyPass_.Draw(dx_->GetCommandList(), input->GetGPUHandle());
 }
+
+} // namespace OffScreen
+} // namespace TYEngine

@@ -1,5 +1,8 @@
 #pragma once
 
+namespace TYEngine {
+namespace Utility {
+
 // イージング関数
 namespace Ease 
 {
@@ -87,3 +90,6 @@ namespace EaseFixed
     /// バウンド補間（EaseInOut）: 前半でバウンドして加速し、後半でバウンドして減速する動き
     float InOutBounce(float t);
 }
+
+} // namespace Utility
+} // namespace TYEngine

@@ -11,14 +11,19 @@
 #include "struct.h"
 #include "SingletonObject.h"
 
+namespace TYEngine {
+namespace Framework {
+
+using namespace Utility;
+
 /// <summary>
 /// キーボード、マウス、ジョイスティックの入力管理クラス（シングルトン）。
 /// DirectInput8 および XInput を使用して入力状態を取得する。
 /// </summary>
 class Input :
-	public SingletonObject<Input>
+	public Utility::SingletonObject<Input>
 {
-	friend class SingletonObject<Input>;
+	friend class Utility::SingletonObject<Input>;
 	friend struct std::default_delete<Input>;
 
 private:
@@ -236,3 +241,6 @@ private: // メンバ変数
 	/// <summary>現在のマウスカーソル位置（クライアント座標）。</summary>
 	Vector2 mousePosition_ = {};
 };
+
+} // namespace Framework
+} // namespace TYEngine

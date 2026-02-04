@@ -3,6 +3,10 @@
 
 void ScoreManager::Init()
 {
+	// 基礎スコアをセット
+	basicScore_ = 20;
+	// 最大スコアをセット
+	maxScore_ = 9999;
 	// スコアを0にリセット
 	score_ = 0;
 }
@@ -15,7 +19,7 @@ void ScoreManager::Update()
 void ScoreManager::AddScore(float multiplier)
 {
 	// 基本スコアに倍率を掛けた値を加算
-	score_ += int32_t(float(kBasicScore_) * multiplier);
-	// スコアの上限を9999に制限（クランプ）
-	score_ = std::clamp<int32_t>(score_, 0, 9999);
+	score_ += int32_t(float(basicScore_) * multiplier);
+	// スコアの上限をkMaxScore_に制限（クランプ）
+	score_ = std::clamp<int32_t>(score_, 0, maxScore_);
 }

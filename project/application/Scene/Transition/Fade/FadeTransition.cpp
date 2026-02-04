@@ -44,8 +44,8 @@ void FadeTransition::Init()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/blackScreen.png");
 	sprites_ = std::make_unique<Sprite>();
 	sprites_->Initialize("Resources/Texture/blackScreen.png");
-	sprites_->SetSize(Vector2{ 1280.0f,720.0f });
-	sprites_->SetTextureSize(Vector2{ 1280,720 });
+	sprites_->SetSize(Vector2{ WindowsApp::kClientWidth,WindowsApp::kClientHeight });
+	sprites_->SetTextureSize(Vector2{ WindowsApp::kClientWidth,WindowsApp::kClientHeight });
 }
 
 void FadeTransition::Draw()

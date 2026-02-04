@@ -72,7 +72,7 @@ private:
     struct BoxFilterParam
     {
         int kernelSize = 5; ///< フィルタカーネルのサイズ。
-        Vector2 texelSize = { 1.0f / 1280.0f, 1.0f / 720.0f }; ///< 1ピクセルあたりのUV単位（解像度に依存）。
+        Vector2 texelSize = { 1.0f / WindowsApp::kClientWidth, 1.0f / WindowsApp::kClientHeight }; ///< 1ピクセルあたりのUV単位（解像度に依存）。
     };
 
     /// <summary>ボックスフィルタのパラメータ。</summary>

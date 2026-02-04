@@ -46,7 +46,7 @@ BlockFadeTransition::BlockFadeTransition(BlockFadeTransition::Type type, const B
 
 void BlockFadeTransition::Init()
 {
-	baseW_ = 1280.0f; baseH_ = 720.0f;
+	baseW_ = WindowsApp::kClientWidth; baseH_ = WindowsApp::kClientHeight;
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Transition01.png");
 

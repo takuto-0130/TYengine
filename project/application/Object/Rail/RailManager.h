@@ -174,7 +174,7 @@ private:
 	float deltaTime_ = 0.0f;
 
 	/// <summary>速度倍率。</summary>
-	float speedMultiply_ = 0.35f;
+	float speedMultiply_ = 0.0f;
 
 
 	/// <summary>初回クリアフラグ。</summary>
@@ -234,6 +234,6 @@ private:
 	/// <summary>注視点への先読み距離。</summary>
 	float lookAhead_ = 1.0f;
 	/// <summary>移動速度（m/s）。</summary>
-	float speedMps_ = 5.0f;
+	float speedMps_ = 0.0f;
 };
 

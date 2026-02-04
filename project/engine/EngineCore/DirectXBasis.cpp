@@ -1,4 +1,5 @@
 #include "DirectXBasis.h"
+#include "EngineConfig.h"
 #include <cassert>
 #include <format>
 #include <vector>
@@ -544,10 +545,10 @@ void DirectXBasis::InitFixFPS()
 
 void DirectXBasis::UpdateFixFPS()
 {
-	// 1/60秒ぴったりの時間
-	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
-	// 1/60秒よりわずかに短い時間
-	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
+	// 1/EngineConfig::fps_秒ぴったりの時間
+	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / EngineConfig::fps_));
+	// 1/EngineConfig::fps_秒よりわずかに短い時間
+	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / EngineConfig::fps_ + 5.0f));
 
 	// 現在時間を取得
 	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();

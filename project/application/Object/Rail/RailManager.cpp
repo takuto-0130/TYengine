@@ -45,6 +45,9 @@ void RailManager::Reset()
 	// 距離トリガーを再構築
 	RebuildTriggerSFromSegments();
 
+	speedMultiply_ = 0.35f;
+	speedMps_ = 5.0f;
+
 	// 弧長の初期値
 	eyeS_ = 0.0f;
 	forwardS_ = std::min(arcMap_.total, lookAhead_);

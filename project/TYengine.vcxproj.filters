@@ -231,7 +231,7 @@
     <ClCompile Include="application\Object\Player\PlayerState\PlayerIdle.cpp">
       <Filter>application\Object\Player\PlayerState</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerState\PlayerRoot.cpp">
+    <ClCompile Include="application\Object\Player\PlayerState\PlayerRoute.cpp">
       <Filter>application\Object\Player\PlayerState</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\PlayerState\PlayerTakeDamage.cpp">
@@ -984,6 +984,7 @@
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener.h" />
+    <ClInclude Include="engine\EngineCore\EngineConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

@@ -110,13 +110,13 @@ void GameCore::Initialize()
 
 	// レンダリング用テクスチャの生成（メイン、一時用、アウトライン用）
 	renderTexture_ = std::make_unique<RenderTexture>();
-	renderTexture_->Initialize(directXBasis_, srvManager_.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1, 0, 0, 1 }); 
+	renderTexture_->Initialize(directXBasis_, srvManager_.get(), WindowsApp::kClientWidth, WindowsApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1, 0, 0, 1 });
 	
 	tempTexture_ = std::make_unique<RenderTexture>();
-	tempTexture_->Initialize(directXBasis_, srvManager_.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+	tempTexture_->Initialize(directXBasis_, srvManager_.get(), WindowsApp::kClientWidth, WindowsApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
 
 	outlineTexture_ = std::make_unique<RenderTexture>();
-	outlineTexture_->Initialize(directXBasis_, srvManager_.get(), 1280, 720, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+	outlineTexture_->Initialize(directXBasis_, srvManager_.get(), WindowsApp::kClientWidth, WindowsApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
 
 	// ポストエフェクトマネージャの初期化とレンダーターゲット設定
 	postEffectManager_ = PostEffectManager::GetInstance();

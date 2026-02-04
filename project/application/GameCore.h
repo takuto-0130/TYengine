@@ -7,7 +7,7 @@
 /// ゲーム全体のメインエントリーポイント。  
 /// TYFrameWork を継承し、ゲーム特有の初期化・更新・描画ロジックを実装する。
 /// </summary>
-class GameCore : public TYFrameWork
+class GameCore : public TYEngine::Framework::TYFrameWork
 {
 public:
     /// <summary>

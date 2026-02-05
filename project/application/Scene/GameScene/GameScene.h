@@ -177,6 +177,10 @@ private: // メンバ変数
 	std::unique_ptr<TYEngine::Utility::JsonManager> gameUIJM_;
 	/// <summary>UI設定エラーメッセージ。</summary>
 	std::string errUI_;
+	/// <summary>パラメータ用JSONマネージャ。</summary>
+	std::unique_ptr<TYEngine::Utility::JsonManager> paramJM_;
+	/// <summary>パラメータ設定エラーメッセージ。</summary>
+	std::string errParam_;
 	/// <summary>設定用JSONマネージャ。</summary>
 	std::unique_ptr<TYEngine::Utility::JsonManager> configJM_;
 	/// <summary>設定エラーメッセージ。</summary>

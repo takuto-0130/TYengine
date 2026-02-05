@@ -53,7 +53,7 @@ void GameScene::StartCamera()
 	std::function<void(Vector3&)> applyCameraWork = [&](Vector3& pos)
 		{
 			// 真後ろから始まるように調整
-			Matrix4x4 rotAjust = MakeRotateYMatrix((3.9f) / 5.0f);
+			Matrix4x4 rotAjust = MakeRotateYMatrix(0.78f);
 			pos = TransformM(pos, rotAjust);
 
 			// プレイヤー位置を基準とした相対位置計算

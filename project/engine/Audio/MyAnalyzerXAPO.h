@@ -44,6 +44,7 @@ namespace TYEngine
 			static const UINT32 FFT_SIZE = 1024;     ///< FFTサンプルサイズ
 			static const UINT32 DELAY_FRAMES = 5;    ///< 遅延フレーム数
 			static const UINT32 WAVEFORM_SIZE = 441; ///< 波形バッファサイズ
+			static const UINT32 BEAT_ANALYE_BUFFER = 64;
 
 		public:
 			/// <summary>
@@ -73,9 +74,15 @@ namespace TYEngine
 			float GetRMS() { return latestRMS_; }
 			std::vector<float>& GetFFT() { return latestFFT_; }
 			std::vector<float>& GetWaveform() { return latestWaveform_; }
+			bool GetBeat() { return isBeatDetected_; }
 
 		private:
 			void ComputeFFT();
+
+			/// <summary>
+			/// 拍の解析
+			/// </summary>
+			void AnalyzeBeat();
 
 		private:
 			/// <summary>入力チャンネル数。</summary>
@@ -99,6 +106,11 @@ namespace TYEngine
 			std::vector<float> latestFFT_;
 			/// <summary>最新の波形データ（UI表示用）。</summary>
 			std::vector<float> latestWaveform_;  // タイムドメイン用
+
+			// 過去のエネルギーを記録するバッファ（例：約1秒分）
+			std::vector<float> energyHistory_;
+			size_t energyIndex_ = 0;
+			bool isBeatDetected_ = false; // 今この瞬間が拍かどうか
 		};
 
 	} // namespace Audio

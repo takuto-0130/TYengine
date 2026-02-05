@@ -59,8 +59,10 @@ void GameScene::Init()
 {
 	//========== ロード ==========//
 	// UI定義と設定ファイルのJSONロード
-	gameUIJM_.Load("GameUI.json", true, &errUI_);
-	configJM_.Load("Config.json", true, &errConfig_);
+	gameUIJM_ = std::make_unique<TYEngine::Utility::JsonManager>();
+	gameUIJM_->Load("GameUI.json", true, &errUI_);
+	configJM_ = std::make_unique<TYEngine::Utility::JsonManager>();
+	configJM_->Load("Config.json", true, &errConfig_);
 #ifdef _DEBUG
 	Log(errUI_);
 	Log(errConfig_);
@@ -107,12 +109,12 @@ void GameScene::Update()
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");
-	static Utility::JsonImGuiEditor inspectorUI(gameUIJM_);
-	inspectorUI.Draw(gameUIJM_.Root(), "GameUI.json");
-	if (ImGui::Button("Save")) gameUIJM_.Save();
-	static Utility::JsonImGuiEditor inspectorConfig(configJM_);
-	inspectorConfig.Draw(configJM_.Root(), "Config.json");
-	if (ImGui::Button("SaveConfig")) configJM_.Save();
+	static Utility::JsonImGuiEditor inspectorUI(*gameUIJM_);
+	inspectorUI.Draw(gameUIJM_->Root(), "GameUI.json");
+	if (ImGui::Button("Save")) gameUIJM_->Save();
+	static Utility::JsonImGuiEditor inspectorConfig(*configJM_);
+	inspectorConfig.Draw(configJM_->Root(), "Config.json");
+	if (ImGui::Button("SaveConfig")) configJM_->Save();
 	ImGui::End();
 #endif // _DEBUG
 

@@ -13,29 +13,29 @@ using namespace TYEngine::Graphics;
 void GameScene::UIInit()
 {
 	scoreDraw_ = std::make_unique<ScoreUI>();
-	scoreDraw_->SetJsonManager(&gameUIJM_);
+	scoreDraw_->SetJsonManager(gameUIJM_.get());
 	scoreDraw_->Init();
 
 	startDraw_ = std::make_unique<StartUI>();
-	startDraw_->SetJsonManager(&gameUIJM_);
+	startDraw_->SetJsonManager(gameUIJM_.get());
 	startDraw_->Init();
 
 	playUI_ = std::make_unique<PlayUI>();
-	playUI_->SetJsonManager(&gameUIJM_);
+	playUI_->SetJsonManager(gameUIJM_.get());
 	playUI_->SetScoreDraw(scoreDraw_.get());
 	playUI_->Init();
 
 	pauseMenu_ = std::make_unique<PauseClass>();
-	pauseMenu_->SetJsonManager(&gameUIJM_);
-	pauseMenu_->SetConfigJsonManager(&configJM_);
+	pauseMenu_->SetJsonManager(gameUIJM_.get());
+	pauseMenu_->SetConfigJsonManager(configJM_.get());
 	pauseMenu_->Init();
 
 	resultMenu_ = std::make_unique<ResultClass>();
-	resultMenu_->SetJsonManager(&gameUIJM_);
+	resultMenu_->SetJsonManager(gameUIJM_.get());
 	resultMenu_->Init();
 
 	retryDraw_ = std::make_unique<RetryUI>();
-	retryDraw_->SetJsonManager(&gameUIJM_);
+	retryDraw_->SetJsonManager(gameUIJM_.get());
 	retryDraw_->Init();
 }
 

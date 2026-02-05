@@ -5,6 +5,7 @@
 #include "imgui.h"
 #endif // _DEBUG
 
+using namespace TYEngine::Utility;
 
 void GameScene::InitReady()
 {

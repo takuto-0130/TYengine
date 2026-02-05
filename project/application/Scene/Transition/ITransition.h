@@ -26,7 +26,8 @@ public:
 	/// 完了時に呼ばれるコールバック関数を設定する。
 	/// </summary>
 	/// <param name="callback">コールバック関数。</param>
-	void SetOnFinishCallback(std::function<void()> callback) {
+	void SetOnFinishCallback(std::function<void()> callback)
+	{
 		onFinishCallback_ = std::move(callback);
 	}
 
@@ -34,8 +35,10 @@ public:
 	/// 演出完了を通知し、コールバックを実行する。
 	/// TransitionManager から呼び出される。
 	/// </summary>
-	void NotifyFinished() {
-		if (onFinishCallback_) {
+	void NotifyFinished()
+	{
+		if (onFinishCallback_)
+		{
 			onFinishCallback_();
 			onFinishCallback_ = nullptr; // 1回限りにする
 		}

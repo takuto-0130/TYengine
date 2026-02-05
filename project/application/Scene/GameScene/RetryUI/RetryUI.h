@@ -3,7 +3,10 @@
 
 #include "Utils/Json/JsonManager.h"
 
-class Sprite;
+namespace TYEngine::Graphics
+{
+	class Sprite;
+}
 /// <summary>
 /// ゲームオーバー時のリトライUI管理クラス。
 /// 画面表示と入力待機演出を行う。
@@ -29,7 +32,7 @@ public:
 	/// <summary>状態をリセットする。</summary>
 	void Reset();
 
-	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
+	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 private:
 	void DebugJMApply();
@@ -43,12 +46,12 @@ private:
 		SpriteNum
 	};
 
-	std::array<std::unique_ptr<Sprite>, SpriteNum> sprites_;
+	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, SpriteNum> sprites_;
 
 	float timer_ = 0.0f;
 
 	float maxTime_ = 0.0f;
 
-	jx::JsonManager* jm_;
+	TYEngine::Utility::JsonManager* jm_;
 };
 

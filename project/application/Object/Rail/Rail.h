@@ -5,7 +5,7 @@
 /// レールオブジェクトクラス。
 /// キャラクターが移動する軌跡やパスとして機能するオブジェクト。
 /// </summary>
-class Rail : public BaseObject
+class Rail : public TYEngine::Utility::BaseObject
 {
 public:
 

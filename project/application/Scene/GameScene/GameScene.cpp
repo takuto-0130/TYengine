@@ -17,6 +17,12 @@
 #include "imgui.h"
 #endif
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Debugger;
+using namespace TYEngine::AudioSystem;
+using namespace TYEngine::Graphics;
+using namespace TYEngine;
+
 #define GAME_SCENE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(GameScene, stateEnum, funcName)
 
@@ -56,15 +62,15 @@ void GameScene::Init()
 	gameUIJM_.Load("GameUI.json", true, &errUI_);
 	configJM_.Load("Config.json", true, &errConfig_);
 #ifdef _DEBUG
-	Logger::Log(errUI_);
-	Logger::Log(errConfig_);
+	Log(errUI_);
+	Log(errConfig_);
 #endif // _DEBUG
 
 	gameAudio_ = GameAudio::GetInstance();
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 
-	input_ = Input::GetInstance();
+	input_ = Framework::Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 
 	// スカイボックス設定
@@ -89,7 +95,7 @@ void GameScene::Init()
 	// フェードインから開始
 	ChangeState(GameSceneState::FADE_IN);
 
-	bulletTime_ = BulletTimeController::GetInstance();
+	bulletTime_ = Utility::BulletTimeController::GetInstance();
 }
 
 void GameScene::Update()
@@ -101,10 +107,10 @@ void GameScene::Update()
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");
-	static jx::JsonImGuiEditor inspectorUI(gameUIJM_);
+	static Utility::JsonImGuiEditor inspectorUI(gameUIJM_);
 	inspectorUI.Draw(gameUIJM_.Root(), "GameUI.json");
 	if (ImGui::Button("Save")) gameUIJM_.Save();
-	static jx::JsonImGuiEditor inspectorConfig(configJM_);
+	static Utility::JsonImGuiEditor inspectorConfig(configJM_);
 	inspectorConfig.Draw(configJM_.Root(), "Config.json");
 	if (ImGui::Button("SaveConfig")) configJM_.Save();
 	ImGui::End();

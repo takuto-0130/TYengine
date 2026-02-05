@@ -6,6 +6,9 @@
 #include "Timer.h"
 #include "Random.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+
 void ScoreUI::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");

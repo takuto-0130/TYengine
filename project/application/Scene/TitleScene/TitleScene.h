@@ -52,16 +52,16 @@ private:
 
 private:
 	/// <summary>スペース（Press Space）表示スプライト。</summary>
-	std::unique_ptr<Sprite> spaceSpr_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> spaceSpr_;
 	/// <summary>タイトルテキストスプライト。</summary>
-	std::unique_ptr<Sprite> text_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> text_;
 	/// <summary>操作説明スプライト。</summary>
-	std::unique_ptr<Sprite> operation_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> operation_;
 	/// <summary>レティクルスプライト（演出用）。</summary>
-	std::unique_ptr<Sprite> reticle_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> reticle_;
 
 	/// <summary>スカイボックス。</summary>
-	std::unique_ptr<ObjectCubemap> skybox_;
+	std::unique_ptr<TYEngine::Graphics::ObjectCubemap> skybox_;
 
 	/// <summary>デモ用プレイヤー。</summary>
 	std::unique_ptr<Player> player_;
@@ -71,17 +71,17 @@ private:
 
 
 	/// <summary>背景（地面）。</summary>
-	std::unique_ptr<Object3d> ground_;
+	std::unique_ptr<TYEngine::Graphics::Object3d> ground_;
 	/// <summary>背景のワールド変換情報。</summary>
-	WorldTransform groundWT_;
+	TYEngine::Utility::WorldTransform groundWT_;
 	/// <summary>背景の回転速度。</summary>
 	float rotateSpeed_ = 0.0f;
 
 	/// <summary>JSONマネージャ（デバッグ設定用）。</summary>
-	jx::JsonManager titleJM;
+	TYEngine::Utility::JsonManager titleJM;
 	/// <summary>JSONエラーメッセージ。</summary>
 	std::string err;
 
 	/// <summary>オーディオスペクトラムアナライザー（演出用）。</summary>
-	AudioAnalyzer audioAnalyzer_;
+	TYEngine::AudioSystem::AudioAnalyzer audioAnalyzer_;
 };

@@ -2,7 +2,10 @@
 #include "../StateMachineTransition.h"
 #include <memory>
 
-class Sprite;
+namespace TYEngine::Graphics
+{
+	class Sprite;
+}
 
 /// <summary>
 /// フェードイン・フェードアウトを行うトランジションクラス。
@@ -11,7 +14,7 @@ class Sprite;
 class FadeTransition : public StateMachineTransition<FadeTransition>
 {
 public: // 関数テーブル
-	static const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSet>& GetStateTable();
+	static const std::vector<TYEngine::Utility::StateMachine<FadeTransition, TransitionStage>::StateFunctionSet>& GetStateTable();
 
 public:
 	/// <summary>
@@ -57,7 +60,7 @@ private:
 
 private:
 	/// <summary>フェード用スプライト（全画面矩形）。</summary>
-	std::unique_ptr<Sprite> sprites_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> sprites_;
 	/// <summary>フェード時間。</summary>
 	float duration_ = 0.0f;
 	/// <summary>完了フラグ。</summary>

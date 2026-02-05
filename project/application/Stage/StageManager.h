@@ -15,7 +15,7 @@ class Camera;
 class StageManager
 {
 public:
-    StageManager(Camera* camera) : camera_(camera) {};
+    StageManager(TYEngine::CameraSystem::Camera* camera) : camera_(camera) {};
     
     /// <summary>初期化処理。</summary>
     void Init();
@@ -35,7 +35,7 @@ public:
 
 public:
     /// <summary>カメラを設定する。</summary>
-    void SetCamera(Camera* camera) { camera_ = camera; }
+    void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
     
     /// <summary>
     /// レール終端に到達したか判定する。
@@ -77,7 +77,7 @@ private:
 
 private:
     /// <summary>カメラ。</summary>
-    Camera* camera_ = nullptr;
+    TYEngine::CameraSystem::Camera* camera_ = nullptr;
     /// <summary>ステージリスト。</summary>
     std::vector<std::unique_ptr<Stage>> stages_;
     /// <summary>現在のステージインデックス。</summary>

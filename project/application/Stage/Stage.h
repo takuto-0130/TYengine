@@ -60,7 +60,7 @@ public:
 	/// ステージで使用するカメラを設定する。
 	/// </summary>
 	/// <param name="camera">カメラへのポインタ。</param>
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
 	/// <summary>
 	/// レールが終端に到達したかどうかを判定する。
@@ -93,7 +93,7 @@ public:
 
 private:
 	/// <summary>カメラへのポインタ（借用）。</summary>
-	Camera* camera_ = nullptr;
+	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 	
 	/// <summary>プレイヤーオブジェクト。</summary>
 	std::unique_ptr<Player> player_;
@@ -111,10 +111,10 @@ private:
 	std::unique_ptr<ScoreManager> scoreManager_;
 
 	/// <summary>背景（地面）オブジェクト。</summary>
-	std::unique_ptr<Object3d> ground_;
+	std::unique_ptr<TYEngine::Graphics::Object3d> ground_;
 	
 	/// <summary>背景のワールド変換情報。</summary>
-	WorldTransform groundWT_;
+	TYEngine::Utility::WorldTransform groundWT_;
 
 	/// <summary>レールエディタによる編集モードフラグ。</summary>
 	bool isEdit_ = false;

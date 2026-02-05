@@ -6,6 +6,10 @@
 #include "Timer.h"
 #include <algorithm>
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Core;
+using namespace TYEngine::Graphics;
+
 #define BLOCKFADE_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(BlockFadeTransition, stateEnum, funcName)
 

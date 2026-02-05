@@ -3,6 +3,8 @@
 #include "../PlayUI/PlayUI.h"
 #include "../../../ScoreUI/ScoreUI.h"
 
+using namespace TYEngine::CameraSystem;
+
 void GameScene::InitPlay()
 {
 }

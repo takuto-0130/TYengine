@@ -13,15 +13,17 @@ enum class TransitionStage
 // CRTP化したステートマシン遷移テンプレート
 // 'Class' = 継承先クラス（例：FadeTransition）
 template<typename Class>
-class StateMachineTransition : public ITransition, public StateMachine<Class, TransitionStage>
+class StateMachineTransition : public ITransition, public TYEngine::Utility::StateMachine<Class, TransitionStage>
 {
 public:
-    void Update(float dt) override {
+    void Update(float dt) override 
+    {
         this->UpdateState(dt);
     }
 
 protected:
-    std::string GetStateName(TransitionStage state) const override {
+    std::string GetStateName(TransitionStage state) const override 
+    {
         switch (state) {
         case TransitionStage::IDLE: return "IDLE";
         case TransitionStage::ENTERING: return "ENTERING";

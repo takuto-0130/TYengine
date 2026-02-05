@@ -6,6 +6,11 @@
 #include "Ease.h"
 #include "imgui.h"
 
+
+using namespace TYEngine::Utility;
+using namespace TYEngine::Framework;
+using namespace TYEngine::Graphics;
+
 void PauseClass::Init()
 {
 	input_ = Input::GetInstance();

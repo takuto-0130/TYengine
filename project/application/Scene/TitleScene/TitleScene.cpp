@@ -13,6 +13,12 @@
 #include "imgui.h"
 #endif // _DEBUG
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Debugger;
+using namespace TYEngine::AudioSystem;
+using namespace TYEngine::Graphics;
+using namespace TYEngine;
+
 
 TitleScene::~TitleScene()
 {
@@ -25,7 +31,7 @@ void TitleScene::Init()
 	// タイトル用JSONデータのロード
 	titleJM.Load("Title.json", true, &err);
 #ifdef _DEBUG
-	Logger::Log(err);
+	Log(err);
 	Audio::GetInstance()->LoadWave("gameBGM");
 #endif // _DEBUG
 
@@ -45,30 +51,30 @@ void TitleScene::Init()
 
 	//========== カメラ、入力取得 ==========//
 
-	input_ = Input::GetInstance();
+	input_ = Framework::Input::GetInstance();
 	camera_ = Object3dBasis::GetInstance()->GetDefaultCamera();
 
 
 	//========== テクスチャ初期化 ==========//
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Enter.png");
-	spaceSpr_ = std::make_unique<Sprite>();
+	spaceSpr_ = std::make_unique<Graphics::Sprite>();
 	spaceSpr_->Initialize("Resources/Texture/Enter.png");
 	spaceSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
 	spaceSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Title.png");
-	text_ = std::make_unique<Sprite>();
+	text_ = std::make_unique<Graphics::Sprite>();
 	text_->Initialize("Resources/Texture/Title.png");
 	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
-	operation_ = std::make_unique<Sprite>();
+	operation_ = std::make_unique<Graphics::Sprite>();
 	operation_->Initialize("Resources/Texture/Operation.png");
 	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
-	reticle_ = std::make_unique<Sprite>();
+	reticle_ = std::make_unique<Graphics::Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
 
@@ -134,7 +140,7 @@ void TitleScene::Update() {
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");
-	static jx::JsonImGuiEditor inspector(titleJM);
+	static TYEngine::Utility::JsonImGuiEditor inspector(titleJM);
 	inspector.Draw(titleJM.Root(), "Title.json");
 	if (ImGui::Button("Save")) titleJM.Save();
 	ImGui::End();

@@ -5,7 +5,7 @@
 /// 移動方向、速度、寿命（生存時間）、衝突判定の共通インターフェースを提供する。
 /// </summary>
 class BaseBullet :
-    public BaseObject
+    public TYEngine::Utility::BaseObject
 {
 public:
 	BaseBullet()
@@ -20,7 +20,7 @@ public:
 	/// 弾の進行方向（発射方向）を設定する。
 	/// </summary>
 	/// <param name="direction">正規化された方向ベクトル。</param>
-	virtual void SetShotDirection(const Vector3& direction) { direction_ = direction; }
+	virtual void SetShotDirection(const TYEngine::Utility::Vector3& direction) { direction_ = direction; }
 
 	/// <summary>
 	/// 弾が消滅状態かどうかを取得する。
@@ -51,13 +51,13 @@ protected:
 	float scale_ = 0.0f;
 
 	/// <summary>現在の速度ベクトル。</summary>
-	Vector3 velocity_ = {};
+	TYEngine::Utility::Vector3 velocity_ = {};
 
 	/// <summary>基本移動速度。</summary>
 	float defaultSpeed_ = 0.0f;
 
 	/// <summary>移動方向ベクトル。</summary>
-	Vector3 direction_ = {};
+	TYEngine::Utility::Vector3 direction_ = {};
 
 	/// <summary>弾の生存寿命（秒）。0以下で消滅。</summary>
 	float lifeTime_ = 0.0f;

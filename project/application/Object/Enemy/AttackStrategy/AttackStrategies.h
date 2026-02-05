@@ -9,7 +9,7 @@
 namespace EnemyAttack
 {
 	// 共通ヘルパー: 弾を1発生成してマネージャに追加
-	inline void SpawnBullet(EnemyBulletManager* manager, const Vector3& pos, const Vector3& dir)
+	inline void SpawnBullet(EnemyBulletManager* manager, const TYEngine::Utility::Vector3& pos, const TYEngine::Utility::Vector3& dir)
 	{
 		auto bullet = std::make_unique<EnemyBullet::Linear>();
 		bullet->Init();
@@ -23,9 +23,9 @@ namespace EnemyAttack
 	class NormalAttackStrategy : public IAttackStrategy
 	{
 	public:
-		void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) override
+		void Attack(const TYEngine::Utility::Vector3& origin, const TYEngine::Utility::Vector3& target, EnemyBulletManager* manager) override
 		{
-			Vector3 forward = Normalize(target - origin);
+			TYEngine::Utility::Vector3 forward = TYEngine::Utility::Normalize(target - origin);
 			SpawnBullet(manager, origin, forward);
 		}
 	};
@@ -35,18 +35,18 @@ namespace EnemyAttack
 	class VerticalSplitAttackStrategy : public IAttackStrategy
 	{
 	public:
-		void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) override
+		void Attack(const TYEngine::Utility::Vector3& origin, const TYEngine::Utility::Vector3& target, EnemyBulletManager* manager) override
 		{
-			Vector3 forward = Normalize(target - origin);
+			TYEngine::Utility::Vector3 forward = TYEngine::Utility::Normalize(target - origin);
 
 			// ローカル上方向を計算
-			Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
+			TYEngine::Utility::Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
 			if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f };
-			Vector3 right = Normalize(Cross(worldUp, forward));
-			Vector3 up = Normalize(Cross(forward, right));
+			TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
+			TYEngine::Utility::Vector3 up = TYEngine::Utility::Normalize(Cross(forward, right));
 			// 上下に少しずらして発射
-			SpawnBullet(manager, origin, Normalize(forward + up * 0.02f));
-			SpawnBullet(manager, origin, Normalize(forward + up * -0.02f));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * 0.02f));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * -0.02f));
 		}
 	};
 	// -------------------------------------------------------------
@@ -55,18 +55,18 @@ namespace EnemyAttack
 	class HorizontalSplitAttackStrategy : public IAttackStrategy
 	{
 	public:
-		void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) override
+		void Attack(const TYEngine::Utility::Vector3& origin, const TYEngine::Utility::Vector3& target, EnemyBulletManager* manager) override
 		{
-			Vector3 forward = Normalize(target - origin);
+			TYEngine::Utility::Vector3 forward = TYEngine::Utility::Normalize(target - origin);
 
-			Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
+			TYEngine::Utility::Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
 			if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f };
-			Vector3 right = Normalize(Cross(worldUp, forward));
+			TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
 			// 左右にずらして4発発射
-			SpawnBullet(manager, origin, Normalize(forward + right * 0.06f));
-			SpawnBullet(manager, origin, Normalize(forward + right * 0.02f));
-			SpawnBullet(manager, origin, Normalize(forward + right * -0.02f));
-			SpawnBullet(manager, origin, Normalize(forward + right * -0.06f));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * 0.06f));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * 0.02f));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -0.02f));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -0.06f));
 		}
 	};
 	// -------------------------------------------------------------
@@ -75,18 +75,18 @@ namespace EnemyAttack
 	class TriangleAttackStrategy : public IAttackStrategy
 	{
 	public:
-		void Attack(const Vector3& origin, const Vector3& target, EnemyBulletManager* manager) override
+		void Attack(const TYEngine::Utility::Vector3& origin, const TYEngine::Utility::Vector3& target, EnemyBulletManager* manager) override
 		{
-			Vector3 forward = Normalize(target - origin);
+			TYEngine::Utility::Vector3 forward = Normalize(target - origin);
 
-			Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
+			TYEngine::Utility::Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
 			if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f };
-			Vector3 right = Normalize(Cross(worldUp, forward));
-			Vector3 up = Normalize(Cross(forward, right));
+			TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
+			TYEngine::Utility::Vector3 up = TYEngine::Utility::Normalize(Cross(forward, right));
 			// 左右にずらして4発発射
-			SpawnBullet(manager, origin, Normalize(forward + up * 0.04f));
-			SpawnBullet(manager, origin, Normalize(forward + right * 0.04f + up * -0.02f));
-			SpawnBullet(manager, origin, Normalize(forward + right * -0.04f + up * -0.02f));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * 0.04f));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * 0.04f + up * -0.02f));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -0.04f + up * -0.02f));
 		}
 	};
 }

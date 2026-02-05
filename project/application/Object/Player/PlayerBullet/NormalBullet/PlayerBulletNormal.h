@@ -18,7 +18,7 @@ enum class NormalBulletState
 /// 直進挙動と衝突後の挙動をステートマシンで管理する。
 /// </summary>
 class PlayerBulletNormal :
-    public BaseBullet, StateMachine<PlayerBulletNormal, NormalBulletState>
+    public BaseBullet, TYEngine::Utility::StateMachine<PlayerBulletNormal, NormalBulletState>
 {
 public: // 関数テーブル
     static const std::vector<StateFunctionSet>& GetStateTable();

@@ -1,6 +1,7 @@
 #include "PlayerBulletManager.h"
 #include "NormalBullet/PlayerBulletNormal.h"
 
+using namespace TYEngine::Utility;
 
 PlayerBulletManager::PlayerBulletManager(Player* player)
 {

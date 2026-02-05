@@ -4,6 +4,9 @@
 #include "Camera.h"
 #include "Input.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Utility;
+
 Reticle::~Reticle()
 {
 	ColliderManager::GetInstance()->RemoveCollider(collider_.get());

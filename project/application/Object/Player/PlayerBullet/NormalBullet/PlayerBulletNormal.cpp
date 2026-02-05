@@ -3,6 +3,8 @@
 #include "Timer.h"
 #include "ColliderManager.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
 
 #define NORMAL_BULLET_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(PlayerBulletNormal, stateEnum, funcName)

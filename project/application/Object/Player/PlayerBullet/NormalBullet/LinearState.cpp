@@ -6,7 +6,7 @@ void PlayerBulletNormal::InitLinear()
 
 void PlayerBulletNormal::UpdateLinear()
 {
-	// 寿命を超えたら死亡フラグをtrueにし、削除対象とする
+	// 寿命を超えたら死亡フラグを true にし、削除対象とする
 	if (GetStateElapsedTime() > lifeTime_) 
 	{
 		isDead_ = true;

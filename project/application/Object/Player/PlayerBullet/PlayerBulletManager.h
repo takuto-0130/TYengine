@@ -41,12 +41,12 @@ public:
 	/// <param name="type">弾の種類（NORMAL, MISSILEなど）。</param>
 	/// <param name="pos">発射位置（ワールド座標）。</param>
 	/// <param name="direction">発射方向（正規化ベクトル）。</param>
-	void Fire(PlayerBulletType type, const Vector3& pos, const Vector3& direction);
+	void Fire(PlayerBulletType type, const TYEngine::Utility::Vector3& pos, const TYEngine::Utility::Vector3& direction);
 
 	/// <summary>
 	/// カメラを設定する（ビルボード用）。
 	/// </summary>
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
 private:
 	/// <summary>所有者（プレイヤー）。</summary>
@@ -55,6 +55,6 @@ private:
 	std::list<std::unique_ptr<BaseBullet>> bullets_;
 
 	/// <summary>カメラ。</summary>
-	Camera* camera_ = nullptr;
+	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 };
 

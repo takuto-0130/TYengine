@@ -3,6 +3,8 @@
 #include "../../ColliderTypeID/ColliderTypeID.h"
 #include "Sphere/SphereCollider.h"
 
+using namespace TYEngine::Utility;
+
 void ReticleCollider::OnCollisionEnter([[maybe_unused]] Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
 	// 敵との衝突判定（ロックオン距離算出のため）

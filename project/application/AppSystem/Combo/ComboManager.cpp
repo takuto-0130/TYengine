@@ -1,6 +1,8 @@
 #include "ComboManager.h"
 #include "Timer.h"
 
+using namespace TYEngine::Utility;
+
 void ComboManager::Init()
 {
 	// 各変数を初期値にリセット

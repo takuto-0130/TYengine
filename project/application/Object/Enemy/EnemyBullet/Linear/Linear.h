@@ -19,7 +19,7 @@ namespace EnemyBullet
 	/// 発射ステートと衝突後ステートを持つ。
 	/// </summary>
 	class Linear :
-		public BaseBullet, StateMachine<Linear, LinearState>
+		public BaseBullet, TYEngine::Utility::StateMachine<Linear, LinearState>
 	{
 	public: // 関数テーブル
 		static const std::vector<StateFunctionSet>& GetStateTable();

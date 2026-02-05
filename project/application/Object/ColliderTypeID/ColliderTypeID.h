@@ -5,7 +5,8 @@
 /// コライダーのタイプID定義。
 /// 衝突判定のフィルタリングや識別に使用する。
 /// </summary>
-enum class ColliderTypeID {
+enum class ColliderTypeID 
+{
     NONE,       ///< なし/未設定
     PLAYER,     ///< プレイヤー本体
     P_BULLET,   ///< プレイヤーの弾

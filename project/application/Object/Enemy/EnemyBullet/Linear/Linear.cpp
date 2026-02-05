@@ -9,6 +9,7 @@
 
 
 using namespace EnemyBullet;
+using namespace TYEngine::Utility;
 
 
 #define E_LINEAR_BULLET_ENTRY(stateEnum, funcName) \
@@ -37,7 +38,7 @@ Linear::~Linear()
 void Linear::Init()
 {
 	// 3Dモデル生成
-	obj_ = std::make_unique<Object3d>();
+	obj_ = std::make_unique<TYEngine::Graphics::Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("unitSphere.obj");
 	obj_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });

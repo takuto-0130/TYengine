@@ -6615,10 +6615,15 @@ void GameScene::Init()
 {
 	//========== ロード ==========//
 	// UI定義と設定ファイルのJSONロード
-	gameUIJM_.Load("GameUI.json", true, &errUI_);
-	configJM_.Load("Config.json", true, &errConfig_);
+	gameUIJM_ = std::make_unique<TYEngine::Utility::JsonManager>();
+	gameUIJM_->Load("GameUI.json", true, &errUI_);
+	paramJM_ = std::make_unique<TYEngine::Utility::JsonManager>();
+	paramJM_->Load("Param.json", true, &errParam_);
+	configJM_ = std::make_unique<TYEngine::Utility::JsonManager>();
+	configJM_->Load("Config.json", true, &errConfig_);
 #ifdef _DEBUG
 	Log(errUI_);
+	Log(errParam_);
 	Log(errConfig_);
 #endif // _DEBUG
 
@@ -6662,13 +6667,19 @@ void GameScene::Update()
 	ImGui::End();
 
 	// ImGui で編集
+	// UI
 	ImGui::Begin("JSON Editor");
-	static Utility::JsonImGuiEditor inspectorUI(gameUIJM_);
-	inspectorUI.Draw(gameUIJM_.Root(), "GameUI.json");
-	if (ImGui::Button("Save")) gameUIJM_.Save();
-	static Utility::JsonImGuiEditor inspectorConfig(configJM_);
-	inspectorConfig.Draw(configJM_.Root(), "Config.json");
-	if (ImGui::Button("SaveConfig")) configJM_.Save();
+	static Utility::JsonImGuiEditor inspectorUI(*gameUIJM_);
+	inspectorUI.Draw(gameUIJM_->Root(), "GameUI.json");
+	if (ImGui::Button("Save")) gameUIJM_->Save();
+	// パラメータ
+	static Utility::JsonImGuiEditor inspectorParam(*paramJM_);
+	inspectorParam.Draw(paramJM_->Root(), "Param.json");
+	if (ImGui::Button("Save")) paramJM_->Save();
+	// コンフィグ
+	static Utility::JsonImGuiEditor inspectorConfig(*configJM_);
+	inspectorConfig.Draw(configJM_->Root(), "Config.json");
+	if (ImGui::Button("SaveConfig")) configJM_->Save();
 	ImGui::End();
 #endif // _DEBUG
 
@@ -6873,11 +6884,15 @@ private: // メンバ変数
 
 
 	/// <summary>ゲームUI用JSONマネージャ。</summary>
-	TYEngine::Utility::JsonManager gameUIJM_;
+	std::unique_ptr<TYEngine::Utility::JsonManager> gameUIJM_;
 	/// <summary>UI設定エラーメッセージ。</summary>
 	std::string errUI_;
+	/// <summary>パラメータ用JSONマネージャ。</summary>
+	std::unique_ptr<TYEngine::Utility::JsonManager> paramJM_;
+	/// <summary>パラメータ設定エラーメッセージ。</summary>
+	std::string errParam_;
 	/// <summary>設定用JSONマネージャ。</summary>
-	TYEngine::Utility::JsonManager configJM_;
+	std::unique_ptr<TYEngine::Utility::JsonManager> configJM_;
 	/// <summary>設定エラーメッセージ。</summary>
 	std::string errConfig_;
 
@@ -7289,7 +7304,7 @@ void GameScene::StartCamera()
 	std::function<void(Vector3&)> applyCameraWork = [&](Vector3& pos)
 		{
 			// 真後ろから始まるように調整
-			Matrix4x4 rotAjust = MakeRotateYMatrix((3.9f) / 5.0f);
+			Matrix4x4 rotAjust = MakeRotateYMatrix(0.78f);
 			pos = TransformM(pos, rotAjust);
 
 			// プレイヤー位置を基準とした相対位置計算
@@ -7550,29 +7565,29 @@ using namespace TYEngine::Graphics;
 void GameScene::UIInit()
 {
 	scoreDraw_ = std::make_unique<ScoreUI>();
-	scoreDraw_->SetJsonManager(&gameUIJM_);
+	scoreDraw_->SetJsonManager(gameUIJM_.get());
 	scoreDraw_->Init();
 
 	startDraw_ = std::make_unique<StartUI>();
-	startDraw_->SetJsonManager(&gameUIJM_);
+	startDraw_->SetJsonManager(gameUIJM_.get());
 	startDraw_->Init();
 
 	playUI_ = std::make_unique<PlayUI>();
-	playUI_->SetJsonManager(&gameUIJM_);
+	playUI_->SetJsonManager(gameUIJM_.get());
 	playUI_->SetScoreDraw(scoreDraw_.get());
 	playUI_->Init();
 
 	pauseMenu_ = std::make_unique<PauseClass>();
-	pauseMenu_->SetJsonManager(&gameUIJM_);
-	pauseMenu_->SetConfigJsonManager(&configJM_);
+	pauseMenu_->SetJsonManager(gameUIJM_.get());
+	pauseMenu_->SetConfigJsonManager(configJM_.get());
 	pauseMenu_->Init();
 
 	resultMenu_ = std::make_unique<ResultClass>();
-	resultMenu_->SetJsonManager(&gameUIJM_);
+	resultMenu_->SetJsonManager(gameUIJM_.get());
 	resultMenu_->Init();
 
 	retryDraw_ = std::make_unique<RetryUI>();
-	retryDraw_->SetJsonManager(&gameUIJM_);
+	retryDraw_->SetJsonManager(gameUIJM_.get());
 	retryDraw_->Init();
 }
 
@@ -8176,7 +8191,7 @@ void PlayUI::Init()
 {
 	input_ = Input::GetInstance();
 
-	shakeTime_ = 0.4f;
+	shakeTime_ = jm_->Get<float>("PlayUI.UIShake");
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	reticle_ = std::make_unique<Sprite>();
@@ -8268,7 +8283,7 @@ void PlayUI::SetShiftPos(const Vector2& pos)
 	Vector2 pixelPos;
 	pixelPos.x = (pos.x + 1.0f) * 0.5f * windowWidth;
 
-	pixelPos.y = ((1.0f - pos.y) * 0.5f * windowHeight) + 30.0f;
+	pixelPos.y = ((1.0f - pos.y) * 0.5f * windowHeight) + jm_->Get<float>("PlayUI.OffsetShiftY");
 	sprites_[SHIFT]->SetPosition(pixelPos);
 }
 
@@ -8320,7 +8335,7 @@ void PlayUI::ComboTexUpdate()
 
 	// コンボ表示の透明度制御
 	float t = comboTimer_ / kComboTime_;
-	t = 1.0f - powf(1.0f - t, 4.0f);
+	t = 1.0f - powf(1.0f - t, jm_->Get<float>("PlayUI.AlphaEasePow"));
 	sprites_[COMBO_TEXT]->SetAlpha(t);
 	sprites_[COMBO_NUM_TEXT]->SetAlpha(t);
 
@@ -8329,7 +8344,7 @@ void PlayUI::ComboTexUpdate()
 	if (t > 0)
 	{
 		std::mt19937 random(seedGene_());
-		std::uniform_real_distribution<float> dist(-15.0f, 15.0f);
+		std::uniform_real_distribution<float> dist(-jm_->Get<float>("PlayUI.ShakeScale"), jm_->Get<float>("PlayUI.ShakeScale"));
 		Vector2 pos = { dist(random),dist(random) };
 		sprites_[COMBO_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.ComboText.Position") + pos * t);
 		sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo") + pos * t);

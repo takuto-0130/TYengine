@@ -14,7 +14,7 @@ void PlayUI::Init()
 {
 	input_ = Input::GetInstance();
 
-	shakeTime_ = 0.4f;
+	shakeTime_ = jm_->Get<float>("PlayUI.UIShake");
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	reticle_ = std::make_unique<Sprite>();
@@ -106,7 +106,7 @@ void PlayUI::SetShiftPos(const Vector2& pos)
 	Vector2 pixelPos;
 	pixelPos.x = (pos.x + 1.0f) * 0.5f * windowWidth;
 
-	pixelPos.y = ((1.0f - pos.y) * 0.5f * windowHeight) + 30.0f;
+	pixelPos.y = ((1.0f - pos.y) * 0.5f * windowHeight) + jm_->Get<float>("PlayUI.OffsetShiftY");
 	sprites_[SHIFT]->SetPosition(pixelPos);
 }
 
@@ -158,7 +158,7 @@ void PlayUI::ComboTexUpdate()
 
 	// コンボ表示の透明度制御
 	float t = comboTimer_ / kComboTime_;
-	t = 1.0f - powf(1.0f - t, 4.0f);
+	t = 1.0f - powf(1.0f - t, jm_->Get<float>("PlayUI.AlphaEasePow"));
 	sprites_[COMBO_TEXT]->SetAlpha(t);
 	sprites_[COMBO_NUM_TEXT]->SetAlpha(t);
 
@@ -167,7 +167,7 @@ void PlayUI::ComboTexUpdate()
 	if (t > 0)
 	{
 		std::mt19937 random(seedGene_());
-		std::uniform_real_distribution<float> dist(-15.0f, 15.0f);
+		std::uniform_real_distribution<float> dist(-jm_->Get<float>("PlayUI.ShakeScale"), jm_->Get<float>("PlayUI.ShakeScale"));
 		Vector2 pos = { dist(random),dist(random) };
 		sprites_[COMBO_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.ComboText.Position") + pos * t);
 		sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo") + pos * t);

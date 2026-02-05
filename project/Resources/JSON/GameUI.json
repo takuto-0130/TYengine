@@ -24,6 +24,9 @@
     }
   },
   "PlayUI": {
+    "AlphaEasePow": 4.0,
+    "OffsetShiftY": 32.0,
+    "ShakeScale": 15.0,
     "Texture": {
       "ComboText": {
         "AnchorPoint": {
@@ -89,7 +92,8 @@
           "y": 0.5
         }
       }
-    }
+    },
+    "UIShake": 0.4000000059604645
   },
   "Result": {
     "Texture": {

@@ -21,7 +21,7 @@ public:
 	void Draw() override;
 
 	/// <summary>回転を設定する。</summary>
-	void SetRotate(const Vector3& rotation) { worldTransform_.SetRotate(rotation); }
+	void SetRotate(const TYEngine::Utility::Vector3& rotation) { worldTransform_.SetRotate(rotation); }
 	/// <summary>位置を設定する。</summary>
-	void SetTranslation(const Vector3& translation) { worldTransform_.SetTranslation(translation); }
+	void SetTranslation(const TYEngine::Utility::Vector3& translation) { worldTransform_.SetTranslation(translation); }
 };

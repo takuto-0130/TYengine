@@ -5,7 +5,7 @@
 #include "Input.h"
 
 using namespace TYEngine::Utility;
-using namespace TYEngine::Utility;
+using namespace TYEngine;
 
 Reticle::~Reticle()
 {
@@ -14,7 +14,7 @@ Reticle::~Reticle()
 
 void Reticle::Init()
 {
-	input_ = Input::GetInstance();
+	input_ = Framework::Input::GetInstance();
 	
 	// レティクル用レイコライダーの生成
 	collider_ = std::make_unique<ReticleCollider>(

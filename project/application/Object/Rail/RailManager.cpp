@@ -4,6 +4,8 @@
 #include "TImer.h"
 #include <imgui.h>
 
+using namespace TYEngine::Utility;
+
 void RailManager::Init()
 {
 	// JSONからレールデータをロード

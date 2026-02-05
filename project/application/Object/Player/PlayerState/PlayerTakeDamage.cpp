@@ -1,5 +1,7 @@
 #include "../Player.h"
 
+using namespace TYEngine::CameraSystem;
+
 void Player::InitTakeDamage()
 {
 	// 被弾時に色を加算（白く光らせる）

@@ -37,7 +37,7 @@ public:
     void DrawEditorUI();
 
     /// <summary>制御点リストを取得する。</summary>
-    const std::vector<Vector3>& GetControlPoints() const;
+    const std::vector<TYEngine::Utility::Vector3>& GetControlPoints() const;
     /// <summary>セグメント情報リストを取得する。</summary>
     const std::vector<RailSegment>& GetSegments() const;
     
@@ -52,7 +52,7 @@ public:
 private:
     RailEditor();
 
-    std::vector<Vector3> controlPoints_;
+    std::vector<TYEngine::Utility::Vector3> controlPoints_;
     std::vector<RailSegment> railSegments_;
     bool needsPreviewUpdate_ = false;
 };

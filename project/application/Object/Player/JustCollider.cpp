@@ -2,6 +2,8 @@
 #include "Player.h"
 #include "../ColliderTypeID/ColliderTypeID.h"
 
+using namespace TYEngine::Utility;
+
 void JustCollider::OnCollisionEnter([[maybe_unused]] Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
 }

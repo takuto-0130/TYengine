@@ -1,5 +1,8 @@
 #include "Rail.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+
 Rail::~Rail() 
 {
 }

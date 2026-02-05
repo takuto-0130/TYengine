@@ -37,6 +37,8 @@ namespace TYEngine
 			fftInput_.resize(FFT_SIZE);
 			fftReal_.resize(FFT_SIZE);
 			fftImag_.resize(FFT_SIZE);
+
+			energyHistory_.resize(BEAT_ANALYE_BUFFER, 0.0f);
 		}
 
 		MyAnalyzerXAPO::~MyAnalyzerXAPO() {}
@@ -120,7 +122,34 @@ namespace TYEngine
 				latestFFT_[i] = sqrtf(fftReal_[i] * fftReal_[i] + fftImag_[i] * fftImag_[i]);
 		}
 
-		// --------------------------------------------------------------
+		void MyAnalyzerXAPO::AnalyzeBeat()
+		{
+			// 1. 現在のフレームのエネルギー（RMS）を取得
+			float currentEnergy = latestRMS_;
+
+			// 2. 過去の平均エネルギーを算出
+			float averageEnergy = 0;
+			for (float e : energyHistory_) averageEnergy += e;
+			averageEnergy /= energyHistory_.size();
+
+			// 3. 判定（現在の音が平均より特定倍率以上大きければ「拍」）
+			// 係数(1.5fなど)は曲や感度に合わせて調整
+			if (currentEnergy > averageEnergy * 1.5f && !isBeatDetected_)
+			{
+				// 拍を検出！
+				isBeatDetected_ = true;
+				// ここでフラグを立てたり、外部に通知したりする
+			}
+			else if (currentEnergy < averageEnergy)
+			{
+				isBeatDetected_ = false; // エネルギーが下がったらリセット
+			}
+
+			// 4. 履歴を更新
+			energyHistory_[energyIndex_] = currentEnergy;
+			energyIndex_ = (energyIndex_ + 1) % energyHistory_.size();
+		}
+
 		// --------------------------------------------------------------
 		// XAudio2 の音声処理コールバック（リアルタイムスレッドで呼ばれる）
 		// --------------------------------------------------------------
@@ -164,6 +193,9 @@ namespace TYEngine
 
 				return;
 			}
+
+			// 拍を検出
+			AnalyzeBeat();
 
 			// ---- 遅延バッファへの蓄積とFFT実行 ----
 			// 今回のサンプルをリングバッファに保存

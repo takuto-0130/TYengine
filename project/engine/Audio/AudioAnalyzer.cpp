@@ -456,6 +456,8 @@ namespace TYEngine
 			ImGui::Text("Low : %.2f", lowGray_);
 			ImGui::Text("Mid : %.2f", midGray_);
 			ImGui::Text("High : %.2f", highGray_);
+			bool a = Audio::GetInstance()->GetAnalyzerXAPO()->GetBeat();
+			ImGui::Text("Beat : %d", a);
 
 			// 波形描画
 			DrawWaveform(width);

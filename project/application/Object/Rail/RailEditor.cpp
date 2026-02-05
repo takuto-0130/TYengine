@@ -3,6 +3,8 @@
 
 using json = nlohmann::json;
 
+using namespace TYEngine::Utility;
+
 RailEditor* RailEditor::Instance() {
     static RailEditor instance;
     return &instance;

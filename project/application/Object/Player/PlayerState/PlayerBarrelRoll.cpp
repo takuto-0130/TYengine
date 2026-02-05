@@ -9,6 +9,9 @@
 #include "RadialBlurEffect.h"
 #include "../../../AppSystem/Audio/GameAudio.h"
 
+using namespace TYEngine::OffScreen;
+using namespace TYEngine::Utility;
+
 void Player::InitBarrelRoll()
 {
     // SE再生

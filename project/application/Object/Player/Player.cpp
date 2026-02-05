@@ -8,6 +8,11 @@
 #include "Effect/ParticleManager.h"
 #include "../../AppSystem/Audio/GameAudio.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+using namespace TYEngine::Effect;
+using namespace TYEngine;
+
 #define PLAYER_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Player, stateEnum, funcName)
 
@@ -38,7 +43,7 @@ void Player::Init()
 	RegisterFromDefaultTable(this);
 	
 	// 入力マネージャ取得
-	input_ = Input::GetInstance();
+	input_ = Framework::Input::GetInstance();
 
 	// 数値を適用
 	colliderScale_ = 0.2f;

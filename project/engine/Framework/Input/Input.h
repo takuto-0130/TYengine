@@ -16,8 +16,6 @@ namespace TYEngine
 	namespace Framework
 	{
 
-		// using namespace Utility;
-
 		/// <summary>
 		/// キーボード、マウス、ジョイスティックの入力管理クラス（シングルトン）。
 		/// DirectInput8 および XInput を使用して入力状態を取得する。

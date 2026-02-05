@@ -68,7 +68,7 @@ public:
 	void Reset();
 
 public:
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
 	float GetRailTotalLength() const { return arcMap_.total; }
 
@@ -78,7 +78,7 @@ public:
 
 private:
 	/// <summary>レールポイントを追加する。</summary>
-	void PopRail(const Vector3& position, const Vector3& rotate);
+	void PopRail(const TYEngine::Utility::Vector3& position, const TYEngine::Utility::Vector3& rotate);
 
 	/// <summary>レールを描画用に再構築する。</summary>
 	void RailReDraw();
@@ -92,7 +92,7 @@ private:
 	/// <summary>レールカメラ位置をリセットする。</summary>
 	void ResetRailCamera();
 
-	static PolylineArc BuildPolylineArc(const std::vector<Vector3>& poly)
+	static PolylineArc BuildPolylineArc(const std::vector<TYEngine::Utility::Vector3>& poly)
 	{
 		PolylineArc map;
 
@@ -143,24 +143,24 @@ private:
 		const float t1 = map.T[lo + 1];
 
 		const float a = (s - s0) / std::max<float>(1e-6f, (s1 - s0));
-		return Lerp(t0, t1, a); // 線形補間
+		return TYEngine::Utility::Lerp(t0, t1, a); // 線形補間
 	}
 
 private:
 	/// <summary>カメラへのポインタ。</summary>
-	Camera* camera_ = nullptr;
+	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 
 	/// <summary>カメラのオフセット位置。</summary>
-	Vector3 offsetCameraPos_ = { 0.0f,0.8f,0.0f };
+	TYEngine::Utility::Vector3 offsetCameraPos_ = { 0.0f,0.8f,0.0f };
 
 	/// <summary>レールセグメントのリスト。</summary>
 	std::list<std::unique_ptr<Rail>> rails_;
 	/// <summary>セグメントごとのトリガーフラグ。</summary>
 	std::vector<bool> triggeredFlags_;
 	/// <summary>制御点リスト。</summary>
-	std::vector<Vector3> controlPoints_;
+	std::vector<TYEngine::Utility::Vector3> controlPoints_;
 	/// <summary>描画用ポイントリスト。</summary>
-	std::vector<Vector3> pointsDrawing_;
+	std::vector<TYEngine::Utility::Vector3> pointsDrawing_;
 
 	/// <summary>1セグメントあたりの描画分割数（基準）。</summary>
 	size_t oneSegmentCount = 20;
@@ -191,11 +191,11 @@ private:
 	struct TriggerObject
 	{
 		/// <summary>ワールドトランスフォーム。</summary>
-		WorldTransform world;
+		TYEngine::Utility::WorldTransform world;
 		/// <summary>描画オブジェクト。</summary>
-		Object3d object;
+		TYEngine::Graphics::Object3d object;
 
-		explicit TriggerObject(const Vector3& pos)
+		explicit TriggerObject(const TYEngine::Utility::Vector3& pos)
 		{
 			world.Initialize();
 			world.SetTranslation(pos);

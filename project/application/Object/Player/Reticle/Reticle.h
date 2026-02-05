@@ -2,6 +2,7 @@
 #include "ReticleCollider.h"
 #include <memory>
 
+
 class Camera;
 class Input;
 /// <summary>
@@ -12,7 +13,7 @@ class Reticle
 {
 public:
 	/// <summary>コンストラクタ。</summary>
-	Reticle(Camera* camera) : camera_(camera) {}
+	Reticle(TYEngine::CameraSystem::Camera* camera) : camera_(camera) {}
 	~Reticle();
 
 	/// <summary>初期化処理。</summary>
@@ -39,8 +40,8 @@ public:
 	TYEngine::Utility::Vector3 GetTarget() { return collider_->GetRay().origin + collider_->GetRay().diff * targetDistance_; }
 
 private:
-	Camera* camera_ = nullptr;
-	Input* input_ = nullptr;
+	TYEngine::CameraSystem::Camera* camera_ = nullptr;
+	TYEngine::Framework::Input* input_ = nullptr;
 	std::unique_ptr<ReticleCollider> collider_;
 	float targetDistance_ = 0.0f;
 	float frameDistance_ = 0.0f;

@@ -19,11 +19,18 @@ enum class PlayerState
     DEAD,
 };
 
-class Input;
+namespace TYEngine
+{
+	namespace Framework
+	{
+		class Input;
+	}
+}
+
 class Camera;
 
 class Player :
-    public BaseCharacter, public StateMachine<Player, PlayerState>
+	public BaseCharacter, public TYEngine::Utility::StateMachine<Player, PlayerState>
 {
 public: // 関数テーブル
     static const std::vector<StateFunctionSet>& GetStateTable();
@@ -51,12 +58,12 @@ public:
 	/// <summary>
 	/// プレイヤーに使用させるカメラを設定する。
 	/// </summary>
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
 	/// <summary>
 	/// プレイヤーの3Dオブジェクトを取得する。
 	/// </summary>
-	Object3d* GetObj() { return obj_.get(); }
+	TYEngine::Graphics::Object3d* GetObj() { return obj_.get(); }
 
 	/// <summary>ジャスト回避成功時のフラグを立てる。</summary>
 	void OnJust() { isJust_ = true; }
@@ -70,7 +77,7 @@ public:
 	/// 画面内での相対オフセット位置を設定する。
 	/// </summary>
 	/// <param name="offset">オフセット（-1.0 ~ 1.0）。</param>
-	void SetScreenOffset(const Vector2& offset) { screenOffset_ = offset; }
+	void SetScreenOffset(const TYEngine::Utility::Vector2& offset) { screenOffset_ = offset; }
 
 	/// <summary>
 	/// ダメージを受ける処理。
@@ -82,7 +89,7 @@ public:
 	int GetHP() { return hitPoint_; }
 
 	/// <summary>現在の画面内オフセットを取得する。</summary>
-	Vector2 GetScreenOffset() { return screenOffset_; }
+	TYEngine::Utility::Vector2 GetScreenOffset() { return screenOffset_; }
 
 	/// <summary>
 	/// 衝突時コールバック。
@@ -109,7 +116,7 @@ private:
 	/// </summary>
 	/// <param name="offset">スクリーンオフセット。</param>
 	/// <returns>ワール座標。</returns>
-	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
+	TYEngine::Utility::Vector3 ConvertScreenOffsetToWorld(const TYEngine::Utility::Vector2& offset);
 
 	// BarrelRoll
 	/// <summary>バレルロール（回避）開始処理。</summary>
@@ -117,9 +124,9 @@ private:
 	/// <summary>バレルロール中の更新処理。</summary>
 	void BarrelRoll();
 	/// <summary>左方向へのロール。</summary>
-	void LeftRoll(const Vector2& dir);
+	void LeftRoll(const TYEngine::Utility::Vector2& dir);
 	/// <summary>右方向へのロール。</summary>
-	void RightRoll(const Vector2& dir);
+	void RightRoll(const TYEngine::Utility::Vector2& dir);
 
 
 	// Debug
@@ -136,11 +143,11 @@ private:
 
 private:
 	/// <summary>入力管理クラス。</summary>
-	Input* input_ = nullptr;
+	TYEngine::Framework::Input* input_ = nullptr;
 	/// <summary>使用するカメラ。</summary>
-	Camera* camera_ = nullptr;
+	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 	/// <summary>カメラ基準のスクリーン内オフセット（例：[-1, 1]）。</summary>
-	Vector2 screenOffset_{}; 
+	TYEngine::Utility::Vector2 screenOffset_{};
 	/// <summary>プレイヤー用コライダー。</summary>
 	std::unique_ptr<PlayerCollider> collider_;
 	/// <summary>ジャスト回避判定用コライダー。</summary>
@@ -158,12 +165,12 @@ private:
 	/// <summary>基本移動速度。</summary>
 	float defaultSpeed_ = 0.0f;
 	/// <summary>現在の移動速度。</summary>
-	Vector2 speed_{};
+	TYEngine::Utility::Vector2 speed_{};
 	/// <summary>入力方向。</summary>
-	Vector2 inputDir_{};
+	TYEngine::Utility::Vector2 inputDir_{};
 
 	/// <summary>ロール回転方向。</summary>
-	Vector2 rollDir_{};
+	TYEngine::Utility::Vector2 rollDir_{};
 
 	/// <summary>デルタタイム。</summary>
 	float deltaTime_ = 0.0f;
@@ -193,9 +200,9 @@ private:
 	/// <summary>右ロール目標角度。</summary>
 	float rightRoll_ = 0.0f;
 	/// <summary>ロール開始位置。</summary>
-	Vector2 startRollPos_{};
+	TYEngine::Utility::Vector2 startRollPos_{};
 	/// <summary>ロール終了位置。</summary>
-	Vector2 goalRollPos_{};
+	TYEngine::Utility::Vector2 goalRollPos_{};
 
 	/// <summary>ロールエフェクトタイマー。</summary>
 	float rollEffectTimer_ = 0.0f;
@@ -223,9 +230,9 @@ private:
 
 
 	/// <summary>デバッグ用レティクルオブジェクト。</summary>
-	std::unique_ptr<Object3d> reticleObj_;
+	std::unique_ptr<TYEngine::Graphics::Object3d> reticleObj_;
 	/// <summary>レティクルワールド変換。</summary>
-	WorldTransform reticleWT_;
+	TYEngine::Utility::WorldTransform reticleWT_;
 
 	/// <summary>コントレイルインデックス。</summary>
 	int contrailIndex_;

@@ -2,6 +2,8 @@
 #include "Player.h"
 #include "../ColliderTypeID/ColliderTypeID.h"
 
+using namespace TYEngine::Utility;
+
 void PlayerCollider::OnCollisionEnter([[maybe_unused]]Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
 	// 敵弾に当たった場合（バレルロール中は無敵）

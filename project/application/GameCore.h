@@ -36,8 +36,8 @@ public:
 
 private:
     /// <summary>入力管理クラス（キーボード、マウス、パッドなど）。</summary>
-    Input* input_ = nullptr;
+    TYEngine::Framework::Input* input_ = nullptr;
 
     /// <summary>パーティクル描画および管理クラス。</summary>
-    ParticleManager* particleManager_ = nullptr;
+    TYEngine::Effect::ParticleManager* particleManager_ = nullptr;
 };

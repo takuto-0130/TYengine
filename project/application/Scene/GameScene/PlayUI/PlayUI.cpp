@@ -4,6 +4,12 @@
 #include "TextureManager.h"
 #include "../../../ScoreUI/ScoreUI.h"
 
+
+using namespace TYEngine::Framework;
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+using namespace TYEngine::Core;
+
 void PlayUI::Init()
 {
 	input_ = Input::GetInstance();

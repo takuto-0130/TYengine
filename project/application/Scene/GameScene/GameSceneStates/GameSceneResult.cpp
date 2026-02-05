@@ -5,6 +5,11 @@
 #include "../../../ScoreUI/ScoreUI.h"
 #include "Timer.h"
 
+using namespace TYEngine;
+using namespace TYEngine::Core;
+using namespace TYEngine::Graphics;
+using namespace TYEngine::OffScreen;
+
 void GameScene::InitResult()
 {
 	gameAudio_->Play("fanfare", false, SoundCategory::BGM);
@@ -20,7 +25,7 @@ void GameScene::InitResult()
 	scoreDraw_->UpdateResult(0.0f);
 
 	// 紙吹雪（Confetti）の衝突判定用にUIスプライトを登録
-	std::vector<Sprite*> setSpr;
+	std::vector<Graphics::Sprite*> setSpr;
 	setSpr.insert(setSpr.end(), resultMenu_->GetSprite().begin(), resultMenu_->GetSprite().end());
 	setSpr.insert(setSpr.end(), scoreDraw_->GetSprite().begin(), scoreDraw_->GetSprite().end());
 
@@ -50,7 +55,7 @@ void GameScene::UpdateResult()
 	{
 		// 常に少しずつ追加して降り続ける
 		confetti_.Emit(2);
-		confetti_.Update(Timer::GetInstance()->GetDeltaTime());
+		confetti_.Update(Utility::Timer::GetInstance()->GetDeltaTime());
 	}
 
 	// 時間経過でブラー強度を変化、その後入力待ち

@@ -5,8 +5,14 @@
 
 #include <memory>
 #include <random>
-
-class Input;
+namespace TYEngine::Framework
+{
+	class Input;
+}
+namespace TYEngine::Graphics
+{
+	class Sprite;
+}
 class ScoreUI;
 /// <summary>
 /// ゲームプレイ中のUI（HUD）を管理するクラス。
@@ -46,13 +52,13 @@ public:
 	void SetHPNum(int hp = 0) { sprites_[HP_NUM_TEXT]->SetTextureLeftTop({ sprites_[HP_NUM_TEXT]->GetSize().x * float(hp),0 }); }
 
 	/// <summary>シフトガイドの位置を設定。</summary>
-	void SetShiftPos(const Vector2& pos);
+	void SetShiftPos(const TYEngine::Utility::Vector2& pos);
 
 	/// <summary>ジャスト回避演出の有無を設定。</summary>
 	void SetJust(bool just) { isJust_ = just; }
 
 	/// <summary>JSONマネージャを設定（デバッグ調整用）。</summary>
-	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
+	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 private:
 	/// <summary>JSONからパラメータを適用する。</summary>
@@ -60,7 +66,7 @@ private:
 
 private:
 	/// <summary>入力管理クラス。</summary>
-	Input* input_ = nullptr;
+	TYEngine::Framework::Input* input_ = nullptr;
 	/// <summary>スコア描画クラス。</summary>
 	ScoreUI* scoreDraw_ = nullptr;
 
@@ -79,10 +85,10 @@ private:
 	};
 
 	/// <summary>UIスプライト群。</summary>
-	std::array<std::unique_ptr<Sprite>, SpriteNum> sprites_;
+	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, SpriteNum> sprites_;
 
 	/// <summary>レティクルスプライト。</summary>
-	std::unique_ptr<Sprite> reticle_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> reticle_;
 
 	/// <summary>コンボ表示中のタイマー。</summary>
 	float comboTimer_ = 0;
@@ -98,6 +104,6 @@ private:
 	float shakeTime_ = 0.0f;
 
 	/// <summary>JSONマネージャ。</summary>
-	jx::JsonManager* jm_;
+	TYEngine::Utility::JsonManager* jm_;
 };
 

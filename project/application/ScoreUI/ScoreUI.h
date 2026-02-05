@@ -4,6 +4,7 @@
 #include "Utils/Json/JsonManager.h"
 
 #include <memory>
+
 /// <summary>
 /// スコア表示UIの管理クラス。
 /// 桁ごとのスプライト管理やスコア加算時のアニメーション制御を行う。
@@ -47,12 +48,12 @@ public:
 	void SetResult();
 
 
-	std::vector<Sprite*>& GetSprite() { return setColliderSpr_; }
+	std::vector<TYEngine::Graphics::Sprite*>& GetSprite() { return setColliderSpr_; }
 
-	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
+	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 private:
-	void OffsetPos(const Vector2& pos);
+	void OffsetPos(const TYEngine::Utility::Vector2& pos);
 
 	void ScoreViewSetting();
 
@@ -68,7 +69,7 @@ private:
 		SpriteNum
 	};
 
-	std::array<std::unique_ptr<Sprite>, SpriteNum> sprites_;
+	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, SpriteNum> sprites_;
 
 	int32_t prevScore_ = 0;
 	int32_t currentScore_ = 0;
@@ -80,13 +81,13 @@ private:
 	};
 	ScoreDisplay scoreDisplay_ = {};
 
-	std::vector<Sprite*> setColliderSpr_;
+	std::vector<TYEngine::Graphics::Sprite*> setColliderSpr_;
 
 	float scoreViewTimer_ = 0;
 	float scoreViewTime_ = 0.0f;
 
 	float deltaTime_ = 0.0f;
 
-	jx::JsonManager* jm_;
+	TYEngine::Utility::JsonManager* jm_;
 };
 

@@ -13,7 +13,7 @@ class PBulletCollider :
 {
 public:
     /// <summary>コンストラクタ。</summary>
-    PBulletCollider(uint32_t typeID, const Vector3& center, float radius, BaseBullet* bullet)
+    PBulletCollider(uint32_t typeID, const TYEngine::Utility::Vector3& center, float radius, BaseBullet* bullet)
         : SphereCollider(typeID, center, radius), bullet_(bullet) 
     {
     }

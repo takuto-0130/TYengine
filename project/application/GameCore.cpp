@@ -28,6 +28,17 @@
 #include <imgui.h>
 #endif // _DEBUG
 
+
+using namespace TYEngine::Framework;
+using namespace TYEngine::Core;
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+using namespace TYEngine::Debugger;
+using namespace TYEngine::CameraSystem;
+using namespace TYEngine::Effect;
+using namespace TYEngine::OffScreen;
+using namespace TYEngine::AudioSystem;
+
 void GameCore::Initialize()
 {
 	// フレームワーク基盤の初期化（Window, DirectXなど）

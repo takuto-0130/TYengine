@@ -5,6 +5,10 @@
 #include "SpriteBasis.h"
 #include <algorithm>
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Core;
+using namespace TYEngine::Graphics;
+
 #define FADE_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(FadeTransition, stateEnum, funcName)
 
@@ -42,7 +46,7 @@ FadeTransition::FadeTransition(FadeTransition::Type type, float duration)
 void FadeTransition::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/blackScreen.png");
-	sprites_ = std::make_unique<Sprite>();
+	sprites_ = std::make_unique<TYEngine::Graphics::Sprite>();
 	sprites_->Initialize("Resources/Texture/blackScreen.png");
 	sprites_->SetSize(Vector2{ WindowsApp::kClientWidth,WindowsApp::kClientHeight });
 	sprites_->SetTextureSize(Vector2{ WindowsApp::kClientWidth,WindowsApp::kClientHeight });

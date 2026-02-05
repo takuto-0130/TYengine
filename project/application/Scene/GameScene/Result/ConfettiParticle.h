@@ -5,10 +5,10 @@
 
 struct ConfettiParticle
 {
-    Sprite  sprite;
+    TYEngine::Graphics::Sprite  sprite;
 
-    Vector2 pos;           // 物理的な基準位置（揺れの中心）
-    Vector2 vel;           // 速度（左右/上下）
+    TYEngine::Utility::Vector2 pos;           // 物理的な基準位置（揺れの中心）
+    TYEngine::Utility::Vector2 vel;           // 速度（左右/上下）
 
     // 回転
     float   angle = 0.0f;

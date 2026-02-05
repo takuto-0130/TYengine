@@ -44,15 +44,15 @@ public:
     /// UIの衝突判定用AABBリストを登録する。
     /// </summary>
     /// <param name="uiAABBs">AABBリストへの参照。</param>
-    void SetUIColliders(const std::vector<AABB2D>& uiAABBs)
+    void SetUIColliders(const std::vector<TYEngine::Utility::AABB2D>& uiAABBs)
     {
         uiAABBs_ = &uiAABBs;
     }
 
 private:
     void SpawnOne();
-    void SpawnShatter(const Vector2& pos, const Vector4& color, float depth, int count);
-    bool CheckAndHandleHitUI(ConfettiParticle& p, const Vector2& drawPos);
+    void SpawnShatter(const TYEngine::Utility::Vector2& pos, const TYEngine::Utility::Vector4& color, float depth, int count);
+    bool CheckAndHandleHitUI(ConfettiParticle& p, const TYEngine::Utility::Vector2& drawPos);
 
 private:
     /// <summary>パーティクルリスト。</summary>
@@ -69,5 +69,5 @@ private:
     float globalTime_ = 0.0f; // 風揺れ用の経過時間
 
     // UI との衝突用
-    const std::vector<AABB2D>* uiAABBs_ = nullptr;
+    const std::vector<TYEngine::Utility::AABB2D>* uiAABBs_ = nullptr;
 };

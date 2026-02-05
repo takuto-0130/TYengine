@@ -24,7 +24,11 @@ class RetryUI;
 class Audio;
 class RailManager;
 class Player;
-class BulletTimeController;
+
+namespace TYEngine::Utility
+{
+	class BulletTimeController;
+}
 
 enum class GameSceneState {
 	LOAD,		// データのロード（ロードに時間がかかる場合に使用、使わなければのちに削除）
@@ -43,7 +47,8 @@ enum class GameSceneState {
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene : public IScene, public StateMachine<GameScene, GameSceneState>
+class GameScene : 
+	public TYEngine::Framework::IScene, public TYEngine::Utility::StateMachine<GameScene, GameSceneState>
 {
 public: // 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
@@ -108,7 +113,7 @@ private: // メンバ変数
 	/// <summary>カメラのピッチ角。</summary>
 	float pitch_ = 1.0f;
 	/// <summary>カメラのオフセット位置。</summary>
-	Vector3 cameraOffset_ = {};
+	TYEngine::Utility::Vector3 cameraOffset_ = {};
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
@@ -121,17 +126,17 @@ private: // メンバ変数
 
 
 	/// <summary>汎用パーティクルエミッター。</summary>
-	IParticleRenderer::Emitter emitter;
+	TYEngine::Effect::IParticleRenderer::Emitter emitter;
 	/// <summary>リング状パーティクルエミッター。</summary>
-	IParticleRenderer::Emitter emitterRing;
+	TYEngine::Effect::IParticleRenderer::Emitter emitterRing;
 
 	/// <summary>UI用コライダー管理。</summary>
-	UISpriteColliderManager uiCollider_;
+	TYEngine::Utility::UISpriteColliderManager uiCollider_;
 	/// <summary>紙吹雪エフェクトシステム。</summary>
 	ConfettiSystem confetti_;
 
 	/// <summary>バレットタイムコントローラー。</summary>
-	BulletTimeController* bulletTime_ = nullptr;
+	TYEngine::Utility::BulletTimeController* bulletTime_ = nullptr;
 
 	
 	// UIクラス群
@@ -149,7 +154,7 @@ private: // メンバ変数
 	std::unique_ptr<ResultClass> resultMenu_;
 
 	/// <summary>スカイボックス。</summary>
-	std::unique_ptr<ObjectCubemap> skybox_;
+	std::unique_ptr<TYEngine::Graphics::ObjectCubemap> skybox_;
 
 	/// <summary>エディタ切り替えスイッチ。</summary>
 	bool otherEditorSwitch_ = false;
@@ -159,9 +164,9 @@ private: // メンバ変数
 	/// <summary>準備カウントダウン。</summary>
 	int readyCount_ = 0;
 	/// <summary>開始時カメラ位置。</summary>
-	Vector3 startCameraPos_{};
+	TYEngine::Utility::Vector3 startCameraPos_{};
 	/// <summary>開始時カメラ回転。</summary>
-	Vector3 startCameraRot_{};
+	TYEngine::Utility::Vector3 startCameraRot_{};
 	/// <summary>開始カメラ演出タイマー。</summary>
 	float startCameraTimer_ = 0;
 	/// <summary>前回のステート経過時間。</summary>
@@ -169,11 +174,11 @@ private: // メンバ変数
 
 
 	/// <summary>ゲームUI用JSONマネージャ。</summary>
-	jx::JsonManager gameUIJM_;
+	TYEngine::Utility::JsonManager gameUIJM_;
 	/// <summary>UI設定エラーメッセージ。</summary>
 	std::string errUI_;
 	/// <summary>設定用JSONマネージャ。</summary>
-	jx::JsonManager configJM_;
+	TYEngine::Utility::JsonManager configJM_;
 	/// <summary>設定エラーメッセージ。</summary>
 	std::string errConfig_;
 

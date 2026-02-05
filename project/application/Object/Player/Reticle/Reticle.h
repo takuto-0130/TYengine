@@ -3,8 +3,17 @@
 #include <memory>
 
 
-class Camera;
-class Input;
+namespace TYEngine
+{
+	namespace CameraSystem
+	{
+		class Camera;
+	}
+	namespace Framework
+	{
+		class Input;
+	}
+}
 /// <summary>
 /// プレイヤーの照準（レティクル）クラス。
 /// 画面上の照準位置を管理し、ワールド空間上のレイを計算する。

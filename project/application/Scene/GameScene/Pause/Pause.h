@@ -6,7 +6,10 @@
 
 #include "../../../AppSystem/Audio/GameAudio.h"
 
-class Sprite;
+namespace TYEngine::Graphics
+{
+	class Sprite;
+}
 
 /// <summary>
 /// ポーズメニューのボタンの種類。
@@ -37,9 +40,9 @@ public:
 	/// <summary>描画処理。</summary>
 	void Draw();
 
-	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
+	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
-	void SetConfigJsonManager(jx::JsonManager* jm) { configJM_ = jm; }
+	void SetConfigJsonManager(TYEngine::Utility::JsonManager* jm) { configJM_ = jm; }
 
 	ButtonElements GetElements() { return elements_; }
 
@@ -56,21 +59,21 @@ private:
 		/// <summary>サウンドカテゴリ。</summary>
 		SoundCategory soundCategory = SoundCategory::CategoryNum;
 		/// <summary>判定用座標。</summary>
-		Vector2 pos = {};	
+		TYEngine::Utility::Vector2 pos = {};
 		/// <summary>判定用サイズ。</summary>
-		Vector2 size = {};	
+		TYEngine::Utility::Vector2 size = {};
 		/// <summary>押下状態フラグ。</summary>
 		bool isPush = false;
 		/// <summary>ホバーアニメーション進捗。</summary>
 		float hoverProgress = 0.0f;
 		/// <summary>背景バーのスプライト。</summary>
-		std::unique_ptr<Sprite> bar;
+		std::unique_ptr<TYEngine::Graphics::Sprite> bar;
 		/// <summary>音量バー（中身）のスプライト。</summary>
-		std::unique_ptr<Sprite> colorBar;
+		std::unique_ptr<TYEngine::Graphics::Sprite> colorBar;
 		/// <summary>スライダつまみのスプライト。</summary>
-		std::unique_ptr<Sprite> slide;
+		std::unique_ptr<TYEngine::Graphics::Sprite> slide;
 		/// <summary>テキスト表示用スプライト。</summary>
-		std::unique_ptr<Sprite> text;
+		std::unique_ptr<TYEngine::Graphics::Sprite> text;
 	};
 
 	enum VolumeCategory
@@ -89,11 +92,11 @@ private:
 		/// <summary>ボタンの種類。</summary>
 		ButtonElements elements = ButtonElements::Num;
 		/// <summary>判定用座標。</summary>
-		Vector2 pos = {};	
+		TYEngine::Utility::Vector2 pos = {};
 		/// <summary>判定用サイズ。</summary>
-		Vector2 size = {};	
+		TYEngine::Utility::Vector2 size = {};
 		/// <summary>ボタン画像スプライト。</summary>
-		std::unique_ptr<Sprite> button;
+		std::unique_ptr<TYEngine::Graphics::Sprite> button;
 		/// <summary>ホバーアニメーション進捗。</summary>
 		float hoverProgress = 0.0f;
 	};
@@ -103,19 +106,19 @@ private:
 	bool isPush_ = false;
 	ButtonElements elements_ = ButtonElements::Num;
 
-	Input* input_ = nullptr;
+	TYEngine::Framework::Input* input_ = nullptr;
 	GameAudio* audio_ = nullptr;
 
 	float timer_ = 0.0f;
 
 
-	std::unique_ptr<Sprite> returnTitle_;
-	std::unique_ptr<Sprite> resume_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> returnTitle_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> resume_;
 
-	std::unique_ptr<Sprite> back_;
-	std::unique_ptr<Sprite> text_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> back_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> text_;
 
-	jx::JsonManager* jm_;
-	jx::JsonManager* configJM_;
+	TYEngine::Utility::JsonManager* jm_;
+	TYEngine::Utility::JsonManager* configJM_;
 };
 

@@ -7,6 +7,9 @@
 #include "../../../ScoreUI/ScoreUI.h"
 #include "SpriteBasis.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+
 void GameScene::UIInit()
 {
 	scoreDraw_ = std::make_unique<ScoreUI>();

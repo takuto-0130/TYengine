@@ -5,6 +5,9 @@
 #include "mathFunc.h"
 #include "Ease.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+
 void RetryUI::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/GameOver.png");

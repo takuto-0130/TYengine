@@ -1,6 +1,9 @@
 #include "Stage.h"
 #include "../Object/Rail/RailEditor.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+
 void Stage::Init()
 {
 	// プレイヤー生成と初期化

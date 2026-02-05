@@ -4,6 +4,9 @@
 #include "Timer.h"
 #include "mathFunc.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+
 void StartUI::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Ready.png");

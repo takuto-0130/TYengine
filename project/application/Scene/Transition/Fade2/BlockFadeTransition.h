@@ -2,7 +2,10 @@
 #include "../StateMachineTransition.h"
 #include <memory>
 
-class Sprite;
+namespace TYEngine::Graphics
+{
+	class Sprite;
+}
 
 struct BlockFadeConfig
 {
@@ -27,7 +30,7 @@ struct BlockFadeConfig
 class BlockFadeTransition : public StateMachineTransition<BlockFadeTransition>
 {
 public: // 関数テーブル
-	static const std::vector<StateMachine<BlockFadeTransition, TransitionStage>::StateFunctionSet>& GetStateTable();
+	static const std::vector<TYEngine::Utility::StateMachine<BlockFadeTransition, TransitionStage>::StateFunctionSet>& GetStateTable();
 
 public:
 	enum class Type
@@ -53,7 +56,7 @@ private:
 	static float saturate(float v) { return std::max<float>(0.0f, std::min<float>(1.0f, v)); }
 
 	BlockFadeConfig cfg_;
-	std::vector<Sprite> sprites_;   // タイル＝スプライト
+	std::vector<TYEngine::Graphics::Sprite> sprites_;   // タイル＝スプライト
 	std::vector<float> viewSprites_;
 
 	float baseW_ = 0.0f, baseH_ = 0.0f;

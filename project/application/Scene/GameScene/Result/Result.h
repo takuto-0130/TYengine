@@ -32,9 +32,9 @@ public:
 	/// <summary>
 	/// コライダーに設定するスプライトのリストを取得する。
 	/// </summary>
-	std::vector<Sprite*>& GetSprite() { return setColliderSpr_; }
+	std::vector<TYEngine::Graphics::Sprite*>& GetSprite() { return setColliderSpr_; }
 
-	void SetJsonManager(jx::JsonManager* jm) { jm_ = jm; }
+	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 private:
 	void DebugJMApply();
@@ -50,10 +50,10 @@ private:
 	};
 
 	/// <summary>スプライト配列。</summary>
-	std::array<std::unique_ptr<Sprite>, SpriteNum> sprites_;
+	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, SpriteNum> sprites_;
 
 	/// <summary>コライダー設定用スプライトリスト。</summary>
-	std::vector<Sprite*> setColliderSpr_;
+	std::vector<TYEngine::Graphics::Sprite*> setColliderSpr_;
 
 	/// <summary>演出タイマー。</summary>
 	float timer_ = 0.0f;
@@ -62,6 +62,6 @@ private:
 	float maxTime_ = 0.0f;
 
 	/// <summary>JSONマネージャ。</summary>
-	jx::JsonManager* jm_;
+	TYEngine::Utility::JsonManager* jm_;
 };
 

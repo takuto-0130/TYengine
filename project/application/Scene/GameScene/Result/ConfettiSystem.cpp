@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace TYEngine::Utility;
+
 void ConfettiSystem::Init(int maxCount, const std::string& texturePath,
     int screenW, int screenH)
 {

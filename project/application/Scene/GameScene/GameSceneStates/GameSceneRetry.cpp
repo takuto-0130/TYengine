@@ -4,6 +4,9 @@
 #include "../RetryUI/RetryUI.h"
 #include "../../../ScoreUI/ScoreUI.h"
 
+
+using namespace TYEngine::OffScreen;
+
 void GameScene::InitRetry()
 {
 	PostEffectManager::GetInstance()->SetEffectEnabled("Gaussian", true);

@@ -1,8 +1,10 @@
 #include "TitleEnemyManager.h"
 #include "Timer.h"
 
+using namespace TYEngine::Utility;
+using namespace TYEngine;
 
-void EnemyManager::Init(Camera* camera)
+void EnemyManager::Init(CameraSystem::Camera* camera)
 {
 	camera_ = camera;
 	bulletManager_.Init();
@@ -109,7 +111,7 @@ void EnemyManager::Pop()
 	enemies_.push_back(std::move(enemy));
 }
 
-void EnemyManager::SetCamera(Camera* camera)
+void EnemyManager::SetCamera(CameraSystem::Camera* camera)
 {
 	for (auto& enemy : enemies_)
 	{

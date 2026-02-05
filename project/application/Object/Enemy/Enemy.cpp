@@ -12,6 +12,11 @@
 #define ENEMY_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Enemy, stateEnum, funcName)
 
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+using namespace TYEngine::Effect;
+using namespace TYEngine::CameraSystem;
+
 const std::vector<StateMachine<Enemy, EnemyState>::StateFunctionSet>& Enemy::GetStateTable()
 {
 	using enum EnemyState;
@@ -47,7 +52,7 @@ void Enemy::Init()
 
 
 	// 敵タイプをランダムに決定（現在は4種類）
-	enemyType_ = Random::GetInstance()->Int(0, Triangle);
+	enemyType_ = Random::GetInstance()->Int(0, EnemyType::Triangle);
 
 	// 3Dオブジェクト生成
 	obj_ = std::make_unique<Object3d>();
@@ -56,25 +61,25 @@ void Enemy::Init()
 	using namespace EnemyAttack;
 
 	// タイプに応じたモデルと攻撃パターンの設定
-	if (enemyType_ == Normal)
+	if (enemyType_ == EnemyType::Normal)
 	{
 		// 通常ショット
 		obj_->SetModel("crystal1.obj");
 		SetAttackStrategy(std::make_unique<NormalAttackStrategy>());
 	}
-	else if (enemyType_ == Vertical)
+	else if (enemyType_ == EnemyType::Vertical)
 	{
 		// 垂直2点
 		obj_->SetModel("crystal2.obj");
 		SetAttackStrategy(std::make_unique<VerticalSplitAttackStrategy>());
 	}
-	else if (enemyType_ == Horizontal)
+	else if (enemyType_ == EnemyType::Horizontal)
 	{
 		// 水平4点
 		obj_->SetModel("crystal4.obj");
 		SetAttackStrategy(std::make_unique<HorizontalSplitAttackStrategy>());
 	}
-	else if (enemyType_ == Triangle)
+	else if (enemyType_ == EnemyType::Triangle)
 	{
 		// 3角形
 		obj_->SetModel("crystal.obj");

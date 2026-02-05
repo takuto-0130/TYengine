@@ -2,6 +2,8 @@
 #include "Enemy.h"
 #include "../ColliderTypeID/ColliderTypeID.h"
 
+using namespace TYEngine::Utility;
+
 void EnemyCollider::OnCollisionEnter([[maybe_unused]] Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
 	// プレイヤ―弾と接触し、かつ敵が生存・活動中の場合

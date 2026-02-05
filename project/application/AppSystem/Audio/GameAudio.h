@@ -19,8 +19,8 @@ enum class SoundCategory
 /// AudioSystemBase を継承し、BGM, SE, UI の3カテゴリを登録する。
 /// </summary>
 class GameAudio :
-    public AudioSystemBase<SoundCategory>,
-    public SingletonObject<GameAudio>
+    public TYEngine::AudioSystem::AudioSystemBase<SoundCategory>,
+    public TYEngine::Utility::SingletonObject<GameAudio>
 {
     friend class SingletonObject<GameAudio>;
     friend struct std::default_delete<GameAudio>;

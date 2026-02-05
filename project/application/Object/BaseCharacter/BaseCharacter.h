@@ -7,7 +7,8 @@
 /// ゲーム内キャラクター（プレイヤー・敵など）の基底クラス。
 /// BaseObject を継承し、体力の概念や死亡フラグ、共通の衝突処理を持つ。
 /// </summary>
-class BaseCharacter : public BaseObject
+class BaseCharacter : 
+	public TYEngine::Utility::BaseObject
 {
 public:
 	// 死んだかどうか

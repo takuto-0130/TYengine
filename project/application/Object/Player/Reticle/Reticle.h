@@ -33,10 +33,10 @@ public:
 	/// <summary>現在のターゲット距離を取得する。</summary>
 	float GetTargetDistance() const { return targetDistance_; }
 	/// <summary>レティクルのレイを取得する。</summary>
-	Ray GetRay() const { return collider_->GetRay(); }
+	TYEngine::Utility::Ray GetRay() const { return collider_->GetRay(); }
 
 	/// <summary>ワールド空間上のターゲット座標を取得する。</summary>
-	Vector3 GetTarget() { return collider_->GetRay().origin + collider_->GetRay().diff * targetDistance_; }
+	TYEngine::Utility::Vector3 GetTarget() { return collider_->GetRay().origin + collider_->GetRay().diff * targetDistance_; }
 
 private:
 	Camera* camera_ = nullptr;

@@ -14,7 +14,7 @@ class EnemyManager
 {
 public:
 	/// <summary>初期化処理。</summary>
-	void Init(Camera* camera);
+	void Init(TYEngine::CameraSystem::Camera* camera);
 
 	/// <summary>
 	/// スコア・コンボ管理ハンドラを生成・登録する。
@@ -34,9 +34,9 @@ public:
 	void Pop();
 
 public:
-	void SetTargetPos(Vector3* pos);
+	void SetTargetPos(TYEngine::Utility::Vector3* pos);
 
-	void SetCamera(Camera* camera);
+	void SetCamera(TYEngine::CameraSystem::Camera* camera);
 
 private:
 	/// <summary>
@@ -44,11 +44,11 @@ private:
 	/// </summary>
 	/// <param name="offset">スクリーンオフセット。</param>
 	/// <returns>ワールド座標。</returns>
-	Vector3 ConvertScreenOffsetToWorld(const Vector2& offset);
+	TYEngine::Utility::Vector3 ConvertScreenOffsetToWorld(const TYEngine::Utility::Vector2& offset);
 	
 private:
 	/// <summary>カメラへのポインタ。</summary>
-	Camera* camera_ = nullptr;
+	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 
 	/// <summary>管理中の敵リスト。</summary>
 	std::list<std::unique_ptr<Enemy>> enemies_;

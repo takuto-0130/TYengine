@@ -40,12 +40,11 @@ enum EnemyType
 /// 状態マシンにより行動を制御し、出現・攻撃・被弾・死亡などのライフサイクルを管理する。
 /// </summary>
 class Enemy :
-    public BaseCharacter, public StateMachine<Enemy, EnemyState>
+    public BaseCharacter, public TYEngine::Utility::StateMachine<Enemy, EnemyState>
 {
 public: // 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
-public:
 public:
 	~Enemy() override;
 
@@ -84,7 +83,6 @@ public:
 	void OnCollision() override;
 
 public:
-public:
 	/// <summary>
 	/// 敵イベントリスナー（撃破時の通知先など）を設定する。
 	/// </summary>
@@ -99,7 +97,7 @@ public:
 	/// 座標を強制的に設定し、行列更新を行う。
 	/// </summary>
 	/// <param name="pos">設定座標。</param>
-	void SetAndApplyPos(const Vector3& pos) 
+	void SetAndApplyPos(const TYEngine::Utility::Vector3& pos)
 	{
 		worldTransform_.SetTranslation(pos);
 		worldTransform_.Update();
@@ -108,7 +106,7 @@ public:
 	/// <summary>
 	/// 移動目標座標を設定する。
 	/// </summary>
-	void SetTargetPos(const Vector3& pos) { targetPos_ = pos; }
+	void SetTargetPos(const TYEngine::Utility::Vector3& pos) { targetPos_ = pos; }
 
 	/// <summary>
 	/// ゲーム中（アクティブ）かどうかのフラグを設定する。
@@ -118,17 +116,17 @@ public:
 	/// <summary>
 	/// 参照用カメラを設定する。
 	/// </summary>
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
 	/// <summary>
 	/// スクリーン座標（デバッグ用・配置ツール用）を設定する。
 	/// </summary>
-	void SetScreenPos(const Vector2& pos) { screenPos = pos; }
+	void SetScreenPos(const TYEngine::Utility::Vector2& pos) { screenPos = pos; }
 
 	/// <summary>
 	/// スクリーン座標を取得する。
 	/// </summary>
-	const Vector2& GetScreenPos() { return screenPos; }
+	const TYEngine::Utility::Vector2& GetScreenPos() { return screenPos; }
 
 	/// <summary>
 	/// 攻撃戦略（ストラテジーパターン）を設定する。
@@ -139,7 +137,6 @@ public:
 		attackStrategy_ = std::move(strategy);
 	}
 
-private:
 private:
 	/// <summary>
 	/// 射撃処理を実行する。
@@ -156,7 +153,7 @@ private:
 	std::unique_ptr<EnemyCollider> collider_;
 
 	/// <summary>パーティクルエミッター。</summary>
-	IParticleRenderer::Emitter emitter;
+	TYEngine::Effect::IParticleRenderer::Emitter emitter;
 
 	/// <summary>出現演出にかかる時間（秒）。</summary>
 	float popTime_ = 0.0f;
@@ -178,17 +175,17 @@ private:
 	float deltaTime_ = 0.0f;
 
 	/// <summary>通常スケール。</summary>
-	Vector3 defaultScale_ = { 1, 1, 1 };
+	TYEngine::Utility::Vector3 defaultScale_ = { 1, 1, 1 };
 	/// <summary>拡大スケール（演出用）。</summary>
-	Vector3 upScale_ = { 1, 1, 1 };
+	TYEngine::Utility::Vector3 upScale_ = { 1, 1, 1 };
 	/// <summary>ゼロスケール（出現前）。</summary>
-	const Vector3 ZeroScale = {};
+	const TYEngine::Utility::Vector3 ZeroScale = {};
 
 	/// <summary>移動目標地点。</summary>
-	Vector3 targetPos_ = {};
+	TYEngine::Utility::Vector3 targetPos_ = {};
 
 	/// <summary>画面上の座標（エディタ用）。</summary>
-	Vector2 screenPos = {};
+	TYEngine::Utility::Vector2 screenPos = {};
 
 	// 発射予兆角度
 	/// <summary>発射予兆 Yaw角。</summary>
@@ -220,7 +217,7 @@ private:
 	float roll_ = 0.0f;
 
 	/// <summary>カメラ。</summary>
-	Camera* camera_ = nullptr;
+	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 
 
 private: // シーン内のState関連関数

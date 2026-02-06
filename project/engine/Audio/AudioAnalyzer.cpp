@@ -458,6 +458,8 @@ namespace TYEngine
 			ImGui::Text("High : %.2f", highGray_);
 			bool a = Audio::GetInstance()->GetAnalyzerXAPO()->GetBeat();
 			ImGui::Text("Beat : %d", a);
+			float bpm = Audio::GetInstance()->GetAnalyzerXAPO()->GetBPM();
+			ImGui::Text("BPM : %.2f", bpm);
 
 			// 波形描画
 			DrawWaveform(width);

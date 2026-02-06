@@ -76,6 +76,8 @@ namespace TYEngine
 			std::vector<float>& GetWaveform() { return latestWaveform_; }
 			bool GetBeat() { return isBeatDetected_; }
 
+			float GetBPM(){return estimatedBPM_;}
+
 		private:
 			void ComputeFFT();
 
@@ -111,6 +113,14 @@ namespace TYEngine
 			std::vector<float> energyHistory_;
 			size_t energyIndex_ = 0;
 			bool isBeatDetected_ = false; // 今この瞬間が拍かどうか
+
+			// 自己相関用のパラメータ
+			static const int ONSET_HISTORY_SIZE = 256; // 過去の音の立ち上がり履歴（約1~2秒分）
+			std::vector<float> onsetHistory_;
+			int onsetIndex_ = 0;
+
+			// 検証結果（推定されたBPMなど）
+			float estimatedBPM_ = 0.0f;
 		};
 
 	} // namespace Audio

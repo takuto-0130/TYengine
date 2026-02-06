@@ -186,7 +186,7 @@ void Enemy::IsShot()
 	if (!isInGame_) return;
 
 	// 攻撃音再生
-	GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+	//GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
 	// 設定された攻撃パターンを実行
 	if (attackStrategy_)

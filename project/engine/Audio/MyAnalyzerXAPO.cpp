@@ -39,6 +39,7 @@ namespace TYEngine
 			fftImag_.resize(FFT_SIZE);
 
 			energyHistory_.resize(BEAT_ANALYE_BUFFER, 0.0f);
+			onsetHistory_.resize(ONSET_HISTORY_SIZE, 0.0f);
 		}
 
 		MyAnalyzerXAPO::~MyAnalyzerXAPO() {}
@@ -124,30 +125,75 @@ namespace TYEngine
 
 		void MyAnalyzerXAPO::AnalyzeBeat()
 		{
-			// 1. 現在のフレームのエネルギー（RMS）を取得
-			float currentEnergy = latestRMS_;
+			//// 1. 現在のフレームのエネルギー（RMS）を取得
+			//float currentEnergy = latestRMS_;
 
-			// 2. 過去の平均エネルギーを算出
-			float averageEnergy = 0;
-			for (float e : energyHistory_) averageEnergy += e;
-			averageEnergy /= energyHistory_.size();
+			//// 2. 過去の平均エネルギーを算出
+			//float averageEnergy = 0;
+			//for (float e : energyHistory_) averageEnergy += e;
+			//averageEnergy /= energyHistory_.size();
 
-			// 3. 判定（現在の音が平均より特定倍率以上大きければ「拍」）
-			// 係数(1.5fなど)は曲や感度に合わせて調整
-			if (currentEnergy > averageEnergy * 1.5f && !isBeatDetected_)
+			//// 3. 判定（現在の音が平均より特定倍率以上大きければ「拍」）
+			//// 係数(1.5fなど)は曲や感度に合わせて調整
+			//if (currentEnergy > averageEnergy * 1.5f && !isBeatDetected_)
+			//{
+			//	// 拍を検出！
+			//	isBeatDetected_ = true;
+			//	// ここでフラグを立てたり、外部に通知したりする
+			//}
+			//else if (currentEnergy < averageEnergy)
+			//{
+			//	isBeatDetected_ = false; // エネルギーが下がったらリセット
+			//}
+
+			//// 4. 履歴を更新
+			//energyHistory_[energyIndex_] = currentEnergy;
+			//energyIndex_ = (energyIndex_ + 1) % energyHistory_.size();
+
+
+
+			// 1. 現在の「音の立ち上がり（Onset）」を計算して履歴に保存
+			// 前回のRMSとの差分をとることで、音の「出だし」を強調する
+			static float lastRMS = 0;
+			float onset = max(0.0f, latestRMS_ - lastRMS);
+			lastRMS = latestRMS_;
+
+			onsetHistory_[onsetIndex_] = onset;
+			onsetIndex_ = (onsetIndex_ + 1) % ONSET_HISTORY_SIZE;
+
+			// --- ここから自己相関の検証 (重いため、数フレームに1回実行するのが理想) ---
+			static int skipCount = 0;
+			if (++skipCount < 10) return; // 10フレームに1回だけ計算
+			skipCount = 0;
+
+			float maxCorrelation = 0;
+			int bestLag = 0;
+
+			// ラグ（ズレ）を変えながら計算
+			// minLag/maxLag は想定するBPM範囲（60~180BPMなど）に合わせる
+			for (int lag = 20; lag < ONSET_HISTORY_SIZE / 2; ++lag)
 			{
-				// 拍を検出！
-				isBeatDetected_ = true;
-				// ここでフラグを立てたり、外部に通知したりする
-			}
-			else if (currentEnergy < averageEnergy)
-			{
-				isBeatDetected_ = false; // エネルギーが下がったらリセット
+				float correlation = 0;
+				for (int i = 0; i < ONSET_HISTORY_SIZE / 2; ++i)
+				{
+					int idx1 = (onsetIndex_ - i + ONSET_HISTORY_SIZE) % ONSET_HISTORY_SIZE;
+					int idx2 = (onsetIndex_ - i - lag + ONSET_HISTORY_SIZE) % ONSET_HISTORY_SIZE;
+					correlation += onsetHistory_[idx1] * onsetHistory_[idx2];
+				}
+
+				if (correlation > maxCorrelation)
+				{
+					maxCorrelation = correlation;
+					bestLag = lag;
+				}
 			}
 
-			// 4. 履歴を更新
-			energyHistory_[energyIndex_] = currentEnergy;
-			energyIndex_ = (energyIndex_ + 1) % energyHistory_.size();
+			// bestLag から BPM を算出（サンプルレートやバッファサイズに依存）
+			// 例: 1バッファが約23msなら: BPM = 60 / (bestLag * 0.023)
+			if (bestLag > 0)
+			{
+				estimatedBPM_ = 60.0f / (bestLag * ((float)FFT_SIZE / 44100.0f)); // 概算
+			}
 		}
 
 		// --------------------------------------------------------------

@@ -32,7 +32,6 @@ void TitleScene::Init()
 	titleJM.Load("Title.json", true, &err);
 #ifdef _DEBUG
 	Log(err);
-	Audio::GetInstance()->LoadWave("gameBGM");
 #endif // _DEBUG
 
 	// 必要なサウンドリソースの読み込み

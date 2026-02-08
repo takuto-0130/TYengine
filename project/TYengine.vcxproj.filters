@@ -579,6 +579,8 @@
     <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp">
       <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="engine\Audio\BPMDetector.cpp" />
+    <ClCompile Include="engine\Audio\BeatAnalyzer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
@@ -985,6 +987,8 @@
     </ClInclude>
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener.h" />
     <ClInclude Include="engine\EngineCore\EngineConfig.h" />
+    <ClInclude Include="engine\Audio\BPMDetector.h" />
+    <ClInclude Include="engine\Audio\BeatAnalyzer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

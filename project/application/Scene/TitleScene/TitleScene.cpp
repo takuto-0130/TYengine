@@ -47,6 +47,9 @@ void TitleScene::Init()
 	GameAudio::GetInstance()->LoadSound("damageP");
 	GameAudio::GetInstance()->LoadSound("roll");
 	GameAudio::GetInstance()->LoadSound("attack");
+	GameAudio::GetInstance()->LoadSound("418");
+
+	beatAnalyzer_.Init("418", "BGM");
 
 
 	//========== カメラ、入力取得 ==========//
@@ -131,11 +134,22 @@ void TitleScene::Update() {
 
 	audioAnalyzer_.Update();
 	audioAnalyzer_.Draw();
+	beatAnalyzer_.Update();
+	beatAnalyzer_.Draw();
+	static int bgmH = -1;
 
 	if (input_->TriggerKey(DIK_M))
 	{
-		int a = GameAudio::GetInstance()->Play("gameBGM", true, SoundCategory::BGM);
-		GameAudio::GetInstance()->SetSoundVolume(a, 1.0f);
+		bgmH = GameAudio::GetInstance()->Play("418", false, SoundCategory::BGM);
+		GameAudio::GetInstance()->SetSoundVolume(bgmH, 1.0f);
+	}
+	if (input_->TriggerKey(DIK_P))
+	{
+		Audio::GetInstance()->Pause(bgmH);
+	}
+	if (input_->TriggerKey(DIK_O))
+	{
+		Audio::GetInstance()->ReStart(bgmH);
 	}
 
 	// ImGui で編集
@@ -146,6 +160,18 @@ void TitleScene::Update() {
 	ImGui::End();
 
 	DebugJMApply();
+
+	static float timer = 0.0f;
+	if (beatAnalyzer_.GetBeat())
+	{
+		timer = 0.0f;
+		player_->SetScale({ 0.4f,0.4f,0.4f });
+	}
+	else
+	{
+		timer += Timer::GetInstance()->GetDeltaTime();
+		player_->SetScale(Lerp(Vector3{ 0.4f,0.4f,0.4f } , Vector3{ 0.2f,0.2f,0.2f }, timer));
+	}
 
 #else // Release
 

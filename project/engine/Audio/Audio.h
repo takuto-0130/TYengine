@@ -23,7 +23,7 @@ namespace TYEngine
 
 		/// <summary>
 		/// オーディオ再生・管理を行うシングルトンクラス。
-		/// XAudio2 を使用してWAVファイルの読み込み、再生、ストリーミング、エフェクト適用を行う。
+		/// XAudio2 を使用してWAVファイルの読み込み、再生を行う。
 		/// </summary>
 		class Audio :
 			public Utility::SingletonObject<Audio>
@@ -72,6 +72,7 @@ namespace TYEngine
 				WAVEFORMATEX wfex; // 波形フォーマット
 				std::vector<BYTE> buffer; // バッファの先頭アドレス
 				int playSoundLength;
+				float bpm; // BPMデータ
 			};
 
 		public:
@@ -83,19 +84,20 @@ namespace TYEngine
 			void Initialize(const std::string& directoryPath = "Resources/Sound/");
 
 			/// <summary>
-			/// オーディオエンジンの開始処理。
+			///  無音バッファ供給。
 			/// </summary>
-			void Start();
+			void Update();
+
+			/// <summary>
+			///  無音バッファフラグ。
+			/// </summary>
+			void EnableSilentFeed(bool enable);
 
 			/// <summary>
 			/// 指定したリソース番号のBGM（音源）を停止する。
 			/// </summary>
 			/// <param name="resourceNum">停止対象のBGMリソース番号。</param>
 			void StopBGM(int resourceNum);
-
-
-			void Update();                  // ★ 無音バッファ供給
-			void EnableSilentFeed(bool enable);
 
 			/// <summary>
 			/// 音源を一時停止する。
@@ -176,14 +178,27 @@ namespace TYEngine
 			/// <returns>再生ハンドル（リソース番号）。エラー時は -1。</returns>
 			int Play(const std::string& filename, const bool isLoop = false, std::string soundCategory = "");
 
-			Microsoft::WRL::ComPtr<MyAnalyzerXAPO> GetAnalyzerXAPO() { return analyzerXAPO_; }
+			Microsoft::WRL::ComPtr<MyAnalyzerXAPO> GetAnalyzerXAPO(const std::string& soundCategory = "");
 
 			int GetAnalyzerSampleRate()
 			{
 				XAUDIO2_VOICE_DETAILS submixDetails = {};
 				analyzerSubmix_->GetVoiceDetails(&submixDetails);
-
 				return submixDetails.InputSampleRate;
+			}
+
+			SoundData& GetSoundData(const std::string& filename)
+			{
+				auto it = soundDataMap_.find(filename);
+
+				if (it == soundDataMap_.end())
+				{
+					Debugger::Log("Sound not loaded: " + filename + "\n");
+					static SoundData emptyData{};
+					return emptyData;
+				}
+
+				return it->second;
 			}
 
 		private:
@@ -207,6 +222,16 @@ namespace TYEngine
 			/// </summary>
 			void CreateAnalyzerSubmix();
 
+			/// <summary>
+			/// オーディオエンジンの開始処理。
+			/// </summary>
+			void Start();
+
+			/// <summary>
+			/// 無音ボイスの作成。
+			/// </summary>
+			void CreateSilentVoice(IXAudio2SourceVoice*& voice, IXAudio2SubmixVoice* sendSubmix);
+
 		private:
 			/// <summary>XAudio2 エンジン本体。</summary>
 			Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
@@ -214,10 +239,11 @@ namespace TYEngine
 			IXAudio2MasteringVoice* masterVoice_;
 
 			/// <summary>サウンドカテゴリごとのサブミックスボイス。</summary>
-			std::unordered_map<std::string, IXAudio2SubmixVoice*> soundCategorySubmixVoices_;
+			std::unordered_map<std::string, IXAudio2SubmixVoice*> categorySubmixVoices_;
+			std::unordered_map<std::string, Microsoft::WRL::ComPtr<MyAnalyzerXAPO>> categoryAnalyzerXAPO_;
 
 			/// <summary>ロード済みサウンドデータ格納コンテナ。</summary>
-			std::unordered_map<std::string, Audio::SoundData> soundDataMap_;
+			std::unordered_map<std::string, SoundData> soundDataMap_;
 
 			/// <summary>再生中のソースボイス配列（同時再生管理用）。</summary>
 			std::array<IXAudio2SourceVoice*, kMaxPlayWave> sourceVoices_ = { nullptr };
@@ -227,6 +253,7 @@ namespace TYEngine
 
 			/// <summary>全体解析用サブミックスボイス。</summary>
 			IXAudio2SubmixVoice* analyzerSubmix_ = nullptr;
+			XAUDIO2_VOICE_DETAILS analyzerDetails_ = {};
 
 			// ---- 無音バッファ用 Voice ----
 			/// <summary>無音再生用ソースボイス（オーディオエンジン維持用）。</summary>
@@ -237,6 +264,9 @@ namespace TYEngine
 			std::vector<float> silentBuffer_;
 			/// <summary>無音フィードが有効かどうか。</summary>
 			bool silentFeedEnabled_ = false;
+
+			/// <summary>無音再生用ソースボイス。</summary>
+			std::unordered_map<std::string, IXAudio2SourceVoice*> categorySilentVoices_;
 
 
 			/// <summary>サウンドファイルのルートディレクトリパス。</summary>

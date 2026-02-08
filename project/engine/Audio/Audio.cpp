@@ -1,4 +1,5 @@
 #include "Audio.h"
+#include "BPMDetector.h"
 #include <cassert>
 #include <Logger.h>
 
@@ -21,15 +22,31 @@ namespace TYEngine
 				}
 			}
 
-			// カテゴリ用 SubmixVoices の破棄
-			for (auto& [name, voice] : soundCategorySubmixVoices_)
+			// 無音ボイスの破棄
+			if (silentVoice_)
+			{
+				silentVoice_->DestroyVoice();
+				silentVoice_ = nullptr;
+			}
+			for (auto& [name, voice] : categorySilentVoices_)
 			{
 				if (voice)
 				{
 					voice->DestroyVoice();
 				}
 			}
-			soundCategorySubmixVoices_.clear();
+			categorySilentVoices_.clear();
+
+
+			// カテゴリ用 SubmixVoices の破棄
+			for (auto& [name, voice] : categorySubmixVoices_)
+			{
+				if (voice)
+				{
+					voice->DestroyVoice();
+				}
+			}
+			categorySubmixVoices_.clear();
 
 			// 解析用 SubmixVoice の破棄
 			if (analyzerSubmix_)
@@ -132,23 +149,66 @@ namespace TYEngine
 		{
 			xAudio2_->StartEngine();
 
-			XAUDIO2_VOICE_DETAILS details = {};
-			analyzerSubmix_->GetVoiceDetails(&details);
-
-			HRESULT result;
+			analyzerSubmix_->GetVoiceDetails(&analyzerDetails_);
 
 			// ---- ★無音バッファ用 Voice を作成（解析器への入力維持用） ----
 			silentFormat_.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
 			silentFormat_.nChannels = 1;
-			silentFormat_.nSamplesPerSec = details.InputSampleRate;
+			silentFormat_.nSamplesPerSec = analyzerDetails_.InputSampleRate;
 			silentFormat_.wBitsPerSample = 32;
 			silentFormat_.nBlockAlign = 4;
-			silentFormat_.nAvgBytesPerSec = details.InputSampleRate * 4;
+			silentFormat_.nAvgBytesPerSec = analyzerDetails_.InputSampleRate * 4;
 			silentFormat_.cbSize = 0;
 
 			// 無音バッファ（50ms程度）
-			int silentSamples = int(details.InputSampleRate * 0.05f);
+			int silentSamples = int(analyzerDetails_.InputSampleRate * 0.05f);
 			silentBuffer_.assign(silentSamples, 0.0f);
+
+			CreateSilentVoice(silentVoice_, analyzerSubmix_);
+			
+			EnableSilentFeed(true);
+		}
+
+		void Audio::CreateSilentVoice(IXAudio2SourceVoice*& voice, IXAudio2SubmixVoice* sendSubmix)
+		{
+			HRESULT result;
+
+			XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
+			sendDesc.Flags = 0;
+			sendDesc.pOutputVoice = sendSubmix;
+
+			XAUDIO2_VOICE_SENDS sends = {};
+			sends.SendCount = 1;
+			sends.pSends = &sendDesc;
+
+			result = xAudio2_->CreateSourceVoice(
+				&voice,
+				&silentFormat_,
+				0, 2.0f,
+				nullptr, &sends, nullptr
+			);
+
+			assert(SUCCEEDED(result));
+
+			voice->Start(0);
+		}
+
+		void Audio::AddSoundCategory(const std::string& soundCategory)
+		{
+			if (categorySubmixVoices_.count(soundCategory))
+			{
+				// キーが存在する場合、処理を中断
+				return;
+			}
+
+			HRESULT result;
+
+			// analyzerSubmix と同じフォーマットで作る
+			XAUDIO2_VOICE_DETAILS details = {};
+			analyzerSubmix_->GetVoiceDetails(&details);
+
+			// ボイス
+			IXAudio2SubmixVoice* voice;
 
 			XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 			sendDesc.Flags = 0;
@@ -158,17 +218,42 @@ namespace TYEngine
 			sends.SendCount = 1;
 			sends.pSends = &sendDesc;
 
-			result = xAudio2_->CreateSourceVoice(
-				&silentVoice_,
-				&silentFormat_,
-				0, 2.0f,
-				nullptr, &sends, nullptr
+			result = xAudio2_->CreateSubmixVoice(
+				&voice,
+				details.InputChannels,
+				details.InputSampleRate,
+				0,
+				kCategory,          // ProcessingStage (下から上へ)
+				&sends,
+				nullptr
 			);
-
 			assert(SUCCEEDED(result));
 
-			silentVoice_->Start(0);
-			EnableSilentFeed(true);
+			categorySubmixVoices_[soundCategory] = voice;
+
+			// ============================================
+			//   ★ SubmixVoice に XAPO を付ける
+			// ============================================
+
+			// XAPO インスタンス
+			categoryAnalyzerXAPO_[soundCategory] = Microsoft::WRL::Make<MyAnalyzerXAPO>();
+
+			// Effect desc
+			XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
+			effectDesc.InitialState = TRUE;
+			effectDesc.OutputChannels = details.InputChannels;
+			effectDesc.pEffect = static_cast<IXAPO*>(categoryAnalyzerXAPO_[soundCategory].Get());
+
+			// Effect chain
+			XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
+			effectChainXAPO.EffectCount = 1;
+			effectChainXAPO.pEffectDescriptors = &effectDesc;
+
+			// SubmixVoice に XAPO をセット
+			result = categorySubmixVoices_[soundCategory]->SetEffectChain(&effectChainXAPO);
+			assert(SUCCEEDED(result));
+
+			CreateSilentVoice(categorySilentVoices_[soundCategory], categorySubmixVoices_[soundCategory]);
 		}
 
 		void Audio::Update()
@@ -187,14 +272,41 @@ namespace TYEngine
 
 				silentVoice_->SubmitSourceBuffer(&buf);
 			}
+
+			for (auto& [name, voice] : categorySilentVoices_)
+			{
+				voice->GetState(&st);
+				if (st.BuffersQueued < 3)
+				{
+					XAUDIO2_BUFFER buf{};
+					buf.AudioBytes = static_cast<UINT32>(silentBuffer_.size() * sizeof(float));
+					buf.pAudioData = reinterpret_cast<const BYTE*>(silentBuffer_.data());
+
+					voice->SubmitSourceBuffer(&buf);
+				}
+			}
 		}
 
 		void Audio::EnableSilentFeed(bool enable)
 		{
 			silentFeedEnabled_ = enable;
 
-			if (enable) silentVoice_->Start();
-			else silentVoice_->Stop();
+			if (enable) 
+			{
+				silentVoice_->Start();
+				for (auto& [name, voice] : categorySilentVoices_)
+				{
+					voice->Start();
+				}
+			}
+			else 
+			{
+				silentVoice_->Stop();
+				for (auto& [name, voice] : categorySilentVoices_)
+				{
+					voice->Stop();
+				}
+			}
 		}
 
 		void Audio::StopBGM(int resourceNum)
@@ -220,7 +332,7 @@ namespace TYEngine
 
 		void Audio::SetCategoryVolume(const std::string& soundCategory, float volume)
 		{
-			soundCategorySubmixVoices_[soundCategory]->SetVolume(volume);
+			categorySubmixVoices_[soundCategory]->SetVolume(volume);
 		}
 
 		void Audio::SetSoundVolume(int resourceNum, float volume)
@@ -238,7 +350,7 @@ namespace TYEngine
 		float Audio::GetCategoryVolume(const std::string& soundCategory)
 		{
 			float volume = 0;
-			soundCategorySubmixVoices_[soundCategory]->GetVolume(&volume);
+			categorySubmixVoices_[soundCategory]->GetVolume(&volume);
 			return volume;
 		}
 
@@ -320,6 +432,10 @@ namespace TYEngine
 			soundData.buffer.resize(data.size);
 			file.read(reinterpret_cast<char*>(soundData.buffer.data()), data.size);
 
+			soundData.bpm = BPMDetector::AnalyzeBPM(soundData.buffer.data(), data.size, soundData.wfex);
+
+			Log(filename + ": BPM " + std::to_string(soundData.bpm) + "\n");
+
 			file.close();
 
 			// マップに登録
@@ -332,45 +448,6 @@ namespace TYEngine
 			{
 				Log("Sound not loaded.\n");
 			}
-		}
-
-		void Audio::AddSoundCategory(const std::string& soundCategory)
-		{
-			if (soundCategorySubmixVoices_.count(soundCategory))
-			{
-				// キーが存在する場合、処理を中断
-				return;
-			}
-
-			HRESULT result;
-
-			// analyzerSubmix と同じフォーマットで作る
-			XAUDIO2_VOICE_DETAILS details = {};
-			analyzerSubmix_->GetVoiceDetails(&details);
-
-			// ボイス
-			IXAudio2SubmixVoice* voice;
-
-			XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
-			sendDesc.Flags = 0;
-			sendDesc.pOutputVoice = analyzerSubmix_;
-
-			XAUDIO2_VOICE_SENDS sends = {};
-			sends.SendCount = 1;
-			sends.pSends = &sendDesc;
-
-			result = xAudio2_->CreateSubmixVoice(
-				&voice,
-				details.InputChannels,
-				details.InputSampleRate,
-				0,
-				kCategory,          // ProcessingStage (下から上へ)
-				&sends,
-				nullptr
-			);
-			assert(SUCCEEDED(result));
-
-			soundCategorySubmixVoices_[soundCategory] = voice;
 		}
 
 		int Audio::Play(const std::string& filename, const bool isLoop, std::string soundCategory)
@@ -415,8 +492,8 @@ namespace TYEngine
 			else
 			{
 				// カテゴリ指定あり -> 該当Submixへ
-				auto itSub = soundCategorySubmixVoices_.find(soundCategory);
-				if (itSub == soundCategorySubmixVoices_.end())
+				auto itSub = categorySubmixVoices_.find(soundCategory);
+				if (itSub == categorySubmixVoices_.end())
 				{
 					Log("SoundCategory not found.\n");
 					sendDesc.pOutputVoice = analyzerSubmix_;
@@ -450,6 +527,29 @@ namespace TYEngine
 			result = sourceVoices_[sourceNum]->Start();
 
 			return sourceNum;
+		}
+
+		Microsoft::WRL::ComPtr<MyAnalyzerXAPO> Audio::GetAnalyzerXAPO(const std::string& soundCategory)
+		{
+			if (soundCategory == "")
+			{
+				// カテゴリ指定なし -> defaultAnalyzer
+				return analyzerXAPO_;
+			}
+			else
+			{
+				// カテゴリ指定あり -> 該当 Analyzer へ
+				auto itSub = categorySubmixVoices_.find(soundCategory);
+				if (itSub == categorySubmixVoices_.end())
+				{
+					Debugger::Log("SoundCategory not found.\n");
+					return analyzerXAPO_;
+				}
+				else
+				{
+					return categoryAnalyzerXAPO_[soundCategory];
+				}
+			}
 		}
 
 		int Audio::SearchSourceVoice(IXAudio2SourceVoice** sourceVoices)

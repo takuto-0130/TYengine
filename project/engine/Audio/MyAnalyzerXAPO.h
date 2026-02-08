@@ -17,7 +17,7 @@ namespace TYEngine
 		class __declspec(uuid("2dde0a3b-45d5-4a48-a9e6-a3a8129ef91a"))
 			MyAnalyzerXAPO : public Microsoft::WRL::RuntimeClass<
 			Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::ClassicCom>,
-			Microsoft::WRL::FtmBase>, // IXAPO 等をここから削除
+			Microsoft::WRL::FtmBase>,
 			public CXAPOParametersBase
 		{
 		private:
@@ -74,9 +74,8 @@ namespace TYEngine
 			float GetRMS() { return latestRMS_; }
 			std::vector<float>& GetFFT() { return latestFFT_; }
 			std::vector<float>& GetWaveform() { return latestWaveform_; }
-			bool GetBeat() { return isBeatDetected_; }
-
-			float GetBPM(){return estimatedBPM_;}
+			
+			float GetSpectralFlux() const { return latestSpectralFlux_; }
 
 		private:
 			void ComputeFFT();
@@ -109,18 +108,11 @@ namespace TYEngine
 			/// <summary>最新の波形データ（UI表示用）。</summary>
 			std::vector<float> latestWaveform_;  // タイムドメイン用
 
-			// 過去のエネルギーを記録するバッファ（例：約1秒分）
-			std::vector<float> energyHistory_;
-			size_t energyIndex_ = 0;
-			bool isBeatDetected_ = false; // 今この瞬間が拍かどうか
+			/// <summary>前フレームのFFTマグニチュード（Spectral Flux計算用）</summary>
+			std::vector<float> prevMag_;
+			/// <summary>計算された低域エネルギー（またはFlux値）</summary>
+			float latestSpectralFlux_ = 0.0f;
 
-			// 自己相関用のパラメータ
-			static const int ONSET_HISTORY_SIZE = 256; // 過去の音の立ち上がり履歴（約1~2秒分）
-			std::vector<float> onsetHistory_;
-			int onsetIndex_ = 0;
-
-			// 検証結果（推定されたBPMなど）
-			float estimatedBPM_ = 0.0f;
 		};
 
 	} // namespace Audio

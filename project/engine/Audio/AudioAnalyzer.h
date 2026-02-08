@@ -16,11 +16,10 @@ namespace TYEngine
 		{
 		public:
 			static const int FFT_SIZE = 1024;        ///< FFTサンプル数
-			static const int BANDS = 8;              ///< 周波数帯域分割数
+			static const int BANDS = 24;              ///< 周波数帯域分割数
 			static const int RMS_HISTORY_SIZE = 120; ///< RMS履歴保持数（60fps換算で2秒分）
 			static const int DELAY_FRAMES = 5;       ///< 解析遅延フレーム数
 
-		public:
 		public:
 			/// <summary>コンストラクタ。</summary>
 			AudioAnalyzer();
@@ -105,6 +104,7 @@ namespace TYEngine
 			float lowGray_ = 0.0f;
 			float midGray_ = 0.0f;
 			float highGray_ = 0.0f;
+
 		};
 
 	} // namespace Audio

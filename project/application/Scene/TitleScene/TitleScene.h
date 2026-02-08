@@ -4,7 +4,8 @@
 #include "Object/Player/Player.h"
 #include "../../Object/Enemy/TitleEnemy/TitleEnemyManager.h"
 
-#include "Audio/AudioAnalyzer.h"
+#include "AudioAnalyzer.h"
+#include "BeatAnalyzer.h"
 
 #define JSONMGR_WITH_IMGUI
 #include "Utils/Json/JsonManager.h"
@@ -40,7 +41,6 @@ public:
 	/// </summary>
 	void UIDraw() override;
 
-private:
 private:
 	/// <summary>
 	/// シーン遷移処理。ゲーム本編へ切り替える。
@@ -84,4 +84,7 @@ private:
 
 	/// <summary>オーディオスペクトラムアナライザー（演出用）。</summary>
 	TYEngine::AudioSystem::AudioAnalyzer audioAnalyzer_;
+
+	/// <summary>ビートアナライザー（演出用）。</summary>
+	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
 };

@@ -70,7 +70,6 @@ void GameCore::Initialize()
 	// オーディオシステムの初期化
 	Audio::GetInstance()->Initialize();
 	GameAudio::GetInstance()->Init();
-	// Audio::GetInstance()->Start();
 
 	// シーンファクトリの生成と初期シーンの設定
 	sceneFactory_ = std::make_unique<SceneFactory>();

@@ -299,7 +299,7 @@ void Enemy::UpdateActive()
 			{
 				t = 1.5f;
 			}
-			worldTransform_.SetScale(Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f)));
+			//worldTransform_.SetScale(Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f)));
 		}
 
 		if (bulletTimer_ <= 0.5f)

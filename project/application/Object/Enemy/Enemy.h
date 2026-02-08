@@ -137,6 +137,9 @@ public:
 		attackStrategy_ = std::move(strategy);
 	}
 
+	const TYEngine::Utility::Vector3& GetDefaultScale() { return defaultScale_; }
+	const TYEngine::Utility::Vector3& GetUpScale() { return upScale_; }
+
 private:
 	/// <summary>
 	/// 射撃処理を実行する。

@@ -111,6 +111,7 @@ void TitleScene::Init()
 
 	// タイトル画面の演出用敵マネージャ
 	enemyMgr_.Init(camera_);
+	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
 }
 
 void TitleScene::DebugJMApply()
@@ -164,12 +165,12 @@ void TitleScene::Update() {
 	if (beatAnalyzer_.GetBeat())
 	{
 		timer = 0.0f;
-		player_->SetScale({ 0.4f,0.4f,0.4f });
+		player_->SetScale({ 0.3f,0.3f,0.3f });
 	}
 	else
 	{
 		timer += Timer::GetInstance()->GetDeltaTime();
-		player_->SetScale(Lerp(Vector3{ 0.4f,0.4f,0.4f } , Vector3{ 0.2f,0.2f,0.2f }, timer));
+		player_->SetScale(Lerp(Vector3{ 0.3f,0.3f,0.3f } , Vector3{ 0.2f,0.2f,0.2f }, timer));
 	}
 
 #else // Release

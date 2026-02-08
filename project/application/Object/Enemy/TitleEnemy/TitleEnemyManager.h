@@ -2,6 +2,7 @@
 #include "../Enemy.h"
 #include "../EnemyBullet/EnemyBulletManager.h"
 #include "../../../AppSystem/EventListener/EnemyEvent/ComboAndScoreHandler.h"
+#include "BeatAnalyzer.h"
 #include <random>
 
 class Camera;
@@ -37,6 +38,8 @@ public:
 	void SetTargetPos(TYEngine::Utility::Vector3* pos);
 
 	void SetCamera(TYEngine::CameraSystem::Camera* camera);
+
+	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
 
 private:
 	/// <summary>
@@ -78,5 +81,7 @@ private:
 
 	/// <summary>コンボ・スコア処理ハンドラ。</summary>
 	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;
+
+	TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer_;
 };
 

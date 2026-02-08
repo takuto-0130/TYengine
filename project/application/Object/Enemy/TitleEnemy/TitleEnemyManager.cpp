@@ -2,6 +2,7 @@
 #include "Timer.h"
 
 using namespace TYEngine::Utility;
+using namespace TYEngine::AudioSystem;
 using namespace TYEngine;
 
 void EnemyManager::Init(CameraSystem::Camera* camera)
@@ -30,6 +31,30 @@ void EnemyManager::Update()
 {
 	// 死亡した敵をリストから削除
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& e) { return e->IsDead(); });
+
+	if (beatAnalyzer_)
+	{
+		static float timer = 0.0f;
+		for (auto& enemy : enemies_)
+		{
+			if(enemy->GetCurrentState() == EnemyState::ACTIVE)
+			{
+				if (beatAnalyzer_->GetBeat())
+				{
+					timer = 0.0f;
+					enemy->SetScale(enemy->GetUpScale());
+				}
+				else
+				{
+					if (timer < 1.0f)
+					{
+						timer += Timer::GetInstance()->GetDeltaTime();
+					}
+					enemy->SetScale(Lerp(enemy->GetUpScale(), enemy->GetDefaultScale(), timer));
+				}
+			}
+		}
+	}
 
 	// 各敵の更新
 	for (auto& enemy : enemies_)

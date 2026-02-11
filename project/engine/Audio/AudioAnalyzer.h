@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <array>
+#include <string>
 #include <imgui.h>
 
 namespace TYEngine
@@ -22,7 +23,7 @@ namespace TYEngine
 
 		public:
 			/// <summary>コンストラクタ。</summary>
-			AudioAnalyzer();
+			AudioAnalyzer(const std::string& soundCategory = "");
 
 			/// <summary>
 			/// 毎フレームの更新処理。
@@ -46,11 +47,11 @@ namespace TYEngine
 			const std::vector<float>& GetSmoothedSpectrum() const { return spectrumSmoothed_; }
 
 			/// <summary>低音域の強度（0.0～1.0）。</summary>
-			float GetLowGray()  const { return lowGray_; }
+			float GetLow()  const { return low_; }
 			/// <summary>中音域の強度（0.0～1.0）。</summary>
-			float GetMidGray()  const { return midGray_; }
+			float GetMid()  const { return mid_; }
 			/// <summary>高音域の強度（0.0～1.0）。</summary>
-			float GetHighGray() const { return highGray_; }
+			float GetHigh() const { return high_; }
 
 		private:
 			// 内部処理
@@ -59,8 +60,8 @@ namespace TYEngine
 			void UpdateWaveform();
 			void UpdateSpectrumSmoothing();
 
-			// Low/Mid/High グレースケール更新
-			void UpdateBandGrayscale();
+			// Low/Mid/High 更新
+			void UpdateBand();
 
 			std::vector<float> MakeLogSpectrum(
 				const std::vector<float>& fft,
@@ -100,10 +101,12 @@ namespace TYEngine
 			// ---- スペクトラム ----
 			std::vector<float> spectrumSmoothed_;
 
-			// グレースケール値（0〜1）
-			float lowGray_ = 0.0f;
-			float midGray_ = 0.0f;
-			float highGray_ = 0.0f;
+			// band値（0〜1）
+			float low_ = 0.0f;
+			float mid_ = 0.0f;
+			float high_ = 0.0f;
+
+			std::string soundCategory_ = "";
 
 		};
 

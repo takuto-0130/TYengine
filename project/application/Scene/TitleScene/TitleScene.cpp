@@ -51,6 +51,10 @@ void TitleScene::Init()
 	beatAnalyzer_.Init("418", "BGM");
 
 
+	int bgmH = GameAudio::GetInstance()->Play("418", false, SoundCategory::BGM);
+	GameAudio::GetInstance()->SetSoundVolume(bgmH, 1.0f);
+
+
 	//========== カメラ、入力取得 ==========//
 
 	input_ = Framework::Input::GetInstance();

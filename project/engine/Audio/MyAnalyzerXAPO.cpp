@@ -67,7 +67,7 @@ namespace TYEngine
 			// 窓関数の適用、虚数部は0初期化
 			for (UINT32 i = 0; i < FFT_SIZE; ++i)
 			{
-				float w = 0.5f - 0.5f * cosf(2.0f * 3.1415926535f * i / (FFT_SIZE - 1));
+				float w = 0.5f - 0.5f * cosf(2.0f * std::numbers::pi_v<float> * i / (FFT_SIZE - 1));
 				fftReal_[i] = fftInput_[i] * w; // 窓をかけてからFFTへ
 				fftImag_[i] = 0.0f;
 			}

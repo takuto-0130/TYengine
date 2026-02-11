@@ -74,7 +74,7 @@ namespace TYEngine
 			// クールダウン更新
 			if (syncCooldown_ > 0.0f) syncCooldown_ -= deltaTime;
 
-			// 同期処理（タイミング合わせのみ）
+			// 3. 同期処理（タイミング合わせのみ）
 			if (currentFlux > threshold && syncCooldown_ <= 0.0f)
 			{
 				float phase = fmod(beatPhase_, 1.0f);

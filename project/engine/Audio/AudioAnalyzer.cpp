@@ -9,7 +9,7 @@ namespace TYEngine
 	namespace AudioSystem
 	{
 
-		AudioAnalyzer::AudioAnalyzer()
+		AudioAnalyzer::AudioAnalyzer(const std::string& soundCategory)
 		{
 			spectrumSmoothed_.resize(BANDS, 0.0f);
 
@@ -22,6 +22,8 @@ namespace TYEngine
 			waveform_.resize(441);   // 10ms
 			waveformScroll_.resize(2000, 0.0f); // 2000 サンプル分のスクロール領域
 			waveformWriteIndex_ = 0;
+
+			soundCategory_ = soundCategory;
 		}
 
 		void AudioAnalyzer::Update()
@@ -38,7 +40,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateRMS()
 		{
-			float rms = Audio::GetInstance()->GetAnalyzerXAPO()->GetRMS();
+			float rms = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetRMS();
 
 			// 履歴
 			rmsHistory_[rmsIndex_] = rms;
@@ -53,7 +55,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateFFT()
 		{
-			const auto& fftNow = Audio::GetInstance()->GetAnalyzerXAPO()->GetFFT();
+			const auto& fftNow = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetFFT();
 
 			// 遅延バッファにコピー
 			for (int i = 0; i < FFT_SIZE; i++)
@@ -64,7 +66,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateWaveform()
 		{
-			auto* xapo = Audio::GetInstance()->GetAnalyzerXAPO().Get();
+			auto* xapo = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_).Get();
 			const auto& src = xapo->GetWaveform();
 
 			int N = static_cast<int>(src.size());
@@ -94,7 +96,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateSpectrumSmoothing()
 		{
-			// 無音判定（RMS と同期させる）
+			// 無音判定
 			if (syncedRMS_ < 0.00001f)
 			{
 				for (auto& v : spectrumSmoothed_)
@@ -128,17 +130,17 @@ namespace TYEngine
 					spectrumSmoothed_[i] = 0.0f;
 			}
 
-			UpdateBandGrayscale();
+			UpdateBand();
 		}
 
-		void AudioAnalyzer::UpdateBandGrayscale()
+		void AudioAnalyzer::UpdateBand()
 		{
 			// 無音なら全部 0
 			if (syncedRMS_ < 0.00001f)
 			{
-				lowGray_ = 0.0f;
-				midGray_ = 0.0f;
-				highGray_ = 0.0f;
+				low_ = 0.0f;
+				mid_ = 0.0f;
+				high_ = 0.0f;
 				return;
 			}
 
@@ -205,9 +207,9 @@ namespace TYEngine
 						return current * decay;
 				};
 
-			lowGray_ = smooth(lowGray_, lowTarget);
-			midGray_ = smooth(midGray_, midTarget);
-			highGray_ = smooth(highGray_, highTarget);
+			low_ = smooth(low_, lowTarget);
+			mid_ = smooth(mid_, midTarget);
+			high_ = smooth(high_, highTarget);
 		}
 
 		std::vector<float> AudioAnalyzer::MakeLogSpectrum(
@@ -456,9 +458,9 @@ namespace TYEngine
 			DrawSpectrum(width);
 
 			// 帯域ごとの強度数値表示
-			ImGui::Text("Low : %.2f", lowGray_);
-			ImGui::Text("Mid : %.2f", midGray_);
-			ImGui::Text("High : %.2f", highGray_);
+			ImGui::Text("Low : %.2f", low_);
+			ImGui::Text("Mid : %.2f", mid_);
+			ImGui::Text("High : %.2f", high_);
 
 			// 波形描画
 			DrawWaveform(width);

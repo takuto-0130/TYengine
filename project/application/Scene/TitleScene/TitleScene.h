@@ -2,7 +2,7 @@
 #include "IScene.h"
 #include "ObjectCubemap.h"
 #include "Object/Player/Player.h"
-#include "../../Object/Enemy/TitleEnemy/TitleEnemyManager.h"
+#include "../../Object/Enemy/EnemyManager/EnemyManager.h"
 
 #include "AudioAnalyzer.h"
 #include "BeatAnalyzer.h"
@@ -11,6 +11,9 @@
 #include "Utils/Json/JsonManager.h"
 
 #include "Sprite.h"
+
+class GameAudio;
+
 /// <summary>
 /// タイトル画面シーン。
 /// ゲーム開始前の演出、操作説明、ゲーム本編への遷移を管理する。
@@ -87,4 +90,8 @@ private:
 
 	/// <summary>ビートアナライザー（演出用）。</summary>
 	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
+
+	int bgmHandle_ = -1;
+
+	GameAudio* gameAudio_ = nullptr;
 };

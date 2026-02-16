@@ -265,7 +265,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\Linear.cpp" />
     <ClCompile Include="application\Object\Player\JustCollider.cpp" />
-    <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyManager\EnemyManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
     <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp" />
@@ -404,7 +404,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\Linear\Linear.h" />
     <ClInclude Include="application\Object\Player\JustCollider.h" />
-    <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyManager\EnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
     <ClInclude Include="engine\Audio\AudioSystemBase.h" />

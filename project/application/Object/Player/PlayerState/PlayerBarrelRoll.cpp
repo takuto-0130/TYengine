@@ -15,7 +15,7 @@ using namespace TYEngine::Utility;
 void Player::InitBarrelRoll()
 {
     // SE再生
-    GameAudio::GetInstance()->Play("roll", false, SoundCategory::SE);
+    int h = GameAudio::GetInstance()->Play("roll", false, SoundCategory::SE);
 	
 	// ロール開始位置を記録
 	startRollPos_ = screenOffset_;
@@ -33,6 +33,7 @@ void Player::InitBarrelRoll()
 	{
 		pem->SetEffectEnabled("Vignette", true);
 		pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
+        GameAudio::GetInstance()->Pitch(h, 0.3f);
 	}
     
     // 入力方向がある場合はその方向へ、なければランダム方向へロール
@@ -52,6 +53,7 @@ void Player::InitBarrelRoll()
 void Player::UpdateBarrelRoll()
 {
 	BarrelRoll();
+    GameAudio::GetInstance()->Pitch(BGMHandle_, Timer::GetInstance()->GetTimeScale());
 }
 
 void Player::ExitBarrelRoll()

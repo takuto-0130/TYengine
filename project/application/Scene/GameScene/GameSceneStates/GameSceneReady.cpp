@@ -20,7 +20,7 @@ void GameScene::UpdateReady()
 }
 void GameScene::ExitReady()
 {
-	BGMHandle_ = gameAudio_->Play("418", true, SoundCategory::BGM);
+	gameAudio_->Resume(BGMHandle_);
 	startDraw_->Reset();
 	startCameraTimer_ = 0;
 	prevStateElapsed_ = 0;

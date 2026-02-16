@@ -66,6 +66,24 @@ namespace TYEngine
 			}
 
 			/// <summary>
+			/// Enum を指定して対応する string を呼び出す。
+			/// </summary>
+			/// <returns>カテゴリ文字列。未登録なら空の文字列とログを出す。</returns>
+			const std::string& CategoryToString(CategoryEnum type)
+			{
+
+				auto it = categoryMap_.find(type);
+				if (it != categoryMap_.end())
+				{
+					return it->second;
+				}
+				// 登録されていないカテゴリーなら空扱い
+				Debugger::Log("Category not registered!");
+				static const std::string empty = "";
+				return empty;
+			}
+
+			/// <summary>
 			/// Enumを指定してサウンドを再生する。
 			/// </summary>
 			/// <param name="filename">再生するファイルパス。</param>
@@ -74,16 +92,8 @@ namespace TYEngine
 			/// <returns>再生ハンドル（ボイスID）。失敗時はエラーコード。</returns>
 			int Play(const std::string& filename, bool isLoop, CategoryEnum category)
 			{
-				// 登録されていないカテゴリーならエラー（またはデフォルト扱い）
-				if (categoryMap_.find(category) == categoryMap_.end())
-				{
-					// 登録忘れを防ぐため assert を入れるか、デフォルト文字列で再生
-					assert(false && "Category not registered!");
-					return audio_->Play(filename, isLoop);
-				}
-
 				// Enum -> string に変換して再生
-				return audio_->Play(filename, isLoop, categoryMap_[category]);
+				return audio_->Play(filename, isLoop, CategoryToString(category));
 			}
 
 			/// <summary>

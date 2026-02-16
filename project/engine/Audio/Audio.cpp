@@ -309,7 +309,7 @@ namespace TYEngine
 			}
 		}
 
-		void Audio::StopBGM(int resourceNum)
+		void Audio::Stop(int resourceNum)
 		{
 			sourceVoices_[resourceNum]->Stop();
 			sourceVoices_[resourceNum]->FlushSourceBuffers();
@@ -320,9 +320,14 @@ namespace TYEngine
 			sourceVoices_[resourceNum]->Stop();
 		}
 
-		void Audio::ReStart(int resourceNum)
+		void Audio::Resume(int resourceNum)
 		{
 			sourceVoices_[resourceNum]->Start();
+		}
+
+		void Audio::Pitch(int resourceNum, float pitch)
+		{
+			sourceVoices_[resourceNum]->SetFrequencyRatio(pitch);
 		}
 
 		void Audio::SetMasterVolume(float volume)

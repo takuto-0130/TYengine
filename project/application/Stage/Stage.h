@@ -1,14 +1,13 @@
 #pragma once
 
-#include "Audio/Audio.h"
+#include "Audio.h"
+#include "BeatAnalyzer.h"
 #include "Object/Player/Player.h"
-#include "Object/Enemy/TitleEnemy/TitleEnemyManager.h"
+#include "Object/Enemy/EnemyManager/EnemyManager.h"
 #include "Object/Rail/RailManager.h"
-#include "ParticleManager.h"
 #include "../AppSystem/Combo/ComboManager.h"
 #include "../AppSystem/Score/ScoreManager.h"
 #include <memory>
-#include <list>
 #include <json.hpp>
 
 class Stage
@@ -118,5 +117,8 @@ private:
 
 	/// <summary>レールエディタによる編集モードフラグ。</summary>
 	bool isEdit_ = false;
+
+	/// <summary>ビートアナライザー（演出用）。</summary>
+	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
 };
 

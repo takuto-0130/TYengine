@@ -97,6 +97,8 @@ public:
 	/// </summary>
 	void OnCollision() override;
 
+	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
+
 private:
 	/// <summary>状態更新後の共通処理（フラグ管理など）。</summary>
 	void PostStateUpdate();
@@ -236,6 +238,9 @@ private:
 
 	/// <summary>コントレイルインデックス。</summary>
 	int contrailIndex_;
+
+	/// <summary>BGM再生ハンドル。</summary>
+	int BGMHandle_ = -1;
 
 
 private: // シーン内のState関連関数

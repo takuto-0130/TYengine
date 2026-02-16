@@ -72,6 +72,9 @@ void GameScene::Init()
 #endif // _DEBUG
 
 	gameAudio_ = GameAudio::GetInstance();
+	// 再生開始処理だけして止めておく
+	BGMHandle_ = gameAudio_->Play("418", true, SoundCategory::BGM);
+	gameAudio_->Pause(BGMHandle_);
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 
@@ -81,11 +84,12 @@ void GameScene::Init()
 	// スカイボックス設定
 	Object3dBasis::GetInstance()->SetSkyboxFilePath("Resources/Texture/output_skybox.dds");
 	skybox_ = std::make_unique<ObjectCubemap>();
-	skybox_->Initialize("Resources/Texture/output_skybox.dds");
+	skybox_->Initialize(Object3dBasis::GetInstance()->GetSkyboxFilePath());
 
 	// ステージデータ（レール・敵配置など）の管理クラス生成と初期化
 	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
+	stageManager_->GetPlayer()->SetBGMHandle(BGMHandle_);
 
 	// 開始時のカメラ位置などを保持
 	startCameraPos_ = camera_->GetPosition();
@@ -115,11 +119,11 @@ void GameScene::Update()
 	ImGui::Begin("JSON Editor");
 	static Utility::JsonImGuiEditor inspectorUI(*gameUIJM_);
 	inspectorUI.Draw(gameUIJM_->Root(), "GameUI.json");
-	if (ImGui::Button("Save")) gameUIJM_->Save();
+	if (ImGui::Button("SaveUI")) gameUIJM_->Save();
 	// パラメータ
 	static Utility::JsonImGuiEditor inspectorParam(*paramJM_);
 	inspectorParam.Draw(paramJM_->Root(), "Param.json");
-	if (ImGui::Button("Save")) paramJM_->Save();
+	if (ImGui::Button("SaveParam")) paramJM_->Save();
 	// コンフィグ
 	static Utility::JsonImGuiEditor inspectorConfig(*configJM_);
 	inspectorConfig.Draw(configJM_->Root(), "Config.json");

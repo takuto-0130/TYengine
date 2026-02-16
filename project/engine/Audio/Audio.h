@@ -97,7 +97,7 @@ namespace TYEngine
 			/// 指定したリソース番号のBGM（音源）を停止する。
 			/// </summary>
 			/// <param name="resourceNum">停止対象のBGMリソース番号。</param>
-			void StopBGM(int resourceNum);
+			void Stop(int resourceNum);
 
 			/// <summary>
 			/// 音源を一時停止する。
@@ -109,7 +109,14 @@ namespace TYEngine
 			/// 一時停止中の音源を再開する。
 			/// </summary>
 			/// <param name="resourceNum">対象のサウンドリソース番号。</param>
-			void ReStart(int resourceNum);
+			void Resume(int resourceNum);
+
+			/// <summary>
+			/// 音源のピッチを変更する。
+			/// </summary>
+			/// <param name="resourceNum">対象のサウンドリソース番号。</param>
+			/// <param name="pitch"> 1/1024 ~ 1024/1 までの任意の比率。デフォルトは 1/1 。</param>
+			void Pitch(int resourceNum, float pitch);
 
 			/// <summary>
 			/// マスターボリューム（全体の音量）を設定する。

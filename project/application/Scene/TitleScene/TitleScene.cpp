@@ -33,26 +33,26 @@ void TitleScene::Init()
 #ifdef _DEBUG
 	Log(err);
 #endif // _DEBUG
-
+	gameAudio_ = GameAudio::GetInstance();
 	// 必要なサウンドリソースの読み込み
-	GameAudio::GetInstance()->LoadSound("open");
-	GameAudio::GetInstance()->LoadSound("close");
-	GameAudio::GetInstance()->LoadSound("slide");
-	GameAudio::GetInstance()->LoadSound("enter");
-	GameAudio::GetInstance()->LoadSound("fanfare");
-	GameAudio::GetInstance()->LoadSound("gameBGM");
-	GameAudio::GetInstance()->LoadSound("gekiha");
-	GameAudio::GetInstance()->LoadSound("damageE");
-	GameAudio::GetInstance()->LoadSound("damageP");
-	GameAudio::GetInstance()->LoadSound("roll");
-	GameAudio::GetInstance()->LoadSound("attack");
-	GameAudio::GetInstance()->LoadSound("418");
+	gameAudio_->LoadSound("open");
+	gameAudio_->LoadSound("close");
+	gameAudio_->LoadSound("slide");
+	gameAudio_->LoadSound("enter");
+	gameAudio_->LoadSound("fanfare");
+	gameAudio_->LoadSound("gameBGM");
+	gameAudio_->LoadSound("gekiha");
+	gameAudio_->LoadSound("damageE");
+	gameAudio_->LoadSound("damageP");
+	gameAudio_->LoadSound("roll");
+	gameAudio_->LoadSound("attack");
+	gameAudio_->LoadSound("418");
 
-	beatAnalyzer_.Init("418", "BGM");
+	beatAnalyzer_.Init("gameBGM", gameAudio_->CategoryToString(SoundCategory::BGM));
 
 
-	int bgmH = GameAudio::GetInstance()->Play("418", false, SoundCategory::BGM);
-	GameAudio::GetInstance()->SetSoundVolume(bgmH, 1.0f);
+	bgmHandle_ = gameAudio_->Play("gameBGM", false, SoundCategory::BGM);
+	gameAudio_->SetSoundVolume(bgmHandle_, 1.0f);
 
 
 	//========== カメラ、入力取得 ==========//
@@ -64,23 +64,23 @@ void TitleScene::Init()
 	//========== テクスチャ初期化 ==========//
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Enter.png");
-	spaceSpr_ = std::make_unique<Graphics::Sprite>();
+	spaceSpr_ = std::make_unique<Sprite>();
 	spaceSpr_->Initialize("Resources/Texture/Enter.png");
 	spaceSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
 	spaceSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Title.png");
-	text_ = std::make_unique<Graphics::Sprite>();
+	text_ = std::make_unique<Sprite>();
 	text_->Initialize("Resources/Texture/Title.png");
 	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
-	operation_ = std::make_unique<Graphics::Sprite>();
+	operation_ = std::make_unique<Sprite>();
 	operation_->Initialize("Resources/Texture/Operation.png");
 	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
-	reticle_ = std::make_unique<Graphics::Sprite>();
+	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
 
@@ -112,6 +112,7 @@ void TitleScene::Init()
 	player_->SetCamera(camera_);
 	player_->Init();
 	player_->SetScreenOffset(titleJM.Get<Vector2>("config.Player.ScreenOffset"));
+	player_->SetBGMHandle(bgmHandle_);
 
 	// タイトル画面の演出用敵マネージャ
 	enemyMgr_.Init(camera_);
@@ -144,8 +145,8 @@ void TitleScene::Update() {
 
 	if (input_->TriggerKey(DIK_M))
 	{
-		bgmH = GameAudio::GetInstance()->Play("418", false, SoundCategory::BGM);
-		GameAudio::GetInstance()->SetSoundVolume(bgmH, 1.0f);
+		bgmH = gameAudio_->Play("418", false, SoundCategory::BGM);
+		gameAudio_->SetSoundVolume(bgmH, 1.0f);
 	}
 	if (input_->TriggerKey(DIK_P))
 	{
@@ -153,12 +154,12 @@ void TitleScene::Update() {
 	}
 	if (input_->TriggerKey(DIK_O))
 	{
-		Audio::GetInstance()->ReStart(bgmH);
+		Audio::GetInstance()->Resume(bgmH);
 	}
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");
-	static TYEngine::Utility::JsonImGuiEditor inspector(titleJM);
+	static JsonImGuiEditor inspector(titleJM);
 	inspector.Draw(titleJM.Root(), "Title.json");
 	if (ImGui::Button("Save")) titleJM.Save();
 	ImGui::End();
@@ -237,12 +238,13 @@ void TitleScene::Transition()
 	if (input_->TriggerKey(DIK_RETURN))
 	{
 		sceneManager_->ChangeScene("GAME");
+		gameAudio_->Stop(bgmHandle_);
 	}
 #else
 	if (input_->TriggerKey(DIK_RETURN))
 	{
 		// 決定音再生
-		GameAudio::GetInstance()->Play("enter", false, SoundCategory::UI);
+		gameAudio_->Play("enter", false, SoundCategory::UI);
 		
 		// ブロックフェード演出を開始してゲームシーンへ遷移
 		BlockFadeConfig cfg;
@@ -252,6 +254,7 @@ void TitleScene::Transition()
 				BlockFadeConfig cfg1;
 				sceneManager_->ChangeScene("GAME");
 				TransitionManager::GetInstance()->Enqueue(std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_OUT, cfg1));
+				gameAudio_->Stop(bgmHandle_);
 			});
 		TransitionManager::GetInstance()->Start(std::move(transition));
 	}

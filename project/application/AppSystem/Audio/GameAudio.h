@@ -42,5 +42,22 @@ private:
     } 
 
 public:
+    void Stop(int resourceNum)
+    {
+        GetAudio()->Stop(resourceNum);
+    }
+    void Pause(int resourceNum)
+    {
+        GetAudio()->Pause(resourceNum);
+    }
+    void Resume(int resourceNum)
+    {
+        GetAudio()->Resume(resourceNum);
+    }
+
+    void Pitch(int resourceNum, float pitch)
+    {
+        GetAudio()->Pitch(resourceNum, pitch);
+    }
 
 };

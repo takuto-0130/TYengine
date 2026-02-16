@@ -1,11 +1,14 @@
 #include "Stage.h"
 #include "../Object/Rail/RailEditor.h"
+#include "../AppSystem//Audio//GameAudio.h"
 
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
 
 void Stage::Init()
 {
+    beatAnalyzer_.Init("418", GameAudio::GetInstance()->CategoryToString(SoundCategory::BGM));
+
 	// プレイヤー生成と初期化
     player_ = std::make_unique<Player>();
     player_->SetCamera(camera_);
@@ -19,6 +22,7 @@ void Stage::Init()
 
     // 敵マネージャ設定（スコア/コンボ関連付け）
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
+    enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
     enemyMgr_.Init(camera_);
 
     // レール管理初期化
@@ -44,6 +48,9 @@ void Stage::Reset()
 void Stage::Update()
 {
     isEdit_ = false;
+
+    beatAnalyzer_.Update();
+    beatAnalyzer_.Draw();
 
     // カメラ情報の更新
     enemyMgr_.SetCamera(camera_);

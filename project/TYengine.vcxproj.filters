@@ -573,7 +573,7 @@
     <ClCompile Include="application\Object\Player\JustCollider.cpp">
       <Filter>application\Object\Player</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp">
+    <ClCompile Include="application\Object\Enemy\EnemyManager\EnemyManager.cpp">
       <Filter>application\Object\Enemy\TitleEnemy</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp">
@@ -986,7 +986,7 @@
     <ClInclude Include="application\Object\Player\JustCollider.h">
       <Filter>application\Object\Player</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h">
+    <ClInclude Include="application\Object\Enemy\EnemyManager\EnemyManager.h">
       <Filter>application\Object\Enemy\TitleEnemy</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h">

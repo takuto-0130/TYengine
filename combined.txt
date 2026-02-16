@@ -4,31 +4,17 @@
     ├── Resources/
     └── ├── JSON/
     └── ├── Models/
-    └── └── ├── EnemyBody/
     └── └── ├── Ground/
-    └── └── ├── ICO/
-    └── └── ├── axis/
-    └── └── ├── bunny/
     └── └── ├── crystal/
     └── └── ├── crystal1/
     └── └── ├── crystal2/
     └── └── ├── crystal4/
     └── └── ├── cube/
-    └── └── ├── float_L_arm/
-    └── └── ├── float_R_arm/
-    └── └── ├── float_body/
-    └── └── ├── float_head/
     └── └── ├── ground/
-    └── └── ├── hammer/
     └── └── ├── jett/
-    └── └── ├── multiMaterial/
-    └── └── ├── multiMesh/
     └── └── ├── plane/
     └── └── ├── skydome/
-    └── └── ├── suzanne/
-    └── └── ├── teapot/
     └── └── ├── titleground/
-    └── └── ├── unitHead/
     └── └── ├── unitSphere/
     └── ├── Shaders/
     └── ├── Sound/
@@ -77,9 +63,9 @@
     └── └── └── └──     └── ShotState.cpp
     └── └── └── ├── EnemyCollider.cpp
     └── └── └── ├── EnemyCollider.h
-    └── └── └── └── TitleEnemy/
-    └── └── └──     ├── TitleEnemyManager.cpp
-    └── └── └──     └── TitleEnemyManager.h
+    └── └── └── └── EnemyManager/
+    └── └── └──     ├── EnemyManager.cpp
+    └── └── └──     └── EnemyManager.h
     └── └── ├── Player/
     └── └── └── ├── JustCollider.cpp
     └── └── └── ├── JustCollider.h
@@ -185,6 +171,10 @@
     └── └── ├── AudioAnalyzer.cpp
     └── └── ├── AudioAnalyzer.h
     └── └── ├── AudioSystemBase.h
+    └── └── ├── BPMDetector.cpp
+    └── └── ├── BPMDetector.h
+    └── └── ├── BeatAnalyzer.cpp
+    └── └── ├── BeatAnalyzer.h
     └── └── ├── MyAnalyzerXAPO.cpp
     └── └── ├── MyAnalyzerXAPO.h
     └── └── ├── StreamingAudio.cpp
@@ -526,6 +516,8 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp" />
+    <ClCompile Include="engine\Audio\BeatAnalyzer.cpp" />
+    <ClCompile Include="engine\Audio\BPMDetector.cpp" />
     <ClCompile Include="engine\Audio\AudioAnalyzer.cpp" />
     <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
     <ClCompile Include="externals\xapobase.cpp" />
@@ -615,7 +607,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\OffScreen\PostEffect\RandomEffect.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\Linear.cpp" />
     <ClCompile Include="application\Object\Player\JustCollider.cpp" />
-    <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp" />
+    <ClCompile Include="application\Object\Enemy\EnemyManager\EnemyManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
     <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp" />
@@ -640,6 +632,8 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h" />
+    <ClInclude Include="engine\Audio\BeatAnalyzer.h" />
+    <ClInclude Include="engine\Audio\BPMDetector.h" />
     <ClInclude Include="engine\Audio\MyAnalyzerXAPO.h" />
     <ClInclude Include="engine\Audio\AudioAnalyzer.h" />
     <ClInclude Include="engine\Effect\ContrailBehaviour.h" />
@@ -752,7 +746,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\OffScreen\PostEffect\RandomEffect.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\Linear\Linear.h" />
     <ClInclude Include="application\Object\Player\JustCollider.h" />
-    <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h" />
+    <ClInclude Include="application\Object\Enemy\EnemyManager\EnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
     <ClInclude Include="engine\Audio\AudioSystemBase.h" />
@@ -778,205 +772,205 @@ File Path: project/TYengine.vcxproj.filters
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="application">
-      <UniqueIdentifier>{977dd2f3-5a05-47ff-86ae-f792dc66065d}</UniqueIdentifier>
+      <UniqueIdentifier>{69a4eaf5-e447-4e90-89aa-5416c04989b6}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem">
-      <UniqueIdentifier>{a18a2dbd-ad03-4009-bce0-984808772e8a}</UniqueIdentifier>
+      <UniqueIdentifier>{3fc9c7f0-4ddd-4b11-8662-481a2a8b4d73}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Audio">
-      <UniqueIdentifier>{56e1725f-2340-4928-911d-28ff76170cac}</UniqueIdentifier>
+      <UniqueIdentifier>{63efd7f3-e983-4a21-af12-40ecb273807a}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Combo">
-      <UniqueIdentifier>{b0f91d77-847f-408b-a5ef-e9e7d70c7cf6}</UniqueIdentifier>
+      <UniqueIdentifier>{e5e90144-b8f9-4bcf-95b0-e29eadf01238}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener">
-      <UniqueIdentifier>{257e6318-246c-4ac1-a007-894ce69e1d31}</UniqueIdentifier>
+      <UniqueIdentifier>{73cd3d9e-d41a-4ad8-998e-979a1c1ef879}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener\EnemyEvent">
-      <UniqueIdentifier>{bce6b357-d2c3-478c-bdd7-0bae23cfbe02}</UniqueIdentifier>
+      <UniqueIdentifier>{237969ab-331a-4219-a341-4ebff1bc24a7}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Score">
-      <UniqueIdentifier>{9b2a6cdf-094b-444c-bda6-bb4d11e6f942}</UniqueIdentifier>
+      <UniqueIdentifier>{dc69c566-0224-418c-95b4-a8beca1e7885}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object">
-      <UniqueIdentifier>{abe023d0-4ffd-48dd-beaa-29524972733c}</UniqueIdentifier>
+      <UniqueIdentifier>{6e2b437c-c883-4d25-b099-dc5041755031}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseBullet">
-      <UniqueIdentifier>{35fac45e-7760-4156-973a-5ed3572225a4}</UniqueIdentifier>
+      <UniqueIdentifier>{7cba8350-099c-4ff6-a267-fa0969e1ad71}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseCharacter">
-      <UniqueIdentifier>{e61a5de2-c57f-4bfc-9e36-21cf9e1b66c4}</UniqueIdentifier>
+      <UniqueIdentifier>{0e4930fa-48e9-473f-9a8d-d2bf317252a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\ColliderTypeID">
-      <UniqueIdentifier>{800d9d8c-c282-4145-8d90-d8c412747e34}</UniqueIdentifier>
+      <UniqueIdentifier>{a0edf34c-602f-410c-9d40-38c5815fe0d0}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy">
-      <UniqueIdentifier>{4a181944-b834-4d4c-aa8f-a36b0853f8bd}</UniqueIdentifier>
+      <UniqueIdentifier>{64d364e9-cd1b-460c-8772-bfc82f62da24}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\AttackStrategy">
-      <UniqueIdentifier>{75146d0d-fdb6-4060-ab0a-e8268dace13d}</UniqueIdentifier>
+      <UniqueIdentifier>{a94e6c50-9167-4f98-89e7-3d9360f39a77}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet">
-      <UniqueIdentifier>{be49e567-c8a1-420a-a489-5e4018e40be6}</UniqueIdentifier>
+      <UniqueIdentifier>{347b02ba-d65c-4da9-8429-4836858b4d2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="application\Object\Enemy\EnemyBullet\Liner">
-      <UniqueIdentifier>{b011adb8-00ac-4e30-8c9e-58dc12dc102b}</UniqueIdentifier>
+    <Filter Include="application\Object\Enemy\EnemyBullet\Linear">
+      <UniqueIdentifier>{5fa4132f-59e2-4bd9-8e15-49ddf18926c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="application\Object\Enemy\TitleEnemy">
-      <UniqueIdentifier>{775006c7-57eb-4fbd-984b-2a9d12c02e73}</UniqueIdentifier>
+    <Filter Include="application\Object\Enemy\EnemyManager">
+      <UniqueIdentifier>{f5c5e403-4564-4e1f-a55a-9c23cd66769b}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player">
-      <UniqueIdentifier>{02fbc740-a399-41f9-a85e-52064c7fa70f}</UniqueIdentifier>
+      <UniqueIdentifier>{22bc0032-b6c3-4d8b-bc5d-dac4919ba966}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet">
-      <UniqueIdentifier>{c98639ba-4e77-4adf-8b6f-6a6caa2da31b}</UniqueIdentifier>
+      <UniqueIdentifier>{7dd47d9f-5f3f-445a-8e2a-d48c583cb205}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet\NormalBullet">
-      <UniqueIdentifier>{f691c21e-ae0a-40a2-a607-057395f17944}</UniqueIdentifier>
+      <UniqueIdentifier>{73e76f5d-2096-454b-b200-e4b579573a09}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerState">
-      <UniqueIdentifier>{47f2ea88-08dc-4b5b-a24d-cad9aa129942}</UniqueIdentifier>
+      <UniqueIdentifier>{a16a8f3a-c67e-4802-80ec-0d86432e4a5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\Reticle">
-      <UniqueIdentifier>{297aad24-75c2-4084-bac2-4a8f3c84df67}</UniqueIdentifier>
+      <UniqueIdentifier>{fb30142f-d11f-4da1-be9e-e7c1b421dda4}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Rail">
-      <UniqueIdentifier>{f3e10528-475d-4885-a44f-427457f84195}</UniqueIdentifier>
+      <UniqueIdentifier>{c41eed6a-90fc-4cd0-853c-9eb1fa051c53}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene">
-      <UniqueIdentifier>{095d986f-6f15-403b-8ceb-480fd1609fef}</UniqueIdentifier>
+      <UniqueIdentifier>{6c3c47b7-e0bf-42d6-82e6-5631cfc21c33}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene">
-      <UniqueIdentifier>{007344f0-8479-4c18-9ab3-77e09182aad4}</UniqueIdentifier>
+      <UniqueIdentifier>{dfdbdf00-c310-4cc0-9e90-f746cb916efc}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\GameSceneStates">
-      <UniqueIdentifier>{14dea72b-fe75-408c-a8fd-b76ff76b8c36}</UniqueIdentifier>
+      <UniqueIdentifier>{6486a698-0ca0-44ea-b1a8-6a0d10ef1f2e}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Pause">
-      <UniqueIdentifier>{d5d90fdc-ce17-484f-a9a6-610b6c5af30d}</UniqueIdentifier>
+      <UniqueIdentifier>{bdd5cfa1-d7ba-478b-b35a-f6b3b259ab6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\PlayUI">
-      <UniqueIdentifier>{c64e9967-9b8c-4778-8d0e-df3a51157d44}</UniqueIdentifier>
+      <UniqueIdentifier>{48ff4e57-4ba3-4dc6-9466-025173fbb129}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Result">
-      <UniqueIdentifier>{b3ac00ff-09ef-40b1-b99c-dbb61047b7ab}</UniqueIdentifier>
+      <UniqueIdentifier>{264c8583-2364-4f6e-bc5b-03649fd1a43b}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\RetryUI">
-      <UniqueIdentifier>{8fdeb950-7b38-4051-9412-a9f489f8b256}</UniqueIdentifier>
+      <UniqueIdentifier>{d2740b09-468b-414b-97bd-ae7f8948df07}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\StartUI">
-      <UniqueIdentifier>{f7279225-8405-4a20-aedc-a5eb65a84eed}</UniqueIdentifier>
+      <UniqueIdentifier>{8c8b5937-8f59-4714-810c-e9c3acb486df}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\SceneFactory">
-      <UniqueIdentifier>{251fac2f-1ffe-49ac-a1f4-86cd56b8c55b}</UniqueIdentifier>
+      <UniqueIdentifier>{1f72d9e0-0749-4c54-b0ac-16b770ce4888}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\TitleScene">
-      <UniqueIdentifier>{dd16f7f2-c560-4180-b51c-b89bb5e1d5cb}</UniqueIdentifier>
+      <UniqueIdentifier>{9413e364-a3a6-42cc-b145-ec71d5156f67}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition">
-      <UniqueIdentifier>{a888ec6d-70af-4997-867b-32efb48ff633}</UniqueIdentifier>
+      <UniqueIdentifier>{c21e41c6-e953-4ea9-8d79-cdc0d1a6cfa4}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition\Fade">
-      <UniqueIdentifier>{96e547a7-2951-4ea6-b5e5-bfea0a6cbffb}</UniqueIdentifier>
+      <UniqueIdentifier>{19723848-cf32-48ec-baec-76d9666a28ce}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition\Fade2">
-      <UniqueIdentifier>{ace8182d-b419-49c0-b31d-90ac15fff773}</UniqueIdentifier>
+      <UniqueIdentifier>{411272b3-1882-4dd2-b6a6-a496fe8c3db9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\ScoreUI">
-      <UniqueIdentifier>{21439cbf-17c9-489f-af93-69eadf273b93}</UniqueIdentifier>
+      <UniqueIdentifier>{854ec754-7a8e-4908-af4f-bfd145dcb15c}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Stage">
-      <UniqueIdentifier>{34e7e95e-bee1-4344-802b-bfe4dced7ab6}</UniqueIdentifier>
+      <UniqueIdentifier>{61799cc7-5f23-4dfd-b49a-c76f5e09b7b8}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine">
-      <UniqueIdentifier>{c8c10118-69c5-43bb-b2c9-6c1882f31389}</UniqueIdentifier>
+      <UniqueIdentifier>{50cf6afa-6242-4c4b-a122-bb78e07e187f}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio">
-      <UniqueIdentifier>{591fc9b5-5e83-4348-a020-7e5b19cef973}</UniqueIdentifier>
+      <UniqueIdentifier>{39f1f4e1-df18-4fc4-bb81-049e82b9b16d}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Camera">
-      <UniqueIdentifier>{1f51d9e3-cdf7-40e8-8c4d-580db78d78cb}</UniqueIdentifier>
+      <UniqueIdentifier>{3aa8e0ff-c565-441e-b7b6-b73b4206896d}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Debugger">
-      <UniqueIdentifier>{13723f12-870b-49d0-9fe7-81775ccd1fcf}</UniqueIdentifier>
+      <UniqueIdentifier>{894f27e4-6573-467a-a16a-395182891894}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Effect">
-      <UniqueIdentifier>{690aa6dc-ff53-4285-9c80-d7eb676bca0e}</UniqueIdentifier>
+      <UniqueIdentifier>{f1e5d807-cef5-4b15-9908-e1eb4f7cf9d4}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\EngineCore">
-      <UniqueIdentifier>{25d57da4-42c9-48c3-bc0e-ce2ec084d6d7}</UniqueIdentifier>
+      <UniqueIdentifier>{5dfea76a-c170-445b-8ac3-a3cb0af5ed74}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework">
-      <UniqueIdentifier>{8a500f53-e08a-409a-a925-6f75bf2e5917}</UniqueIdentifier>
+      <UniqueIdentifier>{d6e287cf-f78a-405b-98b0-f5f2c60ad9af}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\Input">
-      <UniqueIdentifier>{d2e795f0-4899-4fef-a393-6e657d16ac68}</UniqueIdentifier>
+      <UniqueIdentifier>{d2fc4a28-5265-46b2-8612-1441e012498c}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\SceneBase">
-      <UniqueIdentifier>{d37bdf31-e086-4c68-90f4-d721e84778a8}</UniqueIdentifier>
+      <UniqueIdentifier>{08f169b7-03e8-4ab3-83d6-c8fe0efa0b9c}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics">
-      <UniqueIdentifier>{b9ec06d1-0083-497b-b7ca-4d2b41e5c64e}</UniqueIdentifier>
+      <UniqueIdentifier>{259d93a5-c07a-4732-ad13-1e8482e9bb4b}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Cubemap">
-      <UniqueIdentifier>{dc45224a-414d-44fd-a0a1-0767411d73bb}</UniqueIdentifier>
+      <UniqueIdentifier>{45b8441a-c126-409a-a9a2-022af7ccad24}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Model">
-      <UniqueIdentifier>{dd5e9f8b-b9d1-48ee-bfe7-4fbdfd5d851b}</UniqueIdentifier>
+      <UniqueIdentifier>{339f9035-8e6b-427d-ab9d-a40be01ef061}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Sprite">
-      <UniqueIdentifier>{72f2d8e6-721e-44f6-bd68-d3411649d799}</UniqueIdentifier>
+      <UniqueIdentifier>{cfbbf1a5-2b84-4d22-bc9c-409ee09b3b09}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\SRV">
-      <UniqueIdentifier>{40cbd3c7-0a6f-485c-8fa1-91fc697fa3b0}</UniqueIdentifier>
+      <UniqueIdentifier>{74623371-8cd4-4d18-8e18-2e8fb5e058bc}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen">
-      <UniqueIdentifier>{2f2b7449-d7df-404b-846a-e7206f3f9396}</UniqueIdentifier>
+      <UniqueIdentifier>{0df04e44-1597-4e2b-ac4c-5ccbd7ac7d28}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen\PostEffect">
-      <UniqueIdentifier>{151b6f1c-b91c-467d-af4f-42a1926363cd}</UniqueIdentifier>
+      <UniqueIdentifier>{a1dd5f7e-2c76-44cb-acc1-2177d6ada0ac}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility">
-      <UniqueIdentifier>{4513ec88-ac02-4196-9d50-3ce7c21d8c3b}</UniqueIdentifier>
+      <UniqueIdentifier>{3a48d08d-41c7-4b1c-ac2c-165441c1dc07}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider">
-      <UniqueIdentifier>{929262d6-6703-4dea-96df-9cff6c90bb1f}</UniqueIdentifier>
+      <UniqueIdentifier>{a6807263-c218-482e-880a-5a98290a19a8}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\2DCollider">
-      <UniqueIdentifier>{49402057-6805-4525-9d53-0b8fcb632054}</UniqueIdentifier>
+      <UniqueIdentifier>{1a610196-b0b5-4f55-8a0f-6f6436fc80e2}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Ray">
-      <UniqueIdentifier>{bf33d6b5-d11a-41f5-8898-c15b53eeb2e7}</UniqueIdentifier>
+      <UniqueIdentifier>{e41a0ad7-94ad-490b-8b2a-7a7d14c4829d}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Sphere">
-      <UniqueIdentifier>{98845c49-14d6-40bf-b484-b9ff7210a32e}</UniqueIdentifier>
+      <UniqueIdentifier>{128add5f-4df5-4afd-911d-be4493af6e38}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Loader">
-      <UniqueIdentifier>{52e25a53-9eac-4f5b-ad7a-f3c976caf9c3}</UniqueIdentifier>
+      <UniqueIdentifier>{af3b12a6-0f0b-4bec-8211-aecca72ddf8f}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Math">
-      <UniqueIdentifier>{310cc11c-62c5-425e-a20c-631e8295ecdd}</UniqueIdentifier>
+      <UniqueIdentifier>{dc645531-87c1-48a2-b554-79250caeadd6}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\ObjectBasis">
-      <UniqueIdentifier>{b7b39591-8dbd-4f71-a129-7289850406fc}</UniqueIdentifier>
+      <UniqueIdentifier>{95ea464b-81fc-4234-86cd-b5a69afcac03}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\SceneObjects">
-      <UniqueIdentifier>{99138250-746a-4809-8cc4-cb9f01cff5f8}</UniqueIdentifier>
+      <UniqueIdentifier>{07075b8b-f33e-41ae-890f-0b20dfdf424b}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils">
-      <UniqueIdentifier>{3d0789bc-da9c-46c2-8316-7985f88ae8c3}</UniqueIdentifier>
+      <UniqueIdentifier>{1adc1b16-3daf-427e-8aed-d93baba74831}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\JSON">
-      <UniqueIdentifier>{2ba55a4d-cc3f-4b6c-872e-50ed1c869fba}</UniqueIdentifier>
+      <UniqueIdentifier>{5ef49014-d3a9-4ddb-bfef-902e4be98a27}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\Time">
-      <UniqueIdentifier>{c083915b-93ce-411b-9ece-862892867ee6}</UniqueIdentifier>
+      <UniqueIdentifier>{9f7fcfc2-d185-4811-9996-ace2b4fb4ca7}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals">
-      <UniqueIdentifier>{7b7b3193-0019-4905-a058-98fc7e992d49}</UniqueIdentifier>
+      <UniqueIdentifier>{dfef4087-f650-4040-b16a-5d930e480b26}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals\imgui">
-      <UniqueIdentifier>{16549c89-e55e-4a37-bb71-fba43f19ee38}</UniqueIdentifier>
+      <UniqueIdentifier>{3cac3c21-cae4-467c-9c60-a242a2e6f5ee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -984,10 +978,10 @@ File Path: project/TYengine.vcxproj.filters
       <Filter>application\AppSystem\Combo</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp">
-      <Filter>application\Object\Enemy\EnemyBullet\Liner</Filter>
+      <Filter>application\Object\Enemy\EnemyBullet\Linear</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp">
-      <Filter>application\Object\Enemy\EnemyBullet\Liner</Filter>
+      <Filter>application\Object\Enemy\EnemyBullet\Linear</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp">
       <Filter>application\Object\Player\PlayerBullet\NormalBullet</Filter>
@@ -1075,6 +1069,12 @@ File Path: project/TYengine.vcxproj.filters
     </ClCompile>
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp">
       <Filter>application\Scene\Transition\Fade2</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Audio\BeatAnalyzer.cpp">
+      <Filter>engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Audio\BPMDetector.cpp">
+      <Filter>engine\Audio</Filter>
     </ClCompile>
     <ClCompile Include="engine\Audio\AudioAnalyzer.cpp">
       <Filter>engine\Audio</Filter>
@@ -1338,13 +1338,13 @@ File Path: project/TYengine.vcxproj.filters
       <Filter>engine\OffScreen\PostEffect</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\Linear.cpp">
-      <Filter>application\Object\Enemy\EnemyBullet\Liner</Filter>
+      <Filter>application\Object\Enemy\EnemyBullet\Linear</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\JustCollider.cpp">
       <Filter>application\Object\Player</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.cpp">
-      <Filter>application\Object\Enemy\TitleEnemy</Filter>
+    <ClCompile Include="application\Object\Enemy\EnemyManager\EnemyManager.cpp">
+      <Filter>application\Object\Enemy\EnemyManager</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp">
       <Filter>application\Scene\GameScene\StartUI</Filter>
@@ -1361,6 +1361,9 @@ File Path: project/TYengine.vcxproj.filters
       <Filter>application\AppSystem\Combo</Filter>
     </ClInclude>
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\ComboAndScoreHandler.h">
+      <Filter>application\AppSystem\EventListener\EnemyEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener.h">
       <Filter>application\AppSystem\EventListener\EnemyEvent</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h">
@@ -1411,6 +1414,12 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h">
       <Filter>application\Scene\Transition\Fade2</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Audio\BeatAnalyzer.h">
+      <Filter>engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Audio\BPMDetector.h">
+      <Filter>engine\Audio</Filter>
+    </ClInclude>
     <ClInclude Include="engine\Audio\MyAnalyzerXAPO.h">
       <Filter>engine\Audio</Filter>
     </ClInclude>
@@ -1437,6 +1446,9 @@ File Path: project/TYengine.vcxproj.filters
     </ClInclude>
     <ClInclude Include="engine\Effect\ParticleParam.h">
       <Filter>engine\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\EngineCore\EngineConfig.h">
+      <Filter>engine\EngineCore</Filter>
     </ClInclude>
     <ClInclude Include="engine\OffScreen\PostEffect\DoFPass.h">
       <Filter>engine\OffScreen\PostEffect</Filter>
@@ -1739,13 +1751,13 @@ File Path: project/TYengine.vcxproj.filters
       <Filter>engine\OffScreen\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Enemy\EnemyBullet\Linear\Linear.h">
-      <Filter>application\Object\Enemy\EnemyBullet\Liner</Filter>
+      <Filter>application\Object\Enemy\EnemyBullet\Linear</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Player\JustCollider.h">
       <Filter>application\Object\Player</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Enemy\TitleEnemy\TitleEnemyManager.h">
-      <Filter>application\Object\Enemy\TitleEnemy</Filter>
+    <ClInclude Include="application\Object\Enemy\EnemyManager\EnemyManager.h">
+      <Filter>application\Object\Enemy\EnemyManager</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h">
       <Filter>application\Scene\GameScene\StartUI</Filter>
@@ -1759,8 +1771,6 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="application\AppSystem\Audio\GameAudio.h">
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener.h" />
-    <ClInclude Include="engine\EngineCore\EngineConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -1826,6 +1836,23 @@ private:
     } 
 
 public:
+    void Stop(int resourceNum)
+    {
+        GetAudio()->Stop(resourceNum);
+    }
+    void Pause(int resourceNum)
+    {
+        GetAudio()->Pause(resourceNum);
+    }
+    void Resume(int resourceNum)
+    {
+        GetAudio()->Resume(resourceNum);
+    }
+
+    void Pitch(int resourceNum, float pitch)
+    {
+        GetAudio()->Pitch(resourceNum, pitch);
+    }
 
 };
 
@@ -2139,7 +2166,6 @@ void GameCore::Initialize()
 	// オーディオシステムの初期化
 	Audio::GetInstance()->Initialize();
 	GameAudio::GetInstance()->Init();
-	// Audio::GetInstance()->Start();
 
 	// シーンファクトリの生成と初期シーンの設定
 	sceneFactory_ = std::make_unique<SceneFactory>();
@@ -2895,7 +2921,7 @@ void Enemy::UpdateActive()
 			{
 				t = 1.5f;
 			}
-			worldTransform_.SetScale(Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f)));
+			//worldTransform_.SetScale(Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f)));
 		}
 
 		if (bulletTimer_ <= 0.5f)
@@ -3110,6 +3136,9 @@ public:
 	{
 		attackStrategy_ = std::move(strategy);
 	}
+
+	const TYEngine::Utility::Vector3& GetDefaultScale() { return defaultScale_; }
+	const TYEngine::Utility::Vector3& GetUpScale() { return upScale_; }
 
 private:
 	/// <summary>
@@ -3678,12 +3707,13 @@ private:
 
 
 ============================================================
-File Path: project/application/Object/Enemy/TitleEnemy/TitleEnemyManager.cpp
+File Path: project/application/Object/Enemy/EnemyManager/EnemyManager.cpp
 ============================================================
-#include "TitleEnemyManager.h"
+#include "EnemyManager.h"
 #include "Timer.h"
 
 using namespace TYEngine::Utility;
+using namespace TYEngine::AudioSystem;
 using namespace TYEngine;
 
 void EnemyManager::Init(CameraSystem::Camera* camera)
@@ -3712,6 +3742,30 @@ void EnemyManager::Update()
 {
 	// 死亡した敵をリストから削除
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& e) { return e->IsDead(); });
+
+	if (beatAnalyzer_)
+	{
+		static float timer = 0.0f;
+		for (auto& enemy : enemies_)
+		{
+			if(enemy->GetCurrentState() == EnemyState::ACTIVE)
+			{
+				if (beatAnalyzer_->GetBeat())
+				{
+					timer = 0.0f;
+					enemy->SetScale(enemy->GetUpScale());
+				}
+				else
+				{
+					if (timer < 1.0f)
+					{
+						timer += Timer::GetInstance()->GetDeltaTime();
+					}
+					enemy->SetScale(Lerp(enemy->GetUpScale(), enemy->GetDefaultScale(), timer));
+				}
+			}
+		}
+	}
 
 	// 各敵の更新
 	for (auto& enemy : enemies_)
@@ -3803,12 +3857,13 @@ void EnemyManager::SetCamera(CameraSystem::Camera* camera)
 
 
 ============================================================
-File Path: project/application/Object/Enemy/TitleEnemy/TitleEnemyManager.h
+File Path: project/application/Object/Enemy/EnemyManager/EnemyManager.h
 ============================================================
 #pragma once
 #include "../Enemy.h"
 #include "../EnemyBullet/EnemyBulletManager.h"
 #include "../../../AppSystem/EventListener/EnemyEvent/ComboAndScoreHandler.h"
+#include "BeatAnalyzer.h"
 #include <random>
 
 class Camera;
@@ -3844,6 +3899,8 @@ public:
 	void SetTargetPos(TYEngine::Utility::Vector3* pos);
 
 	void SetCamera(TYEngine::CameraSystem::Camera* camera);
+
+	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
 
 private:
 	/// <summary>
@@ -3885,6 +3942,8 @@ private:
 
 	/// <summary>コンボ・スコア処理ハンドラ。</summary>
 	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;
+
+	TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer_;
 };
 
 
@@ -4449,6 +4508,8 @@ public:
 	/// </summary>
 	void OnCollision() override;
 
+	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
+
 private:
 	/// <summary>状態更新後の共通処理（フラグ管理など）。</summary>
 	void PostStateUpdate();
@@ -4588,6 +4649,9 @@ private:
 
 	/// <summary>コントレイルインデックス。</summary>
 	int contrailIndex_;
+
+	/// <summary>BGM再生ハンドル。</summary>
+	int BGMHandle_ = -1;
 
 
 private: // シーン内のState関連関数
@@ -5153,7 +5217,7 @@ using namespace TYEngine::Utility;
 void Player::InitBarrelRoll()
 {
     // SE再生
-    GameAudio::GetInstance()->Play("roll", false, SoundCategory::SE);
+    int h = GameAudio::GetInstance()->Play("roll", false, SoundCategory::SE);
 	
 	// ロール開始位置を記録
 	startRollPos_ = screenOffset_;
@@ -5171,6 +5235,7 @@ void Player::InitBarrelRoll()
 	{
 		pem->SetEffectEnabled("Vignette", true);
 		pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
+        GameAudio::GetInstance()->Pitch(h, 0.3f);
 	}
     
     // 入力方向がある場合はその方向へ、なければランダム方向へロール
@@ -5190,6 +5255,7 @@ void Player::InitBarrelRoll()
 void Player::UpdateBarrelRoll()
 {
 	BarrelRoll();
+    GameAudio::GetInstance()->Pitch(BGMHandle_, Timer::GetInstance()->GetTimeScale());
 }
 
 void Player::ExitBarrelRoll()
@@ -6628,6 +6694,9 @@ void GameScene::Init()
 #endif // _DEBUG
 
 	gameAudio_ = GameAudio::GetInstance();
+	// 再生開始処理だけして止めておく
+	BGMHandle_ = gameAudio_->Play("418", true, SoundCategory::BGM);
+	gameAudio_->Pause(BGMHandle_);
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 
@@ -6637,11 +6706,12 @@ void GameScene::Init()
 	// スカイボックス設定
 	Object3dBasis::GetInstance()->SetSkyboxFilePath("Resources/Texture/output_skybox.dds");
 	skybox_ = std::make_unique<ObjectCubemap>();
-	skybox_->Initialize("Resources/Texture/output_skybox.dds");
+	skybox_->Initialize(Object3dBasis::GetInstance()->GetSkyboxFilePath());
 
 	// ステージデータ（レール・敵配置など）の管理クラス生成と初期化
 	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
+	stageManager_->GetPlayer()->SetBGMHandle(BGMHandle_);
 
 	// 開始時のカメラ位置などを保持
 	startCameraPos_ = camera_->GetPosition();
@@ -6671,11 +6741,11 @@ void GameScene::Update()
 	ImGui::Begin("JSON Editor");
 	static Utility::JsonImGuiEditor inspectorUI(*gameUIJM_);
 	inspectorUI.Draw(gameUIJM_->Root(), "GameUI.json");
-	if (ImGui::Button("Save")) gameUIJM_->Save();
+	if (ImGui::Button("SaveUI")) gameUIJM_->Save();
 	// パラメータ
 	static Utility::JsonImGuiEditor inspectorParam(*paramJM_);
 	inspectorParam.Draw(paramJM_->Root(), "Param.json");
-	if (ImGui::Button("Save")) paramJM_->Save();
+	if (ImGui::Button("SaveParam")) paramJM_->Save();
 	// コンフィグ
 	static Utility::JsonImGuiEditor inspectorConfig(*configJM_);
 	inspectorConfig.Draw(configJM_->Root(), "Config.json");
@@ -7097,7 +7167,7 @@ using namespace TYEngine;
 
 void GameScene::InitFadeOut()
 {
-	AudioSystem::Audio::GetInstance()->StopBGM(BGMHandle_);
+	AudioSystem::Audio::GetInstance()->Stop(BGMHandle_);
 	auto transition = std::make_unique<FadeTransition>(FadeTransition::Type::FADE_OUT, 1.0f);
 	transition->SetOnFinishCallback([this]() {
 		sceneManager_->ChangeScene("TITLE");
@@ -7271,7 +7341,7 @@ void GameScene::UpdateReady()
 }
 void GameScene::ExitReady()
 {
-	BGMHandle_ = gameAudio_->Play("gameBGM", true, SoundCategory::BGM);
+	gameAudio_->Resume(BGMHandle_);
 	startDraw_->Reset();
 	startCameraTimer_ = 0;
 	prevStateElapsed_ = 0;
@@ -9511,21 +9581,27 @@ void TitleScene::Init()
 	titleJM.Load("Title.json", true, &err);
 #ifdef _DEBUG
 	Log(err);
-	Audio::GetInstance()->LoadWave("gameBGM");
 #endif // _DEBUG
-
+	gameAudio_ = GameAudio::GetInstance();
 	// 必要なサウンドリソースの読み込み
-	GameAudio::GetInstance()->LoadSound("open");
-	GameAudio::GetInstance()->LoadSound("close");
-	GameAudio::GetInstance()->LoadSound("slide");
-	GameAudio::GetInstance()->LoadSound("enter");
-	GameAudio::GetInstance()->LoadSound("fanfare");
-	GameAudio::GetInstance()->LoadSound("gameBGM");
-	GameAudio::GetInstance()->LoadSound("gekiha");
-	GameAudio::GetInstance()->LoadSound("damageE");
-	GameAudio::GetInstance()->LoadSound("damageP");
-	GameAudio::GetInstance()->LoadSound("roll");
-	GameAudio::GetInstance()->LoadSound("attack");
+	gameAudio_->LoadSound("open");
+	gameAudio_->LoadSound("close");
+	gameAudio_->LoadSound("slide");
+	gameAudio_->LoadSound("enter");
+	gameAudio_->LoadSound("fanfare");
+	gameAudio_->LoadSound("gameBGM");
+	gameAudio_->LoadSound("gekiha");
+	gameAudio_->LoadSound("damageE");
+	gameAudio_->LoadSound("damageP");
+	gameAudio_->LoadSound("roll");
+	gameAudio_->LoadSound("attack");
+	gameAudio_->LoadSound("418");
+
+	beatAnalyzer_.Init("gameBGM", gameAudio_->CategoryToString(SoundCategory::BGM));
+
+
+	bgmHandle_ = gameAudio_->Play("gameBGM", false, SoundCategory::BGM);
+	gameAudio_->SetSoundVolume(bgmHandle_, 1.0f);
 
 
 	//========== カメラ、入力取得 ==========//
@@ -9537,23 +9613,23 @@ void TitleScene::Init()
 	//========== テクスチャ初期化 ==========//
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Enter.png");
-	spaceSpr_ = std::make_unique<Graphics::Sprite>();
+	spaceSpr_ = std::make_unique<Sprite>();
 	spaceSpr_->Initialize("Resources/Texture/Enter.png");
 	spaceSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
 	spaceSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Title.png");
-	text_ = std::make_unique<Graphics::Sprite>();
+	text_ = std::make_unique<Sprite>();
 	text_->Initialize("Resources/Texture/Title.png");
 	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
-	operation_ = std::make_unique<Graphics::Sprite>();
+	operation_ = std::make_unique<Sprite>();
 	operation_->Initialize("Resources/Texture/Operation.png");
 	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
-	reticle_ = std::make_unique<Graphics::Sprite>();
+	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
 
@@ -9585,9 +9661,11 @@ void TitleScene::Init()
 	player_->SetCamera(camera_);
 	player_->Init();
 	player_->SetScreenOffset(titleJM.Get<Vector2>("config.Player.ScreenOffset"));
+	player_->SetBGMHandle(bgmHandle_);
 
 	// タイトル画面の演出用敵マネージャ
 	enemyMgr_.Init(camera_);
+	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
 }
 
 void TitleScene::DebugJMApply()
@@ -9610,21 +9688,44 @@ void TitleScene::Update() {
 
 	audioAnalyzer_.Update();
 	audioAnalyzer_.Draw();
+	beatAnalyzer_.Update();
+	beatAnalyzer_.Draw();
+	static int bgmH = -1;
 
 	if (input_->TriggerKey(DIK_M))
 	{
-		int a = GameAudio::GetInstance()->Play("gameBGM", true, SoundCategory::BGM);
-		GameAudio::GetInstance()->SetSoundVolume(a, 1.0f);
+		bgmH = gameAudio_->Play("418", false, SoundCategory::BGM);
+		gameAudio_->SetSoundVolume(bgmH, 1.0f);
+	}
+	if (input_->TriggerKey(DIK_P))
+	{
+		Audio::GetInstance()->Pause(bgmH);
+	}
+	if (input_->TriggerKey(DIK_O))
+	{
+		Audio::GetInstance()->Resume(bgmH);
 	}
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");
-	static TYEngine::Utility::JsonImGuiEditor inspector(titleJM);
+	static JsonImGuiEditor inspector(titleJM);
 	inspector.Draw(titleJM.Root(), "Title.json");
 	if (ImGui::Button("Save")) titleJM.Save();
 	ImGui::End();
 
 	DebugJMApply();
+
+	static float timer = 0.0f;
+	if (beatAnalyzer_.GetBeat())
+	{
+		timer = 0.0f;
+		player_->SetScale({ 0.3f,0.3f,0.3f });
+	}
+	else
+	{
+		timer += Timer::GetInstance()->GetDeltaTime();
+		player_->SetScale(Lerp(Vector3{ 0.3f,0.3f,0.3f } , Vector3{ 0.2f,0.2f,0.2f }, timer));
+	}
 
 #else // Release
 
@@ -9686,12 +9787,13 @@ void TitleScene::Transition()
 	if (input_->TriggerKey(DIK_RETURN))
 	{
 		sceneManager_->ChangeScene("GAME");
+		gameAudio_->Stop(bgmHandle_);
 	}
 #else
 	if (input_->TriggerKey(DIK_RETURN))
 	{
 		// 決定音再生
-		GameAudio::GetInstance()->Play("enter", false, SoundCategory::UI);
+		gameAudio_->Play("enter", false, SoundCategory::UI);
 		
 		// ブロックフェード演出を開始してゲームシーンへ遷移
 		BlockFadeConfig cfg;
@@ -9701,6 +9803,7 @@ void TitleScene::Transition()
 				BlockFadeConfig cfg1;
 				sceneManager_->ChangeScene("GAME");
 				TransitionManager::GetInstance()->Enqueue(std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_OUT, cfg1));
+				gameAudio_->Stop(bgmHandle_);
 			});
 		TransitionManager::GetInstance()->Start(std::move(transition));
 	}
@@ -9715,14 +9818,18 @@ File Path: project/application/Scene/TitleScene/TitleScene.h
 #include "IScene.h"
 #include "ObjectCubemap.h"
 #include "Object/Player/Player.h"
-#include "../../Object/Enemy/TitleEnemy/TitleEnemyManager.h"
+#include "../../Object/Enemy/EnemyManager/EnemyManager.h"
 
-#include "Audio/AudioAnalyzer.h"
+#include "AudioAnalyzer.h"
+#include "BeatAnalyzer.h"
 
 #define JSONMGR_WITH_IMGUI
 #include "Utils/Json/JsonManager.h"
 
 #include "Sprite.h"
+
+class GameAudio;
+
 /// <summary>
 /// タイトル画面シーン。
 /// ゲーム開始前の演出、操作説明、ゲーム本編への遷移を管理する。
@@ -9753,7 +9860,6 @@ public:
 	/// </summary>
 	void UIDraw() override;
 
-private:
 private:
 	/// <summary>
 	/// シーン遷移処理。ゲーム本編へ切り替える。
@@ -9797,6 +9903,13 @@ private:
 
 	/// <summary>オーディオスペクトラムアナライザー（演出用）。</summary>
 	TYEngine::AudioSystem::AudioAnalyzer audioAnalyzer_;
+
+	/// <summary>ビートアナライザー（演出用）。</summary>
+	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
+
+	int bgmHandle_ = -1;
+
+	GameAudio* gameAudio_ = nullptr;
 };
 
 
@@ -10896,12 +11009,15 @@ File Path: project/application/Stage/Stage.cpp
 ============================================================
 #include "Stage.h"
 #include "../Object/Rail/RailEditor.h"
+#include "../AppSystem//Audio//GameAudio.h"
 
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
 
 void Stage::Init()
 {
+    beatAnalyzer_.Init("418", GameAudio::GetInstance()->CategoryToString(SoundCategory::BGM));
+
 	// プレイヤー生成と初期化
     player_ = std::make_unique<Player>();
     player_->SetCamera(camera_);
@@ -10915,6 +11031,7 @@ void Stage::Init()
 
     // 敵マネージャ設定（スコア/コンボ関連付け）
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
+    enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
     enemyMgr_.Init(camera_);
 
     // レール管理初期化
@@ -10940,6 +11057,9 @@ void Stage::Reset()
 void Stage::Update()
 {
     isEdit_ = false;
+
+    beatAnalyzer_.Update();
+    beatAnalyzer_.Draw();
 
     // カメラ情報の更新
     enemyMgr_.SetCamera(camera_);
@@ -11008,15 +11128,14 @@ File Path: project/application/Stage/Stage.h
 ============================================================
 #pragma once
 
-#include "Audio/Audio.h"
+#include "Audio.h"
+#include "BeatAnalyzer.h"
 #include "Object/Player/Player.h"
-#include "Object/Enemy/TitleEnemy/TitleEnemyManager.h"
+#include "Object/Enemy/EnemyManager/EnemyManager.h"
 #include "Object/Rail/RailManager.h"
-#include "ParticleManager.h"
 #include "../AppSystem/Combo/ComboManager.h"
 #include "../AppSystem/Score/ScoreManager.h"
 #include <memory>
-#include <list>
 #include <json.hpp>
 
 class Stage
@@ -11126,6 +11245,9 @@ private:
 
 	/// <summary>レールエディタによる編集モードフラグ。</summary>
 	bool isEdit_ = false;
+
+	/// <summary>ビートアナライザー（演出用）。</summary>
+	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
 };
 
 
@@ -11438,6 +11560,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 File Path: project/engine/Audio/Audio.cpp
 ============================================================
 #include "Audio.h"
+#include "BPMDetector.h"
 #include <cassert>
 #include <Logger.h>
 
@@ -11460,15 +11583,31 @@ namespace TYEngine
 				}
 			}
 
-			// カテゴリ用 SubmixVoices の破棄
-			for (auto& [name, voice] : soundCategorySubmixVoices_)
+			// 無音ボイスの破棄
+			if (silentVoice_)
+			{
+				silentVoice_->DestroyVoice();
+				silentVoice_ = nullptr;
+			}
+			for (auto& [name, voice] : categorySilentVoices_)
 			{
 				if (voice)
 				{
 					voice->DestroyVoice();
 				}
 			}
-			soundCategorySubmixVoices_.clear();
+			categorySilentVoices_.clear();
+
+
+			// カテゴリ用 SubmixVoices の破棄
+			for (auto& [name, voice] : categorySubmixVoices_)
+			{
+				if (voice)
+				{
+					voice->DestroyVoice();
+				}
+			}
+			categorySubmixVoices_.clear();
 
 			// 解析用 SubmixVoice の破棄
 			if (analyzerSubmix_)
@@ -11571,23 +11710,66 @@ namespace TYEngine
 		{
 			xAudio2_->StartEngine();
 
-			XAUDIO2_VOICE_DETAILS details = {};
-			analyzerSubmix_->GetVoiceDetails(&details);
-
-			HRESULT result;
+			analyzerSubmix_->GetVoiceDetails(&analyzerDetails_);
 
 			// ---- ★無音バッファ用 Voice を作成（解析器への入力維持用） ----
 			silentFormat_.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
 			silentFormat_.nChannels = 1;
-			silentFormat_.nSamplesPerSec = details.InputSampleRate;
+			silentFormat_.nSamplesPerSec = analyzerDetails_.InputSampleRate;
 			silentFormat_.wBitsPerSample = 32;
 			silentFormat_.nBlockAlign = 4;
-			silentFormat_.nAvgBytesPerSec = details.InputSampleRate * 4;
+			silentFormat_.nAvgBytesPerSec = analyzerDetails_.InputSampleRate * 4;
 			silentFormat_.cbSize = 0;
 
 			// 無音バッファ（50ms程度）
-			int silentSamples = int(details.InputSampleRate * 0.05f);
+			int silentSamples = int(analyzerDetails_.InputSampleRate * 0.05f);
 			silentBuffer_.assign(silentSamples, 0.0f);
+
+			CreateSilentVoice(silentVoice_, analyzerSubmix_);
+			
+			EnableSilentFeed(true);
+		}
+
+		void Audio::CreateSilentVoice(IXAudio2SourceVoice*& voice, IXAudio2SubmixVoice* sendSubmix)
+		{
+			HRESULT result;
+
+			XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
+			sendDesc.Flags = 0;
+			sendDesc.pOutputVoice = sendSubmix;
+
+			XAUDIO2_VOICE_SENDS sends = {};
+			sends.SendCount = 1;
+			sends.pSends = &sendDesc;
+
+			result = xAudio2_->CreateSourceVoice(
+				&voice,
+				&silentFormat_,
+				0, 2.0f,
+				nullptr, &sends, nullptr
+			);
+
+			assert(SUCCEEDED(result));
+
+			voice->Start(0);
+		}
+
+		void Audio::AddSoundCategory(const std::string& soundCategory)
+		{
+			if (categorySubmixVoices_.count(soundCategory))
+			{
+				// キーが存在する場合、処理を中断
+				return;
+			}
+
+			HRESULT result;
+
+			// analyzerSubmix と同じフォーマットで作る
+			XAUDIO2_VOICE_DETAILS details = {};
+			analyzerSubmix_->GetVoiceDetails(&details);
+
+			// ボイス
+			IXAudio2SubmixVoice* voice;
 
 			XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
 			sendDesc.Flags = 0;
@@ -11597,17 +11779,42 @@ namespace TYEngine
 			sends.SendCount = 1;
 			sends.pSends = &sendDesc;
 
-			result = xAudio2_->CreateSourceVoice(
-				&silentVoice_,
-				&silentFormat_,
-				0, 2.0f,
-				nullptr, &sends, nullptr
+			result = xAudio2_->CreateSubmixVoice(
+				&voice,
+				details.InputChannels,
+				details.InputSampleRate,
+				0,
+				kCategory,          // ProcessingStage (下から上へ)
+				&sends,
+				nullptr
 			);
-
 			assert(SUCCEEDED(result));
 
-			silentVoice_->Start(0);
-			EnableSilentFeed(true);
+			categorySubmixVoices_[soundCategory] = voice;
+
+			// ============================================
+			//   ★ SubmixVoice に XAPO を付ける
+			// ============================================
+
+			// XAPO インスタンス
+			categoryAnalyzerXAPO_[soundCategory] = Microsoft::WRL::Make<MyAnalyzerXAPO>();
+
+			// Effect desc
+			XAUDIO2_EFFECT_DESCRIPTOR effectDesc = {};
+			effectDesc.InitialState = TRUE;
+			effectDesc.OutputChannels = details.InputChannels;
+			effectDesc.pEffect = static_cast<IXAPO*>(categoryAnalyzerXAPO_[soundCategory].Get());
+
+			// Effect chain
+			XAUDIO2_EFFECT_CHAIN effectChainXAPO = {};
+			effectChainXAPO.EffectCount = 1;
+			effectChainXAPO.pEffectDescriptors = &effectDesc;
+
+			// SubmixVoice に XAPO をセット
+			result = categorySubmixVoices_[soundCategory]->SetEffectChain(&effectChainXAPO);
+			assert(SUCCEEDED(result));
+
+			CreateSilentVoice(categorySilentVoices_[soundCategory], categorySubmixVoices_[soundCategory]);
 		}
 
 		void Audio::Update()
@@ -11626,17 +11833,44 @@ namespace TYEngine
 
 				silentVoice_->SubmitSourceBuffer(&buf);
 			}
+
+			for (auto& [name, voice] : categorySilentVoices_)
+			{
+				voice->GetState(&st);
+				if (st.BuffersQueued < 3)
+				{
+					XAUDIO2_BUFFER buf{};
+					buf.AudioBytes = static_cast<UINT32>(silentBuffer_.size() * sizeof(float));
+					buf.pAudioData = reinterpret_cast<const BYTE*>(silentBuffer_.data());
+
+					voice->SubmitSourceBuffer(&buf);
+				}
+			}
 		}
 
 		void Audio::EnableSilentFeed(bool enable)
 		{
 			silentFeedEnabled_ = enable;
 
-			if (enable) silentVoice_->Start();
-			else silentVoice_->Stop();
+			if (enable) 
+			{
+				silentVoice_->Start();
+				for (auto& [name, voice] : categorySilentVoices_)
+				{
+					voice->Start();
+				}
+			}
+			else 
+			{
+				silentVoice_->Stop();
+				for (auto& [name, voice] : categorySilentVoices_)
+				{
+					voice->Stop();
+				}
+			}
 		}
 
-		void Audio::StopBGM(int resourceNum)
+		void Audio::Stop(int resourceNum)
 		{
 			sourceVoices_[resourceNum]->Stop();
 			sourceVoices_[resourceNum]->FlushSourceBuffers();
@@ -11647,9 +11881,14 @@ namespace TYEngine
 			sourceVoices_[resourceNum]->Stop();
 		}
 
-		void Audio::ReStart(int resourceNum)
+		void Audio::Resume(int resourceNum)
 		{
 			sourceVoices_[resourceNum]->Start();
+		}
+
+		void Audio::Pitch(int resourceNum, float pitch)
+		{
+			sourceVoices_[resourceNum]->SetFrequencyRatio(pitch);
 		}
 
 		void Audio::SetMasterVolume(float volume)
@@ -11659,7 +11898,7 @@ namespace TYEngine
 
 		void Audio::SetCategoryVolume(const std::string& soundCategory, float volume)
 		{
-			soundCategorySubmixVoices_[soundCategory]->SetVolume(volume);
+			categorySubmixVoices_[soundCategory]->SetVolume(volume);
 		}
 
 		void Audio::SetSoundVolume(int resourceNum, float volume)
@@ -11677,7 +11916,7 @@ namespace TYEngine
 		float Audio::GetCategoryVolume(const std::string& soundCategory)
 		{
 			float volume = 0;
-			soundCategorySubmixVoices_[soundCategory]->GetVolume(&volume);
+			categorySubmixVoices_[soundCategory]->GetVolume(&volume);
 			return volume;
 		}
 
@@ -11759,6 +11998,10 @@ namespace TYEngine
 			soundData.buffer.resize(data.size);
 			file.read(reinterpret_cast<char*>(soundData.buffer.data()), data.size);
 
+			soundData.bpm = BPMDetector::AnalyzeBPM(soundData.buffer.data(), data.size, soundData.wfex);
+
+			Log(filename + ": BPM " + std::to_string(soundData.bpm) + "\n");
+
 			file.close();
 
 			// マップに登録
@@ -11771,45 +12014,6 @@ namespace TYEngine
 			{
 				Log("Sound not loaded.\n");
 			}
-		}
-
-		void Audio::AddSoundCategory(const std::string& soundCategory)
-		{
-			if (soundCategorySubmixVoices_.count(soundCategory))
-			{
-				// キーが存在する場合、処理を中断
-				return;
-			}
-
-			HRESULT result;
-
-			// analyzerSubmix と同じフォーマットで作る
-			XAUDIO2_VOICE_DETAILS details = {};
-			analyzerSubmix_->GetVoiceDetails(&details);
-
-			// ボイス
-			IXAudio2SubmixVoice* voice;
-
-			XAUDIO2_SEND_DESCRIPTOR sendDesc = {};
-			sendDesc.Flags = 0;
-			sendDesc.pOutputVoice = analyzerSubmix_;
-
-			XAUDIO2_VOICE_SENDS sends = {};
-			sends.SendCount = 1;
-			sends.pSends = &sendDesc;
-
-			result = xAudio2_->CreateSubmixVoice(
-				&voice,
-				details.InputChannels,
-				details.InputSampleRate,
-				0,
-				kCategory,          // ProcessingStage (下から上へ)
-				&sends,
-				nullptr
-			);
-			assert(SUCCEEDED(result));
-
-			soundCategorySubmixVoices_[soundCategory] = voice;
 		}
 
 		int Audio::Play(const std::string& filename, const bool isLoop, std::string soundCategory)
@@ -11854,8 +12058,8 @@ namespace TYEngine
 			else
 			{
 				// カテゴリ指定あり -> 該当Submixへ
-				auto itSub = soundCategorySubmixVoices_.find(soundCategory);
-				if (itSub == soundCategorySubmixVoices_.end())
+				auto itSub = categorySubmixVoices_.find(soundCategory);
+				if (itSub == categorySubmixVoices_.end())
 				{
 					Log("SoundCategory not found.\n");
 					sendDesc.pOutputVoice = analyzerSubmix_;
@@ -11889,6 +12093,29 @@ namespace TYEngine
 			result = sourceVoices_[sourceNum]->Start();
 
 			return sourceNum;
+		}
+
+		Microsoft::WRL::ComPtr<MyAnalyzerXAPO> Audio::GetAnalyzerXAPO(const std::string& soundCategory)
+		{
+			if (soundCategory == "")
+			{
+				// カテゴリ指定なし -> defaultAnalyzer
+				return analyzerXAPO_;
+			}
+			else
+			{
+				// カテゴリ指定あり -> 該当 Analyzer へ
+				auto itSub = categorySubmixVoices_.find(soundCategory);
+				if (itSub == categorySubmixVoices_.end())
+				{
+					Debugger::Log("SoundCategory not found.\n");
+					return analyzerXAPO_;
+				}
+				else
+				{
+					return categoryAnalyzerXAPO_[soundCategory];
+				}
+			}
 		}
 
 		int Audio::SearchSourceVoice(IXAudio2SourceVoice** sourceVoices)
@@ -11985,7 +12212,7 @@ namespace TYEngine
 
 		/// <summary>
 		/// オーディオ再生・管理を行うシングルトンクラス。
-		/// XAudio2 を使用してWAVファイルの読み込み、再生、ストリーミング、エフェクト適用を行う。
+		/// XAudio2 を使用してWAVファイルの読み込み、再生を行う。
 		/// </summary>
 		class Audio :
 			public Utility::SingletonObject<Audio>
@@ -12034,6 +12261,7 @@ namespace TYEngine
 				WAVEFORMATEX wfex; // 波形フォーマット
 				std::vector<BYTE> buffer; // バッファの先頭アドレス
 				int playSoundLength;
+				float bpm; // BPMデータ
 			};
 
 		public:
@@ -12045,19 +12273,20 @@ namespace TYEngine
 			void Initialize(const std::string& directoryPath = "Resources/Sound/");
 
 			/// <summary>
-			/// オーディオエンジンの開始処理。
+			///  無音バッファ供給。
 			/// </summary>
-			void Start();
+			void Update();
+
+			/// <summary>
+			///  無音バッファフラグ。
+			/// </summary>
+			void EnableSilentFeed(bool enable);
 
 			/// <summary>
 			/// 指定したリソース番号のBGM（音源）を停止する。
 			/// </summary>
 			/// <param name="resourceNum">停止対象のBGMリソース番号。</param>
-			void StopBGM(int resourceNum);
-
-
-			void Update();                  // ★ 無音バッファ供給
-			void EnableSilentFeed(bool enable);
+			void Stop(int resourceNum);
 
 			/// <summary>
 			/// 音源を一時停止する。
@@ -12069,7 +12298,14 @@ namespace TYEngine
 			/// 一時停止中の音源を再開する。
 			/// </summary>
 			/// <param name="resourceNum">対象のサウンドリソース番号。</param>
-			void ReStart(int resourceNum);
+			void Resume(int resourceNum);
+
+			/// <summary>
+			/// 音源のピッチを変更する。
+			/// </summary>
+			/// <param name="resourceNum">対象のサウンドリソース番号。</param>
+			/// <param name="pitch"> 1/1024 ~ 1024/1 までの任意の比率。デフォルトは 1/1 。</param>
+			void Pitch(int resourceNum, float pitch);
 
 			/// <summary>
 			/// マスターボリューム（全体の音量）を設定する。
@@ -12138,14 +12374,27 @@ namespace TYEngine
 			/// <returns>再生ハンドル（リソース番号）。エラー時は -1。</returns>
 			int Play(const std::string& filename, const bool isLoop = false, std::string soundCategory = "");
 
-			Microsoft::WRL::ComPtr<MyAnalyzerXAPO> GetAnalyzerXAPO() { return analyzerXAPO_; }
+			Microsoft::WRL::ComPtr<MyAnalyzerXAPO> GetAnalyzerXAPO(const std::string& soundCategory = "");
 
 			int GetAnalyzerSampleRate()
 			{
 				XAUDIO2_VOICE_DETAILS submixDetails = {};
 				analyzerSubmix_->GetVoiceDetails(&submixDetails);
-
 				return submixDetails.InputSampleRate;
+			}
+
+			SoundData& GetSoundData(const std::string& filename)
+			{
+				auto it = soundDataMap_.find(filename);
+
+				if (it == soundDataMap_.end())
+				{
+					Debugger::Log("Sound not loaded: " + filename + "\n");
+					static SoundData emptyData{};
+					return emptyData;
+				}
+
+				return it->second;
 			}
 
 		private:
@@ -12169,6 +12418,16 @@ namespace TYEngine
 			/// </summary>
 			void CreateAnalyzerSubmix();
 
+			/// <summary>
+			/// オーディオエンジンの開始処理。
+			/// </summary>
+			void Start();
+
+			/// <summary>
+			/// 無音ボイスの作成。
+			/// </summary>
+			void CreateSilentVoice(IXAudio2SourceVoice*& voice, IXAudio2SubmixVoice* sendSubmix);
+
 		private:
 			/// <summary>XAudio2 エンジン本体。</summary>
 			Microsoft::WRL::ComPtr<IXAudio2> xAudio2_;
@@ -12176,10 +12435,11 @@ namespace TYEngine
 			IXAudio2MasteringVoice* masterVoice_;
 
 			/// <summary>サウンドカテゴリごとのサブミックスボイス。</summary>
-			std::unordered_map<std::string, IXAudio2SubmixVoice*> soundCategorySubmixVoices_;
+			std::unordered_map<std::string, IXAudio2SubmixVoice*> categorySubmixVoices_;
+			std::unordered_map<std::string, Microsoft::WRL::ComPtr<MyAnalyzerXAPO>> categoryAnalyzerXAPO_;
 
 			/// <summary>ロード済みサウンドデータ格納コンテナ。</summary>
-			std::unordered_map<std::string, Audio::SoundData> soundDataMap_;
+			std::unordered_map<std::string, SoundData> soundDataMap_;
 
 			/// <summary>再生中のソースボイス配列（同時再生管理用）。</summary>
 			std::array<IXAudio2SourceVoice*, kMaxPlayWave> sourceVoices_ = { nullptr };
@@ -12189,6 +12449,7 @@ namespace TYEngine
 
 			/// <summary>全体解析用サブミックスボイス。</summary>
 			IXAudio2SubmixVoice* analyzerSubmix_ = nullptr;
+			XAUDIO2_VOICE_DETAILS analyzerDetails_ = {};
 
 			// ---- 無音バッファ用 Voice ----
 			/// <summary>無音再生用ソースボイス（オーディオエンジン維持用）。</summary>
@@ -12199,6 +12460,9 @@ namespace TYEngine
 			std::vector<float> silentBuffer_;
 			/// <summary>無音フィードが有効かどうか。</summary>
 			bool silentFeedEnabled_ = false;
+
+			/// <summary>無音再生用ソースボイス。</summary>
+			std::unordered_map<std::string, IXAudio2SourceVoice*> categorySilentVoices_;
 
 
 			/// <summary>サウンドファイルのルートディレクトリパス。</summary>
@@ -12213,14 +12477,17 @@ namespace TYEngine
 File Path: project/engine/Audio/AudioAnalyzer.cpp
 ============================================================
 #include "AudioAnalyzer.h"
-#include "Audio.h"   // ← 最新RMS / FFT を取得するため
+#include "Audio.h"
+#include "Timer.h"
+
+#include <algorithm>
 
 namespace TYEngine
 {
 	namespace AudioSystem
 	{
 
-		AudioAnalyzer::AudioAnalyzer()
+		AudioAnalyzer::AudioAnalyzer(const std::string& soundCategory)
 		{
 			spectrumSmoothed_.resize(BANDS, 0.0f);
 
@@ -12233,6 +12500,8 @@ namespace TYEngine
 			waveform_.resize(441);   // 10ms
 			waveformScroll_.resize(2000, 0.0f); // 2000 サンプル分のスクロール領域
 			waveformWriteIndex_ = 0;
+
+			soundCategory_ = soundCategory;
 		}
 
 		void AudioAnalyzer::Update()
@@ -12249,7 +12518,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateRMS()
 		{
-			float rms = Audio::GetInstance()->GetAnalyzerXAPO()->GetRMS();
+			float rms = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetRMS();
 
 			// 履歴
 			rmsHistory_[rmsIndex_] = rms;
@@ -12264,7 +12533,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateFFT()
 		{
-			const auto& fftNow = Audio::GetInstance()->GetAnalyzerXAPO()->GetFFT();
+			const auto& fftNow = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetFFT();
 
 			// 遅延バッファにコピー
 			for (int i = 0; i < FFT_SIZE; i++)
@@ -12275,7 +12544,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateWaveform()
 		{
-			auto* xapo = Audio::GetInstance()->GetAnalyzerXAPO().Get();
+			auto* xapo = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_).Get();
 			const auto& src = xapo->GetWaveform();
 
 			int N = static_cast<int>(src.size());
@@ -12305,7 +12574,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateSpectrumSmoothing()
 		{
-			// 無音判定（RMS と同期させる）
+			// 無音判定
 			if (syncedRMS_ < 0.00001f)
 			{
 				for (auto& v : spectrumSmoothed_)
@@ -12339,17 +12608,17 @@ namespace TYEngine
 					spectrumSmoothed_[i] = 0.0f;
 			}
 
-			UpdateBandGrayscale();
+			UpdateBand();
 		}
 
-		void AudioAnalyzer::UpdateBandGrayscale()
+		void AudioAnalyzer::UpdateBand()
 		{
 			// 無音なら全部 0
 			if (syncedRMS_ < 0.00001f)
 			{
-				lowGray_ = 0.0f;
-				midGray_ = 0.0f;
-				highGray_ = 0.0f;
+				low_ = 0.0f;
+				mid_ = 0.0f;
+				high_ = 0.0f;
 				return;
 			}
 
@@ -12416,9 +12685,9 @@ namespace TYEngine
 						return current * decay;
 				};
 
-			lowGray_ = smooth(lowGray_, lowTarget);
-			midGray_ = smooth(midGray_, midTarget);
-			highGray_ = smooth(highGray_, highTarget);
+			low_ = smooth(low_, lowTarget);
+			mid_ = smooth(mid_, midTarget);
+			high_ = smooth(high_, highTarget);
 		}
 
 		std::vector<float> AudioAnalyzer::MakeLogSpectrum(
@@ -12667,9 +12936,9 @@ namespace TYEngine
 			DrawSpectrum(width);
 
 			// 帯域ごとの強度数値表示
-			ImGui::Text("Low : %.2f", lowGray_);
-			ImGui::Text("Mid : %.2f", midGray_);
-			ImGui::Text("High : %.2f", highGray_);
+			ImGui::Text("Low : %.2f", low_);
+			ImGui::Text("Mid : %.2f", mid_);
+			ImGui::Text("High : %.2f", high_);
 
 			// 波形描画
 			DrawWaveform(width);
@@ -12689,6 +12958,7 @@ File Path: project/engine/Audio/AudioAnalyzer.h
 #pragma once
 #include <vector>
 #include <array>
+#include <string>
 #include <imgui.h>
 
 namespace TYEngine
@@ -12704,14 +12974,13 @@ namespace TYEngine
 		{
 		public:
 			static const int FFT_SIZE = 1024;        ///< FFTサンプル数
-			static const int BANDS = 8;              ///< 周波数帯域分割数
+			static const int BANDS = 24;              ///< 周波数帯域分割数
 			static const int RMS_HISTORY_SIZE = 120; ///< RMS履歴保持数（60fps換算で2秒分）
 			static const int DELAY_FRAMES = 5;       ///< 解析遅延フレーム数
 
 		public:
-		public:
 			/// <summary>コンストラクタ。</summary>
-			AudioAnalyzer();
+			AudioAnalyzer(const std::string& soundCategory = "");
 
 			/// <summary>
 			/// 毎フレームの更新処理。
@@ -12735,11 +13004,11 @@ namespace TYEngine
 			const std::vector<float>& GetSmoothedSpectrum() const { return spectrumSmoothed_; }
 
 			/// <summary>低音域の強度（0.0～1.0）。</summary>
-			float GetLowGray()  const { return lowGray_; }
+			float GetLow()  const { return low_; }
 			/// <summary>中音域の強度（0.0～1.0）。</summary>
-			float GetMidGray()  const { return midGray_; }
+			float GetMid()  const { return mid_; }
 			/// <summary>高音域の強度（0.0～1.0）。</summary>
-			float GetHighGray() const { return highGray_; }
+			float GetHigh() const { return high_; }
 
 		private:
 			// 内部処理
@@ -12748,8 +13017,8 @@ namespace TYEngine
 			void UpdateWaveform();
 			void UpdateSpectrumSmoothing();
 
-			// Low/Mid/High グレースケール更新
-			void UpdateBandGrayscale();
+			// Low/Mid/High 更新
+			void UpdateBand();
 
 			std::vector<float> MakeLogSpectrum(
 				const std::vector<float>& fft,
@@ -12789,10 +13058,13 @@ namespace TYEngine
 			// ---- スペクトラム ----
 			std::vector<float> spectrumSmoothed_;
 
-			// グレースケール値（0〜1）
-			float lowGray_ = 0.0f;
-			float midGray_ = 0.0f;
-			float highGray_ = 0.0f;
+			// band値（0〜1）
+			float low_ = 0.0f;
+			float mid_ = 0.0f;
+			float high_ = 0.0f;
+
+			std::string soundCategory_ = "";
+
 		};
 
 	} // namespace Audio
@@ -12870,6 +13142,24 @@ namespace TYEngine
 			}
 
 			/// <summary>
+			/// Enum を指定して対応する string を呼び出す。
+			/// </summary>
+			/// <returns>カテゴリ文字列。未登録なら空の文字列とログを出す。</returns>
+			const std::string& CategoryToString(CategoryEnum type)
+			{
+
+				auto it = categoryMap_.find(type);
+				if (it != categoryMap_.end())
+				{
+					return it->second;
+				}
+				// 登録されていないカテゴリーなら空扱い
+				Debugger::Log("Category not registered!");
+				static const std::string empty = "";
+				return empty;
+			}
+
+			/// <summary>
 			/// Enumを指定してサウンドを再生する。
 			/// </summary>
 			/// <param name="filename">再生するファイルパス。</param>
@@ -12878,16 +13168,8 @@ namespace TYEngine
 			/// <returns>再生ハンドル（ボイスID）。失敗時はエラーコード。</returns>
 			int Play(const std::string& filename, bool isLoop, CategoryEnum category)
 			{
-				// 登録されていないカテゴリーならエラー（またはデフォルト扱い）
-				if (categoryMap_.find(category) == categoryMap_.end())
-				{
-					// 登録忘れを防ぐため assert を入れるか、デフォルト文字列で再生
-					assert(false && "Category not registered!");
-					return audio_->Play(filename, isLoop);
-				}
-
 				// Enum -> string に変換して再生
-				return audio_->Play(filename, isLoop, categoryMap_[category]);
+				return audio_->Play(filename, isLoop, CategoryToString(category));
 			}
 
 			/// <summary>
@@ -12958,6 +13240,316 @@ namespace TYEngine
 
 
 ============================================================
+File Path: project/engine/Audio/BPMDetector.cpp
+============================================================
+#include "BPMDetector.h"
+#include <cmath>
+#include <algorithm>
+#include <vector>
+
+namespace TYEngine
+{
+    namespace AudioSystem
+    {
+        float BPMDetector::AnalyzeBPM(const BYTE* pData, UINT32 dataSize, const WAVEFORMATEX& wfx)
+        {
+            // 1. フォーマットチェック (16bit PCMのみ対応の簡易版)
+            if (wfx.wBitsPerSample != 16) return 0.0f; // 24bit/32bit対応が必要なら後に拡張
+
+            // 2. PCMデータを float モノラルに変換 & 縮小 (ダウンサンプリング)
+            //    解析精度のため、元の44100Hzのままではなく、「音量エンベロープ」として扱いやすいレート(例: 約100Hz相当)に圧縮。
+
+            // 1ブロックあたりのサンプル数 (44100Hzなら1024サンプル≒约43Hz)
+            // ここを細かくすると解析精度が上がり計算が重くなる
+            const int BLOCK_SIZE = 512;
+
+            int numSamples = dataSize / wfx.nBlockAlign;
+            int numBlocks = numSamples / BLOCK_SIZE;
+
+            // ガード1: データが少なすぎる（例えば0.5秒以下）ならBPM解析不能として即リターン
+            if (numBlocks < 50)
+            {
+                return 0.0f;
+            }
+
+            std::vector<float> envelope;
+            envelope.reserve(numBlocks);
+
+            const short* pSample16 = reinterpret_cast<const short*>(pData);
+            int channels = wfx.nChannels;
+
+            for (int i = 0; i < numBlocks; ++i)
+            {
+                float sumEnergy = 0.0f;
+                for (int j = 0; j < BLOCK_SIZE; ++j)
+                {
+                    int index = (i * BLOCK_SIZE + j) * channels;
+
+                    // ステレオならL+Rを合成
+                    float sampleVal = (float)pSample16[index]; // L
+                    if (channels == 2) sampleVal += (float)pSample16[index + 1]; // R
+
+                    // エネルギー（絶対値や二乗）を加算
+                    sumEnergy += std::abs(sampleVal);
+                }
+                envelope.push_back(sumEnergy);
+            }
+
+            // 3. 全体自己相関 (Autocorrelation)
+            //    曲全体を使って最も重なり合う周期を探す
+
+            float maxCorrelation = 0.0f;
+            int bestLag = 0;
+
+            // 探索範囲: BPM 60 ～ 240
+            // サンプリングレートは (wfx.nSamplesPerSec / BLOCK_SIZE)
+            float envelopeRate = (float)wfx.nSamplesPerSec / (float)BLOCK_SIZE;
+
+            int minLag = (int)(envelopeRate * (60.0f / 240.0f)); // BPM 240
+            int maxLag = (int)(envelopeRate * (60.0f / 60.0f));  // BPM 60
+
+            // ガード2: エンベロープ長が探索範囲より短い場合もスキップ
+            // ここで (envelope.size() - lag) がアンダーフローするのを防ぐ
+            if (envelope.size() <= (size_t)maxLag)
+            {
+                return 0.0f;
+            }
+
+            for (int lag = minLag; lag <= maxLag; ++lag)
+            {
+                double correlation = 0.0;
+
+                // 高速化のため間引いて計算しても良いが、正確さのため全データで計算
+                for (size_t i = 0; i < envelope.size() - lag; ++i)
+                {
+                    correlation += envelope[i] * envelope[i + lag];
+                }
+
+                // ただし、ラグが短いほうがデータ点数が増えて有利になるのを防ぐ補正
+                // (データ数で割る = 平均をとる)
+                correlation /= (double)(envelope.size() - lag);
+
+                if (correlation > maxCorrelation)
+                {
+                    maxCorrelation = (float)correlation;
+                    bestLag = lag;
+                }
+            }
+
+            // 4. 結果をBPMに変換
+            if (bestLag > 0)
+            {
+                float beatSec = (float)bestLag / envelopeRate;
+                float bpm = 60.0f / beatSec;
+
+                // ハーフテンポ（倍取り）問題の補正
+                // 例: 84 BPM -> 168 BPM に変換
+                // 例: 70 BPM -> 140 BPM に変換
+                // 遅すぎる場合のガード
+                while (bpm < 90.0f) bpm *= 2.0f;
+
+                // 逆に速すぎる場合のガード
+                while (bpm > 240.0f) bpm /= 2.0f;
+
+                return bpm;
+            }
+
+            return 0.0f;
+        }
+    }
+}
+
+============================================================
+File Path: project/engine/Audio/BPMDetector.h
+============================================================
+#pragma once
+#include <vector>
+#include <Windows.h> // WAVEFORMATEX用
+
+namespace TYEngine
+{
+	namespace AudioSystem
+	{
+		class BPMDetector
+		{
+		public:
+			/// <summary>
+			/// WAVバッファを解析してBPMを推定する
+			/// </summary>
+			/// <param name="pData">WAVのデータ部分(dataチャンク)の先頭ポインタ</param>
+			/// <param name="dataSize">データのバイトサイズ</param>
+			/// <param name="wfx">フォーマット情報</param>
+			/// <returns>推定されたBPM</returns>
+			static float AnalyzeBPM(const BYTE* pData, UINT32 dataSize, const WAVEFORMATEX& wfx);
+		};
+	}
+}
+
+============================================================
+File Path: project/engine/Audio/BeatAnalyzer.cpp
+============================================================
+#include "BeatAnalyzer.h"
+#include "Audio.h"
+#include "Timer.h"
+#include "imgui.h"
+
+
+namespace TYEngine
+{
+	namespace AudioSystem
+	{
+		BeatAnalyzer::BeatAnalyzer()
+		{
+		
+		}
+		void BeatAnalyzer::Init(const std::string& filename, const std::string& soundCategory)
+		{
+			currentBPM_ = Audio::GetInstance()->GetSoundData(filename).bpm;
+			soundCategory_ = soundCategory;
+		}
+		void BeatAnalyzer::Init(float bpm, const std::string& soundCategory)
+		{
+			currentBPM_ = bpm;
+			soundCategory_ = soundCategory;
+		}
+		void BeatAnalyzer::Update()
+		{
+			DetectBeat();
+		}
+		void BeatAnalyzer::Draw()
+		{
+#ifdef _DEBUG
+
+			ImGui::Begin("Beat Analyzer");
+			ImGui::Text("BPM : %.2f", currentBPM_);
+			ImGui::Text("Beat : %d", isBeat_);
+
+			ImGui::End();
+
+#endif // _DEBUG
+		}
+		void BeatAnalyzer::DetectBeat()
+		{
+			// 無音判定
+			if (Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetRMS() < 0.00001f)
+			{
+				isBeat_ = false;
+				beatPhase_ = 0.0f;
+				return;
+			}
+
+			// XAPOからSpectral Flux取得
+			float currentFlux = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetSpectralFlux();
+
+			// 1. 平均Flux計算
+			fluxHistory_.push_back(currentFlux);
+			if (fluxHistory_.size() > 60) fluxHistory_.erase(fluxHistory_.begin());
+
+			float avgFlux = 0;
+			for (float f : fluxHistory_) avgFlux += f;
+			avgFlux /= fluxHistory_.size();
+
+			// 2. 閾値計算
+			float threshold = avgFlux * 1.8f;
+
+			// メトロノーム更新
+			float deltaTime = TYEngine::Utility::Timer::GetInstance()->GetDeltaTime();
+
+			// ガード
+			if (currentBPM_ <= 0.0f) currentBPM_ = 120.0f;
+
+			float beatDuration = 60.0f / currentBPM_;
+			beatPhase_ += deltaTime / beatDuration;
+
+			// クールダウン更新
+			if (syncCooldown_ > 0.0f) syncCooldown_ -= deltaTime;
+
+			// 3. 同期処理（タイミング合わせのみ）
+			if (currentFlux > threshold && syncCooldown_ <= 0.0f)
+			{
+				float phase = fmod(beatPhase_, 1.0f);
+
+				// 拍の前後（1.0 または 0.0）に近い場合だけ補正
+				if (phase > 0.8f || phase < 0.2f)
+				{
+					// エラー計算 (正:遅れてる、負:進みすぎ)
+					float error = (phase > 0.5f) ? (1.0f - phase) : -phase;
+
+					// 位相（タイミング）の補正を行う
+					beatPhase_ += error * 0.2f;
+
+					// クールダウン
+					syncCooldown_ = 0.2f;
+				}
+			}
+
+			// 拍通知
+			if (beatPhase_ >= 1.0f)
+			{
+				beatPhase_ -= 1.0f;
+				isBeat_ = true;
+			}
+			else
+			{
+				isBeat_ = false;
+			}
+		}
+	}
+}
+
+============================================================
+File Path: project/engine/Audio/BeatAnalyzer.h
+============================================================
+#pragma once
+#include <string>
+#include <vector>
+
+namespace TYEngine
+{
+	namespace AudioSystem
+	{
+		// BGMの拍を検出することを想定したクラス
+		class BeatAnalyzer
+		{
+		public:
+			/// <summary>コンストラクタ。</summary>
+			BeatAnalyzer();
+
+			void Init(const std::string& filename, const std::string& soundCategory = "");
+			// BPMを手動で指定
+			void Init(float bpm, const std::string& soundCategory);
+
+			/// <summary>
+			/// 毎フレームの更新処理。
+			/// XAPOから受け取ったデータの解析、スムージングを行う。
+			/// </summary>
+			void Update();
+
+			void Draw();
+
+			bool GetBeat() { return isBeat_; }
+
+		private:
+			void DetectBeat();
+
+		private:
+			std::string soundCategory_ = "";
+
+			// ---- ★ビート検出用 ----
+			float beatPhase_ = 0.0f;          // 0.0~1.0 (内部メトロノーム)
+			bool isBeat_ = false;             // 外部公開用フラグ
+
+			float currentBPM_ = 0.0f;
+			float syncCooldown_ = 0.0f; // 同期処理の重複防止用
+
+			std::vector<float> fluxHistory_;
+		};
+	}
+}
+
+
+
+============================================================
 File Path: project/engine/Audio/MyAnalyzerXAPO.cpp
 ============================================================
 #include "MyAnalyzerXAPO.h"
@@ -12999,6 +13591,9 @@ namespace TYEngine
 			fftInput_.resize(FFT_SIZE);
 			fftReal_.resize(FFT_SIZE);
 			fftImag_.resize(FFT_SIZE);
+
+			prevMag_.resize(FFT_SIZE, 0.0f);
+
 		}
 
 		MyAnalyzerXAPO::~MyAnalyzerXAPO() {}
@@ -13023,10 +13618,11 @@ namespace TYEngine
 		// --------------------------------------------------------------
 		void MyAnalyzerXAPO::ComputeFFT()
 		{
-			// 入力を実数部にコピー、虚数部は0初期化
-			for (UINT32 i = 0; i < FFT_SIZE; i++)
+			// 窓関数の適用、虚数部は0初期化
+			for (UINT32 i = 0; i < FFT_SIZE; ++i)
 			{
-				fftReal_[i] = fftInput_[i];
+				float w = 0.5f - 0.5f * cosf(2.0f * std::numbers::pi_v<float> * i / (FFT_SIZE - 1));
+				fftReal_[i] = fftInput_[i] * w; // 窓をかけてからFFTへ
 				fftImag_[i] = 0.0f;
 			}
 
@@ -13082,7 +13678,34 @@ namespace TYEngine
 				latestFFT_[i] = sqrtf(fftReal_[i] * fftReal_[i] + fftImag_[i] * fftImag_[i]);
 		}
 
-		// --------------------------------------------------------------
+		void MyAnalyzerXAPO::AnalyzeBeat()
+		{
+			float flux = 0.0f;
+
+			// 解析帯域の指定 (FFT_SIZE=1024 の場合、1bin ≒ 43Hz)
+			// 2(約86Hz) ～ 60(約2.5kHz) あたりが打楽器の成分
+			int start = 2;
+			int end = 60;
+
+			for (int i = start; i < end; ++i)
+			{
+				// 現在の値と前回の値の差分（増加量）を取る
+				float diff = latestFFT_[i] - prevMag_[i];
+
+				// 音が大きくなった時だけを足し合わせる (Spectral Flux)
+				if (diff > 0.0f)
+				{
+					flux += diff;
+				}
+
+				// 次回のために現在の値を保存
+				prevMag_[i] = latestFFT_[i];
+			}
+
+			// 算出した Flux 値を保存（これを AudioAnalyzer が GetSpectralFlux で取得する）
+			latestSpectralFlux_ = flux;
+		}
+
 		// --------------------------------------------------------------
 		// XAudio2 の音声処理コールバック（リアルタイムスレッドで呼ばれる）
 		// --------------------------------------------------------------
@@ -13127,6 +13750,9 @@ namespace TYEngine
 				return;
 			}
 
+			// 拍を検出
+			AnalyzeBeat();
+
 			// ---- 遅延バッファへの蓄積とFFT実行 ----
 			// 今回のサンプルをリングバッファに保存
 			UINT32 copy = (frameCount < FFT_SIZE) ? frameCount : FFT_SIZE;
@@ -13170,7 +13796,7 @@ namespace TYEngine
 		class __declspec(uuid("2dde0a3b-45d5-4a48-a9e6-a3a8129ef91a"))
 			MyAnalyzerXAPO : public Microsoft::WRL::RuntimeClass<
 			Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::ClassicCom>,
-			Microsoft::WRL::FtmBase>, // IXAPO 等をここから削除
+			Microsoft::WRL::FtmBase>,
 			public CXAPOParametersBase
 		{
 		private:
@@ -13197,6 +13823,7 @@ namespace TYEngine
 			static const UINT32 FFT_SIZE = 1024;     ///< FFTサンプルサイズ
 			static const UINT32 DELAY_FRAMES = 5;    ///< 遅延フレーム数
 			static const UINT32 WAVEFORM_SIZE = 441; ///< 波形バッファサイズ
+			static const UINT32 BEAT_ANALYE_BUFFER = 64;
 
 		public:
 			/// <summary>
@@ -13226,9 +13853,16 @@ namespace TYEngine
 			float GetRMS() { return latestRMS_; }
 			std::vector<float>& GetFFT() { return latestFFT_; }
 			std::vector<float>& GetWaveform() { return latestWaveform_; }
+			
+			float GetSpectralFlux() const { return latestSpectralFlux_; }
 
 		private:
 			void ComputeFFT();
+
+			/// <summary>
+			/// 拍の解析
+			/// </summary>
+			void AnalyzeBeat();
 
 		private:
 			/// <summary>入力チャンネル数。</summary>
@@ -13252,6 +13886,12 @@ namespace TYEngine
 			std::vector<float> latestFFT_;
 			/// <summary>最新の波形データ（UI表示用）。</summary>
 			std::vector<float> latestWaveform_;  // タイムドメイン用
+
+			/// <summary>前フレームのFFTマグニチュード（Spectral Flux計算用）</summary>
+			std::vector<float> prevMag_;
+			/// <summary>計算された低域エネルギー（またはFlux値）</summary>
+			float latestSpectralFlux_ = 0.0f;
+
 		};
 
 	} // namespace Audio

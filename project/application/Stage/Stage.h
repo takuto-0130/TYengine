@@ -38,6 +38,12 @@ public:
 	void Draw();
 
 	/// <summary>
+	/// ステージの描画処理。
+	/// UIの描画コマンドを発行する。
+	/// </summary>
+	void DrawUI();
+
+	/// <summary>
 	/// レールエディタ用の更新処理。
 	/// 編集モード有効時に呼び出される。
 	/// </summary>

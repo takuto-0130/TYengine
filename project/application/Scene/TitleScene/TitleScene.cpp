@@ -117,6 +117,8 @@ void TitleScene::Init()
 	// タイトル画面の演出用敵マネージャ
 	enemyMgr_.Init(camera_);
 	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
+
+	player_->SetEnemyManager(&enemyMgr_);
 }
 
 void TitleScene::DebugJMApply()
@@ -229,6 +231,7 @@ void TitleScene::UIDraw()
 	spaceSpr_->Draw();
 	text_->Draw();
 	operation_->Draw();
+	player_->DrawUI();
 	reticle_->Draw();
 }
 

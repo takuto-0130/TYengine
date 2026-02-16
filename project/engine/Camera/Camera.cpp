@@ -67,5 +67,28 @@ namespace TYEngine
 			viewMatrix_ = Inverse(worldMatrix_);
 		}
 
+		bool Camera::WorldToNDC(const Utility::Vector3& worldPos, Utility::Vector2& outNDC) const
+		{
+			// ビュー×プロジェクション行列を使用
+			Utility::Matrix4x4 vp = worldViewProjectionMatrix_;
+
+			// W成分（カメラからの深度）を計算
+			float w = worldPos.x * vp.m[0][3] + worldPos.y * vp.m[1][3] + worldPos.z * vp.m[2][3] + vp.m[3][3];
+
+			// カメラの後ろにいる場合は除外
+			if (w < 0.1f) return false;
+
+			// X, Y成分を計算してWで割る（正規化デバイス座標へ）
+			float x = worldPos.x * vp.m[0][0] + worldPos.y * vp.m[1][0] + worldPos.z * vp.m[2][0] + vp.m[3][0];
+			float y = worldPos.x * vp.m[0][1] + worldPos.y * vp.m[1][1] + worldPos.z * vp.m[2][1] + vp.m[3][1];
+
+			outNDC.x = x / w;
+			outNDC.y = y / w;
+
+			// NDC範囲（-1.0 ~ 1.0）内に収まっているか判定
+			return (outNDC.x >= -1.0f && outNDC.x <= 1.0f &&
+				outNDC.y >= -1.0f && outNDC.y <= 1.0f);
+		}
+
 	} // namespace Camera
 } // namespace TYEngine

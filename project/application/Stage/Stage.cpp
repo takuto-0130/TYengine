@@ -88,6 +88,12 @@ void Stage::Draw()
     player_->Draw();
 }
 
+void Stage::DrawUI()
+{
+    enemyMgr_.DrawUI();
+    player_->DrawUI();
+}
+
 void Stage::EditUpdate()
 {
     isEdit_ = true;

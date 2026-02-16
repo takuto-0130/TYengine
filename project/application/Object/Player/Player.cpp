@@ -3,10 +3,12 @@
 #include "Input.h"
 #include "Timer.h"
 #include "Quaternion.h"
+#include "Sprite.h"
 #include "Effect/PlaneParticle.h"
 #include "Effect/ContrailBehaviour.h"
 #include "Effect/ParticleManager.h"
 #include "../../AppSystem/Audio/GameAudio.h"
+#include "../Enemy/EnemyManager/EnemyManager.h"
 
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
@@ -111,6 +113,15 @@ void Player::Init()
 	bulletManager_->SetCamera(camera_);
 	bulletManager_->Init();
 	
+
+	for (auto&& spr : lockOnSpr_)
+	{
+		spr = std::make_unique<Sprite>();
+		spr->Initialize("Resources/Texture/reticle.png");
+		spr->SetAnchorPoint({ 0.5f,0.5f });
+		spr->SetColor({ 1,0,0,1 });
+	}
+
 	// レティクルの初期化
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
@@ -155,6 +166,46 @@ void Player::Draw()
 		bulletManager_->Draw();
 
 		ReticleDraw();
+	}
+}
+
+void Player::DrawUI()
+{
+	if (!isDead_)
+	{
+		// ※画面解像度（ウィンドウサイズ）を取得
+		float screenWidth = TYEngine::Core::WindowsApp::kClientWidth;
+		float screenHeight = TYEngine::Core::WindowsApp::kClientHeight;
+
+		int index = 0;
+
+		for (Enemy* target : lockedEnemies_)
+		{
+			// 1. ダングリングポインタ対策：敵がまだ生きているか確認
+			if (enemyManager_ && enemyManager_->IsValidEnemy(target))
+			{
+				Utility::Vector2 ndc;
+
+				// 2. 敵のワールド座標をNDCに変換
+				if (camera_->WorldToNDC(target->GetWorldPosition(), ndc))
+				{
+					// 3. NDC (-1.0 ~ 1.0) を スクリーン座標 (0 ~ Width/Height) に変換
+					// X座標: -1.0 -> 0,  0.0 -> Width/2,  1.0 -> Width
+					float screenX = (ndc.x + 1.0f) * 0.5f * screenWidth;
+
+					// Y座標: -1.0 -> Height,  0.0 -> Height/2,  1.0 -> 0 (Y軸反転)
+					float screenY = (1.0f - ndc.y) * 0.5f * screenHeight;
+
+					// 4. 計算したスクリーン座標 (screenX, screenY) に 
+					// ロックオン用の2Dスプライトを描画する
+					lockOnSpr_[index]->SetPosition({screenX, screenY});
+					lockOnSpr_[index]->Update();
+					lockOnSpr_[index]->Draw();
+					
+				}
+				index++;
+			}
+		}
 	}
 }
 
@@ -255,6 +306,63 @@ void Player::Attack()
 		// クールタイム設定
 		bulletTimer_ = bulletCoolTime_;
 	}
+
+
+	// クールタイムの減算
+	if (lockOnTimer_ > 0)
+	{
+		lockOnTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
+	}
+
+	// 現在の射撃ボタン入力状態
+	bool isPressing = input_->PushKey(DIK_LCONTROL) || input_->IsPressMouse(1);
+
+	// ▼ ボタンを押し続けている間（ロックオン・サーチフェーズ）
+	if (isPressing && lockOnTimer_ <= 0)
+	{
+		// まだ最大ロック数に達していない場合のみサーチ
+		if (lockedEnemies_.size() < maxLockCount_ && enemyManager_)
+		{
+			// reticle_ の画面座標は screenOffset_ とほぼ同義なのでそれを利用
+			Enemy* target = enemyManager_->GetBestLockOnTarget(camera_, screenOffset_, lockOnRadius_, lockedEnemies_);
+
+			if (target)
+			{
+				lockedEnemies_.push_back(target);
+				// TODO: ここで「カシュッ」というロックオン音を鳴らす
+				GameAudio::GetInstance()->Play("enter", false, SoundCategory::SE);
+				lockOnTimer_ = maxLockOnCool_;
+			}
+		}
+	}
+	// ▼ ボタンを離した瞬間（一斉発射フェーズ）
+	else if (wasPressingShot_ && !isPressing)
+	{
+		if (!lockedEnemies_.empty())
+		{
+			currentBulletType_ = PlayerBulletType::NORMAL; // ホーミング弾タイプ（実装済みであれば）
+
+			for (Enemy* target : lockedEnemies_)
+			{
+				// ロックオン中に敵が倒されてポインタが無効になっていないか安全確認
+				if (enemyManager_->IsValidEnemy(target))
+				{
+					// 敵の方向へ向かって弾を発射（ホーミング用のターゲット情報を渡せるとなお良い）
+					Vector3 direction = Normalize(target->GetWorldPosition() - GetWorldPosition());
+					bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+					// 発射音
+					GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+				}
+			}
+
+
+			// ロックオンリストをクリア
+			lockedEnemies_.clear();
+		}
+	}
+
+	// 次のフレームのために状態を保持
+	wasPressingShot_ = isPressing;
 }
 
 void Player::Move()

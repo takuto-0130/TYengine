@@ -3,6 +3,7 @@
 #include "PlayerCollider.h"
 #include "JustCollider.h"
 #include "StateMachine.h"
+#include "Sprite.h"
 #include "PlayerBullet/PlayerBulletType.h"
 #include "PlayerBullet/PlayerBulletManager.h"
 #include "Reticle/Reticle.h"
@@ -28,6 +29,8 @@ namespace TYEngine
 }
 
 class Camera;
+class EnemyManager;
+class Enemy;
 
 class Player :
 	public BaseCharacter, public TYEngine::Utility::StateMachine<Player, PlayerState>
@@ -54,6 +57,12 @@ public:
     /// 3Dモデル、弾、レティクルの描画を行う。
     /// </summary>
     void Draw() override;
+
+	/// <summary>
+	/// 描画処理。
+	/// UIの描画を行う。
+	/// </summary>
+	void DrawUI();
 
 	/// <summary>
 	/// プレイヤーに使用させるカメラを設定する。
@@ -98,6 +107,8 @@ public:
 	void OnCollision() override;
 
 	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
+
+	void SetEnemyManager(EnemyManager* manager) { enemyManager_ = manager; }
 
 private:
 	/// <summary>状態更新後の共通処理（フラグ管理など）。</summary>
@@ -154,6 +165,20 @@ private:
 	std::unique_ptr<PlayerCollider> collider_;
 	/// <summary>ジャスト回避判定用コライダー。</summary>
 	std::unique_ptr<JustCollider> justCollider_;
+
+
+
+	EnemyManager* enemyManager_ = nullptr; // 敵マネージャへのアクセス用
+	// ロックオン関連
+	std::vector<Enemy*> lockedEnemies_;
+	int maxLockCount_ = 8;          // 最大ロックオン数
+	float lockOnRadius_ = 10.0f;     // ロックオン判定の広さ
+	bool wasPressingShot_ = false;  // 前フレームでボタンを押していたか
+	const float maxLockOnCool_ = 0.3f;
+	float lockOnTimer_ = 0.0f;
+	/// <summary>ロックオンスプライト。</summary>
+	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, 8> lockOnSpr_;
+
 
 	/// <summary>コライダーのスケール。</summary>
 	float colliderScale_ = 0.0f;

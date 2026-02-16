@@ -13,8 +13,8 @@ void EnemyManager::Init(CameraSystem::Camera* camera)
 	enemyPopDepthMax_ = 17.0f;
 	xRange = 16.0f * 0.09f * 2.0f;
 	yRange = 9.0f * 0.085f * 2.0f;
-	spawnReadyTimer_ = 2.0f;
-	spawnNum_ = 5;
+	spawnReadyTimer_ = 0.8f;
+	spawnNum_ = 10;
 }
 
 void EnemyManager::Reset()
@@ -85,6 +85,10 @@ void EnemyManager::Draw()
 	bulletManager_.Draw();
 }
 
+void EnemyManager::DrawUI()
+{
+}
+
 void EnemyManager::SetTargetPos(Vector3* pos)
 {
 	if (pos)
@@ -94,6 +98,51 @@ void EnemyManager::SetTargetPos(Vector3* pos)
 			enemy->SetTargetPos(*pos);
 		}
 	}
+}
+
+Enemy* EnemyManager::GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera, const Utility::Vector2& reticleNDC, float lockRadiusNDC, const std::vector<Enemy*>& alreadyLockedEnemies)
+{
+	Enemy* bestTarget = nullptr;
+	float minDistanceSq = lockRadiusNDC * lockRadiusNDC; // ロックオン可能な最大距離の二乗
+
+	for (auto& enemy : enemies_)
+	{
+		// アクティブ状態以外（出現中や死亡済）は除外
+		if (enemy->GetCurrentState() != EnemyState::ACTIVE) continue;
+
+		// 既にロックオン済みの敵は除外
+		auto it = std::find(alreadyLockedEnemies.begin(), alreadyLockedEnemies.end(), enemy.get());
+		if (it != alreadyLockedEnemies.end()) continue;
+
+		Utility::Vector2 enemyNDC;
+		if (camera->WorldToNDC(enemy->GetWorldPosition(), enemyNDC))
+		{
+			// レティクルとの距離（画面上の距離）を計算
+			float dx = enemyNDC.x - reticleNDC.x;
+			float dy = enemyNDC.y - reticleNDC.y;
+			float distSq = dx * dx + dy * dy;
+
+			if (distSq < minDistanceSq)
+			{
+				minDistanceSq = distSq;
+				bestTarget = enemy.get();
+			}
+		}
+	}
+	return bestTarget;
+}
+
+bool EnemyManager::IsValidEnemy(const Enemy* enemyPtr) const
+{
+	// enemies_ リストの中にポインタがまだ存在するか確認（ダングリングポインタ対策）
+	for (const auto& enemy : enemies_)
+	{
+		if (enemy.get() == enemyPtr)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 Vector3 EnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)

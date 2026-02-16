@@ -31,6 +31,9 @@ public:
 	/// <summary>描画処理。</summary>
 	void Draw();
 
+	/// <summary>UI描画処理。</summary>
+	void DrawUI();
+
 	/// <summary>敵をポップ（出現）させる。</summary>
 	void Pop();
 
@@ -40,6 +43,12 @@ public:
 	void SetCamera(TYEngine::CameraSystem::Camera* camera);
 
 	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
+
+	/// <summary>レティクルに最も近い未ロックオンの敵を取得する</summary>
+	Enemy* GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera, const TYEngine::Utility::Vector2& reticleNDC, float lockRadiusNDC, const std::vector<Enemy*>& alreadyLockedEnemies);
+
+	/// <summary>ポインタが現在も有効（生存しているか）確認する</summary>
+	bool IsValidEnemy(const Enemy* enemyPtr) const;
 
 private:
 	/// <summary>

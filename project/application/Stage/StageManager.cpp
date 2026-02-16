@@ -35,6 +35,14 @@ void StageManager::Draw()
     }
 }
 
+void StageManager::DrawUI()
+{
+    if (!stages_.empty())
+    {
+        GetCurrentStage()->DrawUI();
+    }
+}
+
 void StageManager::EditUpdate() 
 {
     // エディタUIの描画と入力処理

@@ -58,6 +58,7 @@ void GameScene::UIDraw()
 		{
 			playUI_->DrawRT();
 		}
+		stageManager_->DrawUI();
 
 		if (GetCurrentState() == GameSceneState::READY)
 		{

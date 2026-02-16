@@ -37,6 +37,14 @@ namespace TYEngine
 			/// <returns>シェイク中なら true。</returns>
 			bool ShakeActive() { return shakeController_.IsActive(); }
 
+			/// <summary>
+			/// ワールド座標をNDC（正規化デバイス座標系）に変換する
+			/// </summary>
+			/// <param name="worldPos">対象のワールド座標</param>
+			/// <param name="outNDC">変換後のNDC（x, y共に -1.0 ~ 1.0）</param>
+			/// <returns>画面の表示範囲内かつカメラ前方なら true </returns>
+			bool WorldToNDC(const Utility::Vector3& worldPos, Utility::Vector2& outNDC) const;
+
 		private: // メンバ変数
 			/// <summary>カメラのトランスフォーム（位置・回転・スケール）。</summary>
 			Utility::Transform transform_;

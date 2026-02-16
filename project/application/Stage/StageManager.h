@@ -23,6 +23,8 @@ public:
     void Update();
     /// <summary>描画処理。</summary>
     void Draw();
+    /// <summary>UI描画処理。</summary>
+    void DrawUI();
     
     /// <summary>
     /// エディタ用更新処理。

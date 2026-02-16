@@ -47,7 +47,7 @@ void Enemy::Init()
 	bulletTimer_ = 0.0f;
 	defaultScale_ = { 0.3f, 0.3f, 0.3f };
 	upScale_ = { 0.45f, 0.45f, 0.45f };
-	lifeTime_ = 4.0f;
+	lifeTime_ = 15.0f;
 
 
 
@@ -132,6 +132,12 @@ void Enemy::Update()
 		
 		// コライダー位置同期
 		collider_->Update(GetWorldPosition());
+		Vector2 pos = {};
+		if (!camera_->WorldToNDC(GetWorldPosition(), pos))
+		{
+			// 画面外に出たら死亡
+			isDead_ = true;
+		}
 	}
 	else
 	{

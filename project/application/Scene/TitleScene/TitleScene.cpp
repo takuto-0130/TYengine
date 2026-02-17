@@ -108,6 +108,7 @@ void TitleScene::Init()
 	//========== キャラクター初期化 ==========//
 
 	// タイトル画面の演出用プレイヤー
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 	player_ = std::make_unique<Player>();
 	player_->SetCamera(camera_);
 	player_->Init();
@@ -137,6 +138,7 @@ void TitleScene::Update() {
 	// シーン遷移更新
 	Transition();
 	enemyMgr_.SetCamera(camera_);
+	beatAnalyzer_.Update();
 #ifdef _DEBUG
 
 	audioAnalyzer_.Update();

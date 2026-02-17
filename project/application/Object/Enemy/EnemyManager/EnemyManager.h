@@ -50,6 +50,15 @@ public:
 	/// <summary>ポインタが現在も有効（生存しているか）確認する</summary>
 	bool IsValidEnemy(const Enemy* enemyPtr) const;
 
+	bool IsActive(const Enemy* enemyPtr) const
+	{
+		if (enemyPtr->GetCurrentState() == EnemyState::ACTIVE)
+		{
+			return true;
+		}
+		return false;
+	}
+
 private:
 	/// <summary>
 	/// スクリーン座標オフセットをワールド座標に変換する。

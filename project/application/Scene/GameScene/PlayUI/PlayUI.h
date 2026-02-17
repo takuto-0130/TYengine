@@ -49,7 +49,7 @@ public:
 	void SetScoreDraw(ScoreUI* scoreDraw) { scoreDraw_ = scoreDraw; }
 
 	/// <summary>HPの数値表示を設定。</summary>
-	void SetHPNum(int hp = 0) { sprites_[HP_NUM_TEXT]->SetTextureLeftTop({ sprites_[HP_NUM_TEXT]->GetSize().x * float(hp),0 }); }
+	void SetHPNum(int hp = 0) { /*sprites_[HP_NUM_TEXT]->SetTextureLeftTop({ sprites_[HP_NUM_TEXT]->GetSize().x * float(hp),0 })*/(void)hp; }
 
 	/// <summary>シフトガイドの位置を設定。</summary>
 	void SetShiftPos(const TYEngine::Utility::Vector2& pos);
@@ -75,8 +75,8 @@ private:
 	{
 		COMBO_TEXT,
 		COMBO_NUM_TEXT,
-		HP_TEXT,
-		HP_NUM_TEXT,
+		/*HP_TEXT,
+		HP_NUM_TEXT,*/
 		OPERATION,
 		OUTLINE,
 		PAUSE,

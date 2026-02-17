@@ -13,6 +13,7 @@ void Stage::Init()
     player_ = std::make_unique<Player>();
     player_->SetCamera(camera_);
     player_->Init();
+    player_->SetIsInGame(true);
 
     // マネージャ群（コンボ、スコア）初期化
     comboManager_ = std::make_unique<ComboManager>();
@@ -24,6 +25,8 @@ void Stage::Init()
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
     enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
     enemyMgr_.Init(camera_);
+
+    player_->SetEnemyManager(&enemyMgr_);
 
     // レール管理初期化
     railManager_ = std::make_unique<RailManager>();

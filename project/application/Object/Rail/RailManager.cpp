@@ -48,7 +48,7 @@ void RailManager::Reset()
 	RebuildTriggerSFromSegments();
 
 	speedMultiply_ = 0.35f;
-	speedMps_ = 5.0f;
+	speedMps_ = 3.5f;
 
 	// 弧長の初期値
 	eyeS_ = 0.0f;

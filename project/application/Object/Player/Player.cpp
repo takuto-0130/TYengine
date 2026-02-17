@@ -56,7 +56,8 @@ void Player::Init()
 	speed_ = { defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
 
 	// HP設定
-	hitPoint_ = 9;
+	maxHP_ = 100;
+	hitPoint_ = maxHP_;
 
 	// バレルロール
 	rollTime_ = 0.6f;
@@ -112,6 +113,18 @@ void Player::Init()
 	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
 	bulletManager_->SetCamera(camera_);
 	bulletManager_->Init();
+
+	hpSpr_ = std::make_unique<Sprite>();
+	hpSpr_->Initialize("Resources/Texture/white2x2.png");
+	hpSpr_->SetPosition({ 368,609 });
+	hpSpr_->SetSize({ 544,32 });
+	hpSpr_->SetColor({ 0.1f,1.0f,0.1f,1.0f });
+
+	hpSprBG_ = std::make_unique<Sprite>();
+	hpSprBG_->Initialize("Resources/Texture/white2x2.png");
+	hpSprBG_->SetPosition({ 368,609 });
+	hpSprBG_->SetSize({ 544,32 });
+	hpSprBG_->SetColor({ 1.0f,0.1f,0.1f,1.0f });
 	
 
 	for (auto&& spr : lockOnSpr_)
@@ -154,6 +167,13 @@ void Player::Update()
 	ParticleManager::GetInstance()->SetEmitter(3, e);
 	ParticleManager::GetInstance()->TriggerEmit(3, true);
 
+	hpSprBG_->Update();
+	if (hitPoint_ >= 0)
+	{
+		hpSpr_->SetSize({ 544.0f * (static_cast<float>(hitPoint_) / static_cast<float>(maxHP_)),32.0f });
+	}
+	hpSpr_->Update();
+
 	// ステート更新後の追加処理（移動反映や攻撃など）
 	PostStateUpdate();
 }
@@ -184,27 +204,35 @@ void Player::DrawUI()
 			// 1. ダングリングポインタ対策：敵がまだ生きているか確認
 			if (enemyManager_ && enemyManager_->IsValidEnemy(target))
 			{
-				Utility::Vector2 ndc;
-
-				// 2. 敵のワールド座標をNDCに変換
-				if (camera_->WorldToNDC(target->GetWorldPosition(), ndc))
+				if(enemyManager_->IsActive(target))
 				{
-					// 3. NDC (-1.0 ~ 1.0) を スクリーン座標 (0 ~ Width/Height) に変換
-					// X座標: -1.0 -> 0,  0.0 -> Width/2,  1.0 -> Width
-					float screenX = (ndc.x + 1.0f) * 0.5f * screenWidth;
+					Utility::Vector2 ndc;
 
-					// Y座標: -1.0 -> Height,  0.0 -> Height/2,  1.0 -> 0 (Y軸反転)
-					float screenY = (1.0f - ndc.y) * 0.5f * screenHeight;
+					// 2. 敵のワールド座標をNDCに変換
+					if (camera_->WorldToNDC(target->GetWorldPosition(), ndc))
+					{
+						// 3. NDC (-1.0 ~ 1.0) を スクリーン座標 (0 ~ Width/Height) に変換
+						// X座標: -1.0 -> 0,  0.0 -> Width/2,  1.0 -> Width
+						float screenX = (ndc.x + 1.0f) * 0.5f * screenWidth;
 
-					// 4. 計算したスクリーン座標 (screenX, screenY) に 
-					// ロックオン用の2Dスプライトを描画する
-					lockOnSpr_[index]->SetPosition({screenX, screenY});
-					lockOnSpr_[index]->Update();
-					lockOnSpr_[index]->Draw();
-					
+						// Y座標: -1.0 -> Height,  0.0 -> Height/2,  1.0 -> 0 (Y軸反転)
+						float screenY = (1.0f - ndc.y) * 0.5f * screenHeight;
+
+						// 4. 計算したスクリーン座標 (screenX, screenY) に 
+						// ロックオン用の2Dスプライトを描画する
+						lockOnSpr_[index]->SetPosition({ screenX, screenY });
+						lockOnSpr_[index]->Update();
+						lockOnSpr_[index]->Draw();
+
+					}
+					index++;
 				}
-				index++;
 			}
+		}
+		if(isInGame_)
+		{
+			hpSprBG_->Draw();
+			hpSpr_->Draw();
 		}
 	}
 }
@@ -217,7 +245,10 @@ void Player::TakeDamage()
 	// デバッグ時ダメージ処理（現在はなし）
 #else
 	// 通常ダメージ処理：HP減少
-	--hitPoint_;
+	if(isInGame_)
+	{
+		--hitPoint_;
+	}
 #endif // _DEBUG
 
 	if (hitPoint_ > 0)
@@ -284,31 +315,6 @@ void Player::PostStateUpdate()
 void Player::Attack()
 {
 	// クールタイムの減算
-	if (bulletTimer_ > 0)
-	{
-		bulletTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
-	}
-	
-	// 攻撃入力があり、クールタイムが解消されていれば発射
-	if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bulletTimer_ <= 0)
-	{
-		currentBulletType_ = PlayerBulletType::NORMAL;
-		
-		// レティクル方向への発射ベクトル計算
-		Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
-		
-		// 弾発射
-		bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
-		
-		// 射撃音再生
-		GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
-		
-		// クールタイム設定
-		bulletTimer_ = bulletCoolTime_;
-	}
-
-
-	// クールタイムの減算
 	if (lockOnTimer_ > 0)
 	{
 		lockOnTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
@@ -340,16 +346,38 @@ void Player::Attack()
 	{
 		if (!lockedEnemies_.empty())
 		{
-			currentBulletType_ = PlayerBulletType::NORMAL; // ホーミング弾タイプ（実装済みであれば）
+			currentBulletType_ = PlayerBulletType::HOMING; // ホーミング弾タイプ
+
+			// 散らすための角度計算用
+			int bulletCount = 0;
+			int totalBullets = static_cast<int>(lockedEnemies_.size());
 
 			for (Enemy* target : lockedEnemies_)
 			{
 				// ロックオン中に敵が倒されてポインタが無効になっていないか安全確認
 				if (enemyManager_->IsValidEnemy(target))
 				{
-					// 敵の方向へ向かって弾を発射（ホーミング用のターゲット情報を渡せるとなお良い）
-					Vector3 direction = Normalize(target->GetWorldPosition() - GetWorldPosition());
-					bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+					// 初期方向を散らす
+					// カメラの上方向と右方向を取得
+					Vector3 up = camera_->GetUp();
+					Vector3 right = camera_->GetRight();
+					Vector3 forward = camera_->GetForward();
+
+					// 弾のインデックスに応じて、左右・上に散らす角度を計算
+					// 例：-1.0 ~ 1.0 の間で左右に散らす
+					float spreadX = (totalBullets > 1) ? -1.0f + (2.0f * bulletCount / (totalBullets - 1)) : 0.0f;
+
+					// 上方向にも少し山なりに飛ばす
+					float spreadY = 0.5f;
+
+					// 初期方向ベクトルを合成（前方に進みつつ、上と左右に広がる）
+					Vector3 initialDir = forward + (right * spreadX) + (up * spreadY);
+					initialDir = Normalize(initialDir);
+
+					// 発射
+					bulletManager_->Fire(currentBulletType_, GetWorldPosition(), initialDir, target, enemyManager_);
+
+					bulletCount++;
 					// 発射音
 					GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 				}
@@ -363,6 +391,34 @@ void Player::Attack()
 
 	// 次のフレームのために状態を保持
 	wasPressingShot_ = isPressing;
+
+
+	// クールタイムの減算
+	if (bulletTimer_ > 0)
+	{
+		bulletTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
+	}
+	if (!isPressing)
+	{
+		// 攻撃入力があり、クールタイムが解消されていれば発射
+		if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bulletTimer_ <= 0)
+		{
+			currentBulletType_ = PlayerBulletType::NORMAL;
+
+			// レティクル方向への発射ベクトル計算
+			Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
+
+			// 弾発射
+			bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+
+			// 射撃音再生
+			GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+
+			// クールタイム設定
+			bulletTimer_ = bulletCoolTime_;
+		}
+	}
+
 }
 
 void Player::Move()

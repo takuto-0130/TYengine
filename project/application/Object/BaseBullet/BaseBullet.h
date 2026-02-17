@@ -40,6 +40,11 @@ public:
 	/// <param name="camera">カメラインスタンス。</param>
 	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
+	/// <summary>
+	/// ターゲットの参照を設定する（ホーミング処理などで使用）。
+	/// </summary>
+	void SetTargetObject(TYEngine::Utility::BaseObject* target) { target_ = target; }
+
 protected:
 	/// <summary>死亡（消滅）フラグ。</summary>
 	bool isDead_ = false;
@@ -64,5 +69,8 @@ protected:
 
 	/// <summary>参照用カメラポインタ。</summary>
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
+
+	/// <summary>参照用ターゲットポインタ。</summary>
+	TYEngine::Utility::BaseObject* target_ = nullptr;
 };
 

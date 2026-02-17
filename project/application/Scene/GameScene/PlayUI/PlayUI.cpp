@@ -34,7 +34,7 @@ void PlayUI::Init()
 	sprites_[COMBO_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
 	sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/HpText.png");
+	/*TextureManager::GetInstance()->LoadTexture("Resources/Texture/HpText.png");
 	sprites_[HP_TEXT] = std::make_unique<Sprite>();
 	sprites_[HP_TEXT]->Initialize("Resources/Texture/HpText.png");
 	sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
@@ -45,7 +45,7 @@ void PlayUI::Init()
 	sprites_[HP_NUM_TEXT]->Initialize("Resources/Texture/number.png");
 	sprites_[HP_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
 	sprites_[HP_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
-	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));
+	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));*/
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	sprites_[OPERATION] = std::make_unique<Sprite>();
@@ -80,12 +80,12 @@ void PlayUI::DebugJMApply()
 	sprites_[COMBO_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
 	sprites_[COMBO_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
 
-	sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
+	/*sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
 	sprites_[HP_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.HpText.Position"));
 
 	sprites_[HP_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
 	sprites_[HP_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
-	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));
+	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));*/
 
 	sprites_[OPERATION]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.Operation.Size"));
 	sprites_[OPERATION]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));

@@ -145,6 +145,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinearState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp" />
@@ -279,6 +280,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\AttackStrategy\AttackStrategies.h" />
     <ClInclude Include="application\Object\Enemy\AttackStrategy\IAttackStrategy.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiParticle.h" />

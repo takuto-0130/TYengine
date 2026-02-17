@@ -110,6 +110,8 @@ public:
 
 	void SetEnemyManager(EnemyManager* manager) { enemyManager_ = manager; }
 
+	void SetIsInGame(bool isInGame) { isInGame_ = isInGame; }
+
 private:
 	/// <summary>状態更新後の共通処理（フラグ管理など）。</summary>
 	void PostStateUpdate();
@@ -180,6 +182,8 @@ private:
 	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, 8> lockOnSpr_;
 
 
+
+
 	/// <summary>コライダーのスケール。</summary>
 	float colliderScale_ = 0.0f;
 	/// <summary>カメラからの深度距離。</summary>
@@ -203,7 +207,10 @@ private:
 	float deltaTime_ = 0.0f;
 
 	/// <summary>ヒットポイント。</summary>
+	int maxHP_ = 0;
 	int hitPoint_ = 0;
+	std::unique_ptr<TYEngine::Graphics::Sprite> hpSprBG_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> hpSpr_;
 
 
 	// 姿勢
@@ -266,6 +273,8 @@ private:
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
+
+	bool isInGame_ = false;
 
 
 private: // シーン内のState関連関数

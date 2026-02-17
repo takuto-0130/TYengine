@@ -9,6 +9,8 @@
 #include "Camera.h"
 
 class Player;
+class Enemy;
+class EnemyManager;
 /// <summary>
 /// プレイヤーの弾を一括管理するクラス。
 /// 発射、更新、描画、衝突判定などを統括する。
@@ -41,7 +43,7 @@ public:
 	/// <param name="type">弾の種類（NORMAL, MISSILEなど）。</param>
 	/// <param name="pos">発射位置（ワールド座標）。</param>
 	/// <param name="direction">発射方向（正規化ベクトル）。</param>
-	void Fire(PlayerBulletType type, const TYEngine::Utility::Vector3& pos, const TYEngine::Utility::Vector3& direction);
+	void Fire(PlayerBulletType type, const TYEngine::Utility::Vector3& pos, const TYEngine::Utility::Vector3& direction, Enemy* target = nullptr, EnemyManager* mgr = nullptr);
 
 	/// <summary>
 	/// カメラを設定する（ビルボード用）。

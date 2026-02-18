@@ -181,14 +181,7 @@ void EnemyManager::Pop()
 	enemy->SetEnemyBulletManager(&bulletManager_);
 	enemy->SetEventListener(comboAndScoreHandler_.get());
 	enemy->SetIsInGame(true);
+	enemy->SetCamera(camera_);
 	
 	enemies_.push_back(std::move(enemy));
-}
-
-void EnemyManager::SetCamera(CameraSystem::Camera* camera)
-{
-	for (auto& enemy : enemies_)
-	{
-		enemy->SetCamera(camera);
-	}
 }

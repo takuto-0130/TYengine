@@ -33,7 +33,7 @@ void Stage::Init()
     railManager_->SetCamera(camera_);
     railManager_->Init();
 
-    Reset();
+    railManager_->Reset();
 
     // 背景（地面）オブジェクト初期化
     ground_ = std::make_unique<Object3d>();
@@ -45,7 +45,10 @@ void Stage::Init()
 
 void Stage::Reset()
 {
+    enemyMgr_.Reset();
     railManager_->Reset();
+    comboManager_->Init();
+    scoreManager_->Init();
 }
 
 void Stage::Update()
@@ -54,9 +57,6 @@ void Stage::Update()
 
     beatAnalyzer_.Update();
     beatAnalyzer_.Draw();
-
-    // カメラ情報の更新
-    enemyMgr_.SetCamera(camera_);
 
     // レール更新（カメラ移動・トリガー判定）
     railManager_->Update();

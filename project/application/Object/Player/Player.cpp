@@ -340,8 +340,7 @@ void Player::Attack()
 				lockOnTimer_ = maxLockOnCool_;
 			}
 		}
-	}
-	// ▼ ボタンを離した瞬間（一斉発射フェーズ）
+	} // ▼ ボタンを離した瞬間（一斉発射フェーズ）
 	else if (wasPressingShot_ && !isPressing)
 	{
 		if (!lockedEnemies_.empty())

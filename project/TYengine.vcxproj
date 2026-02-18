@@ -170,6 +170,8 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneClear.cpp" />
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp" />
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />

@@ -7,7 +7,6 @@
 #include "../Transition/TransitionManager.h"
 #include "CubemapBasis.h"
 #include "Timer.h"
-#include "Audio/Audio.h"
 #include "../../AppSystem/Audio/GameAudio.h"
 #ifdef _DEBUG
 #include "imgui.h"
@@ -26,30 +25,9 @@ TitleScene::~TitleScene()
 
 void TitleScene::Init()
 {
-	//========== ロード ==========//
-
-	// タイトル用JSONデータのロード
-	titleJM.Load("Title.json", true, &err);
-#ifdef _DEBUG
-	Log(err);
-#endif // _DEBUG
-	gameAudio_ = GameAudio::GetInstance();
-	// 必要なサウンドリソースの読み込み
-	gameAudio_->LoadSound("open");
-	gameAudio_->LoadSound("close");
-	gameAudio_->LoadSound("slide");
-	gameAudio_->LoadSound("enter");
-	gameAudio_->LoadSound("fanfare");
-	gameAudio_->LoadSound("gameBGM");
-	gameAudio_->LoadSound("gekiha");
-	gameAudio_->LoadSound("damageE");
-	gameAudio_->LoadSound("damageP");
-	gameAudio_->LoadSound("roll");
-	gameAudio_->LoadSound("attack");
-	gameAudio_->LoadSound("418");
+	Load();
 
 	beatAnalyzer_.Init("gameBGM", gameAudio_->CategoryToString(SoundCategory::BGM));
-
 
 	bgmHandle_ = gameAudio_->Play("gameBGM", false, SoundCategory::BGM);
 	gameAudio_->SetSoundVolume(bgmHandle_, 1.0f);
@@ -63,23 +41,19 @@ void TitleScene::Init()
 
 	//========== テクスチャ初期化 ==========//
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Enter.png");
-	spaceSpr_ = std::make_unique<Sprite>();
-	spaceSpr_->Initialize("Resources/Texture/Enter.png");
-	spaceSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
-	spaceSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
+	enterSpr_ = std::make_unique<Sprite>();
+	enterSpr_->Initialize("Resources/Texture/Enter.png");
+	enterSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
+	enterSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Title.png");
 	text_ = std::make_unique<Sprite>();
 	text_->Initialize("Resources/Texture/Title.png");
 	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	operation_ = std::make_unique<Sprite>();
 	operation_->Initialize("Resources/Texture/Operation.png");
 	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
@@ -108,85 +82,31 @@ void TitleScene::Init()
 	//========== キャラクター初期化 ==========//
 
 	// タイトル画面の演出用プレイヤー
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 	player_ = std::make_unique<Player>();
 	player_->SetCamera(camera_);
 	player_->Init();
 	player_->SetScreenOffset(titleJM.Get<Vector2>("config.Player.ScreenOffset"));
 	player_->SetBGMHandle(bgmHandle_);
 
-	// タイトル画面の演出用敵マネージャ
+	// タイトル画面の敵マネージャ
 	enemyMgr_.Init(camera_);
 	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
 
 	player_->SetEnemyManager(&enemyMgr_);
 }
 
-void TitleScene::DebugJMApply()
-{
-	spaceSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
-	spaceSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
-	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
-	camera_->SetRotate(titleJM.Get<Vector3>("config.Camera.Rotate"));
-	camera_->SetTranslate(titleJM.Get<Vector3>("config.Camera.Position"));
-	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
-	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
-	rotateSpeed_ = titleJM.Get<float>("config.ground.rotateSpeed");
-}
-
 void TitleScene::Update() {
 	// シーン遷移更新
 	Transition();
-	enemyMgr_.SetCamera(camera_);
 	beatAnalyzer_.Update();
-#ifdef _DEBUG
-
 	audioAnalyzer_.Update();
-	audioAnalyzer_.Draw();
-	beatAnalyzer_.Update();
-	beatAnalyzer_.Draw();
-	static int bgmH = -1;
 
-	if (input_->TriggerKey(DIK_M))
-	{
-		bgmH = gameAudio_->Play("418", false, SoundCategory::BGM);
-		gameAudio_->SetSoundVolume(bgmH, 1.0f);
-	}
-	if (input_->TriggerKey(DIK_P))
-	{
-		Audio::GetInstance()->Pause(bgmH);
-	}
-	if (input_->TriggerKey(DIK_O))
-	{
-		Audio::GetInstance()->Resume(bgmH);
-	}
+	// デバッグ用更新処理
+	DebugUpdate();
 
-	// ImGui で編集
-	ImGui::Begin("JSON Editor");
-	static JsonImGuiEditor inspector(titleJM);
-	inspector.Draw(titleJM.Root(), "Title.json");
-	if (ImGui::Button("Save")) titleJM.Save();
-	ImGui::End();
-
-	DebugJMApply();
-
-	static float timer = 0.0f;
-	if (beatAnalyzer_.GetBeat())
-	{
-		timer = 0.0f;
-		player_->SetScale({ 0.3f,0.3f,0.3f });
-	}
-	else
-	{
-		timer += Timer::GetInstance()->GetDeltaTime();
-		player_->SetScale(Lerp(Vector3{ 0.3f,0.3f,0.3f } , Vector3{ 0.2f,0.2f,0.2f }, timer));
-	}
-
-#else // Release
-
-#endif // _DEBUG
 	// UI更新
-	spaceSpr_->Update();
+	(enterSpr_->IsMouseHover()) ? enterSpr_->SetScale({ 1.2f,1.2f }) : enterSpr_->SetScale({ 1.0f,1.0f });
+	enterSpr_->Update();
 	text_->Update();
 	operation_->Update();
 	reticle_->Update();
@@ -230,7 +150,7 @@ void TitleScene::Draw()
 void TitleScene::UIDraw()
 {
 	SpriteBasis::GetInstance()->BasisDrawSetting();
-	spaceSpr_->Draw();
+	enterSpr_->Draw();
 	text_->Draw();
 	operation_->Draw();
 	player_->DrawUI();
@@ -240,13 +160,13 @@ void TitleScene::UIDraw()
 void TitleScene::Transition()
 {
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_RETURN))
+	if (input_->TriggerKey(DIK_RETURN) || enterSpr_->IsMouseClicked(0))
 	{
 		sceneManager_->ChangeScene("GAME");
 		gameAudio_->Stop(bgmHandle_);
 	}
 #else
-	if (input_->TriggerKey(DIK_RETURN))
+	if (input_->TriggerKey(DIK_RETURN) || enterSpr_->IsMouseClicked(0))
 	{
 		// 決定音再生
 		gameAudio_->Play("enter", false, SoundCategory::UI);

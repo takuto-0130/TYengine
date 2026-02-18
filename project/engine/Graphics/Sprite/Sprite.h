@@ -49,6 +49,31 @@ namespace TYEngine
 			void DrawRect(const Utility::Vector2& lt, const Utility::Vector2& rt, const Utility::Vector2& lb, const Utility::Vector2& rb);
 
 			// ========================
+			//         当たり判定
+			// ========================
+
+			/// <summary>
+			/// 指定した座標がスプライトの矩形内にあるか判定する（回転未考慮）。
+			/// </summary>
+			/// <param name="point">判定したい座標</param>
+			/// <returns>矩形内にあれば true</returns>
+			bool IsPointInside(const Utility::Vector2& point) const;
+
+			/// <summary>
+			/// 現在のマウスカーソルがスプライト上に重なっているか判定する。
+			/// </summary>
+			/// <returns>マウスが重なっていれば true</returns>
+			bool IsMouseHover() const;
+
+			/// <summary>
+			/// スプライト上でマウスボタンがクリック（トリガー）されたか判定する。
+			/// </summary>
+			/// <param name="buttonNumber">0:左クリック, 1:右クリック, 2:中クリック</param>
+			/// <returns>クリックされた瞬間なら true</returns>
+			bool IsMouseClicked(int32_t buttonNumber = 0) const;
+
+
+			// ========================
 			//         Getter
 			// ========================
 
@@ -70,6 +95,8 @@ namespace TYEngine
 			const bool& GetIsFlipX() const { return isFlipX_; }
 			/// <summary>上下反転フラグを取得する。</summary>
 			const bool& GetIsFlipY() const { return isFlipY_; }
+			/// <summary>スケール（倍率）を取得する。</summary>
+			const Utility::Vector2& GetScale() const { return scale_; }
 
 			// ========================
 			//         Setter
@@ -95,6 +122,10 @@ namespace TYEngine
 			void SetIsFlipX(bool isFlipX) { isFlipX_ = isFlipX; }
 			/// <summary>上下反転フラグを設定する。</summary>
 			void SetIsFlipY(bool isFlipY) { isFlipY_ = isFlipY; }
+			/// <summary>スケール（倍率）をX, Y個別に設定する。</summary>
+			void SetScale(const Utility::Vector2& scale) { scale_ = scale; }
+			/// <summary>スケール（倍率）を縦横等倍で設定する。</summary>
+			void SetScale(float scale) { scale_ = { scale, scale }; }
 
 			/// <summary>
 			/// 頂点位置を個別に設定する。
@@ -156,15 +187,15 @@ namespace TYEngine
 			//     GPU リソース関連
 			// ========================
 
-			Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;             ///< インデックスバッファ。
-			Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;            ///< 頂点バッファ。
-			Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;          ///< マテリアル定数バッファ。
-			Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_; ///< 行列定数バッファ。
+			Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;					///< インデックスバッファ。
+			Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;					///< 頂点バッファ。
+			Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;				///< マテリアル定数バッファ。
+			Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;	///< 行列定数バッファ。
 
-			uint32_t* indexData_ = nullptr;                 ///< インデックスデータのマップポインタ。
-			VertexData* vertexData_ = nullptr;              ///< 頂点データのマップポインタ。
-			Material* materialData_ = nullptr;              ///< マテリアルデータのマップポインタ。
-			TransformationMatrix* transformationMatrixData_ = nullptr; ///< 行列データのマップポインタ。
+			uint32_t* indexData_ = nullptr;								///< インデックスデータのマップポインタ。
+			VertexData* vertexData_ = nullptr;							///< 頂点データのマップポインタ。
+			Material* materialData_ = nullptr;							///< マテリアルデータのマップポインタ。
+			TransformationMatrix* transformationMatrixData_ = nullptr;	///< 行列データのマップポインタ。
 
 			D3D12_INDEX_BUFFER_VIEW indexBufferView_;       ///< インデックスバッファビュー。
 			D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;     ///< 頂点バッファビュー。
@@ -173,20 +204,21 @@ namespace TYEngine
 			//        スプライト情報
 			// ========================
 
-			uint32_t textureIndex_ = 0;                      ///< 使用テクスチャの SRV インデックス。
-			std::string textureFilePath_;                   ///< 使用中のテクスチャファイルパス。
+			uint32_t textureIndex_ = 0;      ///< 使用テクスチャの SRV インデックス。
+			std::string textureFilePath_;    ///< 使用中のテクスチャファイルパス。
 
 			bool isFlipX_ = false; ///< 左右反転フラグ。
 			bool isFlipY_ = false; ///< 上下反転フラグ。
 
 			Utility::Transform transform_{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} }; ///< 3D変換情報。
-			Utility::Vector2 position_ = { 0.0f, 0.0f }; ///< スプライトの描画位置。
-			float rotation_ = 0.0f;             ///< 回転角度（ラジアン）。
-			Utility::Vector2 size_ = { 100.0f, 100.0f }; ///< スプライトのサイズ。
+			Utility::Vector2 position_ = { 0.0f, 0.0f };	///< スプライトの描画位置。
+			float rotation_ = 0.0f;							///< 回転角度（ラジアン）。
+			Utility::Vector2 size_ = { 100.0f, 100.0f };	///< スプライトのサイズ。
+			Utility::Vector2 scale_ = { 1.0f, 1.0f };		///< スプライトのスケール（倍率）。
 
 			Utility::Vector2 anchorPoint_ = { 0.0f, 0.0f }; ///< 原点（アンカー）位置。
 
-			Utility::Vector2 textureLeftTop_ = { 0.0f, 0.0f }; ///< テクスチャの左上 UV。
+			Utility::Vector2 textureLeftTop_ = { 0.0f, 0.0f };	///< テクスチャの左上 UV。
 			Utility::Vector2 textureSize_ = { 100.0f, 100.0f }; ///< 使用するテクスチャ範囲のサイズ。
 		};
 

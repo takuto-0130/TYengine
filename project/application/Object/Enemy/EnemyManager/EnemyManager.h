@@ -40,8 +40,6 @@ public:
 public:
 	void SetTargetPos(TYEngine::Utility::Vector3* pos);
 
-	void SetCamera(TYEngine::CameraSystem::Camera* camera);
-
 	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
 
 	/// <summary>レティクルに最も近い未ロックオンの敵を取得する</summary>

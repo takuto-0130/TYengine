@@ -586,6 +586,8 @@
       <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">

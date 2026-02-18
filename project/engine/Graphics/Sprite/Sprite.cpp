@@ -3,6 +3,8 @@
 #include "Matrix4x4Func.h"
 #include "struct.h"
 #include "TextureManager.h"
+#include "Input.h"
+#include <algorithm>
 
 
 namespace TYEngine
@@ -31,8 +33,8 @@ namespace TYEngine
 			SetSpriteData();
 
 			transform_.translate = { position_.x, position_.y, 0.0f };
-			transform_.rotate = { 0.0f, 0.0f, rotation_ };
-			transform_.scale = { size_.x, size_.y, 1.0f };
+			transform_.rotate = { 0.0f, 0.0f, rotation_ }; 
+			transform_.scale = { size_.x * scale_.x, size_.y * scale_.y, 1.0f };
 
 			// Transform情報を作る
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
@@ -189,6 +191,65 @@ namespace TYEngine
 			textureSize_.y = static_cast<float>(metadata.height);
 			// 画像サイズをテクスチャサイズに合わせる
 			size_ = textureSize_;
+		}
+
+		bool Sprite::IsPointInside(const Vector2& point) const
+		{
+			// アンカーポイントを基準にしたローカルの端座標を計算
+			float baseLeft = 0.0f - anchorPoint_.x;
+			float baseRight = 1.0f - anchorPoint_.x;
+			float baseTop = 0.0f - anchorPoint_.y;
+			float baseBottom = 1.0f - anchorPoint_.y;
+
+			// フリップ（反転）状態の反映
+			if (isFlipX_)
+			{
+				baseLeft = -baseLeft;
+				baseRight = -baseRight;
+			}
+			if (isFlipY_)
+			{
+				baseTop = -baseTop;
+				baseBottom = -baseBottom;
+			}
+			// 実際の幅と高さを「サイズ × スケール」で計算する
+			float actualWidth = size_.x * scale_.x;
+			float actualHeight = size_.y * scale_.y;
+
+			// actualWidth / actualHeight とワールド座標を乗算・加算して実際の画面座標を算出
+			float actualLeft = position_.x + baseLeft * actualWidth;
+			float actualRight = position_.x + baseRight * actualWidth;
+			float actualTop = position_.y + baseTop * actualHeight;
+			float actualBottom = position_.y + baseBottom * actualHeight;
+
+			// フリップによって左右・上下が入れ替わっていても正しく判定できるよう、最小値と最大値を取る
+			float minX = std::min<float>(actualLeft, actualRight);
+			float maxX = std::max<float>(actualLeft, actualRight);
+			float minY = std::min<float>(actualTop, actualBottom);
+			float maxY = std::max<float>(actualTop, actualBottom);
+
+			// 指定座標が矩形領域内にあるか判定
+			if (point.x >= minX && point.x <= maxX &&
+				point.y >= minY && point.y <= maxY)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		bool Sprite::IsMouseHover() const
+		{
+			// Inputシングルトンから現在のマウス座標を取得して判定
+			Vector2 mousePos = Framework::Input::GetInstance()->GetMousePosition();
+			return IsPointInside(mousePos);
+		}
+
+		bool Sprite::IsMouseClicked(int32_t buttonNumber) const
+		{
+			// マウスが乗っている ＆＆ 指定したボタンが押された瞬間か
+			auto input = Framework::Input::GetInstance();
+			return IsMouseHover() && input->IsTriggerMouse(buttonNumber);
 		}
 
 	} // namespace Graphics

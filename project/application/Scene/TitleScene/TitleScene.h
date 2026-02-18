@@ -53,9 +53,15 @@ private:
 	/// <summary>JSONパラメータの反映（デバッグ用）。</summary>
 	void DebugJMApply();
 
+	/// <summary>JSONパラメータの反映（デバッグ用）。</summary>
+	void DebugUpdate();
+
+	/// <summary>ロードまとめ。</summary>
+	void Load();
+
 private:
 	/// <summary>スペース（Press Space）表示スプライト。</summary>
-	std::unique_ptr<TYEngine::Graphics::Sprite> spaceSpr_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> enterSpr_;
 	/// <summary>タイトルテキストスプライト。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> text_;
 	/// <summary>操作説明スプライト。</summary>

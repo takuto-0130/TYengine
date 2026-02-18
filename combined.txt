@@ -72,6 +72,9 @@
     └── └── └── ├── Player.cpp
     └── └── └── ├── Player.h
     └── └── └── ├── PlayerBullet/
+    └── └── └── └── ├── HomingBullet/
+    └── └── └── └── └── ├── PlayerBulletHoming.cpp
+    └── └── └── └── └── └── PlayerBulletHoming.h
     └── └── └── └── ├── NormalBullet/
     └── └── └── └── └── ├── AfterCollisionState.cpp
     └── └── └── └── └── ├── LinearState.cpp
@@ -142,6 +145,9 @@
     └── └── └── ├── SceneFactory.cpp
     └── └── └── └── SceneFactory.h
     └── └── ├── TitleScene/
+    └── └── └── ├── TItleSceneStates/
+    └── └── └── └── ├── TitleSceneDebug.cpp
+    └── └── └── └── └── TitleSceneLoad.cpp
     └── └── └── ├── TitleScene.cpp
     └── └── └── └── TitleScene.h
     └── └── └── Transition/
@@ -487,6 +493,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinearState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp" />
@@ -511,6 +518,8 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneClear.cpp" />
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp" />
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
@@ -621,6 +630,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\AttackStrategy\AttackStrategies.h" />
     <ClInclude Include="application\Object\Enemy\AttackStrategy\IAttackStrategy.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
+    <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiParticle.h" />
@@ -1355,6 +1365,9 @@ File Path: project/TYengine.vcxproj.filters
     <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp">
       <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
@@ -1771,6 +1784,7 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="application\AppSystem\Audio\GameAudio.h">
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -2406,6 +2420,11 @@ public:
 	/// <param name="camera">カメラインスタンス。</param>
 	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
+	/// <summary>
+	/// ターゲットの参照を設定する（ホーミング処理などで使用）。
+	/// </summary>
+	void SetTargetObject(TYEngine::Utility::BaseObject* target) { target_ = target; }
+
 protected:
 	/// <summary>死亡（消滅）フラグ。</summary>
 	bool isDead_ = false;
@@ -2430,6 +2449,9 @@ protected:
 
 	/// <summary>参照用カメラポインタ。</summary>
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
+
+	/// <summary>参照用ターゲットポインタ。</summary>
+	TYEngine::Utility::BaseObject* target_ = nullptr;
 };
 
 
@@ -2669,7 +2691,7 @@ void Enemy::Init()
 	bulletTimer_ = 0.0f;
 	defaultScale_ = { 0.3f, 0.3f, 0.3f };
 	upScale_ = { 0.45f, 0.45f, 0.45f };
-	lifeTime_ = 4.0f;
+	lifeTime_ = 15.0f;
 
 
 
@@ -2754,6 +2776,12 @@ void Enemy::Update()
 		
 		// コライダー位置同期
 		collider_->Update(GetWorldPosition());
+		Vector2 pos = {};
+		if (!camera_->WorldToNDC(GetWorldPosition(), pos))
+		{
+			// 画面外に出たら死亡
+			isDead_ = true;
+		}
 	}
 	else
 	{
@@ -3724,8 +3752,8 @@ void EnemyManager::Init(CameraSystem::Camera* camera)
 	enemyPopDepthMax_ = 17.0f;
 	xRange = 16.0f * 0.09f * 2.0f;
 	yRange = 9.0f * 0.085f * 2.0f;
-	spawnReadyTimer_ = 2.0f;
-	spawnNum_ = 5;
+	spawnReadyTimer_ = 0.8f;
+	spawnNum_ = 10;
 }
 
 void EnemyManager::Reset()
@@ -3796,6 +3824,10 @@ void EnemyManager::Draw()
 	bulletManager_.Draw();
 }
 
+void EnemyManager::DrawUI()
+{
+}
+
 void EnemyManager::SetTargetPos(Vector3* pos)
 {
 	if (pos)
@@ -3805,6 +3837,51 @@ void EnemyManager::SetTargetPos(Vector3* pos)
 			enemy->SetTargetPos(*pos);
 		}
 	}
+}
+
+Enemy* EnemyManager::GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera, const Utility::Vector2& reticleNDC, float lockRadiusNDC, const std::vector<Enemy*>& alreadyLockedEnemies)
+{
+	Enemy* bestTarget = nullptr;
+	float minDistanceSq = lockRadiusNDC * lockRadiusNDC; // ロックオン可能な最大距離の二乗
+
+	for (auto& enemy : enemies_)
+	{
+		// アクティブ状態以外（出現中や死亡済）は除外
+		if (enemy->GetCurrentState() != EnemyState::ACTIVE) continue;
+
+		// 既にロックオン済みの敵は除外
+		auto it = std::find(alreadyLockedEnemies.begin(), alreadyLockedEnemies.end(), enemy.get());
+		if (it != alreadyLockedEnemies.end()) continue;
+
+		Utility::Vector2 enemyNDC;
+		if (camera->WorldToNDC(enemy->GetWorldPosition(), enemyNDC))
+		{
+			// レティクルとの距離（画面上の距離）を計算
+			float dx = enemyNDC.x - reticleNDC.x;
+			float dy = enemyNDC.y - reticleNDC.y;
+			float distSq = dx * dx + dy * dy;
+
+			if (distSq < minDistanceSq)
+			{
+				minDistanceSq = distSq;
+				bestTarget = enemy.get();
+			}
+		}
+	}
+	return bestTarget;
+}
+
+bool EnemyManager::IsValidEnemy(const Enemy* enemyPtr) const
+{
+	// enemies_ リストの中にポインタがまだ存在するか確認（ダングリングポインタ対策）
+	for (const auto& enemy : enemies_)
+	{
+		if (enemy.get() == enemyPtr)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 Vector3 EnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
@@ -3843,16 +3920,9 @@ void EnemyManager::Pop()
 	enemy->SetEnemyBulletManager(&bulletManager_);
 	enemy->SetEventListener(comboAndScoreHandler_.get());
 	enemy->SetIsInGame(true);
+	enemy->SetCamera(camera_);
 	
 	enemies_.push_back(std::move(enemy));
-}
-
-void EnemyManager::SetCamera(CameraSystem::Camera* camera)
-{
-	for (auto& enemy : enemies_)
-	{
-		enemy->SetCamera(camera);
-	}
 }
 
 
@@ -3892,15 +3962,31 @@ public:
 	/// <summary>描画処理。</summary>
 	void Draw();
 
+	/// <summary>UI描画処理。</summary>
+	void DrawUI();
+
 	/// <summary>敵をポップ（出現）させる。</summary>
 	void Pop();
 
 public:
 	void SetTargetPos(TYEngine::Utility::Vector3* pos);
 
-	void SetCamera(TYEngine::CameraSystem::Camera* camera);
-
 	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
+
+	/// <summary>レティクルに最も近い未ロックオンの敵を取得する</summary>
+	Enemy* GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera, const TYEngine::Utility::Vector2& reticleNDC, float lockRadiusNDC, const std::vector<Enemy*>& alreadyLockedEnemies);
+
+	/// <summary>ポインタが現在も有効（生存しているか）確認する</summary>
+	bool IsValidEnemy(const Enemy* enemyPtr) const;
+
+	bool IsActive(const Enemy* enemyPtr) const
+	{
+		if (enemyPtr->GetCurrentState() == EnemyState::ACTIVE)
+		{
+			return true;
+		}
+		return false;
+	}
 
 private:
 	/// <summary>
@@ -4022,10 +4108,12 @@ File Path: project/application/Object/Player/Player.cpp
 #include "Input.h"
 #include "Timer.h"
 #include "Quaternion.h"
+#include "Sprite.h"
 #include "Effect/PlaneParticle.h"
 #include "Effect/ContrailBehaviour.h"
 #include "Effect/ParticleManager.h"
 #include "../../AppSystem/Audio/GameAudio.h"
+#include "../Enemy/EnemyManager/EnemyManager.h"
 
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
@@ -4073,7 +4161,8 @@ void Player::Init()
 	speed_ = { defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
 
 	// HP設定
-	hitPoint_ = 9;
+	maxHP_ = 100;
+	hitPoint_ = maxHP_;
 
 	// バレルロール
 	rollTime_ = 0.6f;
@@ -4129,7 +4218,28 @@ void Player::Init()
 	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
 	bulletManager_->SetCamera(camera_);
 	bulletManager_->Init();
+
+	hpSpr_ = std::make_unique<Sprite>();
+	hpSpr_->Initialize("Resources/Texture/white2x2.png");
+	hpSpr_->SetPosition({ 368,609 });
+	hpSpr_->SetSize({ 544,32 });
+	hpSpr_->SetColor({ 0.1f,1.0f,0.1f,1.0f });
+
+	hpSprBG_ = std::make_unique<Sprite>();
+	hpSprBG_->Initialize("Resources/Texture/white2x2.png");
+	hpSprBG_->SetPosition({ 368,609 });
+	hpSprBG_->SetSize({ 544,32 });
+	hpSprBG_->SetColor({ 1.0f,0.1f,0.1f,1.0f });
 	
+
+	for (auto&& spr : lockOnSpr_)
+	{
+		spr = std::make_unique<Sprite>();
+		spr->Initialize("Resources/Texture/reticle.png");
+		spr->SetAnchorPoint({ 0.5f,0.5f });
+		spr->SetColor({ 1,0,0,1 });
+	}
+
 	// レティクルの初期化
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
@@ -4162,6 +4272,13 @@ void Player::Update()
 	ParticleManager::GetInstance()->SetEmitter(3, e);
 	ParticleManager::GetInstance()->TriggerEmit(3, true);
 
+	hpSprBG_->Update();
+	if (hitPoint_ >= 0)
+	{
+		hpSpr_->SetSize({ 544.0f * (static_cast<float>(hitPoint_) / static_cast<float>(maxHP_)),32.0f });
+	}
+	hpSpr_->Update();
+
 	// ステート更新後の追加処理（移動反映や攻撃など）
 	PostStateUpdate();
 }
@@ -4177,6 +4294,54 @@ void Player::Draw()
 	}
 }
 
+void Player::DrawUI()
+{
+	if (!isDead_)
+	{
+		// ※画面解像度（ウィンドウサイズ）を取得
+		float screenWidth = TYEngine::Core::WindowsApp::kClientWidth;
+		float screenHeight = TYEngine::Core::WindowsApp::kClientHeight;
+
+		int index = 0;
+
+		for (Enemy* target : lockedEnemies_)
+		{
+			// 1. ダングリングポインタ対策：敵がまだ生きているか確認
+			if (enemyManager_ && enemyManager_->IsValidEnemy(target))
+			{
+				if(enemyManager_->IsActive(target))
+				{
+					Utility::Vector2 ndc;
+
+					// 2. 敵のワールド座標をNDCに変換
+					if (camera_->WorldToNDC(target->GetWorldPosition(), ndc))
+					{
+						// 3. NDC (-1.0 ~ 1.0) を スクリーン座標 (0 ~ Width/Height) に変換
+						// X座標: -1.0 -> 0,  0.0 -> Width/2,  1.0 -> Width
+						float screenX = (ndc.x + 1.0f) * 0.5f * screenWidth;
+
+						// Y座標: -1.0 -> Height,  0.0 -> Height/2,  1.0 -> 0 (Y軸反転)
+						float screenY = (1.0f - ndc.y) * 0.5f * screenHeight;
+
+						// 4. 計算したスクリーン座標 (screenX, screenY) に 
+						// ロックオン用の2Dスプライトを描画する
+						lockOnSpr_[index]->SetPosition({ screenX, screenY });
+						lockOnSpr_[index]->Update();
+						lockOnSpr_[index]->Draw();
+
+					}
+					index++;
+				}
+			}
+		}
+		if(isInGame_)
+		{
+			hpSprBG_->Draw();
+			hpSpr_->Draw();
+		}
+	}
+}
+
 
 ////////////////////// ちょっとおかしいので後に修正 //////////////////////
 void Player::TakeDamage()
@@ -4185,7 +4350,10 @@ void Player::TakeDamage()
 	// デバッグ時ダメージ処理（現在はなし）
 #else
 	// 通常ダメージ処理：HP減少
-	--hitPoint_;
+	if(isInGame_)
+	{
+		--hitPoint_;
+	}
 #endif // _DEBUG
 
 	if (hitPoint_ > 0)
@@ -4252,28 +4420,109 @@ void Player::PostStateUpdate()
 void Player::Attack()
 {
 	// クールタイムの減算
+	if (lockOnTimer_ > 0)
+	{
+		lockOnTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
+	}
+
+	// 現在の射撃ボタン入力状態
+	bool isPressing = input_->PushKey(DIK_LCONTROL) || input_->IsPressMouse(1);
+
+	// ▼ ボタンを押し続けている間（ロックオン・サーチフェーズ）
+	if (isPressing && lockOnTimer_ <= 0)
+	{
+		// まだ最大ロック数に達していない場合のみサーチ
+		if (lockedEnemies_.size() < maxLockCount_ && enemyManager_)
+		{
+			// reticle_ の画面座標は screenOffset_ とほぼ同義なのでそれを利用
+			Enemy* target = enemyManager_->GetBestLockOnTarget(camera_, screenOffset_, lockOnRadius_, lockedEnemies_);
+
+			if (target)
+			{
+				lockedEnemies_.push_back(target);
+				// TODO: ここで「カシュッ」というロックオン音を鳴らす
+				GameAudio::GetInstance()->Play("enter", false, SoundCategory::SE);
+				lockOnTimer_ = maxLockOnCool_;
+			}
+		}
+	} // ▼ ボタンを離した瞬間（一斉発射フェーズ）
+	else if (wasPressingShot_ && !isPressing)
+	{
+		if (!lockedEnemies_.empty())
+		{
+			currentBulletType_ = PlayerBulletType::HOMING; // ホーミング弾タイプ
+
+			// 散らすための角度計算用
+			int bulletCount = 0;
+			int totalBullets = static_cast<int>(lockedEnemies_.size());
+
+			for (Enemy* target : lockedEnemies_)
+			{
+				// ロックオン中に敵が倒されてポインタが無効になっていないか安全確認
+				if (enemyManager_->IsValidEnemy(target))
+				{
+					// 初期方向を散らす
+					// カメラの上方向と右方向を取得
+					Vector3 up = camera_->GetUp();
+					Vector3 right = camera_->GetRight();
+					Vector3 forward = camera_->GetForward();
+
+					// 弾のインデックスに応じて、左右・上に散らす角度を計算
+					// 例：-1.0 ~ 1.0 の間で左右に散らす
+					float spreadX = (totalBullets > 1) ? -1.0f + (2.0f * bulletCount / (totalBullets - 1)) : 0.0f;
+
+					// 上方向にも少し山なりに飛ばす
+					float spreadY = 0.5f;
+
+					// 初期方向ベクトルを合成（前方に進みつつ、上と左右に広がる）
+					Vector3 initialDir = forward + (right * spreadX) + (up * spreadY);
+					initialDir = Normalize(initialDir);
+
+					// 発射
+					bulletManager_->Fire(currentBulletType_, GetWorldPosition(), initialDir, target, enemyManager_);
+
+					bulletCount++;
+					// 発射音
+					GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+				}
+			}
+
+
+			// ロックオンリストをクリア
+			lockedEnemies_.clear();
+		}
+	}
+
+	// 次のフレームのために状態を保持
+	wasPressingShot_ = isPressing;
+
+
+	// クールタイムの減算
 	if (bulletTimer_ > 0)
 	{
 		bulletTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
 	}
-	
-	// 攻撃入力があり、クールタイムが解消されていれば発射
-	if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bulletTimer_ <= 0)
+	if (!isPressing)
 	{
-		currentBulletType_ = PlayerBulletType::NORMAL;
-		
-		// レティクル方向への発射ベクトル計算
-		Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
-		
-		// 弾発射
-		bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
-		
-		// 射撃音再生
-		GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
-		
-		// クールタイム設定
-		bulletTimer_ = bulletCoolTime_;
+		// 攻撃入力があり、クールタイムが解消されていれば発射
+		if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bulletTimer_ <= 0)
+		{
+			currentBulletType_ = PlayerBulletType::NORMAL;
+
+			// レティクル方向への発射ベクトル計算
+			Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
+
+			// 弾発射
+			bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+
+			// 射撃音再生
+			GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+
+			// クールタイム設定
+			bulletTimer_ = bulletCoolTime_;
+		}
 	}
+
 }
 
 void Player::Move()
@@ -4414,6 +4663,7 @@ File Path: project/application/Object/Player/Player.h
 #include "PlayerCollider.h"
 #include "JustCollider.h"
 #include "StateMachine.h"
+#include "Sprite.h"
 #include "PlayerBullet/PlayerBulletType.h"
 #include "PlayerBullet/PlayerBulletManager.h"
 #include "Reticle/Reticle.h"
@@ -4439,6 +4689,8 @@ namespace TYEngine
 }
 
 class Camera;
+class EnemyManager;
+class Enemy;
 
 class Player :
 	public BaseCharacter, public TYEngine::Utility::StateMachine<Player, PlayerState>
@@ -4465,6 +4717,12 @@ public:
     /// 3Dモデル、弾、レティクルの描画を行う。
     /// </summary>
     void Draw() override;
+
+	/// <summary>
+	/// 描画処理。
+	/// UIの描画を行う。
+	/// </summary>
+	void DrawUI();
 
 	/// <summary>
 	/// プレイヤーに使用させるカメラを設定する。
@@ -4509,6 +4767,10 @@ public:
 	void OnCollision() override;
 
 	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
+
+	void SetEnemyManager(EnemyManager* manager) { enemyManager_ = manager; }
+
+	void SetIsInGame(bool isInGame) { isInGame_ = isInGame; }
 
 private:
 	/// <summary>状態更新後の共通処理（フラグ管理など）。</summary>
@@ -4566,6 +4828,22 @@ private:
 	/// <summary>ジャスト回避判定用コライダー。</summary>
 	std::unique_ptr<JustCollider> justCollider_;
 
+
+
+	EnemyManager* enemyManager_ = nullptr; // 敵マネージャへのアクセス用
+	// ロックオン関連
+	std::vector<Enemy*> lockedEnemies_;
+	int maxLockCount_ = 8;          // 最大ロックオン数
+	float lockOnRadius_ = 10.0f;     // ロックオン判定の広さ
+	bool wasPressingShot_ = false;  // 前フレームでボタンを押していたか
+	const float maxLockOnCool_ = 0.3f;
+	float lockOnTimer_ = 0.0f;
+	/// <summary>ロックオンスプライト。</summary>
+	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, 8> lockOnSpr_;
+
+
+
+
 	/// <summary>コライダーのスケール。</summary>
 	float colliderScale_ = 0.0f;
 	/// <summary>カメラからの深度距離。</summary>
@@ -4589,7 +4867,10 @@ private:
 	float deltaTime_ = 0.0f;
 
 	/// <summary>ヒットポイント。</summary>
+	int maxHP_ = 0;
 	int hitPoint_ = 0;
+	std::unique_ptr<TYEngine::Graphics::Sprite> hpSprBG_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> hpSpr_;
 
 
 	// 姿勢
@@ -4653,6 +4934,8 @@ private:
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
 
+	bool isInGame_ = false;
+
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
@@ -4700,6 +4983,271 @@ private: // シーン内のState関連関数
 	void InitDead();
 	void UpdateDead();
 	void ExitDead();
+#pragma endregion
+};
+
+
+
+============================================================
+File Path: project/application/Object/Player/PlayerBullet/HomingBullet/PlayerBulletHoming.cpp
+============================================================
+#include "PlayerBulletHoming.h"
+#include "../../../ColliderTypeID/ColliderTypeID.h"
+#include "Timer.h"
+#include "ColliderManager.h"
+#include "../../../Enemy/EnemyManager/EnemyManager.h"
+
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+
+#define HOMING_BULLET_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(PlayerBulletHoming, stateEnum, funcName)
+
+const std::vector<StateMachine<PlayerBulletHoming, HomingBulletState>::StateFunctionSet>& PlayerBulletHoming::GetStateTable()
+{
+	using enum HomingBulletState;
+	static const std::vector<StateFunctionSet> stateTable = {
+		HOMING_BULLET_ENTRY(SHOT, Shot),
+		HOMING_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
+	};
+	return stateTable;
+}
+
+PlayerBulletHoming::PlayerBulletHoming()
+{
+	RegisterFromDefaultTable(this);
+}
+
+PlayerBulletHoming::~PlayerBulletHoming()
+{
+	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+}
+
+void PlayerBulletHoming::Init()
+{
+	// 3Dモデル生成
+	obj_ = std::make_unique<Object3d>();
+	obj_->Initialize();
+	obj_->SetModel("unitSphere.obj");
+	obj_->SetColor({ 1.0f, 0.2f, 0.2f, 1.0f });
+
+	// トランスフォーム初期化
+	worldTransform_.Initialize();
+	//worldTransform_.SetScale({ scale_, scale_, scale_ });
+	worldTransform_.SetScale({ scale_ * 0.4f, scale_ * 0.4f, scale_ * 6.0f });
+	worldTransform_.Update();
+
+	// コライダー生成（Ray判定用など、適切な型を指定）
+	collider_ = std::make_unique<PBulletCollider>(
+		static_cast<uint32_t>(ColliderTypeID::P_BULLET),
+		GetWorldPosition(),
+		colliderScale_,
+		this
+	);
+	ColliderManager::GetInstance()->AddCollider(collider_.get());
+
+	// 初期状態を直線移動（LINER）に設定
+	ChangeState(HomingBulletState::SHOT);
+
+	defaultSpeed_ = 25.0f;
+
+	homingT_ = 0.1f;
+}
+
+void PlayerBulletHoming::Update()
+{
+	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+
+	// カメラ移動分の補正（必要に応じて）
+	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
+
+	// ステート更新（移動処理などはここで行われる）
+	UpdateState(deltaTime_);
+
+	// コライダー同期
+	collider_->Update(GetWorldPosition());
+}
+
+void PlayerBulletHoming::Draw()
+{
+	obj_->Draw(worldTransform_);
+}
+
+
+/////////////////////////////////////////////////////////
+void PlayerBulletHoming::InitShot() {}
+
+void PlayerBulletHoming::UpdateShot()
+{
+	// 寿命を超えたら死亡フラグを true にし、削除対象とする
+	if (GetStateElapsedTime() > lifeTime_)
+	{
+		isDead_ = true;
+	}
+
+	// 移動処理
+	Move();
+	// 進行方向に合わせて回転
+	RotationDirection();
+	
+	worldTransform_.Update();
+}
+
+void PlayerBulletHoming::ExitShot() {}
+
+void PlayerBulletHoming::Move()
+{
+	if(enemyMgr_)
+	{
+		if(target_)
+		{
+			Enemy* enemyTarget = static_cast<Enemy*>(target_);
+			if (enemyMgr_->IsValidEnemy(enemyTarget))
+			{
+				if(enemyMgr_->IsActive(enemyTarget))
+				{
+					Vector3 idealDir = Normalize(target_->GetWorldPosition() - GetWorldPosition());
+
+					// 時間経過でホーミング係数を強くする
+					// GetStateElapsedTime() は発射からの経過時間
+					float timeRatio = GetStateElapsedTime() / 1.0f; // 0.5秒かけて最大ホーミング力になる
+					timeRatio = std::clamp(timeRatio, 0.0f, 0.5f);
+
+					// 初期の弱いホーミング力（例: 0.01f）から、最大ホーミング力（例: 0.15f）へ
+					float currentHomingT = std::lerp(0.01f, 0.3f, timeRatio);
+
+					// 現在の進行方向 direction_ を idealDir に向かって球面線形補間する
+					direction_ = Normalize(Slerp(direction_, idealDir, currentHomingT));
+				}
+			}
+			else
+			{
+				target_ = nullptr;
+			}
+		}
+	}
+	// 速度ベクトルの計算
+	velocity_ = direction_ * defaultSpeed_ * deltaTime_;
+
+	// 座標更新
+	worldTransform_.SetTranslation(worldTransform_.GetTranslation() + velocity_);
+
+}
+
+void PlayerBulletHoming::RotationDirection()
+{
+	// 進行方向（Y軸回転 Yaw）を計算
+	float yaw = std::atan2(direction_.x, direction_.z);
+
+	// 進行方向（X軸回転 Pitch）を計算
+	float lenXZ = std::sqrt(direction_.x * direction_.x + direction_.z * direction_.z);
+	float pitch = std::atan2(-direction_.y, lenXZ);
+
+	// Roll（横傾き）は固定
+	float roll = 0.0f;
+
+	// 回転を適用
+	worldTransform_.SetRotate({ pitch, yaw, roll });
+	worldTransform_.Update();
+}
+
+
+/////////////////////////////////////////////////////////////////
+void PlayerBulletHoming::InitAfterCollision()
+{
+	// 着弾後は即座に消滅（エフェクトなどはOnCollisionで生成済み）
+	isDead_ = true;
+}
+
+void PlayerBulletHoming::UpdateAfterCollision() {}
+
+void PlayerBulletHoming::ExitAfterCollision() {}
+
+
+
+
+
+============================================================
+File Path: project/application/Object/Player/PlayerBullet/HomingBullet/PlayerBulletHoming.h
+============================================================
+#pragma once
+#include "../../../BaseBullet/BaseBullet.h"
+#include "StateMachine.h"
+
+#include "../PBulletCollider.h"
+
+/// <summary>
+/// 通常弾の状態定数。
+/// </summary>
+enum class HomingBulletState
+{
+	SHOT,				///< 発射状態
+	AFTER_COLLISION,	///< 衝突後（着弾エフェクト等）
+};
+
+class EnemyManager;
+
+/// <summary>
+/// プレイヤーの通常弾クラス。
+/// 直進挙動と衝突後の挙動をステートマシンで管理する。
+/// </summary>
+class PlayerBulletHoming :
+	public BaseBullet, TYEngine::Utility::StateMachine<PlayerBulletHoming, HomingBulletState>
+{
+public: // 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
+
+public:
+	PlayerBulletHoming();
+	~PlayerBulletHoming();
+	void Init()override;
+	void Update()override;
+	void Draw()override;
+
+	void SetEnemyManager(EnemyManager* enemyMgr) { enemyMgr_ = enemyMgr; }
+
+private:
+	/// <summary>移動処理（直進）。</summary>
+	void Move();
+	/// <summary>進行方向に合わせた回転更新。</summary>
+	void RotationDirection();
+
+private:
+	/// <summary>弾用コライダー。</summary>
+	std::unique_ptr<PBulletCollider> collider_;
+
+	/// <summary>固定タイムステップ（60FPS想定）。</summary>
+	float deltaTime_ = 0.0f;
+
+	// <summary>ホーミング強度係数。</summary>
+	float homingT_ = 0.0f;
+
+	EnemyManager* enemyMgr_ = nullptr;
+
+private: // シーン内のState関連関数
+#pragma region // State関連関数
+	// 列挙名を文字列化（ImGui表示用）
+	std::string GetStateName(State state) const override
+	{
+		switch (state)
+		{
+		case State::SHOT: return "SHOT";
+		case State::AFTER_COLLISION: return "AFTER_COLLISION";
+		default: return "Unknown";
+		}
+	}
+
+	// 直線移動
+	// ShotState.cpp
+	void InitShot();
+	void UpdateShot();
+	void ExitShot();
+
+	// 衝突後処理
+	// AfterCollisionState.cpp
+	void InitAfterCollision();
+	void UpdateAfterCollision();
+	void ExitAfterCollision();
 #pragma endregion
 };
 
@@ -4995,6 +5543,8 @@ File Path: project/application/Object/Player/PlayerBullet/PlayerBulletManager.cp
 ============================================================
 #include "PlayerBulletManager.h"
 #include "NormalBullet/PlayerBulletNormal.h"
+#include "HomingBullet/PlayerBulletHoming.h"
+#include "../../Enemy/EnemyManager/EnemyManager.h"
 
 using namespace TYEngine::Utility;
 
@@ -5028,7 +5578,7 @@ void PlayerBulletManager::Draw()
 	}
 }
 
-void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const Vector3& direction)
+void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const Vector3& direction, Enemy* target, EnemyManager* mgr)
 {
 	using enum PlayerBulletType;
 	std::unique_ptr<BaseBullet> bullet;
@@ -5045,7 +5595,19 @@ void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const 
 		bullets_.push_back(std::move(bullet));
 		break;
 	case HOMING:
-		// ホーミング弾（未実装）
+		// ホーミング弾の生成と初期設定
+		bullet = std::make_unique<PlayerBulletHoming>();
+		bullet->SetCamera(camera_);
+		bullet->Init();
+		bullet->SetTranslation(pos);
+		bullet->SetShotDirection(direction);
+		if(mgr)
+		{
+			if (mgr->IsValidEnemy(target)) bullet->SetTargetObject(target);
+			dynamic_cast<PlayerBulletHoming*>(bullet.get())->SetEnemyManager(mgr);
+		}
+
+		bullets_.push_back(std::move(bullet));
 		break;
 	case CHARGE:
 		// チャージ弾（未実装）
@@ -5068,6 +5630,8 @@ File Path: project/application/Object/Player/PlayerBullet/PlayerBulletManager.h
 #include "Camera.h"
 
 class Player;
+class Enemy;
+class EnemyManager;
 /// <summary>
 /// プレイヤーの弾を一括管理するクラス。
 /// 発射、更新、描画、衝突判定などを統括する。
@@ -5100,7 +5664,7 @@ public:
 	/// <param name="type">弾の種類（NORMAL, MISSILEなど）。</param>
 	/// <param name="pos">発射位置（ワールド座標）。</param>
 	/// <param name="direction">発射方向（正規化ベクトル）。</param>
-	void Fire(PlayerBulletType type, const TYEngine::Utility::Vector3& pos, const TYEngine::Utility::Vector3& direction);
+	void Fire(PlayerBulletType type, const TYEngine::Utility::Vector3& pos, const TYEngine::Utility::Vector3& direction, Enemy* target = nullptr, EnemyManager* mgr = nullptr);
 
 	/// <summary>
 	/// カメラを設定する（ビルボード用）。
@@ -6065,7 +6629,7 @@ void RailManager::Reset()
 	RebuildTriggerSFromSegments();
 
 	speedMultiply_ = 0.35f;
-	speedMps_ = 5.0f;
+	speedMps_ = 3.5f;
 
 	// 弧長の初期値
 	eyeS_ = 0.0f;
@@ -7680,6 +8244,7 @@ void GameScene::UIDraw()
 		{
 			playUI_->DrawRT();
 		}
+		stageManager_->DrawUI();
 
 		if (GetCurrentState() == GameSceneState::READY)
 		{
@@ -8281,7 +8846,7 @@ void PlayUI::Init()
 	sprites_[COMBO_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
 	sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/HpText.png");
+	/*TextureManager::GetInstance()->LoadTexture("Resources/Texture/HpText.png");
 	sprites_[HP_TEXT] = std::make_unique<Sprite>();
 	sprites_[HP_TEXT]->Initialize("Resources/Texture/HpText.png");
 	sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
@@ -8292,7 +8857,7 @@ void PlayUI::Init()
 	sprites_[HP_NUM_TEXT]->Initialize("Resources/Texture/number.png");
 	sprites_[HP_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
 	sprites_[HP_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
-	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));
+	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));*/
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	sprites_[OPERATION] = std::make_unique<Sprite>();
@@ -8327,12 +8892,12 @@ void PlayUI::DebugJMApply()
 	sprites_[COMBO_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
 	sprites_[COMBO_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
 
-	sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
+	/*sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
 	sprites_[HP_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.HpText.Position"));
 
 	sprites_[HP_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
 	sprites_[HP_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
-	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));
+	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));*/
 
 	sprites_[OPERATION]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.Operation.Size"));
 	sprites_[OPERATION]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
@@ -8481,7 +9046,7 @@ public:
 	void SetScoreDraw(ScoreUI* scoreDraw) { scoreDraw_ = scoreDraw; }
 
 	/// <summary>HPの数値表示を設定。</summary>
-	void SetHPNum(int hp = 0) { sprites_[HP_NUM_TEXT]->SetTextureLeftTop({ sprites_[HP_NUM_TEXT]->GetSize().x * float(hp),0 }); }
+	void SetHPNum(int hp = 0) { /*sprites_[HP_NUM_TEXT]->SetTextureLeftTop({ sprites_[HP_NUM_TEXT]->GetSize().x * float(hp),0 })*/(void)hp; }
 
 	/// <summary>シフトガイドの位置を設定。</summary>
 	void SetShiftPos(const TYEngine::Utility::Vector2& pos);
@@ -8507,8 +9072,8 @@ private:
 	{
 		COMBO_TEXT,
 		COMBO_NUM_TEXT,
-		HP_TEXT,
-		HP_NUM_TEXT,
+		/*HP_TEXT,
+		HP_NUM_TEXT,*/
 		OPERATION,
 		OUTLINE,
 		PAUSE,
@@ -9545,6 +10110,120 @@ public:
 
 
 ============================================================
+File Path: project/application/Scene/TitleScene/TItleSceneStates/TitleSceneDebug.cpp
+============================================================
+#include "../TitleScene.h"
+#include "../../../AppSystem/Audio/GameAudio.h"
+#include "Timer.h"
+#ifdef _DEBUG
+#include "imgui.h"
+#endif // _DEBUG
+
+using namespace TYEngine::Utility;
+
+void TitleScene::DebugUpdate()
+{
+#ifdef _DEBUG
+	audioAnalyzer_.Draw();
+	beatAnalyzer_.Draw();
+	static int bgmH = -1;
+
+	if (input_->TriggerKey(DIK_M))
+	{
+		bgmH = gameAudio_->Play("418", false, SoundCategory::BGM);
+		gameAudio_->SetSoundVolume(bgmH, 1.0f);
+	}
+	if (input_->TriggerKey(DIK_P))
+	{
+		gameAudio_->Pause(bgmH);
+	}
+	if (input_->TriggerKey(DIK_O))
+	{
+		gameAudio_->Resume(bgmH);
+	}
+
+	// ImGui で編集
+	ImGui::Begin("JSON Editor");
+	static JsonImGuiEditor inspector(titleJM);
+	inspector.Draw(titleJM.Root(), "Title.json");
+	if (ImGui::Button("Save")) titleJM.Save();
+	ImGui::End();
+
+	DebugJMApply();
+
+	static float timer = 0.0f;
+	if (beatAnalyzer_.GetBeat())
+	{
+		timer = 0.0f;
+		player_->SetScale({ 0.3f,0.3f,0.3f });
+	}
+	else
+	{
+		timer += Timer::GetInstance()->GetDeltaTime();
+		player_->SetScale(Lerp(Vector3{ 0.3f,0.3f,0.3f }, Vector3{ 0.2f,0.2f,0.2f }, timer));
+	}
+#endif // _DEBUG
+}
+
+void TitleScene::DebugJMApply()
+{
+	enterSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
+	enterSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
+	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
+	camera_->SetRotate(titleJM.Get<Vector3>("config.Camera.Rotate"));
+	camera_->SetTranslate(titleJM.Get<Vector3>("config.Camera.Position"));
+	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
+	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
+	rotateSpeed_ = titleJM.Get<float>("config.ground.rotateSpeed");
+}
+
+============================================================
+File Path: project/application/Scene/TitleScene/TItleSceneStates/TitleSceneLoad.cpp
+============================================================
+#include "../TitleScene.h"
+
+#include "TextureManager.h"
+
+#include "../../../AppSystem/Audio/GameAudio.h"
+
+using namespace TYEngine::Graphics;
+using namespace TYEngine::Debugger;
+
+void TitleScene::Load()
+{
+	//========== ロード ==========//
+	
+	// タイトル用JSONデータのロード
+	titleJM.Load("Title.json", true, &err);
+#ifdef _DEBUG
+	Log(err);
+#endif // _DEBUG
+	gameAudio_ = GameAudio::GetInstance();
+
+	//========== サウンドリソースロード ==========//
+	gameAudio_->LoadSound("open");
+	gameAudio_->LoadSound("close");
+	gameAudio_->LoadSound("slide");
+	gameAudio_->LoadSound("enter");
+	gameAudio_->LoadSound("fanfare");
+	gameAudio_->LoadSound("gameBGM");
+	gameAudio_->LoadSound("gekiha");
+	gameAudio_->LoadSound("damageE");
+	gameAudio_->LoadSound("damageP");
+	gameAudio_->LoadSound("roll");
+	gameAudio_->LoadSound("attack");
+	gameAudio_->LoadSound("418");
+
+	//========== テクスチャロード ==========//
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Enter.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Title.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
+}
+
+============================================================
 File Path: project/application/Scene/TitleScene/TitleScene.cpp
 ============================================================
 #include "TitleScene.h"
@@ -9556,7 +10235,6 @@ File Path: project/application/Scene/TitleScene/TitleScene.cpp
 #include "../Transition/TransitionManager.h"
 #include "CubemapBasis.h"
 #include "Timer.h"
-#include "Audio/Audio.h"
 #include "../../AppSystem/Audio/GameAudio.h"
 #ifdef _DEBUG
 #include "imgui.h"
@@ -9575,30 +10253,9 @@ TitleScene::~TitleScene()
 
 void TitleScene::Init()
 {
-	//========== ロード ==========//
-
-	// タイトル用JSONデータのロード
-	titleJM.Load("Title.json", true, &err);
-#ifdef _DEBUG
-	Log(err);
-#endif // _DEBUG
-	gameAudio_ = GameAudio::GetInstance();
-	// 必要なサウンドリソースの読み込み
-	gameAudio_->LoadSound("open");
-	gameAudio_->LoadSound("close");
-	gameAudio_->LoadSound("slide");
-	gameAudio_->LoadSound("enter");
-	gameAudio_->LoadSound("fanfare");
-	gameAudio_->LoadSound("gameBGM");
-	gameAudio_->LoadSound("gekiha");
-	gameAudio_->LoadSound("damageE");
-	gameAudio_->LoadSound("damageP");
-	gameAudio_->LoadSound("roll");
-	gameAudio_->LoadSound("attack");
-	gameAudio_->LoadSound("418");
+	Load();
 
 	beatAnalyzer_.Init("gameBGM", gameAudio_->CategoryToString(SoundCategory::BGM));
-
 
 	bgmHandle_ = gameAudio_->Play("gameBGM", false, SoundCategory::BGM);
 	gameAudio_->SetSoundVolume(bgmHandle_, 1.0f);
@@ -9612,23 +10269,19 @@ void TitleScene::Init()
 
 	//========== テクスチャ初期化 ==========//
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Enter.png");
-	spaceSpr_ = std::make_unique<Sprite>();
-	spaceSpr_->Initialize("Resources/Texture/Enter.png");
-	spaceSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
-	spaceSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
+	enterSpr_ = std::make_unique<Sprite>();
+	enterSpr_->Initialize("Resources/Texture/Enter.png");
+	enterSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
+	enterSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Title.png");
 	text_ = std::make_unique<Sprite>();
 	text_->Initialize("Resources/Texture/Title.png");
 	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	operation_ = std::make_unique<Sprite>();
 	operation_->Initialize("Resources/Texture/Operation.png");
 	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
@@ -9663,75 +10316,25 @@ void TitleScene::Init()
 	player_->SetScreenOffset(titleJM.Get<Vector2>("config.Player.ScreenOffset"));
 	player_->SetBGMHandle(bgmHandle_);
 
-	// タイトル画面の演出用敵マネージャ
+	// タイトル画面の敵マネージャ
 	enemyMgr_.Init(camera_);
 	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
-}
 
-void TitleScene::DebugJMApply()
-{
-	spaceSpr_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Enter.AnchorPoint"));
-	spaceSpr_->SetPosition(titleJM.Get<Vector2>("config.texture.Enter.Position"));
-	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
-	camera_->SetRotate(titleJM.Get<Vector3>("config.Camera.Rotate"));
-	camera_->SetTranslate(titleJM.Get<Vector3>("config.Camera.Position"));
-	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
-	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
-	rotateSpeed_ = titleJM.Get<float>("config.ground.rotateSpeed");
+	player_->SetEnemyManager(&enemyMgr_);
 }
 
 void TitleScene::Update() {
 	// シーン遷移更新
 	Transition();
-	enemyMgr_.SetCamera(camera_);
-#ifdef _DEBUG
-
-	audioAnalyzer_.Update();
-	audioAnalyzer_.Draw();
 	beatAnalyzer_.Update();
-	beatAnalyzer_.Draw();
-	static int bgmH = -1;
+	audioAnalyzer_.Update();
 
-	if (input_->TriggerKey(DIK_M))
-	{
-		bgmH = gameAudio_->Play("418", false, SoundCategory::BGM);
-		gameAudio_->SetSoundVolume(bgmH, 1.0f);
-	}
-	if (input_->TriggerKey(DIK_P))
-	{
-		Audio::GetInstance()->Pause(bgmH);
-	}
-	if (input_->TriggerKey(DIK_O))
-	{
-		Audio::GetInstance()->Resume(bgmH);
-	}
+	// デバッグ用更新処理
+	DebugUpdate();
 
-	// ImGui で編集
-	ImGui::Begin("JSON Editor");
-	static JsonImGuiEditor inspector(titleJM);
-	inspector.Draw(titleJM.Root(), "Title.json");
-	if (ImGui::Button("Save")) titleJM.Save();
-	ImGui::End();
-
-	DebugJMApply();
-
-	static float timer = 0.0f;
-	if (beatAnalyzer_.GetBeat())
-	{
-		timer = 0.0f;
-		player_->SetScale({ 0.3f,0.3f,0.3f });
-	}
-	else
-	{
-		timer += Timer::GetInstance()->GetDeltaTime();
-		player_->SetScale(Lerp(Vector3{ 0.3f,0.3f,0.3f } , Vector3{ 0.2f,0.2f,0.2f }, timer));
-	}
-
-#else // Release
-
-#endif // _DEBUG
 	// UI更新
-	spaceSpr_->Update();
+	(enterSpr_->IsMouseHover()) ? enterSpr_->SetScale({ 1.2f,1.2f }) : enterSpr_->SetScale({ 1.0f,1.0f });
+	enterSpr_->Update();
 	text_->Update();
 	operation_->Update();
 	reticle_->Update();
@@ -9775,22 +10378,23 @@ void TitleScene::Draw()
 void TitleScene::UIDraw()
 {
 	SpriteBasis::GetInstance()->BasisDrawSetting();
-	spaceSpr_->Draw();
+	enterSpr_->Draw();
 	text_->Draw();
 	operation_->Draw();
+	player_->DrawUI();
 	reticle_->Draw();
 }
 
 void TitleScene::Transition()
 {
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_RETURN))
+	if (input_->TriggerKey(DIK_RETURN) || enterSpr_->IsMouseClicked(0))
 	{
 		sceneManager_->ChangeScene("GAME");
 		gameAudio_->Stop(bgmHandle_);
 	}
 #else
-	if (input_->TriggerKey(DIK_RETURN))
+	if (input_->TriggerKey(DIK_RETURN) || enterSpr_->IsMouseClicked(0))
 	{
 		// 決定音再生
 		gameAudio_->Play("enter", false, SoundCategory::UI);
@@ -9869,9 +10473,15 @@ private:
 	/// <summary>JSONパラメータの反映（デバッグ用）。</summary>
 	void DebugJMApply();
 
+	/// <summary>JSONパラメータの反映（デバッグ用）。</summary>
+	void DebugUpdate();
+
+	/// <summary>ロードまとめ。</summary>
+	void Load();
+
 private:
 	/// <summary>スペース（Press Space）表示スプライト。</summary>
-	std::unique_ptr<TYEngine::Graphics::Sprite> spaceSpr_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> enterSpr_;
 	/// <summary>タイトルテキストスプライト。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> text_;
 	/// <summary>操作説明スプライト。</summary>
@@ -11022,6 +11632,7 @@ void Stage::Init()
     player_ = std::make_unique<Player>();
     player_->SetCamera(camera_);
     player_->Init();
+    player_->SetIsInGame(true);
 
     // マネージャ群（コンボ、スコア）初期化
     comboManager_ = std::make_unique<ComboManager>();
@@ -11034,12 +11645,14 @@ void Stage::Init()
     enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
     enemyMgr_.Init(camera_);
 
+    player_->SetEnemyManager(&enemyMgr_);
+
     // レール管理初期化
     railManager_ = std::make_unique<RailManager>();
     railManager_->SetCamera(camera_);
     railManager_->Init();
 
-    Reset();
+    railManager_->Reset();
 
     // 背景（地面）オブジェクト初期化
     ground_ = std::make_unique<Object3d>();
@@ -11051,7 +11664,10 @@ void Stage::Init()
 
 void Stage::Reset()
 {
+    enemyMgr_.Reset();
     railManager_->Reset();
+    comboManager_->Init();
+    scoreManager_->Init();
 }
 
 void Stage::Update()
@@ -11060,9 +11676,6 @@ void Stage::Update()
 
     beatAnalyzer_.Update();
     beatAnalyzer_.Draw();
-
-    // カメラ情報の更新
-    enemyMgr_.SetCamera(camera_);
 
     // レール更新（カメラ移動・トリガー判定）
     railManager_->Update();
@@ -11095,6 +11708,12 @@ void Stage::Draw()
     railManager_->Draw();
     enemyMgr_.Draw();
     player_->Draw();
+}
+
+void Stage::DrawUI()
+{
+    enemyMgr_.DrawUI();
+    player_->DrawUI();
 }
 
 void Stage::EditUpdate()
@@ -11164,6 +11783,12 @@ public:
 	/// 背景、レール、敵、プレイヤーの描画コマンドを発行する。
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// ステージの描画処理。
+	/// UIの描画コマンドを発行する。
+	/// </summary>
+	void DrawUI();
 
 	/// <summary>
 	/// レールエディタ用の更新処理。
@@ -11289,6 +11914,14 @@ void StageManager::Draw()
     if (!stages_.empty()) 
     {
         GetCurrentStage()->Draw();
+    }
+}
+
+void StageManager::DrawUI()
+{
+    if (!stages_.empty())
+    {
+        GetCurrentStage()->DrawUI();
     }
 }
 
@@ -11477,6 +12110,8 @@ public:
     void Update();
     /// <summary>描画処理。</summary>
     void Draw();
+    /// <summary>UI描画処理。</summary>
+    void DrawUI();
     
     /// <summary>
     /// エディタ用更新処理。
@@ -14464,6 +15099,29 @@ namespace TYEngine
 			viewMatrix_ = Inverse(worldMatrix_);
 		}
 
+		bool Camera::WorldToNDC(const Utility::Vector3& worldPos, Utility::Vector2& outNDC) const
+		{
+			// ビュー×プロジェクション行列を使用
+			Utility::Matrix4x4 vp = worldViewProjectionMatrix_;
+
+			// W成分（カメラからの深度）を計算
+			float w = worldPos.x * vp.m[0][3] + worldPos.y * vp.m[1][3] + worldPos.z * vp.m[2][3] + vp.m[3][3];
+
+			// カメラの後ろにいる場合は除外
+			if (w < 0.1f) return false;
+
+			// X, Y成分を計算してWで割る（正規化デバイス座標へ）
+			float x = worldPos.x * vp.m[0][0] + worldPos.y * vp.m[1][0] + worldPos.z * vp.m[2][0] + vp.m[3][0];
+			float y = worldPos.x * vp.m[0][1] + worldPos.y * vp.m[1][1] + worldPos.z * vp.m[2][1] + vp.m[3][1];
+
+			outNDC.x = x / w;
+			outNDC.y = y / w;
+
+			// NDC範囲（-1.0 ~ 1.0）内に収まっているか判定
+			return (outNDC.x >= -1.0f && outNDC.x <= 1.0f &&
+				outNDC.y >= -1.0f && outNDC.y <= 1.0f);
+		}
+
 	} // namespace Camera
 } // namespace TYEngine
 
@@ -14509,6 +15167,14 @@ namespace TYEngine
 			/// </summary>
 			/// <returns>シェイク中なら true。</returns>
 			bool ShakeActive() { return shakeController_.IsActive(); }
+
+			/// <summary>
+			/// ワールド座標をNDC（正規化デバイス座標系）に変換する
+			/// </summary>
+			/// <param name="worldPos">対象のワールド座標</param>
+			/// <param name="outNDC">変換後のNDC（x, y共に -1.0 ~ 1.0）</param>
+			/// <returns>画面の表示範囲内かつカメラ前方なら true </returns>
+			bool WorldToNDC(const Utility::Vector3& worldPos, Utility::Vector2& outNDC) const;
 
 		private: // メンバ変数
 			/// <summary>カメラのトランスフォーム（位置・回転・スケール）。</summary>
@@ -20442,6 +21108,8 @@ File Path: project/engine/Graphics/Sprite/Sprite.cpp
 #include "Matrix4x4Func.h"
 #include "struct.h"
 #include "TextureManager.h"
+#include "Input.h"
+#include <algorithm>
 
 
 namespace TYEngine
@@ -20470,8 +21138,8 @@ namespace TYEngine
 			SetSpriteData();
 
 			transform_.translate = { position_.x, position_.y, 0.0f };
-			transform_.rotate = { 0.0f, 0.0f, rotation_ };
-			transform_.scale = { size_.x, size_.y, 1.0f };
+			transform_.rotate = { 0.0f, 0.0f, rotation_ }; 
+			transform_.scale = { size_.x * scale_.x, size_.y * scale_.y, 1.0f };
 
 			// Transform情報を作る
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
@@ -20630,6 +21298,65 @@ namespace TYEngine
 			size_ = textureSize_;
 		}
 
+		bool Sprite::IsPointInside(const Vector2& point) const
+		{
+			// アンカーポイントを基準にしたローカルの端座標を計算
+			float baseLeft = 0.0f - anchorPoint_.x;
+			float baseRight = 1.0f - anchorPoint_.x;
+			float baseTop = 0.0f - anchorPoint_.y;
+			float baseBottom = 1.0f - anchorPoint_.y;
+
+			// フリップ（反転）状態の反映
+			if (isFlipX_)
+			{
+				baseLeft = -baseLeft;
+				baseRight = -baseRight;
+			}
+			if (isFlipY_)
+			{
+				baseTop = -baseTop;
+				baseBottom = -baseBottom;
+			}
+			// 実際の幅と高さを「サイズ × スケール」で計算する
+			float actualWidth = size_.x * scale_.x;
+			float actualHeight = size_.y * scale_.y;
+
+			// actualWidth / actualHeight とワールド座標を乗算・加算して実際の画面座標を算出
+			float actualLeft = position_.x + baseLeft * actualWidth;
+			float actualRight = position_.x + baseRight * actualWidth;
+			float actualTop = position_.y + baseTop * actualHeight;
+			float actualBottom = position_.y + baseBottom * actualHeight;
+
+			// フリップによって左右・上下が入れ替わっていても正しく判定できるよう、最小値と最大値を取る
+			float minX = std::min<float>(actualLeft, actualRight);
+			float maxX = std::max<float>(actualLeft, actualRight);
+			float minY = std::min<float>(actualTop, actualBottom);
+			float maxY = std::max<float>(actualTop, actualBottom);
+
+			// 指定座標が矩形領域内にあるか判定
+			if (point.x >= minX && point.x <= maxX &&
+				point.y >= minY && point.y <= maxY)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		bool Sprite::IsMouseHover() const
+		{
+			// Inputシングルトンから現在のマウス座標を取得して判定
+			Vector2 mousePos = Framework::Input::GetInstance()->GetMousePosition();
+			return IsPointInside(mousePos);
+		}
+
+		bool Sprite::IsMouseClicked(int32_t buttonNumber) const
+		{
+			// マウスが乗っている ＆＆ 指定したボタンが押された瞬間か
+			auto input = Framework::Input::GetInstance();
+			return IsMouseHover() && input->IsTriggerMouse(buttonNumber);
+		}
+
 	} // namespace Graphics
 } // namespace TYEngine
 
@@ -20688,6 +21415,31 @@ namespace TYEngine
 			void DrawRect(const Utility::Vector2& lt, const Utility::Vector2& rt, const Utility::Vector2& lb, const Utility::Vector2& rb);
 
 			// ========================
+			//         当たり判定
+			// ========================
+
+			/// <summary>
+			/// 指定した座標がスプライトの矩形内にあるか判定する（回転未考慮）。
+			/// </summary>
+			/// <param name="point">判定したい座標</param>
+			/// <returns>矩形内にあれば true</returns>
+			bool IsPointInside(const Utility::Vector2& point) const;
+
+			/// <summary>
+			/// 現在のマウスカーソルがスプライト上に重なっているか判定する。
+			/// </summary>
+			/// <returns>マウスが重なっていれば true</returns>
+			bool IsMouseHover() const;
+
+			/// <summary>
+			/// スプライト上でマウスボタンがクリック（トリガー）されたか判定する。
+			/// </summary>
+			/// <param name="buttonNumber">0:左クリック, 1:右クリック, 2:中クリック</param>
+			/// <returns>クリックされた瞬間なら true</returns>
+			bool IsMouseClicked(int32_t buttonNumber = 0) const;
+
+
+			// ========================
 			//         Getter
 			// ========================
 
@@ -20709,6 +21461,8 @@ namespace TYEngine
 			const bool& GetIsFlipX() const { return isFlipX_; }
 			/// <summary>上下反転フラグを取得する。</summary>
 			const bool& GetIsFlipY() const { return isFlipY_; }
+			/// <summary>スケール（倍率）を取得する。</summary>
+			const Utility::Vector2& GetScale() const { return scale_; }
 
 			// ========================
 			//         Setter
@@ -20734,6 +21488,10 @@ namespace TYEngine
 			void SetIsFlipX(bool isFlipX) { isFlipX_ = isFlipX; }
 			/// <summary>上下反転フラグを設定する。</summary>
 			void SetIsFlipY(bool isFlipY) { isFlipY_ = isFlipY; }
+			/// <summary>スケール（倍率）をX, Y個別に設定する。</summary>
+			void SetScale(const Utility::Vector2& scale) { scale_ = scale; }
+			/// <summary>スケール（倍率）を縦横等倍で設定する。</summary>
+			void SetScale(float scale) { scale_ = { scale, scale }; }
 
 			/// <summary>
 			/// 頂点位置を個別に設定する。
@@ -20795,15 +21553,15 @@ namespace TYEngine
 			//     GPU リソース関連
 			// ========================
 
-			Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;             ///< インデックスバッファ。
-			Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;            ///< 頂点バッファ。
-			Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;          ///< マテリアル定数バッファ。
-			Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_; ///< 行列定数バッファ。
+			Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;					///< インデックスバッファ。
+			Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;					///< 頂点バッファ。
+			Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;				///< マテリアル定数バッファ。
+			Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;	///< 行列定数バッファ。
 
-			uint32_t* indexData_ = nullptr;                 ///< インデックスデータのマップポインタ。
-			VertexData* vertexData_ = nullptr;              ///< 頂点データのマップポインタ。
-			Material* materialData_ = nullptr;              ///< マテリアルデータのマップポインタ。
-			TransformationMatrix* transformationMatrixData_ = nullptr; ///< 行列データのマップポインタ。
+			uint32_t* indexData_ = nullptr;								///< インデックスデータのマップポインタ。
+			VertexData* vertexData_ = nullptr;							///< 頂点データのマップポインタ。
+			Material* materialData_ = nullptr;							///< マテリアルデータのマップポインタ。
+			TransformationMatrix* transformationMatrixData_ = nullptr;	///< 行列データのマップポインタ。
 
 			D3D12_INDEX_BUFFER_VIEW indexBufferView_;       ///< インデックスバッファビュー。
 			D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;     ///< 頂点バッファビュー。
@@ -20812,20 +21570,21 @@ namespace TYEngine
 			//        スプライト情報
 			// ========================
 
-			uint32_t textureIndex_ = 0;                      ///< 使用テクスチャの SRV インデックス。
-			std::string textureFilePath_;                   ///< 使用中のテクスチャファイルパス。
+			uint32_t textureIndex_ = 0;      ///< 使用テクスチャの SRV インデックス。
+			std::string textureFilePath_;    ///< 使用中のテクスチャファイルパス。
 
 			bool isFlipX_ = false; ///< 左右反転フラグ。
 			bool isFlipY_ = false; ///< 上下反転フラグ。
 
 			Utility::Transform transform_{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} }; ///< 3D変換情報。
-			Utility::Vector2 position_ = { 0.0f, 0.0f }; ///< スプライトの描画位置。
-			float rotation_ = 0.0f;             ///< 回転角度（ラジアン）。
-			Utility::Vector2 size_ = { 100.0f, 100.0f }; ///< スプライトのサイズ。
+			Utility::Vector2 position_ = { 0.0f, 0.0f };	///< スプライトの描画位置。
+			float rotation_ = 0.0f;							///< 回転角度（ラジアン）。
+			Utility::Vector2 size_ = { 100.0f, 100.0f };	///< スプライトのサイズ。
+			Utility::Vector2 scale_ = { 1.0f, 1.0f };		///< スプライトのスケール（倍率）。
 
 			Utility::Vector2 anchorPoint_ = { 0.0f, 0.0f }; ///< 原点（アンカー）位置。
 
-			Utility::Vector2 textureLeftTop_ = { 0.0f, 0.0f }; ///< テクスチャの左上 UV。
+			Utility::Vector2 textureLeftTop_ = { 0.0f, 0.0f };	///< テクスチャの左上 UV。
 			Utility::Vector2 textureSize_ = { 100.0f, 100.0f }; ///< 使用するテクスチャ範囲のサイズ。
 		};
 

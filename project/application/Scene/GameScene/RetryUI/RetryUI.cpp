@@ -78,7 +78,7 @@ void RetryUI::Move()
 		timer_ += Timer::GetInstance()->GetDeltaTime();
 
 		float t = timer_ / maxTime_;
-		float y = Lerp(jm_->Get<float>("RetryUI.ease.startY"), jm_->Get<float>("RetryUI.ease.goalY"), EaseFixed::InBounce(t));
+		float y = Lerp(jm_->Get<float>("RetryUI.ease.startY"), jm_->Get<float>("RetryUI.ease.goalY"), EaseFixed::OutBounce(t));
 		sprites_[GAMEOVER]->SetPosition({ 0, y });
 		sprites_[SCORE_TEXT]->SetAlpha(t);
 		sprites_[SPACE]->SetAlpha(t);

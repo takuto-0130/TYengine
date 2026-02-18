@@ -94,7 +94,7 @@ void ResultClass::Move()
 		timer_ += Timer::GetInstance()->GetDeltaTime();
 
 		float t = timer_ / maxTime_;
-		float y = Lerp(jm_->Get<float>("Result.startY"), 0.0f, EaseFixed::InBounce(t));
+		float y = Lerp(jm_->Get<float>("Result.startY"), 0.0f, EaseFixed::OutBounce(t));
 		sprites_[RESULT]->SetPosition(jm_->Get<Vector2>("Result.offset") + Vector2{ 0, y });
 		sprites_[SCORE]->SetAlpha(t);
 		sprites_[SPACE]->SetAlpha(t);

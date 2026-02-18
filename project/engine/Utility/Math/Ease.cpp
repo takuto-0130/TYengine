@@ -119,12 +119,12 @@ namespace TYEngine
 
 			float InBounce(float t)
 			{
-				return BounceOut(t);
+				return 1.0f - BounceOut(1.0f - t);
 			}
 
 			float OutBounce(float t)
 			{
-				return 1.0f - BounceOut(1.0f - t);
+				return BounceOut(t);
 			}
 
 			float InOutBounce(float t)

@@ -13,8 +13,10 @@ namespace TYEngine::Graphics
 /// </summary>
 class FadeTransition : public StateMachineTransition<FadeTransition>
 {
-public: // 関数テーブル
-	static const std::vector<TYEngine::Utility::StateMachine<FadeTransition, TransitionStage>::StateFunctionSet>& GetStateTable();
+public:
+	using StateFunctionSet = TYEngine::Utility::StateMachine<FadeTransition, TransitionStage>::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
 	/// <summary>

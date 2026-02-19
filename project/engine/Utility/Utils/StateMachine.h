@@ -6,11 +6,6 @@
 #include <cassert>
 #include <string>
 #include <imgui.h>
-/// --------------------------------------------------------------------------------- ///
-/// !!!!!!!!!!!!!!!!!!!!!!!継承より委譲の方が適切なようなので後に修正!!!!!!!!!!!!!!!!!!!!!!! ///
-/// --------------------------------------------------------------------------------- ///
-
-
 
 namespace TYEngine
 {
@@ -40,10 +35,11 @@ namespace TYEngine
 			using StateFunc = void (Class::*)();
 
 			// 関数テーブル用
-			// 要素：{ StateEnum, InitFunc, UpdateFunc, ExitFunc }
+			// 要素：{ StateEnum, StateName, InitFunc, UpdateFunc, ExitFunc }
 			struct StateFunctionSet
 			{
 				State state;      ///<対象ステート
+				std::string name; ///<ステート名（ImGui等デバッグ用） // 追加
 				StateFunc init;   ///<初期化関数
 				StateFunc update; ///<更新関数
 				StateFunc exit;   ///<終了関数
@@ -58,10 +54,12 @@ namespace TYEngine
 			void RegisterFromDefaultTable(C* instance)
 			{
 				stateList_.clear();
+				stateNames_.clear();
 
 				for (const auto& entry : C::GetStateTable())
 				{
 					stateList_.push_back(entry.state);
+					stateNames_[entry.state] = entry.name;
 					SetInitFunction(entry.state, [instance, f = entry.init]() { (instance->*f)(); });
 					SetUpdateFunction(entry.state, [instance, f = entry.update]() { (instance->*f)(); });
 					SetExitFunction(entry.state, [instance, f = entry.exit]() { (instance->*f)(); });
@@ -166,9 +164,15 @@ namespace TYEngine
 			// 現在のステートの固定を解除
 			void UnlockState() { allowExit_ = true; }
 
-		protected:
-			// オーバーライドで列挙名を文字列化（ImGui表示用）
-			virtual std::string GetStateName(State state) const = 0;
+			// 列挙名を文字列化（ImGui表示用）
+			std::string GetStateName(State state) const
+			{
+				if (stateNames_.contains(state))
+				{
+					return stateNames_.at(state);
+				}
+				return "Unknown";
+			}
 
 		private: // 関数テーブルsetter
 			void SetInitFunction(State state, std::function<void()> func) { initTable_[state] = func; }
@@ -197,8 +201,9 @@ namespace TYEngine
 			/// <summary>終了関数テーブル。</summary>
 			std::unordered_map<State, std::function<void()>> exitTable_;
 
-			// ★ 追加：利用可能なステート一覧（ImGui用）
+			// 利用可能なステート一覧（ImGui用）
 			std::vector<State> stateList_;
+			std::unordered_map<State, std::string> stateNames_;
 		};
 
 	} // namespace Utility
@@ -207,7 +212,7 @@ namespace TYEngine
 // StateMachine.h
 // 関数テーブルの登録用マクロ
 #define STATE_ENTRY_FOR(cls, stateEnum, funcName) \
-    { stateEnum, &cls::Init##funcName, &cls::Update##funcName, &cls::Exit##funcName }
+    { stateEnum, #stateEnum, &cls::Init##funcName, &cls::Update##funcName, &cls::Exit##funcName }
 
 
 // 使い方

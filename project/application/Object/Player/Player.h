@@ -33,9 +33,12 @@ class EnemyManager;
 class Enemy;
 
 class Player :
-	public BaseCharacter, public TYEngine::Utility::StateMachine<Player, PlayerState>
+	public BaseCharacter
 {
-public: // 関数テーブル
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<Player, PlayerState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
     static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
@@ -99,6 +102,8 @@ public:
 
 	/// <summary>現在の画面内オフセットを取得する。</summary>
 	TYEngine::Utility::Vector2 GetScreenOffset() { return screenOffset_; }
+
+	StateMachineType GetStateMachine() { return stateMachine_; }
 
 	/// <summary>
 	/// 衝突時コールバック。
@@ -276,24 +281,11 @@ private:
 
 	bool isInGame_ = false;
 
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override 
-	{
-		switch (state) 
-		{
-		case State::IDLE: return "IDLE";
-		case State::ROUTE: return "ROUTE";
-		case State::BOOST: return "BOOST";
-		case State::BARREL_ROLL: return "BARREL_ROLL";
-		case State::TAKE_DAMAGE: return "TAKE_DAMAGE";
-		case State::DEAD: return "DEAD";
-		default: return "Unknown";
-		}
-	}
-
 	// 待機状態
 	void InitIdle();
 	void UpdateIdle();

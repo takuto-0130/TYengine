@@ -12,7 +12,7 @@ using namespace TYEngine::Graphics;
 #define FADE_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(FadeTransition, stateEnum, funcName)
 
-const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSet>& FadeTransition::GetStateTable()
+const std::vector<FadeTransition::StateFunctionSet>& FadeTransition::GetStateTable()
 {
 	using enum TransitionStage;
 	static const std::vector<StateFunctionSet> stateTable = {
@@ -25,20 +25,20 @@ const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSe
 
 FadeTransition::FadeTransition(FadeTransition::Type type, float duration)
 {
-	this->template RegisterFromDefaultTable<FadeTransition>(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 
 
 	duration_ = duration;
 	switch (type)
 	{
 	case Type::IDLE:
-		ChangeState(TransitionStage::IDLE);
+		stateMachine_.ChangeState(TransitionStage::IDLE);
 		break;
 	case Type::FADE_IN:
-		ChangeState(TransitionStage::ENTERING);
+		stateMachine_.ChangeState(TransitionStage::ENTERING);
 		break;
 	case Type::FADE_OUT:
-		ChangeState(TransitionStage::EXITING);
+		stateMachine_.ChangeState(TransitionStage::EXITING);
 		break;
 	}
 }
@@ -88,8 +88,8 @@ void FadeTransition::InitEntering()
 void FadeTransition::UpdateEntering()
 {
 	// フェードイン：不透明(1.0) -> 透明(0.0)
-	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f - std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
-	if (GetStateElapsedTime() >= duration_)
+	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f - std::clamp(stateMachine_.GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
+	if (stateMachine_.GetStateElapsedTime() >= duration_)
 	{
 		finished_ = true;
 		sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
@@ -109,8 +109,8 @@ void FadeTransition::InitExiting()
 void FadeTransition::UpdateExiting()
 {
 	// フェードアウト：透明(0.0) -> 不透明(1.0)
-	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
-	if (GetStateElapsedTime() >= duration_)
+	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, std::clamp(stateMachine_.GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
+	if (stateMachine_.GetStateElapsedTime() >= duration_)
 	{
 		finished_ = true;
 		sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });

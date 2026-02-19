@@ -17,7 +17,7 @@ void GameScene::UpdatePlay()
 	stageManager_->Update();
 
 	// レール終端到達でリザルトへ
-	if (stageManager_->EndRail()) ChangeState(GameSceneState::RESULT);
+	if (stageManager_->EndRail()) stateMachine_.ChangeState(GameSceneState::RESULT);
 
 	PlayUIUpdate();
 
@@ -25,7 +25,7 @@ void GameScene::UpdatePlay()
 	if (input_->TriggerKey(DIK_ESCAPE)) 
 	{
 		gameAudio_->Play("open", false, SoundCategory::UI);
-		ChangeState(GameSceneState::PAUSE);
+		stateMachine_.ChangeState(GameSceneState::PAUSE);
 	}
 
 	// プレイヤー死亡時はリトライ誘導画面へ
@@ -37,7 +37,7 @@ void GameScene::UpdatePlay()
 		params.frequency = 20.0f;
 
 		camera_->StartShake(params);
-		ChangeState(GameSceneState::RETRY);
+		stateMachine_.ChangeState(GameSceneState::RETRY);
 	}
 }
 void GameScene::ExitPlay()
@@ -49,7 +49,7 @@ void GameScene::PlayUIUpdate()
 	scoreDraw_->Update();
 
 	// バレルロール中以外はジャスト回避判定などをUIに反映
-	if(stageManager_->GetPlayer()->GetCurrentState() != PlayerState::BARREL_ROLL) 
+	if(stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() != PlayerState::BARREL_ROLL)
 	{
 		playUI_->SetJust(stageManager_->GetPlayer()->IsJust());
 		stageManager_->GetPlayer()->OffJust();

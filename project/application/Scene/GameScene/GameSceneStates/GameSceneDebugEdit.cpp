@@ -19,12 +19,12 @@ void GameScene::SwitchEdit()
 	if (otherEditorSwitch_)
 	{
 		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
-		if (!otherEditorSwitch_) ChangeState(GameSceneState::PLAY);
+		if (!otherEditorSwitch_) stateMachine_.ChangeState(GameSceneState::PLAY);
 	}
 	else
 	{
 		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
-		if (otherEditorSwitch_) ChangeState(GameSceneState::DEBUG_EDIT);
+		if (otherEditorSwitch_) stateMachine_.ChangeState(GameSceneState::DEBUG_EDIT);
 	}
 	ImGui::End();
 #endif // _DEBUG

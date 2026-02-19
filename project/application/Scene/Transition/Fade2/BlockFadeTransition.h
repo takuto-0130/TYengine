@@ -29,8 +29,10 @@ struct BlockFadeConfig
 
 class BlockFadeTransition : public StateMachineTransition<BlockFadeTransition>
 {
-public: // 関数テーブル
-	static const std::vector<TYEngine::Utility::StateMachine<BlockFadeTransition, TransitionStage>::StateFunctionSet>& GetStateTable();
+public:
+	using StateFunctionSet = TYEngine::Utility::StateMachine<BlockFadeTransition, TransitionStage>::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
 	enum class Type

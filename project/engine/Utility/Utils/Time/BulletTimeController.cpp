@@ -12,7 +12,7 @@ namespace TYEngine
 	{
 
 
-		const std::vector<StateMachine<BulletTimeController, BulletTimeState>::StateFunctionSet>& BulletTimeController::GetStateTable()
+		const std::vector<BulletTimeController::StateFunctionSet>& BulletTimeController::GetStateTable()
 		{
 			using enum BulletTimeState;
 			static const std::vector<StateFunctionSet> stateTable = {
@@ -26,14 +26,14 @@ namespace TYEngine
 
 		BulletTimeController::BulletTimeController()
 		{
-			RegisterFromDefaultTable(this);
+			stateMachine_.RegisterFromDefaultTable(this);
 			timer_ = Timer::GetInstance();
-			ChangeState(BulletTimeState::NONE);
+			stateMachine_.ChangeState(BulletTimeState::NONE);
 		}
 
 		void BulletTimeController::Update()
 		{
-			UpdateState(timer_->GetRawDeltaTime());
+			stateMachine_.UpdateState(timer_->GetRawDeltaTime());
 		}
 
 		void BulletTimeController::Trigger(
@@ -49,22 +49,22 @@ namespace TYEngine
 
 			elapsed_ = 0.0f;
 			// 強制的に状態遷移
-			UnlockState();
-			ChangeState(BulletTimeState::ENTER);
+			stateMachine_.UnlockState();
+			stateMachine_.ChangeState(BulletTimeState::ENTER);
 		}
 
 		void BulletTimeController::CallStateExit()
 		{
-			UnlockState();
-			ChangeState(BulletTimeState::EXIT);
+			stateMachine_.UnlockState();
+			stateMachine_.ChangeState(BulletTimeState::EXIT);
 		}
 
 		void BulletTimeController::ForceExitNow()
 		{
 			// 即時終了
 			timer_->SetTimeScale(1.0f);
-			UnlockState();
-			ChangeState(BulletTimeState::NONE);
+			stateMachine_.UnlockState();
+			stateMachine_.ChangeState(BulletTimeState::NONE);
 		}
 
 
@@ -73,7 +73,7 @@ namespace TYEngine
 		void BulletTimeController::InitNone()
 		{
 			// スロー終了後に再びトリガーを呼ばないとスローが発生しないように
-			LockState();
+			stateMachine_.LockState();
 		}
 		void BulletTimeController::UpdateNone() {}
 		void BulletTimeController::ExitNone() {}
@@ -96,7 +96,7 @@ namespace TYEngine
 			{
 				timer_->SetTimeScale(params_.slowScale);
 				elapsed_ = 0.0f;
-				ChangeState(BulletTimeState::HOLD);
+				stateMachine_.ChangeState(BulletTimeState::HOLD);
 			}
 		}
 		void BulletTimeController::ExitEnter() {}
@@ -113,7 +113,7 @@ namespace TYEngine
 			{
 				elapsed_ = 0.0f;
 				// 維持時間終了、Exitへ
-				ChangeState(BulletTimeState::EXIT);
+				stateMachine_.ChangeState(BulletTimeState::EXIT);
 			}
 		}
 		void BulletTimeController::ExitHold() {}
@@ -135,7 +135,7 @@ namespace TYEngine
 			if (elapsed_ >= params_.exitDuration)
 			{
 				timer_->SetTimeScale(1.0f);
-				ChangeState(BulletTimeState::NONE);
+				stateMachine_.ChangeState(BulletTimeState::NONE);
 			}
 		}
 		void BulletTimeController::ExitExit() {}

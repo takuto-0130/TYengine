@@ -18,10 +18,13 @@ enum class NormalBulletState
 /// 直進挙動と衝突後の挙動をステートマシンで管理する。
 /// </summary>
 class PlayerBulletNormal :
-    public BaseBullet, TYEngine::Utility::StateMachine<PlayerBulletNormal, NormalBulletState>
+    public BaseBullet
 {
-public: // 関数テーブル
-    static const std::vector<StateFunctionSet>& GetStateTable();
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<PlayerBulletNormal, NormalBulletState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
 	PlayerBulletNormal();
@@ -43,20 +46,11 @@ private:
     /// <summary>固定タイムステップ（60FPS想定）。</summary>
 	float deltaTime_ = 0.0f;
 
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override
-	{
-		switch (state) 
-		{
-		case State::LINEAR: return "LINEAR";
-		case State::AFTER_COLLISION: return "AFTER_COLLISION";
-		default: return "Unknown";
-		}
-	}
-
 	// 直線移動
 	// LinearState.cpp
 	void InitLinear();

@@ -25,7 +25,7 @@ void GameScene::UpdateFadeIn()
 
 	if (!TransitionManager::GetInstance()->IsBusy())
 	{
-		ChangeState(GameSceneState::READY);
+		stateMachine_.ChangeState(GameSceneState::READY);
 	}
 
 }

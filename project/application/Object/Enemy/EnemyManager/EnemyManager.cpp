@@ -37,7 +37,7 @@ void EnemyManager::Update()
 		static float timer = 0.0f;
 		for (auto& enemy : enemies_)
 		{
-			if(enemy->GetCurrentState() == EnemyState::ACTIVE)
+			if(enemy->GetStateMachine().GetCurrentState() == EnemyState::ACTIVE)
 			{
 				if (beatAnalyzer_->GetBeat())
 				{
@@ -108,7 +108,7 @@ Enemy* EnemyManager::GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera,
 	for (auto& enemy : enemies_)
 	{
 		// アクティブ状態以外（出現中や死亡済）は除外
-		if (enemy->GetCurrentState() != EnemyState::ACTIVE) continue;
+		if (enemy->GetStateMachine().GetCurrentState() != EnemyState::ACTIVE) continue;
 
 		// 既にロックオン済みの敵は除外
 		auto it = std::find(alreadyLockedEnemies.begin(), alreadyLockedEnemies.end(), enemy.get());

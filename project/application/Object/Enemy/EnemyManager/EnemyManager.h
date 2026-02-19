@@ -48,9 +48,9 @@ public:
 	/// <summary>ポインタが現在も有効（生存しているか）確認する</summary>
 	bool IsValidEnemy(const Enemy* enemyPtr) const;
 
-	bool IsActive(const Enemy* enemyPtr) const
+	bool IsActive(Enemy* enemyPtr) const
 	{
-		if (enemyPtr->GetCurrentState() == EnemyState::ACTIVE)
+		if (enemyPtr->GetStateMachine().GetCurrentState() == EnemyState::ACTIVE)
 		{
 			return true;
 		}

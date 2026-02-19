@@ -20,9 +20,12 @@ class EnemyManager;
 /// 直進挙動と衝突後の挙動をステートマシンで管理する。
 /// </summary>
 class PlayerBulletHoming :
-	public BaseBullet, TYEngine::Utility::StateMachine<PlayerBulletHoming, HomingBulletState>
+	public BaseBullet
 {
-public: // 関数テーブル
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<PlayerBulletHoming, HomingBulletState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
@@ -52,19 +55,11 @@ private:
 
 	EnemyManager* enemyMgr_ = nullptr;
 
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
+
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override
-	{
-		switch (state)
-		{
-		case State::SHOT: return "SHOT";
-		case State::AFTER_COLLISION: return "AFTER_COLLISION";
-		default: return "Unknown";
-		}
-	}
-
 	// 直線移動
 	// ShotState.cpp
 	void InitShot();

@@ -40,8 +40,12 @@ enum EnemyType
 /// 状態マシンにより行動を制御し、出現・攻撃・被弾・死亡などのライフサイクルを管理する。
 /// </summary>
 class Enemy :
-    public BaseCharacter, public TYEngine::Utility::StateMachine<Enemy, EnemyState>
+    public BaseCharacter
 {
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<Enemy, EnemyState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+
 public: // 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
@@ -139,6 +143,7 @@ public:
 
 	const TYEngine::Utility::Vector3& GetDefaultScale() { return defaultScale_; }
 	const TYEngine::Utility::Vector3& GetUpScale() { return upScale_; }
+	StateMachineType GetStateMachine() { return stateMachine_; }
 
 private:
 	/// <summary>
@@ -222,24 +227,12 @@ private:
 	/// <summary>カメラ。</summary>
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
+
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override
-	{
-		switch (state)
-		{
-		case State::PRE_ENTER: return "PRE_ENTER";
-		case State::ENTERING: return "ENTERING";
-		case State::ACTIVE: return "ACTIVE";
-		case State::EXITING: return "EXITING";
-		case State::DAMAGED: return "DAMAGED";
-		case State::DESPAWNED: return "DESPAWNED";
-		default: return "Unknown";
-		}
-	}
-
 	// 待機状態
 	void InitPreEnter() {};
 	void UpdatePreEnter() {};

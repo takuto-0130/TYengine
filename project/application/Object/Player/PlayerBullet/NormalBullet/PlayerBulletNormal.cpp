@@ -9,7 +9,7 @@ using namespace TYEngine::Graphics;
 #define NORMAL_BULLET_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(PlayerBulletNormal, stateEnum, funcName)
 
-const std::vector<StateMachine<PlayerBulletNormal, NormalBulletState>::StateFunctionSet>& PlayerBulletNormal::GetStateTable()
+const std::vector<PlayerBulletNormal::StateFunctionSet>& PlayerBulletNormal::GetStateTable()
 {
 	using enum NormalBulletState;
 	static const std::vector<StateFunctionSet> stateTable = {
@@ -21,7 +21,7 @@ const std::vector<StateMachine<PlayerBulletNormal, NormalBulletState>::StateFunc
 
 PlayerBulletNormal::PlayerBulletNormal()
 {
-	RegisterFromDefaultTable(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 }
 
 PlayerBulletNormal::~PlayerBulletNormal()
@@ -52,7 +52,7 @@ void PlayerBulletNormal::Init()
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 	
 	// 初期状態を直線移動（LINER）に設定
-	ChangeState(NormalBulletState::LINEAR);
+	stateMachine_.ChangeState(NormalBulletState::LINEAR);
 
 	defaultSpeed_ = 25.0f;
 }
@@ -65,7 +65,7 @@ void PlayerBulletNormal::Update()
 	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 	
 	// ステート更新（移動処理などはここで行われる）
-	UpdateState(deltaTime_);
+	stateMachine_.UpdateState(deltaTime_);
 	
 	// コライダー同期
 	collider_->Update(GetWorldPosition());

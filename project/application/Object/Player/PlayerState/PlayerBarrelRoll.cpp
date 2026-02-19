@@ -76,7 +76,7 @@ void Player::StartBarrelRoll()
 	// LShiftキーでバレルロール開始
 	if(input_->TriggerKey(DIK_LSHIFT))
 	{
-		ChangeState(PlayerState::BARREL_ROLL);
+        stateMachine_.ChangeState(PlayerState::BARREL_ROLL);
 		
 		// ジャスト回避判定
 		justRoll_ = false;
@@ -151,9 +151,9 @@ void Player::BarrelRoll()
     RotationOffsetLocal();
 
     // 終了判定
-    if (GetStateElapsedTime() >= rollTime_)
+    if (stateMachine_.GetStateElapsedTime() >= rollTime_)
     {
-        ChangeState(PlayerState::ROUTE);
+        stateMachine_.ChangeState(PlayerState::ROUTE);
     }
 }
 
@@ -163,7 +163,7 @@ void Player::LeftRoll(const Vector2& dir)
 {
     // ロール目標位置へイージング移動
     goalRollPos_ = startRollPos_ + dir * rollRange_;
-    float t = std::clamp(GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
+    float t = std::clamp(stateMachine_.GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
     screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
     
     // 機体を回転させる
@@ -173,7 +173,7 @@ void Player::LeftRoll(const Vector2& dir)
 void Player::RightRoll(const Vector2& dir)
 {
     goalRollPos_ = startRollPos_ + dir * rollRange_;
-    float t = std::clamp(GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
+    float t = std::clamp(stateMachine_.GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
     screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
     roll = Lerp(0.0f, rightRoll_, EaseFixed::OutBack(t)); // ローカルZ回転
 }

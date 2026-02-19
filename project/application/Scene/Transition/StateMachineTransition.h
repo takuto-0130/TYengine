@@ -10,38 +10,33 @@ enum class TransitionStage
 	EXITING,	// 遷移終了（シーンを出る）
 };
 
-// CRTP化したステートマシン遷移テンプレート
+// ステートマシン遷移テンプレート
 // 'Class' = 継承先クラス（例：FadeTransition）
 template<typename Class>
-class StateMachineTransition : public ITransition, public TYEngine::Utility::StateMachine<Class, TransitionStage>
+class StateMachineTransition : 
+    public ITransition
 {
 public:
     void Update(float dt) override 
     {
-        this->UpdateState(dt);
+        stateMachine_.UpdateState(dt);
     }
 
 protected:
-    std::string GetStateName(TransitionStage state) const override 
-    {
-        switch (state) {
-        case TransitionStage::IDLE: return "IDLE";
-        case TransitionStage::ENTERING: return "ENTERING";
-        case TransitionStage::HOLD: return "HOLD";
-        case TransitionStage::EXITING: return "EXITING";
-        default: return "Unknown";
-        }
-    }
+    TYEngine::Utility::StateMachine<Class, TransitionStage> stateMachine_;
 };
 
 // 関数テーブル等の宣言例
 /* 
 .h
-static const std::vector<StateMachine<Class, TransitionStage>::StateFunctionSet>& GetStateTable();
+public:
+	using StateFunctionSet = TYEngine::Utility::StateMachine<Class, TransitionStage>::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 .cpp
 Class()
 {
-    this->template RegisterFromDefaultTable<Class>(this);
+    stateMachine_.RegisterFromDefaultTable(this);
 }
 */

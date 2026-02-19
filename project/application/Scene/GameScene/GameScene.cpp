@@ -26,7 +26,7 @@ using namespace TYEngine;
 #define GAME_SCENE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(GameScene, stateEnum, funcName)
 
-const std::vector<StateMachine<GameScene, GameSceneState>::StateFunctionSet>& GameScene::GetStateTable()
+const std::vector<GameScene::StateFunctionSet>& GameScene::GetStateTable()
 {
 	using enum GameSceneState;
 	static const std::vector<StateFunctionSet> stateTable =
@@ -48,7 +48,7 @@ const std::vector<StateMachine<GameScene, GameSceneState>::StateFunctionSet>& Ga
 
 GameScene::GameScene()
 {
-	RegisterFromDefaultTable(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 }
 
 GameScene::~GameScene()
@@ -102,7 +102,7 @@ void GameScene::Init()
 	UIInit();
 	
 	// フェードインから開始
-	ChangeState(GameSceneState::FADE_IN);
+	stateMachine_.ChangeState(GameSceneState::FADE_IN);
 
 	bulletTime_ = Utility::BulletTimeController::GetInstance();
 }
@@ -111,7 +111,7 @@ void GameScene::Update()
 {
 #ifdef _DEBUG
 	ImGui::Begin("GameScene State Debug");
-	DebugImGui("GameScene");
+	stateMachine_.DebugImGui("GameScene");
 	ImGui::End();
 
 	// ImGui で編集
@@ -135,7 +135,7 @@ void GameScene::Update()
 	bulletTime_->Update();
 
 	// 現在のシーンステートの更新処理を実行
-	UpdateState(Timer::GetInstance()->GetDeltaTime());
+	stateMachine_.UpdateState(Timer::GetInstance()->GetDeltaTime());
 	
 	// デバッグ用エディタ切り替え処理（デバッグビルドのみ）
 	SwitchEdit();

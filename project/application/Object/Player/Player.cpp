@@ -18,10 +18,10 @@ using namespace TYEngine;
 #define PLAYER_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Player, stateEnum, funcName)
 
-const std::vector<StateMachine<Player, PlayerState>::StateFunctionSet>& Player::GetStateTable()
+const std::vector<Player::StateFunctionSet>& Player::GetStateTable()
 {
 	using enum PlayerState;
-	static const std::vector<StateFunctionSet> stateTable = 
+	static const std::vector<StateFunctionSet> stateTable =
 	{
 		PLAYER_STATE_ENTRY(IDLE, Idle),
 		PLAYER_STATE_ENTRY(ROUTE, Route),
@@ -42,7 +42,7 @@ Player::~Player()
 void Player::Init()
 {
 	// ステートマシンの初期化
-	RegisterFromDefaultTable(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 	
 	// 入力マネージャ取得
 	input_ = Framework::Input::GetInstance();
@@ -107,7 +107,7 @@ void Player::Init()
 
 
 	// 初期ステートをROOTに設定
-	ChangeState(PlayerState::ROUTE);
+	stateMachine_.ChangeState(PlayerState::ROUTE);
 
 	// 自弾マネージャの初期化
 	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
@@ -152,7 +152,7 @@ void Player::Update()
 	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// ステートマシンの更新
-	UpdateState(deltaTime_);
+	stateMachine_.UpdateState(deltaTime_);
 
 	// エンジン噴射パーティクルの生成
 	// プレイヤー後方にパーティクルを発生させる
@@ -255,7 +255,7 @@ void Player::TakeDamage()
 	{
 		// 生存していれば被弾音声再生・被弾ステートへ遷移
 		GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
-		ChangeState(PlayerState::TAKE_DAMAGE);
+		stateMachine_.ChangeState(PlayerState::TAKE_DAMAGE);
 	}
 	else
 	{

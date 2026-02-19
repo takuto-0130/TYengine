@@ -26,8 +26,7 @@ namespace TYEngine
 		/// バレットタイム（スローモーション）への遷移・維持・解除をイージング付きで管理する。
 		/// </summary>
 		class BulletTimeController
-			: public StateMachine<BulletTimeController, BulletTimeState>,
-			public SingletonObject<BulletTimeController>
+			: public SingletonObject<BulletTimeController>
 		{
 			friend class SingletonObject<BulletTimeController>;
 			friend struct std::default_delete<BulletTimeController>;
@@ -37,7 +36,10 @@ namespace TYEngine
 			BulletTimeController();
 			~BulletTimeController() = default;
 
-		public: // 関数テーブル
+		public:
+			using StateMachineType = TYEngine::Utility::StateMachine<BulletTimeController, BulletTimeState>;
+			using StateFunctionSet = StateMachineType::StateFunctionSet;
+			// 関数テーブル
 			static const std::vector<StateFunctionSet>& GetStateTable();
 
 		public: // メンバ関数
@@ -89,21 +91,11 @@ namespace TYEngine
 			// タイマーインスタンスの保持用
 			Timer* timer_ = nullptr;
 
+			/// <summary>ステートマシーン。</summary>
+			StateMachineType stateMachine_;
+
 		private: // State関連関数
 #pragma region // State関連関数
-			// 状態名を文字列化（デバッグ・ImGui表示用）
-			std::string GetStateName(BulletTimeState state) const override
-			{
-				switch (state)
-				{
-				case BulletTimeState::NONE: return "NONE";
-				case BulletTimeState::ENTER: return "ENTER";
-				case BulletTimeState::HOLD:  return "HOLD";
-				case BulletTimeState::EXIT:  return "EXIT";
-				default: return "Unknown";
-				}
-			}
-
 			// 通常時
 			void InitNone();
 			void UpdateNone();

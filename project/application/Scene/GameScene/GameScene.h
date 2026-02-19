@@ -48,9 +48,12 @@ enum class GameSceneState {
 /// ゲームシーン
 /// </summary>
 class GameScene : 
-	public TYEngine::Framework::IScene, public TYEngine::Utility::StateMachine<GameScene, GameSceneState>
+	public TYEngine::Framework::IScene
 {
-public: // 関数テーブル
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<GameScene, GameSceneState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
@@ -186,28 +189,12 @@ private: // メンバ変数
 	/// <summary>設定エラーメッセージ。</summary>
 	std::string errConfig_;
 
+
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
+
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override 
-	{
-		switch (state) 
-		{
-		case State::LOAD: return "LOAD";
-		case State::FADE_IN: return "FADE_IN";
-		case State::READY: return "READY";
-		case State::PLAY: return "PLAY";
-		case State::PAUSE: return "PAUSE";
-		case State::DEAD: return "DEAD";
-		case State::CLEAR: return "CLEAR";
-		case State::RESULT: return "RESULT";
-		case State::RETRY: return "RETRY";
-		case State::FADE_OUT: return "FADE_OUT";
-		case State::DEBUG_EDIT: return "DEBUG_EDIT";
-		default: return "Unknown";
-		}
-	}
-
 	// ロード
 	void InitLoad();
 	void UpdateLoad();

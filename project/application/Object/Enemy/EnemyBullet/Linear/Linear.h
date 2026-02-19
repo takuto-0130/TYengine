@@ -19,9 +19,12 @@ namespace EnemyBullet
 	/// 発射ステートと衝突後ステートを持つ。
 	/// </summary>
 	class Linear :
-		public BaseBullet, TYEngine::Utility::StateMachine<Linear, LinearState>
+		public BaseBullet
 	{
-	public: // 関数テーブル
+	public:
+		using StateMachineType = TYEngine::Utility::StateMachine<Linear, LinearState>;
+		using StateFunctionSet = StateMachineType::StateFunctionSet;
+		// 関数テーブル
 		static const std::vector<StateFunctionSet>& GetStateTable();
 
 	public:
@@ -44,20 +47,11 @@ namespace EnemyBullet
 		/// <summary>固定タイムステップ。</summary>
 		float deltaTime_ = 0.0f;
 
+		/// <summary>ステートマシーン。</summary>
+		StateMachineType stateMachine_;
 
 	private: // シーン内のState関連関数
 #pragma region // State関連関数
-		// 列挙名を文字列化（ImGui表示用）
-		std::string GetStateName(State state) const override
-		{
-			switch (state)
-			{
-			case State::SHOT: return "SHOT";
-			case State::AFTER_COLLISION: return "AFTER_COLLISION";
-			default: return "Unknown";
-			}
-		}
-
 		// 直線移動
 		// ShotState.cpp
 		void InitShot();

@@ -46,12 +46,12 @@ void GameScene::InitResult()
 void GameScene::UpdateResult()
 {
 	resultMenu_->Update();
-	scoreDraw_->UpdateResult(GetStateElapsedTime());
+	scoreDraw_->UpdateResult(stateMachine_.GetStateElapsedTime());
 
 	// UIとの衝突判定を更新
 	uiCollider_.BuildAABBs(false);
 
-	if(GetStateElapsedTime() > 1.0f)
+	if(stateMachine_.GetStateElapsedTime() > 1.0f)
 	{
 		// 常に少しずつ追加して降り続ける
 		confetti_.Emit(2);
@@ -59,16 +59,16 @@ void GameScene::UpdateResult()
 	}
 
 	// 時間経過でブラー強度を変化、その後入力待ち
-	if (GetStateElapsedTime() < 4.0f)
+	if (stateMachine_.GetStateElapsedTime() < 4.0f)
 	{
-		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((GetStateElapsedTime()) / 4.0f) * 13.0f);
+		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((stateMachine_.GetStateElapsedTime()) / 4.0f) * 13.0f);
 	}
-	else if (GetStateElapsedTime() > 4.5f)
+	else if (stateMachine_.GetStateElapsedTime() > 4.5f)
 	{
 		if (input_->TriggerKey(DIK_SPACE)) 
 		{
 			gameAudio_->Play("enter", false, SoundCategory::UI);
-			ChangeState(GameSceneState::FADE_OUT);
+			stateMachine_.ChangeState(GameSceneState::FADE_OUT);
 		}
 	}
 }

@@ -20,16 +20,16 @@ void GameScene::UpdateRetry()
 {
 	retryDraw_->Update();
 	scoreDraw_->Update();
-	if (GetStateElapsedTime() < 2.5f)
+	if (stateMachine_.GetStateElapsedTime() < 2.5f)
 	{
-		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((GetStateElapsedTime() - 0.5f) / 2.0f) * 7.0f);
+		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((stateMachine_.GetStateElapsedTime() - 0.5f) / 2.0f) * 7.0f);
 	}
 	else
 	{
 		if (input_->TriggerKey(DIK_SPACE))
 		{
 			gameAudio_->Play("enter", false, SoundCategory::UI);
-			ChangeState(GameSceneState::FADE_OUT);
+			stateMachine_.ChangeState(GameSceneState::FADE_OUT);
 		}
 	}
 }

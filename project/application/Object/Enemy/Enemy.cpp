@@ -17,7 +17,7 @@ using namespace TYEngine::Graphics;
 using namespace TYEngine::Effect;
 using namespace TYEngine::CameraSystem;
 
-const std::vector<StateMachine<Enemy, EnemyState>::StateFunctionSet>& Enemy::GetStateTable()
+const std::vector<Enemy::StateFunctionSet>& Enemy::GetStateTable()
 {
 	using enum EnemyState;
 	static const std::vector<StateFunctionSet> stateTable =
@@ -39,7 +39,7 @@ Enemy::~Enemy()
 
 void Enemy::Init()
 {
-	RegisterFromDefaultTable(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 
 	// 数値を適用
 	popTime_ = 1.0f;
@@ -109,7 +109,7 @@ void Enemy::Init()
 
 
 	// 出現演出へ遷移
-	ChangeState(EnemyState::ENTERING);
+	stateMachine_.ChangeState(EnemyState::ENTERING);
 }
 
 void Enemy::Update()
@@ -124,7 +124,7 @@ void Enemy::Update()
 		worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 		
 		// ステート更新
-		UpdateState(deltaTime_);
+		stateMachine_.UpdateState(deltaTime_);
 
 		// 行列更新と回転処理
 		UpdateTransform();
@@ -176,12 +176,12 @@ void Enemy::OnCollision()
 	if (hitPoint_ > 0) // まだ生きている場合
 	{
 		GameAudio::GetInstance()->Play("damageE", false, SoundCategory::SE);
-		ChangeState(EnemyState::DAMAGED);
+		stateMachine_.ChangeState(EnemyState::DAMAGED);
 	}
 	else // HPが0以下になった場合
 	{
 		GameAudio::GetInstance()->Play("gekiha", false, SoundCategory::SE);
-		ChangeState(EnemyState::DESPAWNED);
+		stateMachine_.ChangeState(EnemyState::DESPAWNED);
 	}
 }
 
@@ -282,14 +282,14 @@ void Enemy::InitDespawned()
 
 void Enemy::UpdateEntering()
 {
-	float t = GetStateElapsedTime() / popTime_;
+	float t = stateMachine_.GetStateElapsedTime() / popTime_;
 	if (t <= 1.0f)
 	{
 		worldTransform_.SetScale(Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t)));
 	}
 	else
 	{
-		ChangeState(EnemyState::ACTIVE);
+		stateMachine_.ChangeState(EnemyState::ACTIVE);
 	}
 }
 
@@ -345,8 +345,8 @@ void Enemy::InitDamaged()
 
 void Enemy::UpdateDamaged()
 {
-	if (GetStateElapsedTime() > 0.05f)
-		ChangeState(EnemyState::ACTIVE);
+	if (stateMachine_.GetStateElapsedTime() > 0.05f)
+		stateMachine_.ChangeState(EnemyState::ACTIVE);
 }
 
 void Enemy::ExitDamaged()
@@ -357,19 +357,19 @@ void Enemy::ExitDamaged()
 
 void Enemy::UpdateDespawned()
 {
-	if (GetStateElapsedTime() < 2.0f)
+	if (stateMachine_.GetStateElapsedTime() < 2.0f)
 	{
 		roll_ += 0.02f;
 		Vector3 pos = worldTransform_.GetTranslation();
 		pos.y -= 0.02f;
 		worldTransform_.SetTranslation(pos);
-		float t = 1.0f - (GetStateElapsedTime() / 2.0f);
+		float t = 1.0f - (stateMachine_.GetStateElapsedTime() / 2.0f);
 		obj_->SetAlpha(t / 2.0f);
 		worldTransform_.SetScale(defaultScale_ * t);
 	}
 	else
 	{
-		ChangeState(EnemyState::EXITING);
+		stateMachine_.ChangeState(EnemyState::EXITING);
 	}
 }
 

@@ -7,71 +7,71 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-
-using namespace EnemyBullet;
 using namespace TYEngine::Utility;
-
 
 #define E_LINEAR_BULLET_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Linear, stateEnum, funcName)
 
-const std::vector<StateMachine<Linear, LinearState>::StateFunctionSet>& Linear::GetStateTable()
+namespace EnemyBullet
 {
-	using enum LinearState;
-	static const std::vector<StateFunctionSet> stateTable = {
-		E_LINEAR_BULLET_ENTRY(SHOT, Shot),
-		E_LINEAR_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
-	};
-	return stateTable;
-}
+	const std::vector<Linear::StateFunctionSet>& Linear::GetStateTable()
+	{
+		using enum LinearState;
+		static const std::vector<StateFunctionSet> stateTable = {
+			E_LINEAR_BULLET_ENTRY(SHOT, Shot),
+			E_LINEAR_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
+		};
+		return stateTable;
+	}
 
-Linear::Linear()
-{
-	RegisterFromDefaultTable(this);
-}
+	Linear::Linear()
+	{
+		stateMachine_.RegisterFromDefaultTable(this);
+	}
 
-Linear::~Linear()
-{
-	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
-}
+	Linear::~Linear()
+	{
+		ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+	}
 
-void Linear::Init()
-{
-	// 3Dモデル生成
-	obj_ = std::make_unique<TYEngine::Graphics::Object3d>();
-	obj_->Initialize();
-	obj_->SetModel("unitSphere.obj");
-	obj_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
-	obj_->SetIsLighting(true);
-	
-	// トランスフォーム初期化
-	worldTransform_.Initialize();
-	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
-	worldTransform_.Update();
+	void Linear::Init()
+	{
+		// 3Dモデル生成
+		obj_ = std::make_unique<TYEngine::Graphics::Object3d>();
+		obj_->Initialize();
+		obj_->SetModel("unitSphere.obj");
+		obj_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+		obj_->SetIsLighting(true);
 
-	// コライダー生成・登録
-	collider_ = std::make_unique<EBulletCollider>(
-		static_cast<uint32_t>(ColliderTypeID::E_BULLET),
-		GetWorldPosition(),
-		colliderScale_,
-		this
-	);
-	ColliderManager::GetInstance()->AddCollider(collider_.get());
-	
-	// 初期ステートをSHOT（発射中）に
-	ChangeState(LinearState::SHOT);
+		// トランスフォーム初期化
+		worldTransform_.Initialize();
+		worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+		worldTransform_.Update();
 
-	defaultSpeed_ = 20.0f;
-}
+		// コライダー生成・登録
+		collider_ = std::make_unique<EBulletCollider>(
+			static_cast<uint32_t>(ColliderTypeID::E_BULLET),
+			GetWorldPosition(),
+			colliderScale_,
+			this
+		);
+		ColliderManager::GetInstance()->AddCollider(collider_.get());
 
-void Linear::Update()
-{
-	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
-	UpdateState(deltaTime_);
-	collider_->Update(GetWorldPosition());
-}
+		// 初期ステートをSHOT（発射中）に
+		stateMachine_.ChangeState(LinearState::SHOT);
 
-void Linear::Draw()
-{
-	obj_->Draw(worldTransform_);
+		defaultSpeed_ = 20.0f;
+	}
+
+	void Linear::Update()
+	{
+		deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+		stateMachine_.UpdateState(deltaTime_);
+		collider_->Update(GetWorldPosition());
+	}
+
+	void Linear::Draw()
+	{
+		obj_->Draw(worldTransform_);
+	}
 }

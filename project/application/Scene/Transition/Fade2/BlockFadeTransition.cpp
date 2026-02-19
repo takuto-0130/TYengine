@@ -28,22 +28,22 @@ const std::vector<StateMachine<BlockFadeTransition, TransitionStage>::StateFunct
 BlockFadeTransition::BlockFadeTransition(BlockFadeTransition::Type type, const BlockFadeConfig& cfg)
 {
     cfg_ = cfg;
-	this->template RegisterFromDefaultTable<BlockFadeTransition>(this);
+    stateMachine_.RegisterFromDefaultTable(this);
 
 
 	switch (type)
 	{
 	case Type::IDLE:
-		ChangeState(TransitionStage::IDLE);
+        stateMachine_.ChangeState(TransitionStage::IDLE);
 		break;
 	case Type::FADE_IN:
-		ChangeState(TransitionStage::ENTERING);
+        stateMachine_.ChangeState(TransitionStage::ENTERING);
 		break;
 	case Type::HOLD:
-		ChangeState(TransitionStage::HOLD);
+        stateMachine_.ChangeState(TransitionStage::HOLD);
 		break;
 	case Type::FADE_OUT:
-		ChangeState(TransitionStage::EXITING);
+        stateMachine_.ChangeState(TransitionStage::EXITING);
 		break;
 	}
 }
@@ -87,7 +87,7 @@ void BlockFadeTransition::Init()
 
 void BlockFadeTransition::Draw()
 {
-    if (GetCurrentState() == TransitionStage::IDLE) return;
+    if (stateMachine_.GetCurrentState() == TransitionStage::IDLE) return;
 
     const int cols = std::max<int>(1, cfg_.cols);
     const int rows = std::max<int>(1, cfg_.rows);
@@ -96,17 +96,17 @@ void BlockFadeTransition::Draw()
 
     // 進行度
     float t = 0.0f;
-    if (GetCurrentState() == TransitionStage::ENTERING) t = saturate(GetStateElapsedTime() / cfg_.inSec);
-    else if (GetCurrentState() == TransitionStage::HOLD) t = 1.0f;
-    else if (GetCurrentState() == TransitionStage::EXITING) t = 1.0f - saturate(GetStateElapsedTime() / cfg_.outSec);
+    if (stateMachine_.GetCurrentState() == TransitionStage::ENTERING) t = saturate(stateMachine_.GetStateElapsedTime() / cfg_.inSec);
+    else if (stateMachine_.GetCurrentState() == TransitionStage::HOLD) t = 1.0f;
+    else if (stateMachine_.GetCurrentState() == TransitionStage::EXITING) t = 1.0f - saturate(stateMachine_.GetStateElapsedTime() / cfg_.outSec);
     t = std::powf(t, cfg_.easePow);
 
     // 胴体左端の基準シフト（列単位）
     const float startIn = float(-(cfg_.cols + cfg_.headCols));   // 完全オフスクリーンから
     float shiftF = 0.0f;
-    if (GetCurrentState() == TransitionStage::ENTERING)        shiftF = std::lerp(startIn, 0.0f, t);
-    else if (GetCurrentState() == TransitionStage::HOLD)     shiftF = 0.0f;
-    else if (GetCurrentState() == TransitionStage::EXITING)  shiftF = std::lerp(0.0f, float(cols + cfg_.headCols), 1.0f - t);
+    if (stateMachine_.GetCurrentState() == TransitionStage::ENTERING)        shiftF = std::lerp(startIn, 0.0f, t);
+    else if (stateMachine_.GetCurrentState() == TransitionStage::HOLD)     shiftF = 0.0f;
+    else if (stateMachine_.GetCurrentState() == TransitionStage::EXITING)  shiftF = std::lerp(0.0f, float(cols + cfg_.headCols), 1.0f - t);
 
     int shiftCols = int(std::floor(shiftF));
 
@@ -146,7 +146,7 @@ void BlockFadeTransition::Draw()
             }
         }
 
-        if (GetCurrentState() == TransitionStage::EXITING)
+        if (stateMachine_.GetCurrentState() == TransitionStage::EXITING)
         {
             if (drawMin <= drawMax)
             {
@@ -215,7 +215,7 @@ void BlockFadeTransition::InitEntering()
 void BlockFadeTransition::UpdateEntering()
 {
 	// イージングを適用した進行度tを計算
-	float t = std::powf(saturate(GetStateElapsedTime() / cfg_.inSec), cfg_.easePow);
+	float t = std::powf(saturate(stateMachine_.GetStateElapsedTime() / cfg_.inSec), cfg_.easePow);
 	
 	// 左から右への波及計算
 	float shiftF = std::lerp(float(-(cfg_.cols + cfg_.headCols + 0)), 0.0f, t);
@@ -226,7 +226,7 @@ void BlockFadeTransition::UpdateEntering()
 	// 画面全体が覆われたらHOLDへ
 	if (rightOK)
 	{
-		ChangeState(TransitionStage::HOLD);
+        stateMachine_.ChangeState(TransitionStage::HOLD);
 	}
 }
 void BlockFadeTransition::ExitEntering()
@@ -241,7 +241,7 @@ void BlockFadeTransition::InitHold()
 }
 void BlockFadeTransition::UpdateHold()
 {
-	if (GetStateElapsedTime() >= cfg_.holdSec)
+	if (stateMachine_.GetStateElapsedTime() >= cfg_.holdSec)
 	{
 		finished_ = true;
 	}
@@ -258,7 +258,7 @@ void BlockFadeTransition::InitExiting()
 }
 void BlockFadeTransition::UpdateExiting()
 {
-	if (GetStateElapsedTime() >= cfg_.outSec + (cfg_.holdSec / 4.0f))
+	if (stateMachine_.GetStateElapsedTime() >= cfg_.outSec + (cfg_.holdSec / 4.0f))
 	{
 		finished_ = true;
 	}

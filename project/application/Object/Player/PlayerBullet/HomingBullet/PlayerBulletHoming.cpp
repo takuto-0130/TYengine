@@ -10,7 +10,7 @@ using namespace TYEngine::Graphics;
 #define HOMING_BULLET_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(PlayerBulletHoming, stateEnum, funcName)
 
-const std::vector<StateMachine<PlayerBulletHoming, HomingBulletState>::StateFunctionSet>& PlayerBulletHoming::GetStateTable()
+const std::vector<PlayerBulletHoming::StateFunctionSet>& PlayerBulletHoming::GetStateTable()
 {
 	using enum HomingBulletState;
 	static const std::vector<StateFunctionSet> stateTable = {
@@ -22,7 +22,7 @@ const std::vector<StateMachine<PlayerBulletHoming, HomingBulletState>::StateFunc
 
 PlayerBulletHoming::PlayerBulletHoming()
 {
-	RegisterFromDefaultTable(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 }
 
 PlayerBulletHoming::~PlayerBulletHoming()
@@ -54,7 +54,7 @@ void PlayerBulletHoming::Init()
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	// 初期状態を直線移動（LINER）に設定
-	ChangeState(HomingBulletState::SHOT);
+	stateMachine_.ChangeState(HomingBulletState::SHOT);
 
 	defaultSpeed_ = 25.0f;
 
@@ -69,7 +69,7 @@ void PlayerBulletHoming::Update()
 	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 
 	// ステート更新（移動処理などはここで行われる）
-	UpdateState(deltaTime_);
+	stateMachine_.UpdateState(deltaTime_);
 
 	// コライダー同期
 	collider_->Update(GetWorldPosition());
@@ -87,7 +87,7 @@ void PlayerBulletHoming::InitShot() {}
 void PlayerBulletHoming::UpdateShot()
 {
 	// 寿命を超えたら死亡フラグを true にし、削除対象とする
-	if (GetStateElapsedTime() > lifeTime_)
+	if (stateMachine_.GetStateElapsedTime() > lifeTime_)
 	{
 		isDead_ = true;
 	}
@@ -117,7 +117,7 @@ void PlayerBulletHoming::Move()
 
 					// 時間経過でホーミング係数を強くする
 					// GetStateElapsedTime() は発射からの経過時間
-					float timeRatio = GetStateElapsedTime() / 1.0f; // 0.5秒かけて最大ホーミング力になる
+					float timeRatio = stateMachine_.GetStateElapsedTime() / 1.0f; // 0.5秒かけて最大ホーミング力になる
 					timeRatio = std::clamp(timeRatio, 0.0f, 0.5f);
 
 					// 初期の弱いホーミング力（例: 0.01f）から、最大ホーミング力（例: 0.15f）へ

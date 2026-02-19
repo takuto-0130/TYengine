@@ -44,41 +44,41 @@ void GameScene::UIDraw()
 	SpriteBasis::GetInstance()->BasisDrawSetting();
 
 	// フェード中は描画しない
-	if (GetCurrentState() != GameSceneState::FADE_OUT)
+	if (stateMachine_.GetCurrentState() != GameSceneState::FADE_OUT)
 	{
-		if (GetCurrentState() != GameSceneState::RESULT &&
-			GetCurrentState() != GameSceneState::RETRY)
+		if (stateMachine_.GetCurrentState() != GameSceneState::RESULT &&
+			stateMachine_.GetCurrentState() != GameSceneState::RETRY)
 		{
 			playUI_->Draw();
 		}
-		if (GetCurrentState() != GameSceneState::RESULT &&
-			GetCurrentState() != GameSceneState::READY &&
-			GetCurrentState() != GameSceneState::RETRY &&
-			GetCurrentState() != GameSceneState::FADE_IN)
+		if (stateMachine_.GetCurrentState() != GameSceneState::RESULT &&
+			stateMachine_.GetCurrentState() != GameSceneState::READY &&
+			stateMachine_.GetCurrentState() != GameSceneState::RETRY &&
+			stateMachine_.GetCurrentState() != GameSceneState::FADE_IN)
 		{
 			playUI_->DrawRT();
 		}
 		stageManager_->DrawUI();
 
-		if (GetCurrentState() == GameSceneState::READY)
+		if (stateMachine_.GetCurrentState() == GameSceneState::READY)
 		{
 			startDraw_->Draw();
 		}
 
-		if (GetCurrentState() == GameSceneState::RESULT)
+		if (stateMachine_.GetCurrentState() == GameSceneState::RESULT)
 		{
 			resultMenu_->Draw();
 			scoreDraw_->Draw();
 			confetti_.Draw();
 		}
 
-		if (GetCurrentState() == GameSceneState::RETRY)
+		if (stateMachine_.GetCurrentState() == GameSceneState::RETRY)
 		{
 			retryDraw_->Draw();
 			scoreDraw_->Draw();
 		}
 
-		if (GetCurrentState() == GameSceneState::PAUSE)
+		if (stateMachine_.GetCurrentState() == GameSceneState::PAUSE)
 		{
 			pauseMenu_->Draw();
 		}

@@ -34,7 +34,7 @@ void GameScene::StartCamera()
 {
 	Vector3 pos = { 0,0,7 };
 
-	float cur = GetStateElapsedTime();
+	float cur = stateMachine_.GetStateElapsedTime();
 	float prev = prevStateElapsed_;
 
 	// 演出タイマーのリセット用
@@ -81,21 +81,21 @@ void GameScene::StartCamera()
 	resetTimer(13.0f);
 
 	// カメラ旋回演出
-	if (GetStateElapsedTime() <= 3.0f)
+	if (stateMachine_.GetStateElapsedTime() <= 3.0f)
 	{
 		Matrix4x4 rotY = MakeRotateYMatrix((startCameraTimer_ - 7.0f) / 3.0f);
 		pos = TransformM(pos, rotY);
 
 		applyCameraWork(pos);
 	}
-	else if (GetStateElapsedTime() <= 6.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 6.0f)
 	{
 		Matrix4x4 rotY = MakeRotateYMatrix((-startCameraTimer_ + 7.0f) / 3.0f);
 		pos = TransformM(pos, rotY);
 
 		applyCameraWork(pos);
 	}
-	else if (GetStateElapsedTime() <= 10.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 10.0f)
 	{
 		Matrix4x4 rotX = MakeRotateXMatrix((startCameraTimer_) / 5.0f);
 		pos = TransformM(pos, rotX);
@@ -104,9 +104,9 @@ void GameScene::StartCamera()
 
 		applyCameraWork(pos);
 	}
-	else if (GetStateElapsedTime() <= 13.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 13.0f)
 	{
-		if (GetStateElapsedTime() <= 12.0f)
+		if (stateMachine_.GetStateElapsedTime() <= 12.0f)
 		{
 			startDraw_->Start();
 		}
@@ -115,12 +115,12 @@ void GameScene::StartCamera()
 
 		applyCameraWork(pos);
 	}
-	else if (GetStateElapsedTime() <= 16.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 16.0f)
 	{
 	}
 	else
 	{
-		ChangeState(GameSceneState::PLAY);
+		stateMachine_.ChangeState(GameSceneState::PLAY);
 	}
 
 
@@ -158,7 +158,7 @@ void GameScene::StartCamera()
 		pos = TransformM(pos, rotY);
 	}
 
-	if (input_->TriggerKey(DIK_SPACE)) ChangeState(GameSceneState::PLAY);
+	if (input_->TriggerKey(DIK_SPACE)) stateMachine_.ChangeState(GameSceneState::PLAY);
 
 	ImGui::Begin("StartCamera");
 	ImGui::DragFloat3("pos", &pos.x);

@@ -49,32 +49,11 @@ void Player::Init()
 
 	JMInit();
 
-	// 数値を適用
-	colliderScale_ = jm_.Get<float>("colliderScale");
-
-	// 移動関連
-	movement_.Load(jm_);
-
-	// HP設定
-	status_.Load(jm_);
-
-	// バレルロール
-	barrelRoll_.Load(jm_);
-	
-	// ロックオン
-	lockOn_.Load(jm_);
-
-	// 弾関連
-	bullets_.Load(jm_);
 	// 自弾マネージャの初期化
 	bullets_.bulletManager = std::make_unique<PlayerBulletManager>(this);
 	bullets_.bulletManager->SetCamera(camera_);
 	bullets_.bulletManager->SetJM(&jm_);
 	bullets_.bulletManager->Init();
-
-	jetEffect_.Load(jm_);
-
-	destroyEffect_.Load(jm_);
 
 	// 3Dオブジェクトの生成と初期化
 	obj_ = std::make_unique<Object3d>();
@@ -108,12 +87,9 @@ void Player::Init()
 	);
 	ColliderManager::GetInstance()->AddCollider(justCollider_.get());
 
-
-	
 	// レティクルの初期化
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
-
 
 	// 初期ステートをROOTに設定
 	stateMachine_.ChangeState(PlayerState::ROUTE);
@@ -491,7 +467,6 @@ void Player::DebugGUI()
 
 	Vector3 pos = GetWorldPosition();
 	ImGui::DragFloat3("pos", &pos.x);
-
 
 	Vector3 dir = reticle_->GetRay().diff;
 	ImGui::DragFloat3("diff", &dir.x);

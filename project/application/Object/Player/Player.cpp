@@ -84,7 +84,7 @@ void Player::Init()
 
 	// ワールドトランスフォームの設定
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+	worldTransform_.SetScale(colliderScale_);
 	worldTransform_.SetUseQuaternion(true); // クォータニオンを使用
 	worldTransform_.SetParentMatrix(&camera_->GetWorldMatrix()); // 親行列をカメラに設定
 	worldTransform_.Update();

@@ -39,7 +39,7 @@ void PlayerBulletNormal::Init()
 	
 	// トランスフォーム初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ scale_, scale_, scale_ });
+	worldTransform_.SetScale(scale_);
 	worldTransform_.Update();
 
 	// コライダー生成（Ray判定用など、適切な型を指定）

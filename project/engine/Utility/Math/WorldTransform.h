@@ -59,6 +59,8 @@ namespace TYEngine
 			void SetMapWorld(const Matrix4x4& world) { constMap->World = world; }
 			/// <summary>ローカルスケールを設定する。</summary>
 			void SetScale(const Vector3& scale) { scale_ = scale; }
+			/// <summary>ローカルスケールを設定する。</summary>
+			void SetScale(float scale) { scale_ = { scale,scale,scale }; }
 			/// <summary>ローカル回転（オイラー角）を設定する。</summary>
 			void SetRotate(const Vector3& rotate) { rotation_ = rotate; }
 			/// <summary>ローカル座標を設定する。</summary>

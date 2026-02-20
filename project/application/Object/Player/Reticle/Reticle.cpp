@@ -28,14 +28,14 @@ void Reticle::Init()
 
 	targetDistance_ = defaultDistance_;
 
-#ifdef _DEBUG
+#ifdef _DEBUG // デバッグ用
 	reticleObj_ = std::make_unique<Object3d>();
 	reticleObj_->Initialize();
 	reticleObj_->SetModel("cube.obj");
 	reticleObj_->SetIsLighting(false);
 	reticleObj_->SetColor({ 0,1,0,1 });
 	reticleWT_.Initialize();
-	reticleWT_.SetScale({ 0.2f, 0.2f, 0.2f });
+	reticleWT_.SetScale(0.2f);
 	reticleWT_.Update();
 #endif // _DEBUG
 }

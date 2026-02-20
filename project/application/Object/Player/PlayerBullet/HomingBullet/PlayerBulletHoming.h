@@ -50,9 +50,6 @@ private:
 	/// <summary>固定タイムステップ（60FPS想定）。</summary>
 	float deltaTime_ = 0.0f;
 
-	// <summary>ホーミング強度係数。</summary>
-	float homingT_ = 0.0f;
-
 	EnemyManager* enemyMgr_ = nullptr;
 
 	/// <summary>ステートマシーン。</summary>

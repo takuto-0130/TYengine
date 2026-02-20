@@ -1,0 +1,96 @@
+{
+  "barrelRoll": {
+    "BulletTime": {
+      "enterDur": 0.0,
+      "exitDur": 0.800000011920929,
+      "holdDur": 1.0,
+      "slowScale": 0.05000000074505806
+    },
+    "audioPitch": 0.30000001192092896,
+    "blurSamples": 3,
+    "blurWidth": 0.02500000037252903,
+    "firstHalfTime": 1.2000000476837158,
+    "justScale": 3.0,
+    "leftRoll": 6.2831854820251465,
+    "rightRoll": -6.2831854820251465,
+    "rollRange": 0.30000001192092896,
+    "rollTime": 0.6000000238418579,
+    "wholeEffectTime": 2.0999999046325684
+  },
+  "bullets": {
+    "bulletCoolTime": 0.20000000298023224
+  },
+  "colliderScale": 0.20000000298023224,
+  "destroyEffect": {
+    "count": 20,
+    "frequency": 5.0,
+    "scale": {
+      "x": 0.30000001192092896,
+      "y": 0.30000001192092896,
+      "z": 0.30000001192092896
+    }
+  },
+  "jetEffect": {
+    "count": 1,
+    "frequency": 0.009999999776482582,
+    "offSet": 0.30000001192092896,
+    "scale": {
+      "x": 0.10000000149011612,
+      "y": 0.10000000149011612,
+      "z": 0.10000000149011612
+    },
+    "speed": 3.0
+  },
+  "lockOn": {
+    "lockOnRadius": 10.0,
+    "maxLockCount": 8,
+    "maxLockOnCool": 0.30000001192092896,
+    "spreadX": 1.0,
+    "spreadY": 0.5,
+    "texture": {
+      "AnchorPoint": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "Color": {
+        "w": 1.0,
+        "x": 1.0,
+        "y": 0.0,
+        "z": 0.0
+      }
+    }
+  },
+  "movement": {
+    "baseSpeed": 0.4000000059604645,
+    "maxPitch": 0.10000000149011612,
+    "maxRoll": 0.10000000149011612,
+    "playerDepthFromCamera": 4.0,
+    "xRange": 1.440000057220459,
+    "yRange": 0.7649999856948853
+  },
+  "status": {
+    "maxHitPoint": 100,
+    "texture": {
+      "Position": {
+        "x": 368.0,
+        "y": 609.0
+      },
+      "Size": {
+        "x": 544.0,
+        "y": 32.0
+      },
+      "hpSprBGColor": {
+        "w": 1.0,
+        "x": 1.0,
+        "y": 0.10000000149011612,
+        "z": 0.10000000149011612
+      },
+      "hpSprColor": {
+        "w": 1.0,
+        "x": 0.10000000149011612,
+        "y": 1.0,
+        "z": 0.10000000149011612
+      }
+    }
+  }
+}

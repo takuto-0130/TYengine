@@ -40,7 +40,6 @@ void PlayerBulletHoming::Init()
 
 	// トランスフォーム初期化
 	worldTransform_.Initialize();
-	//worldTransform_.SetScale({ scale_, scale_, scale_ });
 	worldTransform_.SetScale({ scale_ * 0.4f, scale_ * 0.4f, scale_ * 6.0f });
 	worldTransform_.Update();
 
@@ -57,8 +56,6 @@ void PlayerBulletHoming::Init()
 	stateMachine_.ChangeState(HomingBulletState::SHOT);
 
 	defaultSpeed_ = 25.0f;
-
-	homingT_ = 0.1f;
 }
 
 void PlayerBulletHoming::Update()
@@ -117,11 +114,11 @@ void PlayerBulletHoming::Move()
 
 					// 時間経過でホーミング係数を強くする
 					// GetStateElapsedTime() は発射からの経過時間
-					float timeRatio = stateMachine_.GetStateElapsedTime() / 1.0f; // 0.5秒かけて最大ホーミング力になる
-					timeRatio = std::clamp(timeRatio, 0.0f, 0.5f);
+					float timeRatio = stateMachine_.GetStateElapsedTime() / 3.0f; // 3秒かけて最大ホーミング力になる
+					timeRatio = std::clamp(timeRatio, 0.0f, 3.0f);
 
-					// 初期の弱いホーミング力（例: 0.01f）から、最大ホーミング力（例: 0.15f）へ
-					float currentHomingT = std::lerp(0.01f, 0.3f, timeRatio);
+					// 初期の弱いホーミング力（0.01f）から、最大ホーミング力（1.0f）へ
+					float currentHomingT = std::lerp(0.01f, 1.0f, timeRatio);
 
 					// 現在の進行方向 direction_ を idealDir に向かって球面線形補間する
 					direction_ = Normalize(Slerp(direction_, idealDir, currentHomingT));

@@ -28,4 +28,6 @@ public:
 protected:
 	/// <summary>死亡状態フラグ。</summary>
 	bool isDead_ = false;
+	/// <summary>デルタタイム。</summary>
+	float deltaTime_ = 0.0f;
 };

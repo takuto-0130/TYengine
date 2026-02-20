@@ -28,6 +28,7 @@
 #include <nlohmann/json.hpp>
 
 #include "struct.h"
+#include <imgui.h>
 
 namespace TYEngine
 {
@@ -546,7 +547,6 @@ namespace TYEngine
 
 
 #ifdef JSONMGR_WITH_IMGUI
-#include <imgui.h>
 		// =========================================================
 		//   Vector 判定
 		// =========================================================

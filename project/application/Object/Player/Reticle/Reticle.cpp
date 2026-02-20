@@ -4,8 +4,9 @@
 #include "Camera.h"
 #include "Input.h"
 
-using namespace TYEngine::Utility;
 using namespace TYEngine;
+using namespace Utility;
+using namespace Graphics;
 
 Reticle::~Reticle()
 {
@@ -26,6 +27,17 @@ void Reticle::Init()
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	targetDistance_ = defaultDistance_;
+
+#ifdef _DEBUG
+	reticleObj_ = std::make_unique<Object3d>();
+	reticleObj_->Initialize();
+	reticleObj_->SetModel("cube.obj");
+	reticleObj_->SetIsLighting(false);
+	reticleObj_->SetColor({ 0,1,0,1 });
+	reticleWT_.Initialize();
+	reticleWT_.SetScale({ 0.2f, 0.2f, 0.2f });
+	reticleWT_.Update();
+#endif // _DEBUG
 }
 
 void Reticle::Update()
@@ -39,11 +51,17 @@ void Reticle::Update()
 	
 	// マウス位置に基づくワールドレイ情報の更新
 	ScreenToWorld();
+#ifdef _DEBUG
+	reticleWT_.SetTranslation(GetTarget());
+	reticleWT_.Update();
+#endif // _DEBUG
 }
 
 void Reticle::Draw()
 {
-
+#ifdef _DEBUG
+	reticleObj_->Draw(reticleWT_);
+#endif // _DEBUG
 }
 
 void Reticle::ScreenToWorld()

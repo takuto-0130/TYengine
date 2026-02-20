@@ -160,7 +160,7 @@ void TitleScene::UIDraw()
 void TitleScene::Transition()
 {
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_RETURN) || enterSpr_->IsMouseClicked(0))
+	if (/*input_->TriggerKey(DIK_RETURN) ||*/ enterSpr_->IsMouseClicked(0))
 	{
 		sceneManager_->ChangeScene("GAME");
 		gameAudio_->Stop(bgmHandle_);

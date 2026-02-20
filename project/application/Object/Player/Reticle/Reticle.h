@@ -1,5 +1,7 @@
 #pragma once
 #include "ReticleCollider.h"
+#include "WorldTransform.h"
+#include "Object3d.h"
 #include <memory>
 
 
@@ -55,5 +57,10 @@ private:
 	float targetDistance_ = 0.0f;
 	float frameDistance_ = 0.0f;
 	const float defaultDistance_ = 50.0f; // 非調整項目のため const float
+
+	/// <summary>デバッグ用レティクルオブジェクト。</summary>
+	std::unique_ptr<TYEngine::Graphics::Object3d> reticleObj_;
+	/// <summary>レティクルワールド変換。</summary>
+	TYEngine::Utility::WorldTransform reticleWT_;
 };
 

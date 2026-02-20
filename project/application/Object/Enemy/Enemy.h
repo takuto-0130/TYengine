@@ -178,10 +178,6 @@ private:
 	/// <summary>弾発射用タイマー。</summary>
 	float bulletTimer_ = 0.0f;
 
-
-	/// <summary>1フレームの時間。</summary>
-	float deltaTime_ = 0.0f;
-
 	/// <summary>通常スケール。</summary>
 	TYEngine::Utility::Vector3 defaultScale_ = { 1, 1, 1 };
 	/// <summary>拡大スケール（演出用）。</summary>

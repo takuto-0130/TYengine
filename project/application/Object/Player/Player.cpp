@@ -10,10 +10,10 @@
 #include "../../AppSystem/Audio/GameAudio.h"
 #include "../Enemy/EnemyManager/EnemyManager.h"
 
-using namespace TYEngine::Utility;
-using namespace TYEngine::Graphics;
-using namespace TYEngine::Effect;
 using namespace TYEngine;
+using namespace Utility;
+using namespace Graphics;
+using namespace Effect;
 
 #define PLAYER_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Player, stateEnum, funcName)
@@ -47,27 +47,34 @@ void Player::Init()
 	// 入力マネージャ取得
 	input_ = Framework::Input::GetInstance();
 
+	JMInit();
+
 	// 数値を適用
-	colliderScale_ = 0.2f;
-	playerDepthFromCamera_ = 4.0f;
-	xRange = 16.0f * 0.09f;
-	yRange = 9.0f * 0.085f;
-	defaultSpeed_ = 0.3f;
-	speed_ = { defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
+	colliderScale_ = jm_.Get<float>("colliderScale");
+
+	// 移動関連
+	movement_.Load(jm_);
 
 	// HP設定
-	maxHP_ = 100;
-	hitPoint_ = maxHP_;
+	status_.Load(jm_);
 
 	// バレルロール
-	rollTime_ = 0.6f;
-	rollRange_ = 0.3f;
-	leftRoll_ = 2.0f * std::numbers::pi_v<float>;
-	rightRoll_ = -2.0f * std::numbers::pi_v<float>;
-	justScale_ = 3.0f;
-	bulletCoolTime_ = 0.1f;
-
+	barrelRoll_.Load(jm_);
 	
+	// ロックオン
+	lockOn_.Load(jm_);
+
+	// 弾関連
+	bullets_.Load(jm_);
+	// 自弾マネージャの初期化
+	bullets_.bulletManager = std::make_unique<PlayerBulletManager>(this);
+	bullets_.bulletManager->SetCamera(camera_);
+	bullets_.bulletManager->Init();
+
+	jetEffect_.Load(jm_);
+
+	destroyEffect_.Load(jm_);
+
 	// 3Dオブジェクトの生成と初期化
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
@@ -80,11 +87,6 @@ void Player::Init()
 	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
 	worldTransform_.SetUseQuaternion(true); // クォータニオンを使用
 	worldTransform_.SetParentMatrix(&camera_->GetWorldMatrix()); // 親行列をカメラに設定
-
-	// 初期位置設定（画面手前への配置）
-	Vector3 pos = worldTransform_.GetTranslation();
-	pos.z = 4.0f;
-	worldTransform_.SetTranslation(pos);
 	worldTransform_.Update();
 
 	// 通常コライダーの生成と登録
@@ -100,82 +102,61 @@ void Player::Init()
 	justCollider_ = std::make_unique<JustCollider>(
 		static_cast<uint32_t>(ColliderTypeID::JUST_AREA),
 		GetWorldPosition(),
-		justScale_,
+		barrelRoll_.justScale,
 		this
 	);
 	ColliderManager::GetInstance()->AddCollider(justCollider_.get());
 
 
-	// 初期ステートをROOTに設定
-	stateMachine_.ChangeState(PlayerState::ROUTE);
-
-	// 自弾マネージャの初期化
-	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
-	bulletManager_->SetCamera(camera_);
-	bulletManager_->Init();
-
-	hpSpr_ = std::make_unique<Sprite>();
-	hpSpr_->Initialize("Resources/Texture/white2x2.png");
-	hpSpr_->SetPosition({ 368,609 });
-	hpSpr_->SetSize({ 544,32 });
-	hpSpr_->SetColor({ 0.1f,1.0f,0.1f,1.0f });
-
-	hpSprBG_ = std::make_unique<Sprite>();
-	hpSprBG_->Initialize("Resources/Texture/white2x2.png");
-	hpSprBG_->SetPosition({ 368,609 });
-	hpSprBG_->SetSize({ 544,32 });
-	hpSprBG_->SetColor({ 1.0f,0.1f,0.1f,1.0f });
 	
-
-	for (auto&& spr : lockOnSpr_)
-	{
-		spr = std::make_unique<Sprite>();
-		spr->Initialize("Resources/Texture/reticle.png");
-		spr->SetAnchorPoint({ 0.5f,0.5f });
-		spr->SetColor({ 1,0,0,1 });
-	}
-
 	// レティクルの初期化
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
 
 
-	// デバッグ用レティクル初期化
-	ReticleInit();
+	// 初期ステートをROOTに設定
+	stateMachine_.ChangeState(PlayerState::ROUTE);
 }
 
 void Player::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 
-	// 色のリセット（被弾などで赤くなっている場合があるため）
-	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+	DebugUpdate();
+
+	// 色のリセット
+	if(obj_->GetColor() != Vector4{ 1.0f, 1.0f, 1.0f, 1.0f }) obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// ステートマシンの更新
 	stateMachine_.UpdateState(deltaTime_);
 
+	ParticleUpdate();
+
+	status_.hpSprBG->Update();
+	if (status_.hitPoint >= 0)
+	{
+		status_.hpSpr->SetScale({ static_cast<float>(status_.hitPoint) / static_cast<float>(status_.maxHitPoint),1.0f });
+	}
+	status_.hpSpr->Update();
+
+	// ステート更新後の追加処理（移動反映や攻撃など）
+	PostStateUpdate();
+}
+
+void Player::ParticleUpdate()
+{
 	// エンジン噴射パーティクルの生成
 	// プレイヤー後方にパーティクルを発生させる
 	Vector3 back = -Normalize(Vector3(worldTransform_.GetMatWorld().m[2][0], worldTransform_.GetMatWorld().m[2][1], worldTransform_.GetMatWorld().m[2][2]));
 	IParticleRenderer::Emitter e;
-	e.transform.translate = GetWorldPosition() + back * 0.3f;
-	e.transform.scale = { 0.1f ,0.1f ,0.1f };
-	e.velocity = back * 3.0f;
-	e.count = 1;
-	e.frequency = 0.01f; // 毎フレーム発生
+	e.transform.translate = GetWorldPosition() + back * jetEffect_.offSet;
+	e.transform.scale = jetEffect_.scale;
+	e.velocity = back * jetEffect_.speed;
+	e.count = jetEffect_.count;
+	e.frequency = jetEffect_.frequency;
 
 	ParticleManager::GetInstance()->SetEmitter(3, e);
 	ParticleManager::GetInstance()->TriggerEmit(3, true);
-
-	hpSprBG_->Update();
-	if (hitPoint_ >= 0)
-	{
-		hpSpr_->SetSize({ 544.0f * (static_cast<float>(hitPoint_) / static_cast<float>(maxHP_)),32.0f });
-	}
-	hpSpr_->Update();
-
-	// ステート更新後の追加処理（移動反映や攻撃など）
-	PostStateUpdate();
 }
 
 void Player::Draw()
@@ -183,9 +164,9 @@ void Player::Draw()
 	if(!isDead_)
 	{
 		obj_->Draw(worldTransform_);
-		bulletManager_->Draw();
+		bullets_.bulletManager->Draw();
 
-		ReticleDraw();
+		reticle_->Draw();
 	}
 }
 
@@ -199,12 +180,12 @@ void Player::DrawUI()
 
 		int index = 0;
 
-		for (Enemy* target : lockedEnemies_)
+		for (Enemy* target : lockOn_.lockedEnemies)
 		{
 			// 1. ダングリングポインタ対策：敵がまだ生きているか確認
-			if (enemyManager_ && enemyManager_->IsValidEnemy(target))
+			if (lockOn_.enemyManager && lockOn_.enemyManager->IsValidEnemy(target))
 			{
-				if(enemyManager_->IsActive(target))
+				if(lockOn_.enemyManager->IsActive(target))
 				{
 					Utility::Vector2 ndc;
 
@@ -220,9 +201,9 @@ void Player::DrawUI()
 
 						// 4. 計算したスクリーン座標 (screenX, screenY) に 
 						// ロックオン用の2Dスプライトを描画する
-						lockOnSpr_[index]->SetPosition({ screenX, screenY });
-						lockOnSpr_[index]->Update();
-						lockOnSpr_[index]->Draw();
+						lockOn_.lockOnSpr[index]->SetPosition({ screenX, screenY });
+						lockOn_.lockOnSpr[index]->Update();
+						lockOn_.lockOnSpr[index]->Draw();
 
 					}
 					index++;
@@ -231,8 +212,8 @@ void Player::DrawUI()
 		}
 		if(isInGame_)
 		{
-			hpSprBG_->Draw();
-			hpSpr_->Draw();
+			status_.hpSprBG->Draw();
+			status_.hpSpr->Draw();
 		}
 	}
 }
@@ -247,11 +228,11 @@ void Player::TakeDamage()
 	// 通常ダメージ処理：HP減少
 	if(isInGame_)
 	{
-		--hitPoint_;
+		--status_.hitPoint;
 	}
 #endif // _DEBUG
 
-	if (hitPoint_ > 0)
+	if (status_.hitPoint > 0)
 	{
 		// 生存していれば被弾音声再生・被弾ステートへ遷移
 		GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
@@ -272,9 +253,9 @@ void Player::OnCollision()
 
 	IParticleRenderer::Emitter e;
 	e.transform.translate = GetWorldPosition();
-	e.count = 20;
-	e.frequency = 5.0f;
-	e.transform.scale = { 0.3f, 0.3f, 0.3f };
+	e.count = destroyEffect_.count;
+	e.frequency = destroyEffect_.frequency;
+	e.transform.scale = destroyEffect_.scale;
 	ParticleManager::GetInstance()->SetEmitter(4, e);
 
 	ParticleManager::GetInstance()->TriggerEmit(4, true);
@@ -301,13 +282,10 @@ void Player::PostStateUpdate()
 	Attack();
 	
 	// 弾マネージャの更新
-	bulletManager_->Update();
+	bullets_.bulletManager->Update();
 
 	// レティクルの更新
 	reticle_->Update();
-
-	// デバッグ用レティクルの更新
-	ReticleUpdate();
 
 	DebugGUI();
 }
@@ -315,46 +293,46 @@ void Player::PostStateUpdate()
 void Player::Attack()
 {
 	// クールタイムの減算
-	if (lockOnTimer_ > 0)
+	if (lockOn_.lockOnTimer > 0)
 	{
-		lockOnTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
+		lockOn_.lockOnTimer -= Timer::GetInstance()->GetRawDeltaTime();
 	}
 
 	// 現在の射撃ボタン入力状態
 	bool isPressing = input_->PushKey(DIK_LCONTROL) || input_->IsPressMouse(1);
 
 	// ▼ ボタンを押し続けている間（ロックオン・サーチフェーズ）
-	if (isPressing && lockOnTimer_ <= 0)
+	if (isPressing && lockOn_.lockOnTimer <= 0)
 	{
 		// まだ最大ロック数に達していない場合のみサーチ
-		if (lockedEnemies_.size() < maxLockCount_ && enemyManager_)
+		if (lockOn_.lockedEnemies.size() < lockOn_.maxLockCount && lockOn_.enemyManager)
 		{
 			// reticle_ の画面座標は screenOffset_ とほぼ同義なのでそれを利用
-			Enemy* target = enemyManager_->GetBestLockOnTarget(camera_, screenOffset_, lockOnRadius_, lockedEnemies_);
+			Enemy* target = lockOn_.enemyManager->GetBestLockOnTarget(camera_, screenOffset_, lockOn_.lockOnRadius, lockOn_.lockedEnemies);
 
 			if (target)
 			{
-				lockedEnemies_.push_back(target);
+				lockOn_.lockedEnemies.push_back(target);
 				// TODO: ここで「カシュッ」というロックオン音を鳴らす
 				GameAudio::GetInstance()->Play("enter", false, SoundCategory::SE);
-				lockOnTimer_ = maxLockOnCool_;
+				lockOn_.lockOnTimer = lockOn_.maxLockOnCool;
 			}
 		}
 	} // ▼ ボタンを離した瞬間（一斉発射フェーズ）
-	else if (wasPressingShot_ && !isPressing)
+	else if (lockOn_.wasPressingShot && !isPressing)
 	{
-		if (!lockedEnemies_.empty())
+		if (!lockOn_.lockedEnemies.empty())
 		{
-			currentBulletType_ = PlayerBulletType::HOMING; // ホーミング弾タイプ
+			bullets_.currentBulletType = PlayerBulletType::HOMING; // ホーミング弾タイプ
 
 			// 散らすための角度計算用
 			int bulletCount = 0;
-			int totalBullets = static_cast<int>(lockedEnemies_.size());
+			int totalBullets = static_cast<int>(lockOn_.lockedEnemies.size());
 
-			for (Enemy* target : lockedEnemies_)
+			for (Enemy* target : lockOn_.lockedEnemies)
 			{
 				// ロックオン中に敵が倒されてポインタが無効になっていないか安全確認
-				if (enemyManager_->IsValidEnemy(target))
+				if (lockOn_.enemyManager->IsValidEnemy(target))
 				{
 					// 初期方向を散らす
 					// カメラの上方向と右方向を取得
@@ -364,17 +342,17 @@ void Player::Attack()
 
 					// 弾のインデックスに応じて、左右・上に散らす角度を計算
 					// 例：-1.0 ~ 1.0 の間で左右に散らす
-					float spreadX = (totalBullets > 1) ? -1.0f + (2.0f * bulletCount / (totalBullets - 1)) : 0.0f;
+					float spreadX = (totalBullets > 1) ? -lockOn_.spreadX + ((lockOn_.spreadX * 2.0f) * bulletCount / (totalBullets - 1)) : 0.0f;
 
 					// 上方向にも少し山なりに飛ばす
-					float spreadY = 0.5f;
+					float spreadY = lockOn_.spreadY;
 
 					// 初期方向ベクトルを合成（前方に進みつつ、上と左右に広がる）
 					Vector3 initialDir = forward + (right * spreadX) + (up * spreadY);
 					initialDir = Normalize(initialDir);
 
 					// 発射
-					bulletManager_->Fire(currentBulletType_, GetWorldPosition(), initialDir, target, enemyManager_);
+					bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), initialDir, target, lockOn_.enemyManager);
 
 					bulletCount++;
 					// 発射音
@@ -384,37 +362,37 @@ void Player::Attack()
 
 
 			// ロックオンリストをクリア
-			lockedEnemies_.clear();
+			lockOn_.lockedEnemies.clear();
 		}
 	}
 
 	// 次のフレームのために状態を保持
-	wasPressingShot_ = isPressing;
+	lockOn_.wasPressingShot = isPressing;
 
 
 	// クールタイムの減算
-	if (bulletTimer_ > 0)
+	if (bullets_.bulletTimer > 0)
 	{
-		bulletTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
+		bullets_.bulletTimer -= Timer::GetInstance()->GetRawDeltaTime();
 	}
 	if (!isPressing)
 	{
 		// 攻撃入力があり、クールタイムが解消されていれば発射
-		if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bulletTimer_ <= 0)
+		if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bullets_.bulletTimer <= 0)
 		{
-			currentBulletType_ = PlayerBulletType::NORMAL;
+			bullets_.currentBulletType = PlayerBulletType::NORMAL;
 
 			// レティクル方向への発射ベクトル計算
 			Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
 
 			// 弾発射
-			bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+			bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), direction);
 
 			// 射撃音再生
 			GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
 			// クールタイム設定
-			bulletTimer_ = bulletCoolTime_;
+			bullets_.bulletTimer = bullets_.bulletCoolTime;
 		}
 	}
 
@@ -422,27 +400,25 @@ void Player::Attack()
 
 void Player::Move()
 {
-	inputDir_ = {};
-	roll = 0.0f;
-	movePitch = 0.0f;
+	movement_.inputDir = {};
+	movement_.roll = 0.0f;
+	movement_.movePitch = 0.0f;
 
 	// 入力に応じた移動方向と姿勢傾きの設定
-	if (input_->PushKey(DIK_W)) { inputDir_.y += 1.0f; movePitch = -0.1f; }
-	if (input_->PushKey(DIK_S)) { inputDir_.y -= 1.0f; movePitch = 0.1f; }
-	if (input_->PushKey(DIK_A)) { inputDir_.x -= 1.0f; roll = 0.1f; }
-	if (input_->PushKey(DIK_D)) { inputDir_.x += 1.0f; roll = -0.1f; }
+	if (input_->PushKey(DIK_W)) { movement_.inputDir.y += 1.0f; movement_.movePitch = -movement_.maxPitch; }
+	if (input_->PushKey(DIK_S)) { movement_.inputDir.y -= 1.0f; movement_.movePitch = movement_.maxPitch; }
+	if (input_->PushKey(DIK_A)) { movement_.inputDir.x -= 1.0f; movement_.roll = movement_.maxRoll; }
+	if (input_->PushKey(DIK_D)) { movement_.inputDir.x += 1.0f; movement_.roll = -movement_.maxPitch; }
 
 	// 移動入力がある場合
-	if (Length(inputDir_) != 0.0f)
+	if (Length(movement_.inputDir) != 0.0f)
 	{
-		inputDir_ = Normalize(inputDir_);
+		movement_.inputDir = Normalize(movement_.inputDir);
 		
-		// 画面アスペクト比を考慮した移動速度補正
-		speed_.x = defaultSpeed_;
-		speed_.y = defaultSpeed_ * (xRange / yRange);
+		movement_.CalculateSpeed();
 		
 		// スクリーン上のオフセット座標を更新
-		screenOffset_ += inputDir_ * speed_ * deltaTime_;
+		screenOffset_ += movement_.inputDir * movement_.speed * deltaTime_;
 	}
 	
 	// 移動範囲の制限
@@ -451,9 +427,9 @@ void Player::Move()
 	// 座標反映（ローカル座標系）
 	// 親はカメラなので、+Z がカメラ前方
 	worldTransform_.SetTranslation({
-		screenOffset_.x * xRange,	// 横位置
-		screenOffset_.y * yRange,	// 縦位置
-		playerDepthFromCamera_      // 画面からの奥行き(カメラ前方)
+		screenOffset_.x * movement_.xRange,	// 横位置
+		screenOffset_.y * movement_.yRange,	// 縦位置
+		movement_.playerDepthFromCamera      // 画面からの奥行き(カメラ前方)
 		});
 
 	// 回転の更新
@@ -470,8 +446,8 @@ void Player::RotationOffsetLocal()
 {
 	// ローカル軸回りに回す（親＝カメラが最終的な向きを与えてくれる）
 	// ロール：ローカル前方(Z)／ピッチ：ローカル右(X)
-	Quaternion qRoll = MakeRotateAxisAngleQuaternion({ 0,0,1 }, roll);
-	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, movePitch);
+	Quaternion qRoll = MakeRotateAxisAngleQuaternion({ 0,0,1 }, movement_.roll);
+	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, movement_.movePitch);
 
 	// 好みで順序調整（ここでは Roll→Pitch）
 	worldTransform_.SetRotateQuaternion(Multiply(qRoll, qPitch));
@@ -486,9 +462,21 @@ Vector3 Player::ConvertScreenOffsetToWorld(const Vector2& offset)
 	Vector3 camUp = camera_->GetUp();
 
 	return camPos
-		+ camForward * playerDepthFromCamera_
-		+ camRight * (offset.x * xRange)
-		+ camUp * (offset.y * yRange);
+		+ camForward * movement_.playerDepthFromCamera
+		+ camRight * (offset.x * movement_.xRange)
+		+ camUp * (offset.y * movement_.yRange);
+}
+
+void Player::DebugUpdate()
+{
+	DebugJMApply();
+#ifdef _DEBUG
+	ImGui::Begin("PlayerConfig");
+	static JsonImGuiEditor inspector(jm_);
+	inspector.Draw(jm_.Root(), "PlayerConfig.json");
+	if (ImGui::Button("PlayerConfigSave")) jm_.Save();
+	ImGui::End();
+#endif // _DEBUG
 }
 
 void Player::DebugGUI()
@@ -496,7 +484,7 @@ void Player::DebugGUI()
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 
-	ImGui::Text("hp : %d", hitPoint_);
+	ImGui::Text("hp : %d", status_.hitPoint);
 
 	ImGui::DragFloat2("ScreenOffset", &screenOffset_.x);
 
@@ -516,35 +504,5 @@ void Player::DebugGUI()
 	Vector3 target = reticle_->GetTarget();
 	ImGui::DragFloat3("target", &target.x);
 	ImGui::End();
-#endif // _DEBUG
-}
-
-void Player::ReticleInit()
-{
-#ifdef _DEBUG
-	reticleObj_ = std::make_unique<Object3d>();
-	reticleObj_->Initialize();
-	reticleObj_->SetModel("cube.obj");
-	reticleObj_->SetIsLighting(false);
-	reticleObj_->SetColor({ 0,1,0,1 });
-	reticleWT_.Initialize();
-	reticleWT_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
-	reticleWT_.Update();
-#endif // _DEBUG
-}
-
-void Player::ReticleUpdate()
-{
-#ifdef _DEBUG
-	reticleWT_.SetRotate(worldTransform_.GetRotate());
-	reticleWT_.SetTranslation(reticle_->GetTarget());
-	reticleWT_.Update();
-#endif // _DEBUG
-}
-
-void Player::ReticleDraw()
-{
-#ifdef _DEBUG
-	reticleObj_->Draw(reticleWT_);
 #endif // _DEBUG
 }

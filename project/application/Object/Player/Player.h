@@ -1,14 +1,12 @@
 #pragma once
 #include "../BaseCharacter/BaseCharacter.h"
+#include "PlayerStruct.h"
 #include "PlayerCollider.h"
 #include "JustCollider.h"
 #include "StateMachine.h"
 #include "Sprite.h"
-#include "PlayerBullet/PlayerBulletType.h"
-#include "PlayerBullet/PlayerBulletManager.h"
 #include "Reticle/Reticle.h"
 #include <numbers>
-
 
 enum class PlayerState
 {
@@ -20,14 +18,10 @@ enum class PlayerState
     DEAD,
 };
 
-namespace TYEngine
+namespace TYEngine::Framework
 {
-	namespace Framework
-	{
-		class Input;
-	}
+	class Input;
 }
-
 class Camera;
 class EnemyManager;
 class Enemy;
@@ -78,12 +72,12 @@ public:
 	TYEngine::Graphics::Object3d* GetObj() { return obj_.get(); }
 
 	/// <summary>ジャスト回避成功時のフラグを立てる。</summary>
-	void OnJust() { isJust_ = true; }
+	void OnJust() { barrelRoll_.isJust = true; }
 	/// <summary>ジャスト回避フラグを下ろす。</summary>
-	void OffJust() { isJust_ = false; }
+	void OffJust() { barrelRoll_.isJust = false; }
 
 	/// <summary>ジャスト回避成功状態かを取得する。</summary>
-	bool IsJust() { return isJust_; }
+	bool IsJust() { return barrelRoll_.isJust; }
 
 	/// <summary>
 	/// 画面内での相対オフセット位置を設定する。
@@ -98,7 +92,7 @@ public:
 	void TakeDamage();
 
 	/// <summary>現在のHPを取得する。</summary>
-	int GetHP() { return hitPoint_; }
+	int GetHP() { return status_.hitPoint; }
 
 	/// <summary>現在の画面内オフセットを取得する。</summary>
 	TYEngine::Utility::Vector2 GetScreenOffset() { return screenOffset_; }
@@ -113,7 +107,7 @@ public:
 
 	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
 
-	void SetEnemyManager(EnemyManager* manager) { enemyManager_ = manager; }
+	void SetEnemyManager(EnemyManager* manager) { lockOn_.enemyManager = manager; }
 
 	void SetIsInGame(bool isInGame) { isInGame_ = isInGame; }
 
@@ -148,18 +142,19 @@ private:
 	/// <summary>右方向へのロール。</summary>
 	void RightRoll(const TYEngine::Utility::Vector2& dir);
 
+	void ParticleUpdate();
+
+
+	/// <summary>JSONマネージャー関連の初期化。</summary>
+	void JMInit();
 
 	// Debug
+	/// <summary>デバッグ時に必要な更新処理。</summary>
+	void DebugUpdate();
 	/// <summary>デバッグ用GUIの表示。</summary>
 	void DebugGUI();
-
-	// Reticle
-	/// <summary>レティクル初期化。</summary>
-	void ReticleInit();
-	/// <summary>レティクル更新。</summary>
-	void ReticleUpdate();
-	/// <summary>レティクル描画。</summary>
-	void ReticleDraw();
+	/// <summary>JSONパラメータの反映（デバッグ用）。</summary>
+	void DebugJMApply();
 
 private:
 	/// <summary>入力管理クラス。</summary>
@@ -173,113 +168,39 @@ private:
 	/// <summary>ジャスト回避判定用コライダー。</summary>
 	std::unique_ptr<JustCollider> justCollider_;
 
-
-
-	EnemyManager* enemyManager_ = nullptr; // 敵マネージャへのアクセス用
-	// ロックオン関連
-	std::vector<Enemy*> lockedEnemies_;
-	int maxLockCount_ = 8;          // 最大ロックオン数
-	float lockOnRadius_ = 10.0f;     // ロックオン判定の広さ
-	bool wasPressingShot_ = false;  // 前フレームでボタンを押していたか
-	const float maxLockOnCool_ = 0.3f;
-	float lockOnTimer_ = 0.0f;
-	/// <summary>ロックオンスプライト。</summary>
-	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, 8> lockOnSpr_;
-
-
 	/// <summary>コライダーのスケール。</summary>
 	float colliderScale_ = 0.0f;
 
-	/// <summary>カメラからの深度距離。</summary>
-	float playerDepthFromCamera_ = 0.0f;
-	/// <summary>横移動の最大幅（画面内の物理スケール）。</summary>
-	float xRange = 0.0f;
-	/// <summary>縦移動の最大高さ。</summary>
-	float yRange = 0.0f;
-	/// <summary>基本移動速度。</summary>
-	float defaultSpeed_ = 0.0f;
-	/// <summary>現在の移動速度。</summary>
-	TYEngine::Utility::Vector2 speed_{};
-	/// <summary>入力方向。</summary>
-	TYEngine::Utility::Vector2 inputDir_{};
-	/// <summary>ロール回転方向。</summary>
-	TYEngine::Utility::Vector2 rollDir_{};
-
-	/// <summary>デルタタイム。</summary>
-	float deltaTime_ = 0.0f;
-
-	/// <summary>ヒットポイント。</summary>
-	int maxHP_ = 0;
-	int hitPoint_ = 0;
-	std::unique_ptr<TYEngine::Graphics::Sprite> hpSprBG_;
-	std::unique_ptr<TYEngine::Graphics::Sprite> hpSpr_;
-
-
-	// 姿勢
-	/// <summary>Yaw：Y軸周りの回転（左右の振り向き）。</summary>
-	float yaw = 0.0f;
-	/// <summary>Pitch：X軸周りの回転（上下の仰角）。</summary>
-	float pitch = 0.0f;
-	/// <summary>Roll：Z軸周りの回転（傾き）。</summary>
-	float roll = 0.0f;
-
-	/// <summary>移動に伴うPitch傾斜。</summary>
-	float movePitch = 0.0f;
-
-	// バレルロール
-	/// <summary>ロール所要時間。</summary>
-	float rollTime_ = 0.0f;
-	/// <summary>ロール移動範囲。</summary>
-	float rollRange_ = 0.0f;
-	/// <summary>左ロール目標角度。</summary>
-	float leftRoll_ = 0.0f;
-	/// <summary>右ロール目標角度。</summary>
-	float rightRoll_ = 0.0f;
-	/// <summary>ロール開始位置。</summary>
-	TYEngine::Utility::Vector2 startRollPos_{};
-	/// <summary>ロール終了位置。</summary>
-	TYEngine::Utility::Vector2 goalRollPos_{};
-
-	/// <summary>ロールエフェクトタイマー。</summary>
-	float rollEffectTimer_ = 0.0f;
-
-	/// <summary>ジャスト回避成功フラグ。</summary>
-	bool isJust_ = false;
-	/// <summary>ジャスト回避ロール中かどうか。</summary>
-	bool justRoll_ = false;
-	/// <summary>ジャスト回避時のスケール倍率。</summary>
-	float justScale_ = 0.0f;
-
-
-	// 弾関連
-	/// <summary>弾管理マネージャ。</summary>
-	std::unique_ptr<PlayerBulletManager> bulletManager_;
-	/// <summary>現在の弾タイプ。</summary>
-	PlayerBulletType currentBulletType_ = PlayerBulletType::NORMAL;
-	/// <summary>発射クールタイム。</summary>
-	float bulletCoolTime_ = 0.0f;
-	/// <summary>発射タイマー。</summary>
-	float bulletTimer_ = 0.0f;
-
+	/// <summary>プレイヤーの移動関連。</summary>
+	PlayerMovement movement_;
+	/// <summary>プレイヤーのステータス。</summary>
+	PlayerStatus status_;
+	/// <summary>プレイヤーのバレルロール関連。</summary>
+	PlayerBarrelRoll barrelRoll_;
+	/// <summary>プレイヤーのロックオン関連。</summary>
+	PlayerLockOn lockOn_;
+	/// <summary>プレイヤーの弾関連。</summary>
+	PlayerBullets bullets_;
 	/// <summary>レティクル管理クラス。</summary>
 	std::unique_ptr<Reticle> reticle_;
 
+	PlayerJetEffect jetEffect_;
 
-	/// <summary>デバッグ用レティクルオブジェクト。</summary>
-	std::unique_ptr<TYEngine::Graphics::Object3d> reticleObj_;
-	/// <summary>レティクルワールド変換。</summary>
-	TYEngine::Utility::WorldTransform reticleWT_;
-
-	/// <summary>コントレイルインデックス。</summary>
-	int contrailIndex_;
+	PlayerDestroyEffect destroyEffect_;
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
 
+	/// <summary>プレイヤーの生成場所がインゲームかどうかのフラグ。</summary>
 	bool isInGame_ = false;
 
 	/// <summary>ステートマシーン。</summary>
 	StateMachineType stateMachine_;
+
+	/// <summary>JSONマネージャ（デバッグ設定用）。</summary>
+	TYEngine::Utility::JsonManager jm_;
+	/// <summary>JSONエラーメッセージ。</summary>
+	std::string err_;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数

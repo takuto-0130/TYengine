@@ -18,8 +18,8 @@ void Player::InitBarrelRoll()
     int h = GameAudio::GetInstance()->Play("roll", false, SoundCategory::SE);
 	
 	// ロール開始位置を記録
-	startRollPos_ = screenOffset_;
-	rollEffectTimer_ = 0.0f;
+    barrelRoll_.startRollPos = screenOffset_;
+    barrelRoll_.rollEffectTimer = 0.0f;
     
     // ラジアルブラーエフェクトの有効化と初期化
     auto* pem = PostEffectManager::GetInstance();
@@ -27,23 +27,25 @@ void Player::InitBarrelRoll()
     pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
     // 中心は画面座標系（-1..1）→ [0..1] に変換して渡す想定
     pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(screenOffset_);
+    pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetNumSamples(barrelRoll_.blurSamples);
+
 	
 	// ジャスト回避時の演出設定
-	if (justRoll_)
+	if (barrelRoll_.justRoll)
 	{
 		pem->SetEffectEnabled("Vignette", true);
 		pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
-        GameAudio::GetInstance()->Pitch(h, 0.3f);
+        GameAudio::GetInstance()->Pitch(h, barrelRoll_.audioPitch);
 	}
     
     // 入力方向がある場合はその方向へ、なければランダム方向へロール
-    if (Length(inputDir_) != 0)
+    if (Length(movement_.inputDir) != 0)
     {
-        rollDir_ = inputDir_;
+        movement_.rollDir = movement_.inputDir;
     }
     else
     {
-        rollDir_ = Normalize(Vector2(Random::GetInstance()->Float(-1,1), Random::GetInstance()->Float(-1, 1)));
+        movement_.rollDir = Normalize(Vector2(Random::GetInstance()->Float(-1,1), Random::GetInstance()->Float(-1, 1)));
     }
     
     // ロール中は当たり判定を無効化
@@ -61,7 +63,7 @@ void Player::ExitBarrelRoll()
     // エフェクトの無効化
     auto* pem = PostEffectManager::GetInstance();
     pem->SetEffectEnabled("RadialBlur", false);
-	if (justRoll_)
+	if (barrelRoll_.justRoll)
 	{
 		pem->SetEffectEnabled("Vignette", false);
 	}
@@ -79,14 +81,18 @@ void Player::StartBarrelRoll()
         stateMachine_.ChangeState(PlayerState::BARREL_ROLL);
 		
 		// ジャスト回避判定
-		justRoll_ = false;
-		if(isJust_)
+        barrelRoll_.justRoll = false;
+		if(barrelRoll_.isJust)
 		{
-			justRoll_ = true;
+            barrelRoll_.justRoll = true;
 			// バレットタイム演出トリガー
 			BulletTimeController::GetInstance()->Trigger(
-				0.05f, 0.0f, 1.0f, 0.8f,
-				EaseFixed::InQuart, EaseFixed::OutQuart);
+                barrelRoll_.slowScale, 
+                barrelRoll_.enterDur, 
+                barrelRoll_.holdDur, 
+                barrelRoll_.exitDur,
+				EaseFixed::InQuart, 
+                EaseFixed::OutQuart);
 		}
 	}
 }
@@ -95,47 +101,42 @@ void Player::StartBarrelRoll()
 void Player::BarrelRoll()
 {
     // 入力方向に応じて左右（または上下）ロール
-    if (rollDir_.x != 0.0f)
+    if (movement_.rollDir.x != 0.0f)
     {
-        (rollDir_.x < 0.0f) ? LeftRoll(rollDir_) : RightRoll(rollDir_);
+        (movement_.rollDir.x < 0.0f) ? LeftRoll(movement_.rollDir) : RightRoll(movement_.rollDir);
     }
-    else if (rollDir_.y != 0.0f)
+    else if (movement_.rollDir.y != 0.0f)
     {
-        (rollDir_.y < 0.0f) ? LeftRoll(rollDir_) : RightRoll(rollDir_);
+        (movement_.rollDir.y < 0.0f) ? LeftRoll(movement_.rollDir) : RightRoll(movement_.rollDir);
     }
 
     // エフェクト更新処理
-    if (rollEffectTimer_ <= 2.1f)
+    if (barrelRoll_.rollEffectTimer <= barrelRoll_.wholeEffectTime)
     {
-        rollEffectTimer_ += Timer::GetInstance()->GetRawDeltaTime();
+        barrelRoll_.rollEffectTimer += Timer::GetInstance()->GetRawDeltaTime();
 
         // タイムラインによるエフェクト強度の制御（前半フェードイン、後半フェードアウト）
-        float t = (rollEffectTimer_ <= 1.2f)
-            ? (rollEffectTimer_ / 1.2f)
-            : (0.9f - (rollEffectTimer_ - 1.2f) / 0.9f);
+        float t = barrelRoll_.GetTimelineT();
 
-        t = (rollEffectTimer_ <= 1.2f) ? t : EaseFixed::InQuint(t);
+        t = (barrelRoll_.rollEffectTimer <= barrelRoll_.firstHalfTime) ? t : EaseFixed::InQuint(t);
 
         auto* pem = PostEffectManager::GetInstance();
-        if (justRoll_)
+        if (barrelRoll_.justRoll)
         {
             // ジャスト回避時の特殊演出（ビネット効果追加）
             pem->GetEffect<VignetteEffect>("Vignette")->SetPower(t);
             pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((Vector2(screenOffset_.x, -screenOffset_.y) + Vector2(1.0f, 1.0f)) * 0.5f);
-            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * t);
+            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(barrelRoll_.blurWidth * t);
         }
         else
         {
             // 通常ロール演出
-            t = (rollEffectTimer_ <= 0.9f)
-                ? (rollEffectTimer_ / 0.9f)
-                : (0.9f - (rollEffectTimer_ - 0.9f) / 0.9f);
+            t = barrelRoll_.GetRollT();
 
-            t = (rollEffectTimer_ <= 0.9f) ? t : EaseFixed::InQuint(t);
+            t = (barrelRoll_.rollEffectTimer <= barrelRoll_.secondHalfTime) ? t : EaseFixed::InQuint(t);
 
             pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((Vector2(screenOffset_.x, -screenOffset_.y) + Vector2(1.0f, 1.0f)) * 0.5f);
-            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * t);
-            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetNumSamples(3);
+            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(barrelRoll_.blurWidth * t);
         }
     }
 
@@ -143,15 +144,15 @@ void Player::BarrelRoll()
     ClampOffset();
 
     worldTransform_.SetTranslation({
-        screenOffset_.x * xRange,
-        screenOffset_.y * yRange,
-        playerDepthFromCamera_
+        screenOffset_.x * movement_.xRange,
+        screenOffset_.y * movement_.yRange,
+        movement_.playerDepthFromCamera
         });
 
     RotationOffsetLocal();
 
     // 終了判定
-    if (stateMachine_.GetStateElapsedTime() >= rollTime_)
+    if (stateMachine_.GetStateElapsedTime() >= barrelRoll_.rollTime)
     {
         stateMachine_.ChangeState(PlayerState::ROUTE);
     }
@@ -162,18 +163,18 @@ void Player::BarrelRoll()
 void Player::LeftRoll(const Vector2& dir)
 {
     // ロール目標位置へイージング移動
-    goalRollPos_ = startRollPos_ + dir * rollRange_;
-    float t = std::clamp(stateMachine_.GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
-    screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
+    barrelRoll_.goalRollPos = barrelRoll_.startRollPos + dir * barrelRoll_.rollRange;
+    float t = std::clamp(stateMachine_.GetStateElapsedTime() / barrelRoll_.rollTime, 0.0f, 1.0f);
+    screenOffset_ = Lerp(barrelRoll_.startRollPos, barrelRoll_.goalRollPos, EaseFixed::OutBack(t));
     
     // 機体を回転させる
-    roll = Lerp(0.0f, leftRoll_, EaseFixed::OutBack(t));  // ローカルZ回転
+    movement_.roll = Lerp(0.0f, barrelRoll_.leftRoll, EaseFixed::OutBack(t));  // ローカルZ回転
 }
 
 void Player::RightRoll(const Vector2& dir)
 {
-    goalRollPos_ = startRollPos_ + dir * rollRange_;
-    float t = std::clamp(stateMachine_.GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
-    screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
-    roll = Lerp(0.0f, rightRoll_, EaseFixed::OutBack(t)); // ローカルZ回転
+    barrelRoll_.goalRollPos = barrelRoll_.startRollPos + dir * barrelRoll_.rollRange;
+    float t = std::clamp(stateMachine_.GetStateElapsedTime() / barrelRoll_.rollTime, 0.0f, 1.0f);
+    screenOffset_ = Lerp(barrelRoll_.startRollPos, barrelRoll_.goalRollPos, EaseFixed::OutBack(t));
+    movement_.roll = Lerp(0.0f, barrelRoll_.rightRoll, EaseFixed::OutBack(t)); // ローカルZ回転
 }

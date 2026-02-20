@@ -213,12 +213,6 @@
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp">
       <Filter>application\Object\Enemy\EnemyBullet\Linear</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp">
-      <Filter>application\Object\Player\PlayerBullet\NormalBullet</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinearState.cpp">
-      <Filter>application\Object\Player\PlayerBullet\NormalBullet</Filter>
-    </ClCompile>
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp">
       <Filter>application\Object\Player\PlayerState</Filter>
     </ClCompile>
@@ -588,6 +582,7 @@
     <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp" />
     <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp" />
     <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerJson.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
@@ -1005,6 +1000,7 @@
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h" />
+    <ClInclude Include="application\Object\Player\PlayerStruct.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

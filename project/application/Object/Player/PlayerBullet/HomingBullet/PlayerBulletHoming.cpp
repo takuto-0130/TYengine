@@ -36,11 +36,20 @@ void PlayerBulletHoming::Init()
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("unitSphere.obj");
-	obj_->SetColor({ 1.0f, 0.2f, 0.2f, 1.0f });
+	obj_->SetColor(jm_->Get<Vector4>("bullets.BulletHoming.Color"));
+
+	colliderScale_ = jm_->Get<float>("bullets.BulletHoming.colliderScale");
+	scale_ = jm_->Get<float>("bullets.BulletHoming.scale");
+	defaultSpeed_ = jm_->Get<float>("bullets.BulletHoming.defaultSpeed");
+	lifeTime_ = jm_->Get<float>("bullets.BulletHoming.lifeTime");
+
+	minHoming_ = jm_->Get<float>("bullets.BulletHoming.minHoming");
+	maxHoming_ = jm_->Get<float>("bullets.BulletHoming.maxHoming");
+	homingTime_ = jm_->Get<float>("bullets.BulletHoming.HomingTime");
 
 	// トランスフォーム初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ scale_ * 0.4f, scale_ * 0.4f, scale_ * 6.0f });
+	worldTransform_.SetScale(scale_ * jm_->Get<Vector3>("bullets.BulletHoming.scale3"));
 	worldTransform_.Update();
 
 	// コライダー生成（Ray判定用など、適切な型を指定）
@@ -54,8 +63,6 @@ void PlayerBulletHoming::Init()
 
 	// 初期状態を直線移動（LINER）に設定
 	stateMachine_.ChangeState(HomingBulletState::SHOT);
-
-	defaultSpeed_ = 25.0f;
 }
 
 void PlayerBulletHoming::Update()
@@ -114,11 +121,11 @@ void PlayerBulletHoming::Move()
 
 					// 時間経過でホーミング係数を強くする
 					// GetStateElapsedTime() は発射からの経過時間
-					float timeRatio = stateMachine_.GetStateElapsedTime() / 3.0f; // 3秒かけて最大ホーミング力になる
-					timeRatio = std::clamp(timeRatio, 0.0f, 3.0f);
+					float timeRatio = stateMachine_.GetStateElapsedTime() / homingTime_; // homingTime_ を経過すると最大ホーミング力になる
+					timeRatio = std::clamp(timeRatio, 0.0f, homingTime_);
 
-					// 初期の弱いホーミング力（0.01f）から、最大ホーミング力（1.0f）へ
-					float currentHomingT = std::lerp(0.01f, 1.0f, timeRatio);
+					// 初期の弱いホーミング力から、最大ホーミング力へ
+					float currentHomingT = std::lerp(minHoming_, maxHoming_, timeRatio);
 
 					// 現在の進行方向 direction_ を idealDir に向かって球面線形補間する
 					direction_ = Normalize(Slerp(direction_, idealDir, currentHomingT));

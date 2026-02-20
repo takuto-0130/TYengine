@@ -7,6 +7,7 @@
 #include "../../BaseBullet/BaseBullet.h"
 
 #include "Camera.h"
+#include "Utils/Json/JsonManager.h"
 
 class Player;
 class Enemy;
@@ -50,6 +51,8 @@ public:
 	/// </summary>
 	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
+	void SetJM(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
+
 private:
 	/// <summary>所有者（プレイヤー）。</summary>
 	Player* player_ = nullptr;
@@ -58,5 +61,8 @@ private:
 
 	/// <summary>カメラ。</summary>
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
+
+	/// <summary>JSONマネージャ。</summary>
+	TYEngine::Utility::JsonManager* jm_ = nullptr;
 };
 

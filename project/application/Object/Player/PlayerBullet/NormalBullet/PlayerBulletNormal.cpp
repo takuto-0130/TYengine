@@ -35,7 +35,12 @@ void PlayerBulletNormal::Init()
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("unitSphere.obj");
-	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
+	obj_->SetColor(jm_->Get<Vector4>("bullets.BulletNormal.Color"));
+
+	colliderScale_ = jm_->Get<float>("bullets.BulletNormal.colliderScale");
+	scale_ = jm_->Get<float>("bullets.BulletNormal.scale");
+	defaultSpeed_ = jm_->Get<float>("bullets.BulletNormal.defaultSpeed");
+	lifeTime_ = jm_->Get<float>("bullets.BulletNormal.lifeTime");
 	
 	// トランスフォーム初期化
 	worldTransform_.Initialize();
@@ -54,7 +59,6 @@ void PlayerBulletNormal::Init()
 	// 初期状態を直線移動（LINER）に設定
 	stateMachine_.ChangeState(NormalBulletState::LINEAR);
 
-	defaultSpeed_ = 25.0f;
 }
 
 void PlayerBulletNormal::Update()

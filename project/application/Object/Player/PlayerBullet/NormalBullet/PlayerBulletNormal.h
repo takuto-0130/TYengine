@@ -3,6 +3,7 @@
 #include "StateMachine.h"
 
 #include "../PBulletCollider.h"
+#include "Utils/Json/JsonManager.h"
 
 /// <summary>
 /// 通常弾の状態定数。
@@ -33,6 +34,8 @@ public:
     void Update()override;
     void Draw()override;
 
+	void SetJM(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
+
 private:
 	/// <summary>移動処理（直進）。</summary>
 	void Move();
@@ -45,6 +48,9 @@ private:
 
     /// <summary>固定タイムステップ（60FPS想定）。</summary>
 	float deltaTime_ = 0.0f;
+
+	/// <summary>JSONマネージャ。</summary>
+	TYEngine::Utility::JsonManager* jm_ = nullptr;
 
 	/// <summary>ステートマシーン。</summary>
 	StateMachineType stateMachine_;

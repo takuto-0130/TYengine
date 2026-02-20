@@ -47,6 +47,12 @@ namespace TYEngine
 			virtual void SetScale(const Vector3& scale) { worldTransform_.SetScale(scale); }
 
 			/// <summary>
+			/// ローカルスケールを設定する。
+			/// </summary>
+			/// <param name="scale">スケール値。</param>
+			virtual void SetScale(float scale) { worldTransform_.SetScale(scale); }
+
+			/// <summary>
 			/// ローカル回転を設定する。
 			/// </summary>
 			/// <param name="rotate">回転角（ラジアン）。</param>

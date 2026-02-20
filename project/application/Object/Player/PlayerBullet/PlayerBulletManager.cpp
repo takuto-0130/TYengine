@@ -45,6 +45,7 @@ void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const 
 		// 通常弾の生成と初期設定
 		bullet = std::make_unique<PlayerBulletNormal>();
 		bullet->SetCamera(camera_);
+		dynamic_cast<PlayerBulletNormal*>(bullet.get())->SetJM(jm_);
 		bullet->Init();
 		bullet->SetTranslation(pos);
 		bullet->SetShotDirection(direction);
@@ -55,6 +56,7 @@ void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const 
 		// ホーミング弾の生成と初期設定
 		bullet = std::make_unique<PlayerBulletHoming>();
 		bullet->SetCamera(camera_);
+		dynamic_cast<PlayerBulletHoming*>(bullet.get())->SetJM(jm_);
 		bullet->Init();
 		bullet->SetTranslation(pos);
 		bullet->SetShotDirection(direction);

@@ -1,12 +1,13 @@
 #pragma once
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
+
 #include "Struct.h"
 #include "Sprite.h"
 #include "PlayerBullet/PlayerBulletType.h"
 #include "PlayerBullet/PlayerBulletManager.h"
 #include <memory>
 
-#define JSONMGR_WITH_IMGUI
-#include "Utils/Json/JsonManager.h"
 
 /// <summary>プレイヤーの移動関連。</summary>
 struct PlayerMovement

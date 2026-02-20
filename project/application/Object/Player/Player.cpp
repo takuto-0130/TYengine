@@ -69,6 +69,7 @@ void Player::Init()
 	// 自弾マネージャの初期化
 	bullets_.bulletManager = std::make_unique<PlayerBulletManager>(this);
 	bullets_.bulletManager->SetCamera(camera_);
+	bullets_.bulletManager->SetJM(&jm_);
 	bullets_.bulletManager->Init();
 
 	jetEffect_.Load(jm_);

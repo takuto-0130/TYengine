@@ -197,7 +197,7 @@ private:
 	/// <summary>ステートマシーン。</summary>
 	StateMachineType stateMachine_;
 
-	/// <summary>JSONマネージャ（デバッグ設定用）。</summary>
+	/// <summary>JSONマネージャ。</summary>
 	TYEngine::Utility::JsonManager jm_;
 	/// <summary>JSONエラーメッセージ。</summary>
 	std::string err_;

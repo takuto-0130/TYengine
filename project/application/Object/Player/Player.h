@@ -187,24 +187,21 @@ private:
 	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, 8> lockOnSpr_;
 
 
-
-
 	/// <summary>コライダーのスケール。</summary>
 	float colliderScale_ = 0.0f;
+
 	/// <summary>カメラからの深度距離。</summary>
 	float playerDepthFromCamera_ = 0.0f;
 	/// <summary>横移動の最大幅（画面内の物理スケール）。</summary>
 	float xRange = 0.0f;
 	/// <summary>縦移動の最大高さ。</summary>
 	float yRange = 0.0f;
-
 	/// <summary>基本移動速度。</summary>
 	float defaultSpeed_ = 0.0f;
 	/// <summary>現在の移動速度。</summary>
 	TYEngine::Utility::Vector2 speed_{};
 	/// <summary>入力方向。</summary>
 	TYEngine::Utility::Vector2 inputDir_{};
-
 	/// <summary>ロール回転方向。</summary>
 	TYEngine::Utility::Vector2 rollDir_{};
 

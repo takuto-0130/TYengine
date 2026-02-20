@@ -229,27 +229,21 @@ enum class State
 	THREE
 };
 
-class Class : public StateMachine<State>
+class Class
 {
 public:
 	Class()
 	{
-		RegisterFromDefaultTable(this);
+		stateMachine_.RegisterFromDefaultTable(this);
 	}
-
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<Class, State>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
 private:
-	std::string GetStateName(State state) const override
-	{
-		switch (state)
-		{
-		case State::ONE: return "ONE";
-		case State::TWO: return "TWO";
-		case State::THREE: return "THREE";
-		default: return "Unknown";
-		}
-	}
+	StateMachineType　stateMachine_;
 
 private:
 	void InitOne() {}
@@ -269,7 +263,7 @@ private:
 #define CLASS_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Class, stateEnum, funcName)
 
-const std::vector<StateMachine<Class, State>::StateFunctionSet>& Class::GetStateTable()
+const std::vector<Class::StateFunctionSet>& Class::GetStateTable()
 {
 	using enum State;
 	static const std::vector<StateFunctionSet> stateTable = {

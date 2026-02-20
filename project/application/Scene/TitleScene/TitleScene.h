@@ -99,7 +99,9 @@ private:
 	/// <summary>ビートアナライザー（演出用）。</summary>
 	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
 
+	/// <summary>BGM再生ハンドル。</summary>
 	int bgmHandle_ = -1;
 
+	/// <summary>ゲームオーディオ管理クラスのポインタ。</summary>
 	GameAudio* gameAudio_ = nullptr;
 };

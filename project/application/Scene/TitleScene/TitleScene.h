@@ -1,5 +1,6 @@
 #pragma once
 #include "IScene.h"
+#include "StateMachine.h"
 #include "ObjectCubemap.h"
 #include "Object/Player/Player.h"
 #include "../../Object/Enemy/EnemyManager/EnemyManager.h"
@@ -14,6 +15,15 @@
 
 class GameAudio;
 
+enum class TitleSceneState
+{
+	FADE_IN,	// シーン開始時のフェードイン
+	READY,		// シーン開始時の演出
+	PLAY,		// 通常の進行
+	PAUSE,		// 一時停止状態（メニューなど）
+	FADE_OUT,	// シーン遷移時のフェードアウト
+};
+
 /// <summary>
 /// タイトル画面シーン。
 /// ゲーム開始前の演出、操作説明、ゲーム本編への遷移を管理する。
@@ -22,6 +32,13 @@ class TitleScene :
 	public TYEngine::Framework::IScene 
 {
 public:
+	using StateMachineType = TYEngine::Utility::StateMachine<TitleScene, TitleSceneState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
+
+public:
+	TitleScene();
 	~TitleScene();
 
 	/// <summary>
@@ -47,11 +64,6 @@ public:
 	void UIDraw() override;
 
 private:
-	/// <summary>
-	/// シーン遷移処理。ゲーム本編へ切り替える。
-	/// </summary>
-	void Transition();
-
 	/// <summary>JSONパラメータの反映（デバッグ用）。</summary>
 	void DebugJMApply();
 
@@ -104,4 +116,35 @@ private:
 
 	/// <summary>ゲームオーディオ管理クラスのポインタ。</summary>
 	GameAudio* gameAudio_ = nullptr;
+
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_; 
+
+private: // シーン内のState関連関数
+#pragma region // State関連関数
+		// フェードイン
+		void InitFadeIn();
+		void UpdateFadeIn();
+		void ExitFadeIn();
+
+		// ゲーム開始直前の演出
+		void InitReady();
+		void UpdateReady();
+		void ExitReady();
+
+		// 通常のゲーム進行
+		void InitPlay();
+		void UpdatePlay();
+		void ExitPlay();
+
+		// 一時停止状態（メニューなど/未実装）
+		void InitPause() {};
+		void UpdatePause() {};
+		void ExitPause() {};
+
+		// フェードアウト
+		void InitFadeOut();
+		void UpdateFadeOut();
+		void ExitFadeOut();
+#pragma endregion
 };

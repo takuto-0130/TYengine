@@ -12,12 +12,33 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-using namespace TYEngine::Utility;
-using namespace TYEngine::Debugger;
-using namespace TYEngine::AudioSystem;
-using namespace TYEngine::Graphics;
 using namespace TYEngine;
+using namespace Utility;
+using namespace Debugger;
+using namespace AudioSystem;
+using namespace Graphics;
 
+#define TITLE_SCENE_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(TitleScene, stateEnum, funcName)
+
+const std::vector<TitleScene::StateFunctionSet>& TitleScene::GetStateTable()
+{
+	using enum TitleSceneState;
+	static const std::vector<StateFunctionSet> stateTable =
+	{
+		TITLE_SCENE_ENTRY(FADE_IN, FadeIn),
+		TITLE_SCENE_ENTRY(READY, Ready),
+		TITLE_SCENE_ENTRY(PLAY, Play),
+		TITLE_SCENE_ENTRY(PAUSE, Pause),
+		TITLE_SCENE_ENTRY(FADE_OUT, FadeOut)
+	};
+	return stateTable;
+}
+
+TitleScene::TitleScene()
+{
+	stateMachine_.RegisterFromDefaultTable(this);
+}
 
 TitleScene::~TitleScene()
 {
@@ -29,7 +50,7 @@ void TitleScene::Init()
 
 	beatAnalyzer_.Init("gameBGM", gameAudio_->CategoryToString(SoundCategory::BGM));
 
-	bgmHandle_ = gameAudio_->Play("gameBGM", false, SoundCategory::BGM);
+	bgmHandle_ = gameAudio_->Play("gameBGM", true, SoundCategory::BGM);
 	gameAudio_->SetSoundVolume(bgmHandle_, 1.0f);
 
 
@@ -93,35 +114,22 @@ void TitleScene::Init()
 	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
 
 	player_->SetEnemyManager(&enemyMgr_);
+
+	stateMachine_.ChangeState(TitleSceneState::FADE_IN);
 }
 
 void TitleScene::Update() {
-	// シーン遷移更新
-	Transition();
-	beatAnalyzer_.Update();
-	audioAnalyzer_.Update();
-
 	// デバッグ用更新処理
 	DebugUpdate();
 
+	stateMachine_.UpdateState(Timer::GetInstance()->GetDeltaTime());
+
 	// UI更新
-	(enterSpr_->IsMouseHover()) ? enterSpr_->SetScale({ 1.2f,1.2f }) : enterSpr_->SetScale({ 1.0f,1.0f });
 	enterSpr_->Update();
 	text_->Update();
 	operation_->Update();
 	reticle_->Update();
 
-	// 演出用プレイヤー更新
-	player_->Update();
-
-	skybox_->Update();
-
-	// エイム用照準位置の更新
-	Vector3 pos = player_->GetWorldPosition();
-	enemyMgr_.SetTargetPos(&pos);
-
-	// 敵管理更新
-	enemyMgr_.Update();
 	
 	// 地面の回転演出
 	Vector3 rotate = groundWT_.GetRotate();
@@ -129,8 +137,6 @@ void TitleScene::Update() {
 	groundWT_.SetRotate(rotate);
 	groundWT_.Update();
 
-	Vector2 mouse = input_->GetMousePosition();
-	reticle_->SetPosition(mouse);
 }
 
 void TitleScene::Draw() 
@@ -155,33 +161,4 @@ void TitleScene::UIDraw()
 	operation_->Draw();
 	player_->DrawUI();
 	reticle_->Draw();
-}
-
-void TitleScene::Transition()
-{
-#ifdef _DEBUG
-	if (/*input_->TriggerKey(DIK_RETURN) ||*/ enterSpr_->IsMouseClicked(0))
-	{
-		sceneManager_->ChangeScene("GAME");
-		gameAudio_->Stop(bgmHandle_);
-	}
-#else
-	if (input_->TriggerKey(DIK_RETURN) || enterSpr_->IsMouseClicked(0))
-	{
-		// 決定音再生
-		gameAudio_->Play("enter", false, SoundCategory::UI);
-		
-		// ブロックフェード演出を開始してゲームシーンへ遷移
-		BlockFadeConfig cfg;
-		auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
-		transition->SetOnFinishCallback([this]()
-			{
-				BlockFadeConfig cfg1;
-				sceneManager_->ChangeScene("GAME");
-				TransitionManager::GetInstance()->Enqueue(std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_OUT, cfg1));
-				gameAudio_->Stop(bgmHandle_);
-			});
-		TransitionManager::GetInstance()->Start(std::move(transition));
-	}
-#endif // _DEBUG
 }

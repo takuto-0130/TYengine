@@ -42,6 +42,8 @@ public:
 
 	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
 
+	void SetIsInGame(bool is) { isInGame_ = is; }
+
 	/// <summary>レティクルに最も近い未ロックオンの敵を取得する</summary>
 	Enemy* GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera, const TYEngine::Utility::Vector2& reticleNDC, float lockRadiusNDC, const std::vector<Enemy*>& alreadyLockedEnemies);
 
@@ -94,6 +96,9 @@ private:
 
 	/// <summary>同時出現数。</summary>
 	int spawnNum_ = 0;
+
+	/// <summary>ゲームシーンかどうか。</summary>
+	bool isInGame_ = false;
 
 	/// <summary>コンボ・スコア処理ハンドラ。</summary>
 	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;

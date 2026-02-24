@@ -25,6 +25,7 @@ void Stage::Init()
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
     enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
     enemyMgr_.Init(camera_);
+    enemyMgr_.SetIsInGame(true);
 
     player_->SetEnemyManager(&enemyMgr_);
 

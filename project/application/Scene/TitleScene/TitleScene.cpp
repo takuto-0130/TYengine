@@ -70,6 +70,7 @@ void TitleScene::Init()
 	text_ = std::make_unique<Sprite>();
 	text_->Initialize("Resources/Texture/Title.png");
 	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
+	text_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Title.AnchorPoint"));
 
 	operation_ = std::make_unique<Sprite>();
 	operation_->Initialize("Resources/Texture/Operation.png");
@@ -112,8 +113,12 @@ void TitleScene::Init()
 	// タイトル画面の敵マネージャ
 	enemyMgr_.Init(camera_);
 	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
+	enemyMgr_.SetIsInGame(false);
 
 	player_->SetEnemyManager(&enemyMgr_);
+
+	oscillator_.SetDuration(2.0f);
+	oscillator_.SetType(Oscillator::Type::Sine);
 
 	stateMachine_.ChangeState(TitleSceneState::FADE_IN);
 }
@@ -121,6 +126,8 @@ void TitleScene::Init()
 void TitleScene::Update() {
 	// デバッグ用更新処理
 	DebugUpdate();
+
+	oscillator_.Update();
 
 	stateMachine_.UpdateState(Timer::GetInstance()->GetDeltaTime());
 

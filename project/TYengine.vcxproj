@@ -363,6 +363,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Utility\Utils\StringUtility.h" />
     <ClInclude Include="engine\Utility\Math\struct.h" />
     <ClInclude Include="engine\Utility\Math\WorldTransform.h" />
+    <ClInclude Include="engine\Utility\Utils\Time\Oscillator.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />

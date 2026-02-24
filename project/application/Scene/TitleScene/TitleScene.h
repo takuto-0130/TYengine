@@ -13,6 +13,8 @@
 
 #include "Sprite.h"
 
+#include "Oscillator.h"
+
 class GameAudio;
 
 enum class TitleSceneState
@@ -92,6 +94,8 @@ private:
 	/// <summary>デモ用敵マネージャ。</summary>
 	EnemyManager enemyMgr_;
 
+
+	TYEngine::Utility::Oscillator oscillator_;
 
 	/// <summary>背景（地面）。</summary>
 	std::unique_ptr<TYEngine::Graphics::Object3d> ground_;

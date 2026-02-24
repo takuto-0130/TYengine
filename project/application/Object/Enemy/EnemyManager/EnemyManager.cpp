@@ -180,7 +180,7 @@ void EnemyManager::Pop()
 	// 依存関係の注入
 	enemy->SetEnemyBulletManager(&bulletManager_);
 	enemy->SetEventListener(comboAndScoreHandler_.get());
-	enemy->SetIsInGame(true);
+	enemy->SetIsInGame(isInGame_);
 	enemy->SetCamera(camera_);
 	
 	enemies_.push_back(std::move(enemy));

@@ -76,8 +76,6 @@
     └── └── └── └── └── ├── PlayerBulletHoming.cpp
     └── └── └── └── └── └── PlayerBulletHoming.h
     └── └── └── └── ├── NormalBullet/
-    └── └── └── └── └── ├── AfterCollisionState.cpp
-    └── └── └── └── └── ├── LinearState.cpp
     └── └── └── └── └── ├── PlayerBulletNormal.cpp
     └── └── └── └── └── └── PlayerBulletNormal.h
     └── └── └── └── ├── PBulletCollider.h
@@ -86,6 +84,7 @@
     └── └── └── └── └── PlayerBulletType.h
     └── └── └── ├── PlayerCollider.cpp
     └── └── └── ├── PlayerCollider.h
+    └── └── └── ├── PlayerJson.cpp
     └── └── └── ├── PlayerState/
     └── └── └── └── ├── PlayerBarrelRoll.cpp
     └── └── └── └── ├── PlayerBoost.cpp
@@ -93,6 +92,7 @@
     └── └── └── └── ├── PlayerIdle.cpp
     └── └── └── └── ├── PlayerRoute.cpp
     └── └── └── └── └── PlayerTakeDamage.cpp
+    └── └── └── ├── PlayerStruct.h
     └── └── └── └── Reticle/
     └── └── └──     ├── Reticle.cpp
     └── └── └──     ├── Reticle.h
@@ -147,7 +147,11 @@
     └── └── ├── TitleScene/
     └── └── └── ├── TItleSceneStates/
     └── └── └── └── ├── TitleSceneDebug.cpp
-    └── └── └── └── └── TitleSceneLoad.cpp
+    └── └── └── └── ├── TitleSceneFadeIn.cpp
+    └── └── └── └── ├── TitleSceneFadeOut.cpp
+    └── └── └── └── ├── TitleSceneLoad.cpp
+    └── └── └── └── ├── TitleScenePlay.cpp
+    └── └── └── └── └── TitleSceneReady.cpp
     └── └── └── ├── TitleScene.cpp
     └── └── └── └── TitleScene.h
     └── └── └── Transition/
@@ -338,6 +342,7 @@
     └──         └── Time/
     └──             ├── BulletTimeController.cpp
     └──             ├── BulletTimeController.h
+    └──             ├── Oscillator.h
     └──             ├── Timer.cpp
     └──             └── Timer.h
 ================================================================================
@@ -494,8 +499,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp" />
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinearState.cpp" />
+    <ClCompile Include="application\Object\Player\PlayerJson.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBoost.cpp" />
     <ClCompile Include="application\Object\Player\PlayerState\PlayerDead.cpp" />
@@ -519,7 +523,11 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneClear.cpp" />
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
     <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeIn.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeOut.cpp" />
     <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleScenePlay.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneReady.cpp" />
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
@@ -632,6 +640,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
+    <ClInclude Include="application\Object\Player\PlayerStruct.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiParticle.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiSystem.h" />
@@ -707,6 +716,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Utility\Utils\StringUtility.h" />
     <ClInclude Include="engine\Utility\Math\struct.h" />
     <ClInclude Include="engine\Utility\Math\WorldTransform.h" />
+    <ClInclude Include="engine\Utility\Utils\Time\Oscillator.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -782,205 +792,211 @@ File Path: project/TYengine.vcxproj.filters
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="application">
-      <UniqueIdentifier>{69a4eaf5-e447-4e90-89aa-5416c04989b6}</UniqueIdentifier>
+      <UniqueIdentifier>{8233adb7-b039-443e-8750-c4faf6b74389}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem">
-      <UniqueIdentifier>{3fc9c7f0-4ddd-4b11-8662-481a2a8b4d73}</UniqueIdentifier>
+      <UniqueIdentifier>{4813aa3b-5cea-4103-aa9d-ce7555a9c58a}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Audio">
-      <UniqueIdentifier>{63efd7f3-e983-4a21-af12-40ecb273807a}</UniqueIdentifier>
+      <UniqueIdentifier>{e3509be5-7086-49ad-b43b-9dc32b86dfc7}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Combo">
-      <UniqueIdentifier>{e5e90144-b8f9-4bcf-95b0-e29eadf01238}</UniqueIdentifier>
+      <UniqueIdentifier>{0d845595-760f-446b-a8c3-618564f32620}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener">
-      <UniqueIdentifier>{73cd3d9e-d41a-4ad8-998e-979a1c1ef879}</UniqueIdentifier>
+      <UniqueIdentifier>{bac5fee7-afbc-48c6-9da8-8db332bc7d77}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener\EnemyEvent">
-      <UniqueIdentifier>{237969ab-331a-4219-a341-4ebff1bc24a7}</UniqueIdentifier>
+      <UniqueIdentifier>{abae68c7-7681-4bcf-94dd-cfd9afb9ccc9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Score">
-      <UniqueIdentifier>{dc69c566-0224-418c-95b4-a8beca1e7885}</UniqueIdentifier>
+      <UniqueIdentifier>{8c35d535-8821-4168-a681-df9765315a0d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object">
-      <UniqueIdentifier>{6e2b437c-c883-4d25-b099-dc5041755031}</UniqueIdentifier>
+      <UniqueIdentifier>{316ca931-db0d-4a66-b5b4-81a202529e8d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseBullet">
-      <UniqueIdentifier>{7cba8350-099c-4ff6-a267-fa0969e1ad71}</UniqueIdentifier>
+      <UniqueIdentifier>{348ef0cc-8404-477c-b816-42920c5d9b6c}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseCharacter">
-      <UniqueIdentifier>{0e4930fa-48e9-473f-9a8d-d2bf317252a9}</UniqueIdentifier>
+      <UniqueIdentifier>{36233fc2-8507-444b-81e2-5baf6f259bf3}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\ColliderTypeID">
-      <UniqueIdentifier>{a0edf34c-602f-410c-9d40-38c5815fe0d0}</UniqueIdentifier>
+      <UniqueIdentifier>{c6527be5-d240-4663-be1f-04c2b0f03b7b}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy">
-      <UniqueIdentifier>{64d364e9-cd1b-460c-8772-bfc82f62da24}</UniqueIdentifier>
+      <UniqueIdentifier>{d787455b-6dbd-4892-a942-ddd1ef10aaa9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\AttackStrategy">
-      <UniqueIdentifier>{a94e6c50-9167-4f98-89e7-3d9360f39a77}</UniqueIdentifier>
+      <UniqueIdentifier>{7413056f-be78-4fbf-80c5-fceb93217c4a}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet">
-      <UniqueIdentifier>{347b02ba-d65c-4da9-8429-4836858b4d2d}</UniqueIdentifier>
+      <UniqueIdentifier>{019970e4-8fde-4bb0-8c7b-0a7aaaccb9d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet\Linear">
-      <UniqueIdentifier>{5fa4132f-59e2-4bd9-8e15-49ddf18926c3}</UniqueIdentifier>
+      <UniqueIdentifier>{741e3433-26a3-4ce6-8b28-2235b8391718}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyManager">
-      <UniqueIdentifier>{f5c5e403-4564-4e1f-a55a-9c23cd66769b}</UniqueIdentifier>
+      <UniqueIdentifier>{46da3140-6775-435e-bf82-3e683f00ad99}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player">
-      <UniqueIdentifier>{22bc0032-b6c3-4d8b-bc5d-dac4919ba966}</UniqueIdentifier>
+      <UniqueIdentifier>{520fc973-6072-4676-951e-66fd35d13a83}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet">
-      <UniqueIdentifier>{7dd47d9f-5f3f-445a-8e2a-d48c583cb205}</UniqueIdentifier>
+      <UniqueIdentifier>{a7499edd-4dc8-4dff-94a2-e68d15b35f3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\Object\Player\PlayerBullet\HomingBullet">
+      <UniqueIdentifier>{d80f01cc-742c-4178-a09a-9ff7775f3af9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet\NormalBullet">
-      <UniqueIdentifier>{73e76f5d-2096-454b-b200-e4b579573a09}</UniqueIdentifier>
+      <UniqueIdentifier>{50e505f0-cee0-421e-9329-41f4567b7916}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerState">
-      <UniqueIdentifier>{a16a8f3a-c67e-4802-80ec-0d86432e4a5e}</UniqueIdentifier>
+      <UniqueIdentifier>{3cf7e418-a088-4f80-8909-8d087469dbad}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\Reticle">
-      <UniqueIdentifier>{fb30142f-d11f-4da1-be9e-e7c1b421dda4}</UniqueIdentifier>
+      <UniqueIdentifier>{110dc9e4-b5e7-42ed-b301-c3fa82f2e8ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Rail">
-      <UniqueIdentifier>{c41eed6a-90fc-4cd0-853c-9eb1fa051c53}</UniqueIdentifier>
+      <UniqueIdentifier>{a75fe3ec-466d-44b6-95c4-65c17f7254a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene">
-      <UniqueIdentifier>{6c3c47b7-e0bf-42d6-82e6-5631cfc21c33}</UniqueIdentifier>
+      <UniqueIdentifier>{7d4ae943-e1b4-4639-b7cb-949daa441af0}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene">
-      <UniqueIdentifier>{dfdbdf00-c310-4cc0-9e90-f746cb916efc}</UniqueIdentifier>
+      <UniqueIdentifier>{6282e713-3a40-4f2c-99c0-08edfea251be}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\GameSceneStates">
-      <UniqueIdentifier>{6486a698-0ca0-44ea-b1a8-6a0d10ef1f2e}</UniqueIdentifier>
+      <UniqueIdentifier>{c5318562-58ce-47ac-9946-366ce2f82d21}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Pause">
-      <UniqueIdentifier>{bdd5cfa1-d7ba-478b-b35a-f6b3b259ab6f}</UniqueIdentifier>
+      <UniqueIdentifier>{240c14ca-5050-441a-ade1-840976964a6e}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\PlayUI">
-      <UniqueIdentifier>{48ff4e57-4ba3-4dc6-9466-025173fbb129}</UniqueIdentifier>
+      <UniqueIdentifier>{e1cc1c7f-f5aa-4fc9-bc7f-fe175066e91a}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Result">
-      <UniqueIdentifier>{264c8583-2364-4f6e-bc5b-03649fd1a43b}</UniqueIdentifier>
+      <UniqueIdentifier>{56f3b385-7a03-4c40-bd50-c46d8b8c08c9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\RetryUI">
-      <UniqueIdentifier>{d2740b09-468b-414b-97bd-ae7f8948df07}</UniqueIdentifier>
+      <UniqueIdentifier>{ae197ff7-c937-4517-b471-ecb8bd9474b3}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\StartUI">
-      <UniqueIdentifier>{8c8b5937-8f59-4714-810c-e9c3acb486df}</UniqueIdentifier>
+      <UniqueIdentifier>{4c2db315-0154-485d-8611-a6137ac76587}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\SceneFactory">
-      <UniqueIdentifier>{1f72d9e0-0749-4c54-b0ac-16b770ce4888}</UniqueIdentifier>
+      <UniqueIdentifier>{d7b9810c-8f4f-40b1-bcca-0720cd75e3d4}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\TitleScene">
-      <UniqueIdentifier>{9413e364-a3a6-42cc-b145-ec71d5156f67}</UniqueIdentifier>
+      <UniqueIdentifier>{3c080818-516a-4e18-9e2b-f8a6864e7dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\Scene\TitleScene\TItleSceneStates">
+      <UniqueIdentifier>{8e93bf13-9dab-41d4-b941-5eeadf18f2fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition">
-      <UniqueIdentifier>{c21e41c6-e953-4ea9-8d79-cdc0d1a6cfa4}</UniqueIdentifier>
+      <UniqueIdentifier>{716d3a77-ada0-4a4d-947f-d03ed1740058}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition\Fade">
-      <UniqueIdentifier>{19723848-cf32-48ec-baec-76d9666a28ce}</UniqueIdentifier>
+      <UniqueIdentifier>{a5c06754-fb31-46ca-ab36-398fb3be1864}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition\Fade2">
-      <UniqueIdentifier>{411272b3-1882-4dd2-b6a6-a496fe8c3db9}</UniqueIdentifier>
+      <UniqueIdentifier>{e7311c69-b897-44ec-8542-14b92d4babe5}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\ScoreUI">
-      <UniqueIdentifier>{854ec754-7a8e-4908-af4f-bfd145dcb15c}</UniqueIdentifier>
+      <UniqueIdentifier>{203106d6-15a3-4f1c-bf1c-6d04626d5e3c}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Stage">
-      <UniqueIdentifier>{61799cc7-5f23-4dfd-b49a-c76f5e09b7b8}</UniqueIdentifier>
+      <UniqueIdentifier>{ab95073f-a074-4b07-8823-906588d085e3}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine">
-      <UniqueIdentifier>{50cf6afa-6242-4c4b-a122-bb78e07e187f}</UniqueIdentifier>
+      <UniqueIdentifier>{83c36c0c-9983-4f8e-b293-86f16bb5182b}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio">
-      <UniqueIdentifier>{39f1f4e1-df18-4fc4-bb81-049e82b9b16d}</UniqueIdentifier>
+      <UniqueIdentifier>{ba73da66-7f0f-41b0-a399-e1a2b341583b}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Camera">
-      <UniqueIdentifier>{3aa8e0ff-c565-441e-b7b6-b73b4206896d}</UniqueIdentifier>
+      <UniqueIdentifier>{28361078-6624-4c40-bc2f-0b14f24ed164}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Debugger">
-      <UniqueIdentifier>{894f27e4-6573-467a-a16a-395182891894}</UniqueIdentifier>
+      <UniqueIdentifier>{26b6eaf9-f1f3-4940-a03d-6b195bf61317}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Effect">
-      <UniqueIdentifier>{f1e5d807-cef5-4b15-9908-e1eb4f7cf9d4}</UniqueIdentifier>
+      <UniqueIdentifier>{e9b11206-f1a3-468b-b5fa-ae7c420a9ca7}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\EngineCore">
-      <UniqueIdentifier>{5dfea76a-c170-445b-8ac3-a3cb0af5ed74}</UniqueIdentifier>
+      <UniqueIdentifier>{c63a7461-1b78-4fc5-8daf-32e666c390fb}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework">
-      <UniqueIdentifier>{d6e287cf-f78a-405b-98b0-f5f2c60ad9af}</UniqueIdentifier>
+      <UniqueIdentifier>{11b11d25-1aff-48b4-93ec-3b0646b6472a}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\Input">
-      <UniqueIdentifier>{d2fc4a28-5265-46b2-8612-1441e012498c}</UniqueIdentifier>
+      <UniqueIdentifier>{98aa537c-33be-4ed2-81f9-78541173ec4b}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\SceneBase">
-      <UniqueIdentifier>{08f169b7-03e8-4ab3-83d6-c8fe0efa0b9c}</UniqueIdentifier>
+      <UniqueIdentifier>{e69ca644-e377-46bd-98ab-a36195ef775a}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics">
-      <UniqueIdentifier>{259d93a5-c07a-4732-ad13-1e8482e9bb4b}</UniqueIdentifier>
+      <UniqueIdentifier>{eef19ec2-e236-4ddf-a7f7-644b7e171a05}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Cubemap">
-      <UniqueIdentifier>{45b8441a-c126-409a-a9a2-022af7ccad24}</UniqueIdentifier>
+      <UniqueIdentifier>{83e833e5-fc5e-447e-a256-49294390c49d}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Model">
-      <UniqueIdentifier>{339f9035-8e6b-427d-ab9d-a40be01ef061}</UniqueIdentifier>
+      <UniqueIdentifier>{54aacd7e-cfaf-47bb-be1b-57e2d11acdea}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Sprite">
-      <UniqueIdentifier>{cfbbf1a5-2b84-4d22-bc9c-409ee09b3b09}</UniqueIdentifier>
+      <UniqueIdentifier>{0b0a11ff-19f0-4a0c-972e-65c44498dbf6}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\SRV">
-      <UniqueIdentifier>{74623371-8cd4-4d18-8e18-2e8fb5e058bc}</UniqueIdentifier>
+      <UniqueIdentifier>{92383680-8351-49f2-bb2b-51a5458f6eda}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen">
-      <UniqueIdentifier>{0df04e44-1597-4e2b-ac4c-5ccbd7ac7d28}</UniqueIdentifier>
+      <UniqueIdentifier>{5d3d8a75-ac8b-440d-90f5-f630ab3ea16d}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen\PostEffect">
-      <UniqueIdentifier>{a1dd5f7e-2c76-44cb-acc1-2177d6ada0ac}</UniqueIdentifier>
+      <UniqueIdentifier>{ba771927-c560-4bcc-a521-3902cdc9237e}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility">
-      <UniqueIdentifier>{3a48d08d-41c7-4b1c-ac2c-165441c1dc07}</UniqueIdentifier>
+      <UniqueIdentifier>{74ca4feb-ba2e-4cfa-987c-f1eb02fd5c02}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider">
-      <UniqueIdentifier>{a6807263-c218-482e-880a-5a98290a19a8}</UniqueIdentifier>
+      <UniqueIdentifier>{67d564a7-8c4b-4a6e-831e-cc137946daa2}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\2DCollider">
-      <UniqueIdentifier>{1a610196-b0b5-4f55-8a0f-6f6436fc80e2}</UniqueIdentifier>
+      <UniqueIdentifier>{8d3d2a5c-69a1-46fb-805c-94e6c1fefef5}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Ray">
-      <UniqueIdentifier>{e41a0ad7-94ad-490b-8b2a-7a7d14c4829d}</UniqueIdentifier>
+      <UniqueIdentifier>{db0a2b64-a3d8-4d38-83fb-81c3a84371b9}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Sphere">
-      <UniqueIdentifier>{128add5f-4df5-4afd-911d-be4493af6e38}</UniqueIdentifier>
+      <UniqueIdentifier>{d17b9a79-d24f-4c90-8464-68168b9fb47b}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Loader">
-      <UniqueIdentifier>{af3b12a6-0f0b-4bec-8211-aecca72ddf8f}</UniqueIdentifier>
+      <UniqueIdentifier>{f6cc43ae-6371-4716-bf9d-eae643954b82}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Math">
-      <UniqueIdentifier>{dc645531-87c1-48a2-b554-79250caeadd6}</UniqueIdentifier>
+      <UniqueIdentifier>{bea7d143-6184-45d2-9ef8-475f21eb38ff}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\ObjectBasis">
-      <UniqueIdentifier>{95ea464b-81fc-4234-86cd-b5a69afcac03}</UniqueIdentifier>
+      <UniqueIdentifier>{429542ba-d5e8-4fd2-999e-ae3559410437}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\SceneObjects">
-      <UniqueIdentifier>{07075b8b-f33e-41ae-890f-0b20dfdf424b}</UniqueIdentifier>
+      <UniqueIdentifier>{0b8ab93e-1316-46b2-b66d-480c8077440d}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils">
-      <UniqueIdentifier>{1adc1b16-3daf-427e-8aed-d93baba74831}</UniqueIdentifier>
+      <UniqueIdentifier>{f8c37225-942e-4e2e-890d-5ec6c04f63fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\JSON">
-      <UniqueIdentifier>{5ef49014-d3a9-4ddb-bfef-902e4be98a27}</UniqueIdentifier>
+      <UniqueIdentifier>{3f4f05eb-c2f4-49db-b0e7-9b4434e32e37}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\Time">
-      <UniqueIdentifier>{9f7fcfc2-d185-4811-9996-ace2b4fb4ca7}</UniqueIdentifier>
+      <UniqueIdentifier>{f76b8847-e666-46ed-a0fa-6dc054a58967}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals">
-      <UniqueIdentifier>{dfef4087-f650-4040-b16a-5d930e480b26}</UniqueIdentifier>
+      <UniqueIdentifier>{86b352c9-6c94-442e-9be7-3ddcd9b6cb7b}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals\imgui">
-      <UniqueIdentifier>{3cac3c21-cae4-467c-9c60-a242a2e6f5ee}</UniqueIdentifier>
+      <UniqueIdentifier>{66828fda-42c3-43bb-9b1f-57b12232baea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -993,11 +1009,11 @@ File Path: project/TYengine.vcxproj.filters
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp">
       <Filter>application\Object\Enemy\EnemyBullet\Linear</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\AfterCollisionState.cpp">
-      <Filter>application\Object\Player\PlayerBullet\NormalBullet</Filter>
+    <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp">
+      <Filter>application\Object\Player\PlayerBullet\HomingBullet</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\NormalBullet\LinearState.cpp">
-      <Filter>application\Object\Player\PlayerBullet\NormalBullet</Filter>
+    <ClCompile Include="application\Object\Player\PlayerJson.cpp">
+      <Filter>application\Object\Player</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Player\PlayerState\PlayerBarrelRoll.cpp">
       <Filter>application\Object\Player\PlayerState</Filter>
@@ -1064,6 +1080,24 @@ File Path: project/TYengine.vcxproj.filters
     </ClCompile>
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp">
       <Filter>application\Scene\GameScene\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp">
+      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeIn.cpp">
+      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeOut.cpp">
+      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp">
+      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleScenePlay.cpp">
+      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneReady.cpp">
+      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
     </ClCompile>
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp">
       <Filter>application\ScoreUI</Filter>
@@ -1365,9 +1399,6 @@ File Path: project/TYengine.vcxproj.filters
     <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp">
       <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
@@ -1394,8 +1425,14 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h">
       <Filter>application\Object\Enemy\EnemyBullet</Filter>
     </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h">
+      <Filter>application\Object\Player\PlayerBullet\HomingBullet</Filter>
+    </ClInclude>
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h">
       <Filter>application\Object\Player\PlayerBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PlayerStruct.h">
+      <Filter>application\Object\Player</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\GameScene\GameScene.h">
       <Filter>application\Scene\GameScene</Filter>
@@ -1784,7 +1821,7 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="application\AppSystem\Audio\GameAudio.h">
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h" />
+    <ClInclude Include="engine\Utility\Utils\Time\Oscillator.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -2489,6 +2526,8 @@ public:
 protected:
 	/// <summary>死亡状態フラグ。</summary>
 	bool isDead_ = false;
+	/// <summary>デルタタイム。</summary>
+	float deltaTime_ = 0.0f;
 };
 
 ============================================================
@@ -2661,7 +2700,7 @@ using namespace TYEngine::Graphics;
 using namespace TYEngine::Effect;
 using namespace TYEngine::CameraSystem;
 
-const std::vector<StateMachine<Enemy, EnemyState>::StateFunctionSet>& Enemy::GetStateTable()
+const std::vector<Enemy::StateFunctionSet>& Enemy::GetStateTable()
 {
 	using enum EnemyState;
 	static const std::vector<StateFunctionSet> stateTable =
@@ -2683,7 +2722,7 @@ Enemy::~Enemy()
 
 void Enemy::Init()
 {
-	RegisterFromDefaultTable(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 
 	// 数値を適用
 	popTime_ = 1.0f;
@@ -2753,7 +2792,7 @@ void Enemy::Init()
 
 
 	// 出現演出へ遷移
-	ChangeState(EnemyState::ENTERING);
+	stateMachine_.ChangeState(EnemyState::ENTERING);
 }
 
 void Enemy::Update()
@@ -2768,7 +2807,7 @@ void Enemy::Update()
 		worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 		
 		// ステート更新
-		UpdateState(deltaTime_);
+		stateMachine_.UpdateState(deltaTime_);
 
 		// 行列更新と回転処理
 		UpdateTransform();
@@ -2820,12 +2859,12 @@ void Enemy::OnCollision()
 	if (hitPoint_ > 0) // まだ生きている場合
 	{
 		GameAudio::GetInstance()->Play("damageE", false, SoundCategory::SE);
-		ChangeState(EnemyState::DAMAGED);
+		stateMachine_.ChangeState(EnemyState::DAMAGED);
 	}
 	else // HPが0以下になった場合
 	{
 		GameAudio::GetInstance()->Play("gekiha", false, SoundCategory::SE);
-		ChangeState(EnemyState::DESPAWNED);
+		stateMachine_.ChangeState(EnemyState::DESPAWNED);
 	}
 }
 
@@ -2926,14 +2965,14 @@ void Enemy::InitDespawned()
 
 void Enemy::UpdateEntering()
 {
-	float t = GetStateElapsedTime() / popTime_;
+	float t = stateMachine_.GetStateElapsedTime() / popTime_;
 	if (t <= 1.0f)
 	{
 		worldTransform_.SetScale(Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t)));
 	}
 	else
 	{
-		ChangeState(EnemyState::ACTIVE);
+		stateMachine_.ChangeState(EnemyState::ACTIVE);
 	}
 }
 
@@ -2989,8 +3028,8 @@ void Enemy::InitDamaged()
 
 void Enemy::UpdateDamaged()
 {
-	if (GetStateElapsedTime() > 0.05f)
-		ChangeState(EnemyState::ACTIVE);
+	if (stateMachine_.GetStateElapsedTime() > 0.05f)
+		stateMachine_.ChangeState(EnemyState::ACTIVE);
 }
 
 void Enemy::ExitDamaged()
@@ -3001,19 +3040,19 @@ void Enemy::ExitDamaged()
 
 void Enemy::UpdateDespawned()
 {
-	if (GetStateElapsedTime() < 2.0f)
+	if (stateMachine_.GetStateElapsedTime() < 2.0f)
 	{
 		roll_ += 0.02f;
 		Vector3 pos = worldTransform_.GetTranslation();
 		pos.y -= 0.02f;
 		worldTransform_.SetTranslation(pos);
-		float t = 1.0f - (GetStateElapsedTime() / 2.0f);
+		float t = 1.0f - (stateMachine_.GetStateElapsedTime() / 2.0f);
 		obj_->SetAlpha(t / 2.0f);
 		worldTransform_.SetScale(defaultScale_ * t);
 	}
 	else
 	{
-		ChangeState(EnemyState::EXITING);
+		stateMachine_.ChangeState(EnemyState::EXITING);
 	}
 }
 
@@ -3068,8 +3107,12 @@ enum EnemyType
 /// 状態マシンにより行動を制御し、出現・攻撃・被弾・死亡などのライフサイクルを管理する。
 /// </summary>
 class Enemy :
-    public BaseCharacter, public TYEngine::Utility::StateMachine<Enemy, EnemyState>
+    public BaseCharacter
 {
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<Enemy, EnemyState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+
 public: // 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
@@ -3167,6 +3210,7 @@ public:
 
 	const TYEngine::Utility::Vector3& GetDefaultScale() { return defaultScale_; }
 	const TYEngine::Utility::Vector3& GetUpScale() { return upScale_; }
+	StateMachineType GetStateMachine() { return stateMachine_; }
 
 private:
 	/// <summary>
@@ -3200,10 +3244,6 @@ private:
 	float bulletCoolTime_ = 0.0f;
 	/// <summary>弾発射用タイマー。</summary>
 	float bulletTimer_ = 0.0f;
-
-
-	/// <summary>1フレームの時間。</summary>
-	float deltaTime_ = 0.0f;
 
 	/// <summary>通常スケール。</summary>
 	TYEngine::Utility::Vector3 defaultScale_ = { 1, 1, 1 };
@@ -3250,24 +3290,12 @@ private:
 	/// <summary>カメラ。</summary>
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
+
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override
-	{
-		switch (state)
-		{
-		case State::PRE_ENTER: return "PRE_ENTER";
-		case State::ENTERING: return "ENTERING";
-		case State::ACTIVE: return "ACTIVE";
-		case State::EXITING: return "EXITING";
-		case State::DAMAGED: return "DAMAGED";
-		case State::DESPAWNED: return "DESPAWNED";
-		default: return "Unknown";
-		}
-	}
-
 	// 待機状態
 	void InitPreEnter() {};
 	void UpdatePreEnter() {};
@@ -3432,18 +3460,17 @@ File Path: project/application/Object/Enemy/EnemyBullet/Linear/AfterCollisionSta
 ============================================================
 #include "Linear.h"
 
-void EnemyBullet::Linear::InitAfterCollision()
+namespace EnemyBullet
 {
-	// 着弾後は即座に死亡
-	isDead_ = true;
-}
+	void Linear::InitAfterCollision()
+	{
+		// 着弾後は即座に死亡
+		isDead_ = true;
+	}
 
-void EnemyBullet::Linear::UpdateAfterCollision()
-{
-}
+	void Linear::UpdateAfterCollision(){}
 
-void EnemyBullet::Linear::ExitAfterCollision()
-{
+	void Linear::ExitAfterCollision(){}
 }
 
 ============================================================
@@ -3458,73 +3485,73 @@ File Path: project/application/Object/Enemy/EnemyBullet/Linear/Linear.cpp
 #include "imgui.h"
 #endif // _DEBUG
 
-
-using namespace EnemyBullet;
 using namespace TYEngine::Utility;
-
 
 #define E_LINEAR_BULLET_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Linear, stateEnum, funcName)
 
-const std::vector<StateMachine<Linear, LinearState>::StateFunctionSet>& Linear::GetStateTable()
+namespace EnemyBullet
 {
-	using enum LinearState;
-	static const std::vector<StateFunctionSet> stateTable = {
-		E_LINEAR_BULLET_ENTRY(SHOT, Shot),
-		E_LINEAR_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
-	};
-	return stateTable;
-}
+	const std::vector<Linear::StateFunctionSet>& Linear::GetStateTable()
+	{
+		using enum LinearState;
+		static const std::vector<StateFunctionSet> stateTable = {
+			E_LINEAR_BULLET_ENTRY(SHOT, Shot),
+			E_LINEAR_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
+		};
+		return stateTable;
+	}
 
-Linear::Linear()
-{
-	RegisterFromDefaultTable(this);
-}
+	Linear::Linear()
+	{
+		stateMachine_.RegisterFromDefaultTable(this);
+	}
 
-Linear::~Linear()
-{
-	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
-}
+	Linear::~Linear()
+	{
+		ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+	}
 
-void Linear::Init()
-{
-	// 3Dモデル生成
-	obj_ = std::make_unique<TYEngine::Graphics::Object3d>();
-	obj_->Initialize();
-	obj_->SetModel("unitSphere.obj");
-	obj_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
-	obj_->SetIsLighting(true);
-	
-	// トランスフォーム初期化
-	worldTransform_.Initialize();
-	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
-	worldTransform_.Update();
+	void Linear::Init()
+	{
+		// 3Dモデル生成
+		obj_ = std::make_unique<TYEngine::Graphics::Object3d>();
+		obj_->Initialize();
+		obj_->SetModel("unitSphere.obj");
+		obj_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+		obj_->SetIsLighting(true);
 
-	// コライダー生成・登録
-	collider_ = std::make_unique<EBulletCollider>(
-		static_cast<uint32_t>(ColliderTypeID::E_BULLET),
-		GetWorldPosition(),
-		colliderScale_,
-		this
-	);
-	ColliderManager::GetInstance()->AddCollider(collider_.get());
-	
-	// 初期ステートをSHOT（発射中）に
-	ChangeState(LinearState::SHOT);
+		// トランスフォーム初期化
+		worldTransform_.Initialize();
+		worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+		worldTransform_.Update();
 
-	defaultSpeed_ = 20.0f;
-}
+		// コライダー生成・登録
+		collider_ = std::make_unique<EBulletCollider>(
+			static_cast<uint32_t>(ColliderTypeID::E_BULLET),
+			GetWorldPosition(),
+			colliderScale_,
+			this
+		);
+		ColliderManager::GetInstance()->AddCollider(collider_.get());
 
-void Linear::Update()
-{
-	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
-	UpdateState(deltaTime_);
-	collider_->Update(GetWorldPosition());
-}
+		// 初期ステートをSHOT（発射中）に
+		stateMachine_.ChangeState(LinearState::SHOT);
 
-void Linear::Draw()
-{
-	obj_->Draw(worldTransform_);
+		defaultSpeed_ = 20.0f;
+	}
+
+	void Linear::Update()
+	{
+		deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+		stateMachine_.UpdateState(deltaTime_);
+		collider_->Update(GetWorldPosition());
+	}
+
+	void Linear::Draw()
+	{
+		obj_->Draw(worldTransform_);
+	}
 }
 
 
@@ -3552,9 +3579,12 @@ namespace EnemyBullet
 	/// 発射ステートと衝突後ステートを持つ。
 	/// </summary>
 	class Linear :
-		public BaseBullet, TYEngine::Utility::StateMachine<Linear, LinearState>
+		public BaseBullet
 	{
-	public: // 関数テーブル
+	public:
+		using StateMachineType = TYEngine::Utility::StateMachine<Linear, LinearState>;
+		using StateFunctionSet = StateMachineType::StateFunctionSet;
+		// 関数テーブル
 		static const std::vector<StateFunctionSet>& GetStateTable();
 
 	public:
@@ -3577,20 +3607,11 @@ namespace EnemyBullet
 		/// <summary>固定タイムステップ。</summary>
 		float deltaTime_ = 0.0f;
 
+		/// <summary>ステートマシーン。</summary>
+		StateMachineType stateMachine_;
 
 	private: // シーン内のState関連関数
 #pragma region // State関連関数
-		// 列挙名を文字列化（ImGui表示用）
-		std::string GetStateName(State state) const override
-		{
-			switch (state)
-			{
-			case State::SHOT: return "SHOT";
-			case State::AFTER_COLLISION: return "AFTER_COLLISION";
-			default: return "Unknown";
-			}
-		}
-
 		// 直線移動
 		// ShotState.cpp
 		void InitShot();
@@ -3613,54 +3634,55 @@ File Path: project/application/Object/Enemy/EnemyBullet/Linear/ShotState.cpp
 ============================================================
 #include "Linear.h"
 
-void EnemyBullet::Linear::InitShot()
+namespace EnemyBullet
 {
-}
+	void Linear::InitShot()
+	{}
 
-void EnemyBullet::Linear::UpdateShot()
-{
-	// 寿命を超えたら死亡フラグを true に
-	if (GetStateElapsedTime() > lifeTime_)
+	void Linear::UpdateShot()
 	{
-		isDead_ = true;
+		// 寿命を超えたら死亡フラグを true に
+		if (stateMachine_.GetStateElapsedTime() > lifeTime_)
+		{
+			isDead_ = true;
+		}
+
+		// 移動処理
+		Move();
+		// 回転処理
+		RotationDirection();
+
+		worldTransform_.Update();
 	}
 
-	// 移動処理
-	Move();
-	// 回転処理
-	RotationDirection();
+	void Linear::ExitShot()
+	{}
 
-	worldTransform_.Update();
-}
+	void Linear::Move()
+	{
+		// 速度ベクトル算出
+		velocity_ = direction_ * defaultSpeed_ * deltaTime_;
 
-void EnemyBullet::Linear::ExitShot()
-{
-}
+		// 座標更新
+		worldTransform_.SetTranslation(worldTransform_.GetTranslation() + velocity_);
+	}
 
-void EnemyBullet::Linear::Move()
-{
-	// 速度ベクトル算出
-	velocity_ = direction_ * defaultSpeed_ * deltaTime_;
+	void Linear::RotationDirection()
+	{
+		// Z軸向き（前方）からY軸回転（Yaw）を計算（XZ平面で）
+		float yaw = std::atan2(direction_.x, direction_.z);
 
-	// 座標更新
-	worldTransform_.SetTranslation(worldTransform_.GetTranslation() + velocity_);
-}
+		// 上下回転（Pitch）も反映したいならY除いたベクトル長からPitchを算出
+		float lenXZ = std::sqrt(direction_.x * direction_.x + direction_.z * direction_.z);
+		float pitch = std::atan2(-direction_.y, lenXZ);
 
-void EnemyBullet::Linear::RotationDirection()
-{
-	// Z軸向き（前方）からY軸回転（Yaw）を計算（XZ平面で）
-	float yaw = std::atan2(direction_.x, direction_.z);
+		// Roll（横傾き）
+		float roll = 0.0f;
 
-	// 上下回転（Pitch）も反映したいならY除いたベクトル長からPitchを算出
-	float lenXZ = std::sqrt(direction_.x * direction_.x + direction_.z * direction_.z);
-	float pitch = std::atan2(-direction_.y, lenXZ);
-
-	// Roll（横傾き）
-	float roll = 0.0f;
-
-	// 回転を適用
-	worldTransform_.SetRotate({ pitch, yaw, roll });
-	worldTransform_.Update();
+		// 回転を適用
+		worldTransform_.SetRotate({ pitch, yaw, roll });
+		worldTransform_.Update();
+	}
 }
 
 ============================================================
@@ -3675,7 +3697,7 @@ using namespace TYEngine::Utility;
 void EnemyCollider::OnCollisionEnter([[maybe_unused]] Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
 	// プレイヤ―弾と接触し、かつ敵が生存・活動中の場合
-	if (other.GetTypeID() == static_cast<uint32_t>(ColliderTypeID::P_BULLET) && !enemy_->IsDead() && enemy_->GetCurrentState() == EnemyState::ACTIVE)
+	if (other.GetTypeID() == static_cast<uint32_t>(ColliderTypeID::P_BULLET) && !enemy_->IsDead() && enemy_->GetStateMachine().GetCurrentState() == EnemyState::ACTIVE)
 	{
 		// 敵側の衝突処理（被弾）を実行
 		enemy_->OnCollision();
@@ -3776,7 +3798,7 @@ void EnemyManager::Update()
 		static float timer = 0.0f;
 		for (auto& enemy : enemies_)
 		{
-			if(enemy->GetCurrentState() == EnemyState::ACTIVE)
+			if(enemy->GetStateMachine().GetCurrentState() == EnemyState::ACTIVE)
 			{
 				if (beatAnalyzer_->GetBeat())
 				{
@@ -3847,7 +3869,7 @@ Enemy* EnemyManager::GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera,
 	for (auto& enemy : enemies_)
 	{
 		// アクティブ状態以外（出現中や死亡済）は除外
-		if (enemy->GetCurrentState() != EnemyState::ACTIVE) continue;
+		if (enemy->GetStateMachine().GetCurrentState() != EnemyState::ACTIVE) continue;
 
 		// 既にロックオン済みの敵は除外
 		auto it = std::find(alreadyLockedEnemies.begin(), alreadyLockedEnemies.end(), enemy.get());
@@ -3919,7 +3941,7 @@ void EnemyManager::Pop()
 	// 依存関係の注入
 	enemy->SetEnemyBulletManager(&bulletManager_);
 	enemy->SetEventListener(comboAndScoreHandler_.get());
-	enemy->SetIsInGame(true);
+	enemy->SetIsInGame(isInGame_);
 	enemy->SetCamera(camera_);
 	
 	enemies_.push_back(std::move(enemy));
@@ -3973,15 +3995,17 @@ public:
 
 	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
 
+	void SetIsInGame(bool is) { isInGame_ = is; }
+
 	/// <summary>レティクルに最も近い未ロックオンの敵を取得する</summary>
 	Enemy* GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera, const TYEngine::Utility::Vector2& reticleNDC, float lockRadiusNDC, const std::vector<Enemy*>& alreadyLockedEnemies);
 
 	/// <summary>ポインタが現在も有効（生存しているか）確認する</summary>
 	bool IsValidEnemy(const Enemy* enemyPtr) const;
 
-	bool IsActive(const Enemy* enemyPtr) const
+	bool IsActive(Enemy* enemyPtr) const
 	{
-		if (enemyPtr->GetCurrentState() == EnemyState::ACTIVE)
+		if (enemyPtr->GetStateMachine().GetCurrentState() == EnemyState::ACTIVE)
 		{
 			return true;
 		}
@@ -4025,6 +4049,9 @@ private:
 
 	/// <summary>同時出現数。</summary>
 	int spawnNum_ = 0;
+
+	/// <summary>ゲームシーンかどうか。</summary>
+	bool isInGame_ = false;
 
 	/// <summary>コンボ・スコア処理ハンドラ。</summary>
 	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;
@@ -4115,18 +4142,18 @@ File Path: project/application/Object/Player/Player.cpp
 #include "../../AppSystem/Audio/GameAudio.h"
 #include "../Enemy/EnemyManager/EnemyManager.h"
 
-using namespace TYEngine::Utility;
-using namespace TYEngine::Graphics;
-using namespace TYEngine::Effect;
 using namespace TYEngine;
+using namespace Utility;
+using namespace Graphics;
+using namespace Effect;
 
 #define PLAYER_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Player, stateEnum, funcName)
 
-const std::vector<StateMachine<Player, PlayerState>::StateFunctionSet>& Player::GetStateTable()
+const std::vector<Player::StateFunctionSet>& Player::GetStateTable()
 {
 	using enum PlayerState;
-	static const std::vector<StateFunctionSet> stateTable = 
+	static const std::vector<StateFunctionSet> stateTable =
 	{
 		PLAYER_STATE_ENTRY(IDLE, Idle),
 		PLAYER_STATE_ENTRY(ROUTE, Route),
@@ -4147,32 +4174,19 @@ Player::~Player()
 void Player::Init()
 {
 	// ステートマシンの初期化
-	RegisterFromDefaultTable(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 	
 	// 入力マネージャ取得
 	input_ = Framework::Input::GetInstance();
 
-	// 数値を適用
-	colliderScale_ = 0.2f;
-	playerDepthFromCamera_ = 4.0f;
-	xRange = 16.0f * 0.09f;
-	yRange = 9.0f * 0.085f;
-	defaultSpeed_ = 0.3f;
-	speed_ = { defaultSpeed_, defaultSpeed_ * (yRange / xRange) };
+	JMInit();
 
-	// HP設定
-	maxHP_ = 100;
-	hitPoint_ = maxHP_;
+	// 自弾マネージャの初期化
+	bullets_.bulletManager = std::make_unique<PlayerBulletManager>(this);
+	bullets_.bulletManager->SetCamera(camera_);
+	bullets_.bulletManager->SetJM(&jm_);
+	bullets_.bulletManager->Init();
 
-	// バレルロール
-	rollTime_ = 0.6f;
-	rollRange_ = 0.3f;
-	leftRoll_ = 2.0f * std::numbers::pi_v<float>;
-	rightRoll_ = -2.0f * std::numbers::pi_v<float>;
-	justScale_ = 3.0f;
-	bulletCoolTime_ = 0.1f;
-
-	
 	// 3Dオブジェクトの生成と初期化
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
@@ -4182,14 +4196,9 @@ void Player::Init()
 
 	// ワールドトランスフォームの設定
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
+	worldTransform_.SetScale(colliderScale_);
 	worldTransform_.SetUseQuaternion(true); // クォータニオンを使用
 	worldTransform_.SetParentMatrix(&camera_->GetWorldMatrix()); // 親行列をカメラに設定
-
-	// 初期位置設定（画面手前への配置）
-	Vector3 pos = worldTransform_.GetTranslation();
-	pos.z = 4.0f;
-	worldTransform_.SetTranslation(pos);
 	worldTransform_.Update();
 
 	// 通常コライダーの生成と登録
@@ -4205,82 +4214,58 @@ void Player::Init()
 	justCollider_ = std::make_unique<JustCollider>(
 		static_cast<uint32_t>(ColliderTypeID::JUST_AREA),
 		GetWorldPosition(),
-		justScale_,
+		barrelRoll_.justScale,
 		this
 	);
 	ColliderManager::GetInstance()->AddCollider(justCollider_.get());
-
-
-	// 初期ステートをROOTに設定
-	ChangeState(PlayerState::ROUTE);
-
-	// 自弾マネージャの初期化
-	bulletManager_ = std::make_unique<PlayerBulletManager>(this);
-	bulletManager_->SetCamera(camera_);
-	bulletManager_->Init();
-
-	hpSpr_ = std::make_unique<Sprite>();
-	hpSpr_->Initialize("Resources/Texture/white2x2.png");
-	hpSpr_->SetPosition({ 368,609 });
-	hpSpr_->SetSize({ 544,32 });
-	hpSpr_->SetColor({ 0.1f,1.0f,0.1f,1.0f });
-
-	hpSprBG_ = std::make_unique<Sprite>();
-	hpSprBG_->Initialize("Resources/Texture/white2x2.png");
-	hpSprBG_->SetPosition({ 368,609 });
-	hpSprBG_->SetSize({ 544,32 });
-	hpSprBG_->SetColor({ 1.0f,0.1f,0.1f,1.0f });
-	
-
-	for (auto&& spr : lockOnSpr_)
-	{
-		spr = std::make_unique<Sprite>();
-		spr->Initialize("Resources/Texture/reticle.png");
-		spr->SetAnchorPoint({ 0.5f,0.5f });
-		spr->SetColor({ 1,0,0,1 });
-	}
 
 	// レティクルの初期化
 	reticle_ = std::make_unique<Reticle>(camera_);
 	reticle_->Init();
 
-
-	// デバッグ用レティクル初期化
-	ReticleInit();
+	// 初期ステートをROOTに設定
+	stateMachine_.ChangeState(PlayerState::ROUTE);
 }
 
 void Player::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 
-	// 色のリセット（被弾などで赤くなっている場合があるため）
-	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+	DebugUpdate();
+
+	// 色のリセット
+	if(obj_->GetColor() != Vector4{ 1.0f, 1.0f, 1.0f, 1.0f }) obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// ステートマシンの更新
-	UpdateState(deltaTime_);
+	stateMachine_.UpdateState(deltaTime_);
 
+	ParticleUpdate();
+
+	status_.hpSprBG->Update();
+	if (status_.hitPoint >= 0)
+	{
+		status_.hpSpr->SetScale({ static_cast<float>(status_.hitPoint) / static_cast<float>(status_.maxHitPoint),1.0f });
+	}
+	status_.hpSpr->Update();
+
+	// ステート更新後の追加処理（移動反映や攻撃など）
+	PostStateUpdate();
+}
+
+void Player::ParticleUpdate()
+{
 	// エンジン噴射パーティクルの生成
 	// プレイヤー後方にパーティクルを発生させる
 	Vector3 back = -Normalize(Vector3(worldTransform_.GetMatWorld().m[2][0], worldTransform_.GetMatWorld().m[2][1], worldTransform_.GetMatWorld().m[2][2]));
 	IParticleRenderer::Emitter e;
-	e.transform.translate = GetWorldPosition() + back * 0.3f;
-	e.transform.scale = { 0.1f ,0.1f ,0.1f };
-	e.velocity = back * 3.0f;
-	e.count = 1;
-	e.frequency = 0.01f; // 毎フレーム発生
+	e.transform.translate = GetWorldPosition() + back * jetEffect_.offSet;
+	e.transform.scale = jetEffect_.scale;
+	e.velocity = back * jetEffect_.speed;
+	e.count = jetEffect_.count;
+	e.frequency = jetEffect_.frequency;
 
 	ParticleManager::GetInstance()->SetEmitter(3, e);
 	ParticleManager::GetInstance()->TriggerEmit(3, true);
-
-	hpSprBG_->Update();
-	if (hitPoint_ >= 0)
-	{
-		hpSpr_->SetSize({ 544.0f * (static_cast<float>(hitPoint_) / static_cast<float>(maxHP_)),32.0f });
-	}
-	hpSpr_->Update();
-
-	// ステート更新後の追加処理（移動反映や攻撃など）
-	PostStateUpdate();
 }
 
 void Player::Draw()
@@ -4288,9 +4273,9 @@ void Player::Draw()
 	if(!isDead_)
 	{
 		obj_->Draw(worldTransform_);
-		bulletManager_->Draw();
+		bullets_.bulletManager->Draw();
 
-		ReticleDraw();
+		reticle_->Draw();
 	}
 }
 
@@ -4304,12 +4289,12 @@ void Player::DrawUI()
 
 		int index = 0;
 
-		for (Enemy* target : lockedEnemies_)
+		for (Enemy* target : lockOn_.lockedEnemies)
 		{
 			// 1. ダングリングポインタ対策：敵がまだ生きているか確認
-			if (enemyManager_ && enemyManager_->IsValidEnemy(target))
+			if (lockOn_.enemyManager && lockOn_.enemyManager->IsValidEnemy(target))
 			{
-				if(enemyManager_->IsActive(target))
+				if(lockOn_.enemyManager->IsActive(target))
 				{
 					Utility::Vector2 ndc;
 
@@ -4325,9 +4310,9 @@ void Player::DrawUI()
 
 						// 4. 計算したスクリーン座標 (screenX, screenY) に 
 						// ロックオン用の2Dスプライトを描画する
-						lockOnSpr_[index]->SetPosition({ screenX, screenY });
-						lockOnSpr_[index]->Update();
-						lockOnSpr_[index]->Draw();
+						lockOn_.lockOnSpr[index]->SetPosition({ screenX, screenY });
+						lockOn_.lockOnSpr[index]->Update();
+						lockOn_.lockOnSpr[index]->Draw();
 
 					}
 					index++;
@@ -4336,8 +4321,8 @@ void Player::DrawUI()
 		}
 		if(isInGame_)
 		{
-			hpSprBG_->Draw();
-			hpSpr_->Draw();
+			status_.hpSprBG->Draw();
+			status_.hpSpr->Draw();
 		}
 	}
 }
@@ -4352,15 +4337,15 @@ void Player::TakeDamage()
 	// 通常ダメージ処理：HP減少
 	if(isInGame_)
 	{
-		--hitPoint_;
+		--status_.hitPoint;
 	}
 #endif // _DEBUG
 
-	if (hitPoint_ > 0)
+	if (status_.hitPoint > 0)
 	{
 		// 生存していれば被弾音声再生・被弾ステートへ遷移
 		GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
-		ChangeState(PlayerState::TAKE_DAMAGE);
+		stateMachine_.ChangeState(PlayerState::TAKE_DAMAGE);
 	}
 	else
 	{
@@ -4377,9 +4362,9 @@ void Player::OnCollision()
 
 	IParticleRenderer::Emitter e;
 	e.transform.translate = GetWorldPosition();
-	e.count = 20;
-	e.frequency = 5.0f;
-	e.transform.scale = { 0.3f, 0.3f, 0.3f };
+	e.count = destroyEffect_.count;
+	e.frequency = destroyEffect_.frequency;
+	e.transform.scale = destroyEffect_.scale;
 	ParticleManager::GetInstance()->SetEmitter(4, e);
 
 	ParticleManager::GetInstance()->TriggerEmit(4, true);
@@ -4406,13 +4391,10 @@ void Player::PostStateUpdate()
 	Attack();
 	
 	// 弾マネージャの更新
-	bulletManager_->Update();
+	bullets_.bulletManager->Update();
 
 	// レティクルの更新
 	reticle_->Update();
-
-	// デバッグ用レティクルの更新
-	ReticleUpdate();
 
 	DebugGUI();
 }
@@ -4420,46 +4402,46 @@ void Player::PostStateUpdate()
 void Player::Attack()
 {
 	// クールタイムの減算
-	if (lockOnTimer_ > 0)
+	if (lockOn_.lockOnTimer > 0)
 	{
-		lockOnTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
+		lockOn_.lockOnTimer -= Timer::GetInstance()->GetRawDeltaTime();
 	}
 
 	// 現在の射撃ボタン入力状態
 	bool isPressing = input_->PushKey(DIK_LCONTROL) || input_->IsPressMouse(1);
 
 	// ▼ ボタンを押し続けている間（ロックオン・サーチフェーズ）
-	if (isPressing && lockOnTimer_ <= 0)
+	if (isPressing && lockOn_.lockOnTimer <= 0)
 	{
 		// まだ最大ロック数に達していない場合のみサーチ
-		if (lockedEnemies_.size() < maxLockCount_ && enemyManager_)
+		if (lockOn_.lockedEnemies.size() < lockOn_.maxLockCount && lockOn_.enemyManager)
 		{
 			// reticle_ の画面座標は screenOffset_ とほぼ同義なのでそれを利用
-			Enemy* target = enemyManager_->GetBestLockOnTarget(camera_, screenOffset_, lockOnRadius_, lockedEnemies_);
+			Enemy* target = lockOn_.enemyManager->GetBestLockOnTarget(camera_, screenOffset_, lockOn_.lockOnRadius, lockOn_.lockedEnemies);
 
 			if (target)
 			{
-				lockedEnemies_.push_back(target);
+				lockOn_.lockedEnemies.push_back(target);
 				// TODO: ここで「カシュッ」というロックオン音を鳴らす
 				GameAudio::GetInstance()->Play("enter", false, SoundCategory::SE);
-				lockOnTimer_ = maxLockOnCool_;
+				lockOn_.lockOnTimer = lockOn_.maxLockOnCool;
 			}
 		}
 	} // ▼ ボタンを離した瞬間（一斉発射フェーズ）
-	else if (wasPressingShot_ && !isPressing)
+	else if (lockOn_.wasPressingShot && !isPressing)
 	{
-		if (!lockedEnemies_.empty())
+		if (!lockOn_.lockedEnemies.empty())
 		{
-			currentBulletType_ = PlayerBulletType::HOMING; // ホーミング弾タイプ
+			bullets_.currentBulletType = PlayerBulletType::HOMING; // ホーミング弾タイプ
 
 			// 散らすための角度計算用
 			int bulletCount = 0;
-			int totalBullets = static_cast<int>(lockedEnemies_.size());
+			int totalBullets = static_cast<int>(lockOn_.lockedEnemies.size());
 
-			for (Enemy* target : lockedEnemies_)
+			for (Enemy* target : lockOn_.lockedEnemies)
 			{
 				// ロックオン中に敵が倒されてポインタが無効になっていないか安全確認
-				if (enemyManager_->IsValidEnemy(target))
+				if (lockOn_.enemyManager->IsValidEnemy(target))
 				{
 					// 初期方向を散らす
 					// カメラの上方向と右方向を取得
@@ -4469,17 +4451,17 @@ void Player::Attack()
 
 					// 弾のインデックスに応じて、左右・上に散らす角度を計算
 					// 例：-1.0 ~ 1.0 の間で左右に散らす
-					float spreadX = (totalBullets > 1) ? -1.0f + (2.0f * bulletCount / (totalBullets - 1)) : 0.0f;
+					float spreadX = (totalBullets > 1) ? -lockOn_.spreadX + ((lockOn_.spreadX * 2.0f) * bulletCount / (totalBullets - 1)) : 0.0f;
 
 					// 上方向にも少し山なりに飛ばす
-					float spreadY = 0.5f;
+					float spreadY = lockOn_.spreadY;
 
 					// 初期方向ベクトルを合成（前方に進みつつ、上と左右に広がる）
 					Vector3 initialDir = forward + (right * spreadX) + (up * spreadY);
 					initialDir = Normalize(initialDir);
 
 					// 発射
-					bulletManager_->Fire(currentBulletType_, GetWorldPosition(), initialDir, target, enemyManager_);
+					bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), initialDir, target, lockOn_.enemyManager);
 
 					bulletCount++;
 					// 発射音
@@ -4489,37 +4471,37 @@ void Player::Attack()
 
 
 			// ロックオンリストをクリア
-			lockedEnemies_.clear();
+			lockOn_.lockedEnemies.clear();
 		}
 	}
 
 	// 次のフレームのために状態を保持
-	wasPressingShot_ = isPressing;
+	lockOn_.wasPressingShot = isPressing;
 
 
 	// クールタイムの減算
-	if (bulletTimer_ > 0)
+	if (bullets_.bulletTimer > 0)
 	{
-		bulletTimer_ -= Timer::GetInstance()->GetRawDeltaTime();
+		bullets_.bulletTimer -= Timer::GetInstance()->GetRawDeltaTime();
 	}
 	if (!isPressing)
 	{
 		// 攻撃入力があり、クールタイムが解消されていれば発射
-		if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bulletTimer_ <= 0)
+		if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bullets_.bulletTimer <= 0)
 		{
-			currentBulletType_ = PlayerBulletType::NORMAL;
+			bullets_.currentBulletType = PlayerBulletType::NORMAL;
 
 			// レティクル方向への発射ベクトル計算
 			Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
 
 			// 弾発射
-			bulletManager_->Fire(currentBulletType_, GetWorldPosition(), direction);
+			bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), direction);
 
 			// 射撃音再生
 			GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
 			// クールタイム設定
-			bulletTimer_ = bulletCoolTime_;
+			bullets_.bulletTimer = bullets_.bulletCoolTime;
 		}
 	}
 
@@ -4527,27 +4509,25 @@ void Player::Attack()
 
 void Player::Move()
 {
-	inputDir_ = {};
-	roll = 0.0f;
-	movePitch = 0.0f;
+	movement_.inputDir = {};
+	movement_.roll = 0.0f;
+	movement_.movePitch = 0.0f;
 
 	// 入力に応じた移動方向と姿勢傾きの設定
-	if (input_->PushKey(DIK_W)) { inputDir_.y += 1.0f; movePitch = -0.1f; }
-	if (input_->PushKey(DIK_S)) { inputDir_.y -= 1.0f; movePitch = 0.1f; }
-	if (input_->PushKey(DIK_A)) { inputDir_.x -= 1.0f; roll = 0.1f; }
-	if (input_->PushKey(DIK_D)) { inputDir_.x += 1.0f; roll = -0.1f; }
+	if (input_->PushKey(DIK_W)) { movement_.inputDir.y += 1.0f; movement_.movePitch = -movement_.maxPitch; }
+	if (input_->PushKey(DIK_S)) { movement_.inputDir.y -= 1.0f; movement_.movePitch = movement_.maxPitch; }
+	if (input_->PushKey(DIK_A)) { movement_.inputDir.x -= 1.0f; movement_.roll = movement_.maxRoll; }
+	if (input_->PushKey(DIK_D)) { movement_.inputDir.x += 1.0f; movement_.roll = -movement_.maxPitch; }
 
 	// 移動入力がある場合
-	if (Length(inputDir_) != 0.0f)
+	if (Length(movement_.inputDir) != 0.0f)
 	{
-		inputDir_ = Normalize(inputDir_);
+		movement_.inputDir = Normalize(movement_.inputDir);
 		
-		// 画面アスペクト比を考慮した移動速度補正
-		speed_.x = defaultSpeed_;
-		speed_.y = defaultSpeed_ * (xRange / yRange);
+		movement_.CalculateSpeed();
 		
 		// スクリーン上のオフセット座標を更新
-		screenOffset_ += inputDir_ * speed_ * deltaTime_;
+		screenOffset_ += movement_.inputDir * movement_.speed * deltaTime_;
 	}
 	
 	// 移動範囲の制限
@@ -4556,9 +4536,9 @@ void Player::Move()
 	// 座標反映（ローカル座標系）
 	// 親はカメラなので、+Z がカメラ前方
 	worldTransform_.SetTranslation({
-		screenOffset_.x * xRange,	// 横位置
-		screenOffset_.y * yRange,	// 縦位置
-		playerDepthFromCamera_      // 画面からの奥行き(カメラ前方)
+		screenOffset_.x * movement_.xRange,	// 横位置
+		screenOffset_.y * movement_.yRange,	// 縦位置
+		movement_.playerDepthFromCamera      // 画面からの奥行き(カメラ前方)
 		});
 
 	// 回転の更新
@@ -4575,8 +4555,8 @@ void Player::RotationOffsetLocal()
 {
 	// ローカル軸回りに回す（親＝カメラが最終的な向きを与えてくれる）
 	// ロール：ローカル前方(Z)／ピッチ：ローカル右(X)
-	Quaternion qRoll = MakeRotateAxisAngleQuaternion({ 0,0,1 }, roll);
-	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, movePitch);
+	Quaternion qRoll = MakeRotateAxisAngleQuaternion({ 0,0,1 }, movement_.roll);
+	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, movement_.movePitch);
 
 	// 好みで順序調整（ここでは Roll→Pitch）
 	worldTransform_.SetRotateQuaternion(Multiply(qRoll, qPitch));
@@ -4591,9 +4571,21 @@ Vector3 Player::ConvertScreenOffsetToWorld(const Vector2& offset)
 	Vector3 camUp = camera_->GetUp();
 
 	return camPos
-		+ camForward * playerDepthFromCamera_
-		+ camRight * (offset.x * xRange)
-		+ camUp * (offset.y * yRange);
+		+ camForward * movement_.playerDepthFromCamera
+		+ camRight * (offset.x * movement_.xRange)
+		+ camUp * (offset.y * movement_.yRange);
+}
+
+void Player::DebugUpdate()
+{
+	DebugJMApply();
+#ifdef _DEBUG
+	ImGui::Begin("PlayerConfig");
+	static JsonImGuiEditor inspector(jm_);
+	inspector.Draw(jm_.Root(), "PlayerConfig.json");
+	if (ImGui::Button("PlayerConfigSave")) jm_.Save();
+	ImGui::End();
+#endif // _DEBUG
 }
 
 void Player::DebugGUI()
@@ -4601,13 +4593,12 @@ void Player::DebugGUI()
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 
-	ImGui::Text("hp : %d", hitPoint_);
+	ImGui::Text("hp : %d", status_.hitPoint);
 
 	ImGui::DragFloat2("ScreenOffset", &screenOffset_.x);
 
 	Vector3 pos = GetWorldPosition();
 	ImGui::DragFloat3("pos", &pos.x);
-
 
 	Vector3 dir = reticle_->GetRay().diff;
 	ImGui::DragFloat3("diff", &dir.x);
@@ -4624,51 +4615,19 @@ void Player::DebugGUI()
 #endif // _DEBUG
 }
 
-void Player::ReticleInit()
-{
-#ifdef _DEBUG
-	reticleObj_ = std::make_unique<Object3d>();
-	reticleObj_->Initialize();
-	reticleObj_->SetModel("cube.obj");
-	reticleObj_->SetIsLighting(false);
-	reticleObj_->SetColor({ 0,1,0,1 });
-	reticleWT_.Initialize();
-	reticleWT_.SetScale({ colliderScale_, colliderScale_, colliderScale_ });
-	reticleWT_.Update();
-#endif // _DEBUG
-}
-
-void Player::ReticleUpdate()
-{
-#ifdef _DEBUG
-	reticleWT_.SetRotate(worldTransform_.GetRotate());
-	reticleWT_.SetTranslation(reticle_->GetTarget());
-	reticleWT_.Update();
-#endif // _DEBUG
-}
-
-void Player::ReticleDraw()
-{
-#ifdef _DEBUG
-	reticleObj_->Draw(reticleWT_);
-#endif // _DEBUG
-}
-
 
 ============================================================
 File Path: project/application/Object/Player/Player.h
 ============================================================
 #pragma once
 #include "../BaseCharacter/BaseCharacter.h"
+#include "PlayerStruct.h"
 #include "PlayerCollider.h"
 #include "JustCollider.h"
 #include "StateMachine.h"
 #include "Sprite.h"
-#include "PlayerBullet/PlayerBulletType.h"
-#include "PlayerBullet/PlayerBulletManager.h"
 #include "Reticle/Reticle.h"
 #include <numbers>
-
 
 enum class PlayerState
 {
@@ -4680,22 +4639,21 @@ enum class PlayerState
     DEAD,
 };
 
-namespace TYEngine
+namespace TYEngine::Framework
 {
-	namespace Framework
-	{
-		class Input;
-	}
+	class Input;
 }
-
 class Camera;
 class EnemyManager;
 class Enemy;
 
 class Player :
-	public BaseCharacter, public TYEngine::Utility::StateMachine<Player, PlayerState>
+	public BaseCharacter
 {
-public: // 関数テーブル
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<Player, PlayerState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
     static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
@@ -4735,12 +4693,12 @@ public:
 	TYEngine::Graphics::Object3d* GetObj() { return obj_.get(); }
 
 	/// <summary>ジャスト回避成功時のフラグを立てる。</summary>
-	void OnJust() { isJust_ = true; }
+	void OnJust() { barrelRoll_.isJust = true; }
 	/// <summary>ジャスト回避フラグを下ろす。</summary>
-	void OffJust() { isJust_ = false; }
+	void OffJust() { barrelRoll_.isJust = false; }
 
 	/// <summary>ジャスト回避成功状態かを取得する。</summary>
-	bool IsJust() { return isJust_; }
+	bool IsJust() { return barrelRoll_.isJust; }
 
 	/// <summary>
 	/// 画面内での相対オフセット位置を設定する。
@@ -4755,10 +4713,12 @@ public:
 	void TakeDamage();
 
 	/// <summary>現在のHPを取得する。</summary>
-	int GetHP() { return hitPoint_; }
+	int GetHP() { return status_.hitPoint; }
 
 	/// <summary>現在の画面内オフセットを取得する。</summary>
 	TYEngine::Utility::Vector2 GetScreenOffset() { return screenOffset_; }
+
+	StateMachineType GetStateMachine() { return stateMachine_; }
 
 	/// <summary>
 	/// 衝突時コールバック。
@@ -4768,7 +4728,7 @@ public:
 
 	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
 
-	void SetEnemyManager(EnemyManager* manager) { enemyManager_ = manager; }
+	void SetEnemyManager(EnemyManager* manager) { lockOn_.enemyManager = manager; }
 
 	void SetIsInGame(bool isInGame) { isInGame_ = isInGame; }
 
@@ -4803,18 +4763,19 @@ private:
 	/// <summary>右方向へのロール。</summary>
 	void RightRoll(const TYEngine::Utility::Vector2& dir);
 
+	void ParticleUpdate();
+
+
+	/// <summary>JSONマネージャー関連の初期化。</summary>
+	void JMInit();
 
 	// Debug
+	/// <summary>デバッグ時に必要な更新処理。</summary>
+	void DebugUpdate();
 	/// <summary>デバッグ用GUIの表示。</summary>
 	void DebugGUI();
-
-	// Reticle
-	/// <summary>レティクル初期化。</summary>
-	void ReticleInit();
-	/// <summary>レティクル更新。</summary>
-	void ReticleUpdate();
-	/// <summary>レティクル描画。</summary>
-	void ReticleDraw();
+	/// <summary>JSONパラメータの反映（デバッグ用）。</summary>
+	void DebugJMApply();
 
 private:
 	/// <summary>入力管理クラス。</summary>
@@ -4828,132 +4789,42 @@ private:
 	/// <summary>ジャスト回避判定用コライダー。</summary>
 	std::unique_ptr<JustCollider> justCollider_;
 
-
-
-	EnemyManager* enemyManager_ = nullptr; // 敵マネージャへのアクセス用
-	// ロックオン関連
-	std::vector<Enemy*> lockedEnemies_;
-	int maxLockCount_ = 8;          // 最大ロックオン数
-	float lockOnRadius_ = 10.0f;     // ロックオン判定の広さ
-	bool wasPressingShot_ = false;  // 前フレームでボタンを押していたか
-	const float maxLockOnCool_ = 0.3f;
-	float lockOnTimer_ = 0.0f;
-	/// <summary>ロックオンスプライト。</summary>
-	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, 8> lockOnSpr_;
-
-
-
-
 	/// <summary>コライダーのスケール。</summary>
 	float colliderScale_ = 0.0f;
-	/// <summary>カメラからの深度距離。</summary>
-	float playerDepthFromCamera_ = 0.0f;
-	/// <summary>横移動の最大幅（画面内の物理スケール）。</summary>
-	float xRange = 0.0f;
-	/// <summary>縦移動の最大高さ。</summary>
-	float yRange = 0.0f;
 
-	/// <summary>基本移動速度。</summary>
-	float defaultSpeed_ = 0.0f;
-	/// <summary>現在の移動速度。</summary>
-	TYEngine::Utility::Vector2 speed_{};
-	/// <summary>入力方向。</summary>
-	TYEngine::Utility::Vector2 inputDir_{};
-
-	/// <summary>ロール回転方向。</summary>
-	TYEngine::Utility::Vector2 rollDir_{};
-
-	/// <summary>デルタタイム。</summary>
-	float deltaTime_ = 0.0f;
-
-	/// <summary>ヒットポイント。</summary>
-	int maxHP_ = 0;
-	int hitPoint_ = 0;
-	std::unique_ptr<TYEngine::Graphics::Sprite> hpSprBG_;
-	std::unique_ptr<TYEngine::Graphics::Sprite> hpSpr_;
-
-
-	// 姿勢
-	/// <summary>Yaw：Y軸周りの回転（左右の振り向き）。</summary>
-	float yaw = 0.0f;
-	/// <summary>Pitch：X軸周りの回転（上下の仰角）。</summary>
-	float pitch = 0.0f;
-	/// <summary>Roll：Z軸周りの回転（傾き）。</summary>
-	float roll = 0.0f;
-
-	/// <summary>移動に伴うPitch傾斜。</summary>
-	float movePitch = 0.0f;
-
-	// バレルロール
-	/// <summary>ロール所要時間。</summary>
-	float rollTime_ = 0.0f;
-	/// <summary>ロール移動範囲。</summary>
-	float rollRange_ = 0.0f;
-	/// <summary>左ロール目標角度。</summary>
-	float leftRoll_ = 0.0f;
-	/// <summary>右ロール目標角度。</summary>
-	float rightRoll_ = 0.0f;
-	/// <summary>ロール開始位置。</summary>
-	TYEngine::Utility::Vector2 startRollPos_{};
-	/// <summary>ロール終了位置。</summary>
-	TYEngine::Utility::Vector2 goalRollPos_{};
-
-	/// <summary>ロールエフェクトタイマー。</summary>
-	float rollEffectTimer_ = 0.0f;
-
-	/// <summary>ジャスト回避成功フラグ。</summary>
-	bool isJust_ = false;
-	/// <summary>ジャスト回避ロール中かどうか。</summary>
-	bool justRoll_ = false;
-	/// <summary>ジャスト回避時のスケール倍率。</summary>
-	float justScale_ = 0.0f;
-
-
-	// 弾関連
-	/// <summary>弾管理マネージャ。</summary>
-	std::unique_ptr<PlayerBulletManager> bulletManager_;
-	/// <summary>現在の弾タイプ。</summary>
-	PlayerBulletType currentBulletType_ = PlayerBulletType::NORMAL;
-	/// <summary>発射クールタイム。</summary>
-	float bulletCoolTime_ = 0.0f;
-	/// <summary>発射タイマー。</summary>
-	float bulletTimer_ = 0.0f;
-
+	/// <summary>プレイヤーの移動関連。</summary>
+	PlayerMovement movement_;
+	/// <summary>プレイヤーのステータス。</summary>
+	PlayerStatus status_;
+	/// <summary>プレイヤーのバレルロール関連。</summary>
+	PlayerBarrelRoll barrelRoll_;
+	/// <summary>プレイヤーのロックオン関連。</summary>
+	PlayerLockOn lockOn_;
+	/// <summary>プレイヤーの弾関連。</summary>
+	PlayerBullets bullets_;
 	/// <summary>レティクル管理クラス。</summary>
 	std::unique_ptr<Reticle> reticle_;
 
+	PlayerJetEffect jetEffect_;
 
-	/// <summary>デバッグ用レティクルオブジェクト。</summary>
-	std::unique_ptr<TYEngine::Graphics::Object3d> reticleObj_;
-	/// <summary>レティクルワールド変換。</summary>
-	TYEngine::Utility::WorldTransform reticleWT_;
-
-	/// <summary>コントレイルインデックス。</summary>
-	int contrailIndex_;
+	PlayerDestroyEffect destroyEffect_;
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
 
+	/// <summary>プレイヤーの生成場所がインゲームかどうかのフラグ。</summary>
 	bool isInGame_ = false;
 
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
+
+	/// <summary>JSONマネージャ。</summary>
+	TYEngine::Utility::JsonManager jm_;
+	/// <summary>JSONエラーメッセージ。</summary>
+	std::string err_;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override 
-	{
-		switch (state) 
-		{
-		case State::IDLE: return "IDLE";
-		case State::ROUTE: return "ROUTE";
-		case State::BOOST: return "BOOST";
-		case State::BARREL_ROLL: return "BARREL_ROLL";
-		case State::TAKE_DAMAGE: return "TAKE_DAMAGE";
-		case State::DEAD: return "DEAD";
-		default: return "Unknown";
-		}
-	}
-
 	// 待機状態
 	void InitIdle();
 	void UpdateIdle();
@@ -5003,7 +4874,7 @@ using namespace TYEngine::Graphics;
 #define HOMING_BULLET_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(PlayerBulletHoming, stateEnum, funcName)
 
-const std::vector<StateMachine<PlayerBulletHoming, HomingBulletState>::StateFunctionSet>& PlayerBulletHoming::GetStateTable()
+const std::vector<PlayerBulletHoming::StateFunctionSet>& PlayerBulletHoming::GetStateTable()
 {
 	using enum HomingBulletState;
 	static const std::vector<StateFunctionSet> stateTable = {
@@ -5015,7 +4886,7 @@ const std::vector<StateMachine<PlayerBulletHoming, HomingBulletState>::StateFunc
 
 PlayerBulletHoming::PlayerBulletHoming()
 {
-	RegisterFromDefaultTable(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 }
 
 PlayerBulletHoming::~PlayerBulletHoming()
@@ -5029,12 +4900,20 @@ void PlayerBulletHoming::Init()
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
 	obj_->SetModel("unitSphere.obj");
-	obj_->SetColor({ 1.0f, 0.2f, 0.2f, 1.0f });
+	obj_->SetColor(jm_->Get<Vector4>("bullets.BulletHoming.Color"));
+
+	colliderScale_ = jm_->Get<float>("bullets.BulletHoming.colliderScale");
+	scale_ = jm_->Get<float>("bullets.BulletHoming.scale");
+	defaultSpeed_ = jm_->Get<float>("bullets.BulletHoming.defaultSpeed");
+	lifeTime_ = jm_->Get<float>("bullets.BulletHoming.lifeTime");
+
+	minHoming_ = jm_->Get<float>("bullets.BulletHoming.minHoming");
+	maxHoming_ = jm_->Get<float>("bullets.BulletHoming.maxHoming");
+	homingTime_ = jm_->Get<float>("bullets.BulletHoming.HomingTime");
 
 	// トランスフォーム初期化
 	worldTransform_.Initialize();
-	//worldTransform_.SetScale({ scale_, scale_, scale_ });
-	worldTransform_.SetScale({ scale_ * 0.4f, scale_ * 0.4f, scale_ * 6.0f });
+	worldTransform_.SetScale(scale_ * jm_->Get<Vector3>("bullets.BulletHoming.scale3"));
 	worldTransform_.Update();
 
 	// コライダー生成（Ray判定用など、適切な型を指定）
@@ -5047,11 +4926,7 @@ void PlayerBulletHoming::Init()
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	// 初期状態を直線移動（LINER）に設定
-	ChangeState(HomingBulletState::SHOT);
-
-	defaultSpeed_ = 25.0f;
-
-	homingT_ = 0.1f;
+	stateMachine_.ChangeState(HomingBulletState::SHOT);
 }
 
 void PlayerBulletHoming::Update()
@@ -5062,7 +4937,7 @@ void PlayerBulletHoming::Update()
 	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 
 	// ステート更新（移動処理などはここで行われる）
-	UpdateState(deltaTime_);
+	stateMachine_.UpdateState(deltaTime_);
 
 	// コライダー同期
 	collider_->Update(GetWorldPosition());
@@ -5080,7 +4955,7 @@ void PlayerBulletHoming::InitShot() {}
 void PlayerBulletHoming::UpdateShot()
 {
 	// 寿命を超えたら死亡フラグを true にし、削除対象とする
-	if (GetStateElapsedTime() > lifeTime_)
+	if (stateMachine_.GetStateElapsedTime() > lifeTime_)
 	{
 		isDead_ = true;
 	}
@@ -5110,11 +4985,11 @@ void PlayerBulletHoming::Move()
 
 					// 時間経過でホーミング係数を強くする
 					// GetStateElapsedTime() は発射からの経過時間
-					float timeRatio = GetStateElapsedTime() / 1.0f; // 0.5秒かけて最大ホーミング力になる
-					timeRatio = std::clamp(timeRatio, 0.0f, 0.5f);
+					float timeRatio = stateMachine_.GetStateElapsedTime() / homingTime_; // homingTime_ を経過すると最大ホーミング力になる
+					timeRatio = std::clamp(timeRatio, 0.0f, homingTime_);
 
-					// 初期の弱いホーミング力（例: 0.01f）から、最大ホーミング力（例: 0.15f）へ
-					float currentHomingT = std::lerp(0.01f, 0.3f, timeRatio);
+					// 初期の弱いホーミング力から、最大ホーミング力へ
+					float currentHomingT = std::lerp(minHoming_, maxHoming_, timeRatio);
 
 					// 現在の進行方向 direction_ を idealDir に向かって球面線形補間する
 					direction_ = Normalize(Slerp(direction_, idealDir, currentHomingT));
@@ -5175,6 +5050,7 @@ File Path: project/application/Object/Player/PlayerBullet/HomingBullet/PlayerBul
 #include "StateMachine.h"
 
 #include "../PBulletCollider.h"
+#include "Utils/Json/JsonManager.h"
 
 /// <summary>
 /// 通常弾の状態定数。
@@ -5192,9 +5068,12 @@ class EnemyManager;
 /// 直進挙動と衝突後の挙動をステートマシンで管理する。
 /// </summary>
 class PlayerBulletHoming :
-	public BaseBullet, TYEngine::Utility::StateMachine<PlayerBulletHoming, HomingBulletState>
+	public BaseBullet
 {
-public: // 関数テーブル
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<PlayerBulletHoming, HomingBulletState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
@@ -5203,6 +5082,8 @@ public:
 	void Init()override;
 	void Update()override;
 	void Draw()override;
+
+	void SetJM(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 	void SetEnemyManager(EnemyManager* enemyMgr) { enemyMgr_ = enemyMgr; }
 
@@ -5219,24 +5100,20 @@ private:
 	/// <summary>固定タイムステップ（60FPS想定）。</summary>
 	float deltaTime_ = 0.0f;
 
-	// <summary>ホーミング強度係数。</summary>
-	float homingT_ = 0.0f;
+	float minHoming_ = 0.0f;
+	float maxHoming_ = 0.0f;
+	float homingTime_ = 0.0f;
 
 	EnemyManager* enemyMgr_ = nullptr;
 
+	/// <summary>JSONマネージャ。</summary>
+	TYEngine::Utility::JsonManager* jm_ = nullptr;
+
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
+
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override
-	{
-		switch (state)
-		{
-		case State::SHOT: return "SHOT";
-		case State::AFTER_COLLISION: return "AFTER_COLLISION";
-		default: return "Unknown";
-		}
-	}
-
 	// 直線移動
 	// ShotState.cpp
 	void InitShot();
@@ -5254,38 +5131,98 @@ private: // シーン内のState関連関数
 
 
 ============================================================
-File Path: project/application/Object/Player/PlayerBullet/NormalBullet/AfterCollisionState.cpp
+File Path: project/application/Object/Player/PlayerBullet/NormalBullet/PlayerBulletNormal.cpp
 ============================================================
 #include "PlayerBulletNormal.h"
+#include "../../../ColliderTypeID/ColliderTypeID.h"
+#include "Timer.h"
+#include "ColliderManager.h"
 
-void PlayerBulletNormal::InitAfterCollision()
+using namespace TYEngine::Utility;
+using namespace TYEngine::Graphics;
+
+#define NORMAL_BULLET_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(PlayerBulletNormal, stateEnum, funcName)
+
+const std::vector<PlayerBulletNormal::StateFunctionSet>& PlayerBulletNormal::GetStateTable()
 {
-	// 着弾後は即座に消滅（エフェクトなどはOnCollisionで生成済み）
-	isDead_ = true;
+	using enum NormalBulletState;
+	static const std::vector<StateFunctionSet> stateTable = {
+		NORMAL_BULLET_ENTRY(LINEAR, Linear),
+		NORMAL_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
+	};
+	return stateTable;
 }
 
-void PlayerBulletNormal::UpdateAfterCollision()
+PlayerBulletNormal::PlayerBulletNormal()
 {
+	stateMachine_.RegisterFromDefaultTable(this);
 }
 
-void PlayerBulletNormal::ExitAfterCollision()
+PlayerBulletNormal::~PlayerBulletNormal()
 {
+	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
 
+void PlayerBulletNormal::Init()
+{
+	// 3Dモデル生成
+	obj_ = std::make_unique<Object3d>();
+	obj_->Initialize();
+	obj_->SetModel("unitSphere.obj");
+	obj_->SetColor(jm_->Get<Vector4>("bullets.BulletNormal.Color"));
 
-============================================================
-File Path: project/application/Object/Player/PlayerBullet/NormalBullet/LinearState.cpp
-============================================================
-#include "PlayerBulletNormal.h"
+	colliderScale_ = jm_->Get<float>("bullets.BulletNormal.colliderScale");
+	scale_ = jm_->Get<float>("bullets.BulletNormal.scale");
+	defaultSpeed_ = jm_->Get<float>("bullets.BulletNormal.defaultSpeed");
+	lifeTime_ = jm_->Get<float>("bullets.BulletNormal.lifeTime");
+	
+	// トランスフォーム初期化
+	worldTransform_.Initialize();
+	worldTransform_.SetScale(scale_);
+	worldTransform_.Update();
 
+	// コライダー生成（Ray判定用など、適切な型を指定）
+	collider_ = std::make_unique<PBulletCollider>(
+		static_cast<uint32_t>(ColliderTypeID::P_BULLET),
+		GetWorldPosition(),
+		colliderScale_,
+		this
+	);
+	ColliderManager::GetInstance()->AddCollider(collider_.get());
+	
+	// 初期状態を直線移動（LINER）に設定
+	stateMachine_.ChangeState(NormalBulletState::LINEAR);
+
+}
+
+void PlayerBulletNormal::Update()
+{
+	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+	
+	// カメラ移動分の補正（必要に応じて）
+	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
+	
+	// ステート更新（移動処理などはここで行われる）
+	stateMachine_.UpdateState(deltaTime_);
+	
+	// コライダー同期
+	collider_->Update(GetWorldPosition());
+}
+
+void PlayerBulletNormal::Draw()
+{
+	obj_->Draw(worldTransform_);
+}
+
+//////////////////// Linear ////////////////////
 void PlayerBulletNormal::InitLinear()
-{
-}
+{}
 
 void PlayerBulletNormal::UpdateLinear()
 {
 	// 寿命を超えたら死亡フラグを true にし、削除対象とする
-	if (GetStateElapsedTime() > lifeTime_) 
+	if (stateMachine_.GetStateElapsedTime() > lifeTime_)
 	{
 		isDead_ = true;
 	}
@@ -5299,8 +5236,7 @@ void PlayerBulletNormal::UpdateLinear()
 }
 
 void PlayerBulletNormal::ExitLinear()
-{
-}
+{}
 
 void PlayerBulletNormal::Move()
 {
@@ -5328,87 +5264,18 @@ void PlayerBulletNormal::RotationDirection()
 	worldTransform_.Update();
 }
 
-
-============================================================
-File Path: project/application/Object/Player/PlayerBullet/NormalBullet/PlayerBulletNormal.cpp
-============================================================
-#include "PlayerBulletNormal.h"
-#include "../../../ColliderTypeID/ColliderTypeID.h"
-#include "Timer.h"
-#include "ColliderManager.h"
-
-using namespace TYEngine::Utility;
-using namespace TYEngine::Graphics;
-
-#define NORMAL_BULLET_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(PlayerBulletNormal, stateEnum, funcName)
-
-const std::vector<StateMachine<PlayerBulletNormal, NormalBulletState>::StateFunctionSet>& PlayerBulletNormal::GetStateTable()
+//////////////////// AfterCollision ////////////////////
+void PlayerBulletNormal::InitAfterCollision()
 {
-	using enum NormalBulletState;
-	static const std::vector<StateFunctionSet> stateTable = {
-		NORMAL_BULLET_ENTRY(LINEAR, Linear),
-		NORMAL_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
-	};
-	return stateTable;
+	// 着弾後は即座に消滅（エフェクトなどはOnCollisionで生成済み）
+	isDead_ = true;
 }
 
-PlayerBulletNormal::PlayerBulletNormal()
-{
-	RegisterFromDefaultTable(this);
-}
+void PlayerBulletNormal::UpdateAfterCollision()
+{}
 
-PlayerBulletNormal::~PlayerBulletNormal()
-{
-	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
-}
-
-void PlayerBulletNormal::Init()
-{
-	// 3Dモデル生成
-	obj_ = std::make_unique<Object3d>();
-	obj_->Initialize();
-	obj_->SetModel("unitSphere.obj");
-	obj_->SetColor({ 0.2f, 0.2f, 1.0f, 1.0f });
-	
-	// トランスフォーム初期化
-	worldTransform_.Initialize();
-	worldTransform_.SetScale({ scale_, scale_, scale_ });
-	worldTransform_.Update();
-
-	// コライダー生成（Ray判定用など、適切な型を指定）
-	collider_ = std::make_unique<PBulletCollider>(
-		static_cast<uint32_t>(ColliderTypeID::P_BULLET),
-		GetWorldPosition(),
-		colliderScale_,
-		this
-	);
-	ColliderManager::GetInstance()->AddCollider(collider_.get());
-	
-	// 初期状態を直線移動（LINER）に設定
-	ChangeState(NormalBulletState::LINEAR);
-
-	defaultSpeed_ = 25.0f;
-}
-
-void PlayerBulletNormal::Update()
-{
-	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
-	
-	// カメラ移動分の補正（必要に応じて）
-	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
-	
-	// ステート更新（移動処理などはここで行われる）
-	UpdateState(deltaTime_);
-	
-	// コライダー同期
-	collider_->Update(GetWorldPosition());
-}
-
-void PlayerBulletNormal::Draw()
-{
-	obj_->Draw(worldTransform_);
-}
+void PlayerBulletNormal::ExitAfterCollision()
+{}
 
 
 
@@ -5420,6 +5287,7 @@ File Path: project/application/Object/Player/PlayerBullet/NormalBullet/PlayerBul
 #include "StateMachine.h"
 
 #include "../PBulletCollider.h"
+#include "Utils/Json/JsonManager.h"
 
 /// <summary>
 /// 通常弾の状態定数。
@@ -5435,10 +5303,13 @@ enum class NormalBulletState
 /// 直進挙動と衝突後の挙動をステートマシンで管理する。
 /// </summary>
 class PlayerBulletNormal :
-    public BaseBullet, TYEngine::Utility::StateMachine<PlayerBulletNormal, NormalBulletState>
+    public BaseBullet
 {
-public: // 関数テーブル
-    static const std::vector<StateFunctionSet>& GetStateTable();
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<PlayerBulletNormal, NormalBulletState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
 	PlayerBulletNormal();
@@ -5446,6 +5317,8 @@ public:
     void Init()override;
     void Update()override;
     void Draw()override;
+
+	void SetJM(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 private:
 	/// <summary>移動処理（直進）。</summary>
@@ -5460,20 +5333,14 @@ private:
     /// <summary>固定タイムステップ（60FPS想定）。</summary>
 	float deltaTime_ = 0.0f;
 
+	/// <summary>JSONマネージャ。</summary>
+	TYEngine::Utility::JsonManager* jm_ = nullptr;
+
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
 
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override
-	{
-		switch (state) 
-		{
-		case State::LINEAR: return "LINEAR";
-		case State::AFTER_COLLISION: return "AFTER_COLLISION";
-		default: return "Unknown";
-		}
-	}
-
 	// 直線移動
 	// LinearState.cpp
 	void InitLinear();
@@ -5588,6 +5455,7 @@ void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const 
 		// 通常弾の生成と初期設定
 		bullet = std::make_unique<PlayerBulletNormal>();
 		bullet->SetCamera(camera_);
+		dynamic_cast<PlayerBulletNormal*>(bullet.get())->SetJM(jm_);
 		bullet->Init();
 		bullet->SetTranslation(pos);
 		bullet->SetShotDirection(direction);
@@ -5598,6 +5466,7 @@ void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const 
 		// ホーミング弾の生成と初期設定
 		bullet = std::make_unique<PlayerBulletHoming>();
 		bullet->SetCamera(camera_);
+		dynamic_cast<PlayerBulletHoming*>(bullet.get())->SetJM(jm_);
 		bullet->Init();
 		bullet->SetTranslation(pos);
 		bullet->SetShotDirection(direction);
@@ -5628,6 +5497,7 @@ File Path: project/application/Object/Player/PlayerBullet/PlayerBulletManager.h
 #include "../../BaseBullet/BaseBullet.h"
 
 #include "Camera.h"
+#include "Utils/Json/JsonManager.h"
 
 class Player;
 class Enemy;
@@ -5671,6 +5541,8 @@ public:
 	/// </summary>
 	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
+	void SetJM(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
+
 private:
 	/// <summary>所有者（プレイヤー）。</summary>
 	Player* player_ = nullptr;
@@ -5679,6 +5551,9 @@ private:
 
 	/// <summary>カメラ。</summary>
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
+
+	/// <summary>JSONマネージャ。</summary>
+	TYEngine::Utility::JsonManager* jm_ = nullptr;
 };
 
 
@@ -5711,7 +5586,7 @@ using namespace TYEngine::Utility;
 void PlayerCollider::OnCollisionEnter([[maybe_unused]]Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
 	// 敵弾に当たった場合（バレルロール中は無敵）
-	if (other.GetTypeID() == static_cast<uint32_t>(ColliderTypeID::E_BULLET) && player_->GetCurrentState() != PlayerState::BARREL_ROLL)
+	if (other.GetTypeID() == static_cast<uint32_t>(ColliderTypeID::E_BULLET) && player_->GetStateMachine().GetCurrentState() != PlayerState::BARREL_ROLL)
 	{
 		// プレイヤーを赤く点滅させ、ダメージ処理を呼ぶ
 		player_->GetObj()->SetColor({ 1,0.1f,0.1f,1.0f });
@@ -5762,6 +5637,70 @@ private:
 
 
 ============================================================
+File Path: project/application/Object/Player/PlayerJson.cpp
+============================================================
+#include "Player.h"
+
+using namespace TYEngine;
+using namespace Utility;
+using namespace Debugger;
+
+void Player::JMInit()
+{
+	jm_.Load("PlayerConfig.json", true, &err_);
+#ifdef _DEBUG
+	Log(err_);
+#endif // _DEBUG
+
+	// 値反映
+	// 数値を適用
+	colliderScale_ = jm_.Get<float>("colliderScale");
+
+	// 移動関連
+	movement_.Load(jm_);
+
+	// HP設定
+	status_.Load(jm_);
+
+	// バレルロール
+	barrelRoll_.Load(jm_);
+
+	// ロックオン
+	lockOn_.Load(jm_);
+
+	// 弾関連
+	bullets_.Load(jm_);
+
+	// エフェクト
+	jetEffect_.Load(jm_);
+	destroyEffect_.Load(jm_);
+}
+
+void Player::DebugJMApply()
+{
+#ifdef _DEBUG
+	// 移動関連
+	movement_.Load(jm_);
+
+	// HP設定
+	status_.Load(jm_);
+
+	// バレルロール
+	barrelRoll_.Load(jm_);
+
+	// ロックオン
+	lockOn_.Load(jm_);
+
+	// 弾関連
+	bullets_.Load(jm_);
+
+	jetEffect_.Load(jm_);
+
+	destroyEffect_.Load(jm_);
+#endif // _DEBUG
+}
+
+============================================================
 File Path: project/application/Object/Player/PlayerState/PlayerBarrelRoll.cpp
 ============================================================
 #include "../Player.h"
@@ -5784,8 +5723,8 @@ void Player::InitBarrelRoll()
     int h = GameAudio::GetInstance()->Play("roll", false, SoundCategory::SE);
 	
 	// ロール開始位置を記録
-	startRollPos_ = screenOffset_;
-	rollEffectTimer_ = 0.0f;
+    barrelRoll_.startRollPos = screenOffset_;
+    barrelRoll_.rollEffectTimer = 0.0f;
     
     // ラジアルブラーエフェクトの有効化と初期化
     auto* pem = PostEffectManager::GetInstance();
@@ -5793,23 +5732,25 @@ void Player::InitBarrelRoll()
     pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
     // 中心は画面座標系（-1..1）→ [0..1] に変換して渡す想定
     pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(screenOffset_);
+    pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetNumSamples(barrelRoll_.blurSamples);
+
 	
 	// ジャスト回避時の演出設定
-	if (justRoll_)
+	if (barrelRoll_.justRoll)
 	{
 		pem->SetEffectEnabled("Vignette", true);
 		pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
-        GameAudio::GetInstance()->Pitch(h, 0.3f);
+        GameAudio::GetInstance()->Pitch(h, barrelRoll_.audioPitch);
 	}
     
     // 入力方向がある場合はその方向へ、なければランダム方向へロール
-    if (Length(inputDir_) != 0)
+    if (Length(movement_.inputDir) != 0)
     {
-        rollDir_ = inputDir_;
+        movement_.rollDir = movement_.inputDir;
     }
     else
     {
-        rollDir_ = Normalize(Vector2(Random::GetInstance()->Float(-1,1), Random::GetInstance()->Float(-1, 1)));
+        movement_.rollDir = Normalize(Vector2(Random::GetInstance()->Float(-1,1), Random::GetInstance()->Float(-1, 1)));
     }
     
     // ロール中は当たり判定を無効化
@@ -5827,7 +5768,7 @@ void Player::ExitBarrelRoll()
     // エフェクトの無効化
     auto* pem = PostEffectManager::GetInstance();
     pem->SetEffectEnabled("RadialBlur", false);
-	if (justRoll_)
+	if (barrelRoll_.justRoll)
 	{
 		pem->SetEffectEnabled("Vignette", false);
 	}
@@ -5842,17 +5783,21 @@ void Player::StartBarrelRoll()
 	// LShiftキーでバレルロール開始
 	if(input_->TriggerKey(DIK_LSHIFT))
 	{
-		ChangeState(PlayerState::BARREL_ROLL);
+        stateMachine_.ChangeState(PlayerState::BARREL_ROLL);
 		
 		// ジャスト回避判定
-		justRoll_ = false;
-		if(isJust_)
+        barrelRoll_.justRoll = false;
+		if(barrelRoll_.isJust)
 		{
-			justRoll_ = true;
+            barrelRoll_.justRoll = true;
 			// バレットタイム演出トリガー
 			BulletTimeController::GetInstance()->Trigger(
-				0.05f, 0.0f, 1.0f, 0.8f,
-				EaseFixed::InQuart, EaseFixed::OutQuart);
+                barrelRoll_.slowScale, 
+                barrelRoll_.enterDur, 
+                barrelRoll_.holdDur, 
+                barrelRoll_.exitDur,
+				EaseFixed::InQuart, 
+                EaseFixed::OutQuart);
 		}
 	}
 }
@@ -5861,47 +5806,42 @@ void Player::StartBarrelRoll()
 void Player::BarrelRoll()
 {
     // 入力方向に応じて左右（または上下）ロール
-    if (rollDir_.x != 0.0f)
+    if (movement_.rollDir.x != 0.0f)
     {
-        (rollDir_.x < 0.0f) ? LeftRoll(rollDir_) : RightRoll(rollDir_);
+        (movement_.rollDir.x < 0.0f) ? LeftRoll(movement_.rollDir) : RightRoll(movement_.rollDir);
     }
-    else if (rollDir_.y != 0.0f)
+    else if (movement_.rollDir.y != 0.0f)
     {
-        (rollDir_.y < 0.0f) ? LeftRoll(rollDir_) : RightRoll(rollDir_);
+        (movement_.rollDir.y < 0.0f) ? LeftRoll(movement_.rollDir) : RightRoll(movement_.rollDir);
     }
 
     // エフェクト更新処理
-    if (rollEffectTimer_ <= 2.1f)
+    if (barrelRoll_.rollEffectTimer <= barrelRoll_.wholeEffectTime)
     {
-        rollEffectTimer_ += Timer::GetInstance()->GetRawDeltaTime();
+        barrelRoll_.rollEffectTimer += Timer::GetInstance()->GetRawDeltaTime();
 
         // タイムラインによるエフェクト強度の制御（前半フェードイン、後半フェードアウト）
-        float t = (rollEffectTimer_ <= 1.2f)
-            ? (rollEffectTimer_ / 1.2f)
-            : (0.9f - (rollEffectTimer_ - 1.2f) / 0.9f);
+        float t = barrelRoll_.GetTimelineT();
 
-        t = (rollEffectTimer_ <= 1.2f) ? t : EaseFixed::InQuint(t);
+        t = (barrelRoll_.rollEffectTimer <= barrelRoll_.firstHalfTime) ? t : EaseFixed::InQuint(t);
 
         auto* pem = PostEffectManager::GetInstance();
-        if (justRoll_)
+        if (barrelRoll_.justRoll)
         {
             // ジャスト回避時の特殊演出（ビネット効果追加）
             pem->GetEffect<VignetteEffect>("Vignette")->SetPower(t);
             pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((Vector2(screenOffset_.x, -screenOffset_.y) + Vector2(1.0f, 1.0f)) * 0.5f);
-            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * t);
+            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(barrelRoll_.blurWidth * t);
         }
         else
         {
             // 通常ロール演出
-            t = (rollEffectTimer_ <= 0.9f)
-                ? (rollEffectTimer_ / 0.9f)
-                : (0.9f - (rollEffectTimer_ - 0.9f) / 0.9f);
+            t = barrelRoll_.GetRollT();
 
-            t = (rollEffectTimer_ <= 0.9f) ? t : EaseFixed::InQuint(t);
+            t = (barrelRoll_.rollEffectTimer <= barrelRoll_.secondHalfTime) ? t : EaseFixed::InQuint(t);
 
             pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter((Vector2(screenOffset_.x, -screenOffset_.y) + Vector2(1.0f, 1.0f)) * 0.5f);
-            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.025f * t);
-            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetNumSamples(3);
+            pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(barrelRoll_.blurWidth * t);
         }
     }
 
@@ -5909,17 +5849,17 @@ void Player::BarrelRoll()
     ClampOffset();
 
     worldTransform_.SetTranslation({
-        screenOffset_.x * xRange,
-        screenOffset_.y * yRange,
-        playerDepthFromCamera_
+        screenOffset_.x * movement_.xRange,
+        screenOffset_.y * movement_.yRange,
+        movement_.playerDepthFromCamera
         });
 
     RotationOffsetLocal();
 
     // 終了判定
-    if (GetStateElapsedTime() >= rollTime_)
+    if (stateMachine_.GetStateElapsedTime() >= barrelRoll_.rollTime)
     {
-        ChangeState(PlayerState::ROUTE);
+        stateMachine_.ChangeState(PlayerState::ROUTE);
     }
 }
 
@@ -5928,20 +5868,20 @@ void Player::BarrelRoll()
 void Player::LeftRoll(const Vector2& dir)
 {
     // ロール目標位置へイージング移動
-    goalRollPos_ = startRollPos_ + dir * rollRange_;
-    float t = std::clamp(GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
-    screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
+    barrelRoll_.goalRollPos = barrelRoll_.startRollPos + dir * barrelRoll_.rollRange;
+    float t = std::clamp(stateMachine_.GetStateElapsedTime() / barrelRoll_.rollTime, 0.0f, 1.0f);
+    screenOffset_ = Lerp(barrelRoll_.startRollPos, barrelRoll_.goalRollPos, EaseFixed::OutBack(t));
     
     // 機体を回転させる
-    roll = Lerp(0.0f, leftRoll_, EaseFixed::OutBack(t));  // ローカルZ回転
+    movement_.roll = Lerp(0.0f, barrelRoll_.leftRoll, EaseFixed::OutBack(t));  // ローカルZ回転
 }
 
 void Player::RightRoll(const Vector2& dir)
 {
-    goalRollPos_ = startRollPos_ + dir * rollRange_;
-    float t = std::clamp(GetStateElapsedTime() / rollTime_, 0.0f, 1.0f);
-    screenOffset_ = Lerp(startRollPos_, goalRollPos_, EaseFixed::OutBack(t));
-    roll = Lerp(0.0f, rightRoll_, EaseFixed::OutBack(t)); // ローカルZ回転
+    barrelRoll_.goalRollPos = barrelRoll_.startRollPos + dir * barrelRoll_.rollRange;
+    float t = std::clamp(stateMachine_.GetStateElapsedTime() / barrelRoll_.rollTime, 0.0f, 1.0f);
+    screenOffset_ = Lerp(barrelRoll_.startRollPos, barrelRoll_.goalRollPos, EaseFixed::OutBack(t));
+    movement_.roll = Lerp(0.0f, barrelRoll_.rightRoll, EaseFixed::OutBack(t)); // ローカルZ回転
 }
 
 ============================================================
@@ -6051,7 +5991,7 @@ void Player::InitTakeDamage()
 void Player::UpdateTakeDamage()
 {
 	// 一定時間経過後にROOTステートへ復帰
-	if (GetStateElapsedTime() > 0.1f) ChangeState(PlayerState::ROUTE);
+	if (stateMachine_.GetStateElapsedTime() > 0.1f) stateMachine_.ChangeState(PlayerState::ROUTE);
 
 	// 被弾中でもバレルロールは可能にする
 	StartBarrelRoll();
@@ -6064,6 +6004,264 @@ void Player::ExitTakeDamage()
 }
 
 ============================================================
+File Path: project/application/Object/Player/PlayerStruct.h
+============================================================
+#pragma once
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
+
+#include "Struct.h"
+#include "Sprite.h"
+#include "PlayerBullet/PlayerBulletType.h"
+#include "PlayerBullet/PlayerBulletManager.h"
+#include <memory>
+
+
+/// <summary>プレイヤーの移動関連。</summary>
+struct PlayerMovement
+{
+	/// <summary>カメラからの深度距離。</summary>
+	float playerDepthFromCamera = 0.0f;
+	/// <summary>横移動の最大幅（画面内の物理スケール）。</summary>
+	float xRange = 0.0f;
+	/// <summary>縦移動の最大高さ。</summary>
+	float yRange = 0.0f;
+	/// <summary>基本移動速度。</summary>
+	float baseSpeed = 0.0f;
+	/// <summary>縦横移動速度。</summary>
+	TYEngine::Utility::Vector2 speed{};
+	/// <summary>現在の速度計算。</summary>
+	void CalculateSpeed() { speed = { baseSpeed, baseSpeed * (xRange / yRange) }; }
+	/// <summary>入力方向。</summary>
+	TYEngine::Utility::Vector2 inputDir{};
+	/// <summary>ロール回転方向。</summary>
+	TYEngine::Utility::Vector2 rollDir{};
+
+	// 姿勢
+	/// <summary>Yaw：Y軸周りの回転（左右の振り向き）。</summary>
+	float yaw = 0.0f;
+	/// <summary>Pitch：X軸周りの回転（上下の仰角）。</summary>
+	float pitch = 0.0f;
+	/// <summary>Roll：Z軸周りの回転（傾き）。</summary>
+	float roll = 0.0f;
+	/// <summary>移動に伴うPitch傾斜。</summary>
+	float movePitch = 0.0f;
+
+	float maxPitch = 0.0f;
+	float maxRoll = 0.0f;
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		playerDepthFromCamera = jm.Get<float>("movement.playerDepthFromCamera");
+		xRange = jm.Get<float>("movement.xRange");
+		yRange = jm.Get<float>("movement.yRange");
+		baseSpeed = jm.Get<float>("movement.baseSpeed");
+		maxPitch = jm.Get<float>("movement.maxPitch");
+		maxRoll = jm.Get<float>("movement.maxRoll");
+		// ロード時に一緒に計算する
+		CalculateSpeed();
+	}
+};
+
+/// <summary>プレイヤーのステータス。</summary>
+struct PlayerStatus
+{
+	/// <summary>ヒットポイント最大値。</summary>
+	int maxHitPoint = 0;
+	/// <summary>ヒットポイント。</summary>
+	int hitPoint = 0;
+	/// <summary>ヒットポイントのリセット。</summary>
+	void HPReset() { hitPoint = maxHitPoint; }
+	/// <summary>ヒットポイントバー背景画像。</summary>
+	std::unique_ptr<TYEngine::Graphics::Sprite> hpSprBG;
+	/// <summary>ヒットポイントバー画像。</summary>
+	std::unique_ptr<TYEngine::Graphics::Sprite> hpSpr;
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		maxHitPoint = jm.Get<int>("status.maxHitPoint");
+		// ロード時に一緒に計算する
+		HPReset();
+
+		hpSpr = std::make_unique<TYEngine::Graphics::Sprite>();
+		hpSpr->Initialize("Resources/Texture/white2x2.png");
+		hpSpr->SetPosition(jm.Get<TYEngine::Utility::Vector2>("status.texture.Position"));
+		hpSpr->SetSize(jm.Get<TYEngine::Utility::Vector2>("status.texture.Size"));
+		hpSpr->SetColor(jm.Get<TYEngine::Utility::Vector4>("status.texture.hpSprColor"));
+
+		hpSprBG = std::make_unique<TYEngine::Graphics::Sprite>();
+		hpSprBG->Initialize("Resources/Texture/white2x2.png");
+		hpSprBG->SetPosition(jm.Get<TYEngine::Utility::Vector2>("status.texture.Position"));
+		hpSprBG->SetSize(jm.Get<TYEngine::Utility::Vector2>("status.texture.Size"));
+		hpSprBG->SetColor(jm.Get<TYEngine::Utility::Vector4>("status.texture.hpSprBGColor"));
+	}
+};
+
+/// <summary>プレイヤーのバレルロール関連。</summary>
+struct PlayerBarrelRoll
+{
+	// バレルロール
+	/// <summary>ロール所要時間。</summary>
+	float rollTime = 0.0f;
+	/// <summary>ロール移動範囲。</summary>
+	float rollRange = 0.0f;
+	/// <summary>左ロール目標角度。</summary>
+	float leftRoll = 0.0f;
+	/// <summary>右ロール目標角度。</summary>
+	float rightRoll = 0.0f;
+	/// <summary>ロール開始位置。</summary>
+	TYEngine::Utility::Vector2 startRollPos{};
+	/// <summary>ロール終了位置。</summary>
+	TYEngine::Utility::Vector2 goalRollPos{};
+	/// <summary>ロールエフェクトタイマー。</summary>
+	float rollEffectTimer = 0.0f;
+
+	float wholeEffectTime = 0.0f;
+	float firstHalfTime = 0.0f;
+	float secondHalfTime = 0.0f;
+	float blurWidth = 0.0f;
+	int blurSamples = 0;
+
+	float audioPitch = 0.0f;
+
+	float slowScale = 0.0f;
+	float enterDur = 0.0f;
+	float holdDur = 0.0f;
+	float exitDur = 0.0f;
+
+	/// <summary>ジャスト回避成功フラグ。</summary>
+	bool isJust = false;
+	/// <summary>ジャスト回避ロール中かどうか。</summary>
+	bool justRoll = false;
+	/// <summary>ジャスト回避時のスケール倍率。</summary>
+	float justScale = 0.0f;
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		rollTime = jm.Get<float>("barrelRoll.rollTime");
+		rollRange = jm.Get<float>("barrelRoll.rollRange");
+		leftRoll = jm.Get<float>("barrelRoll.leftRoll");
+		rightRoll = jm.Get<float>("barrelRoll.rightRoll");
+		justScale = jm.Get<float>("barrelRoll.justScale");
+		wholeEffectTime = jm.Get<float>("barrelRoll.wholeEffectTime");
+		firstHalfTime = jm.Get<float>("barrelRoll.firstHalfTime");
+		blurWidth = jm.Get<float>("barrelRoll.blurWidth");
+		blurSamples = jm.Get<int>("barrelRoll.blurSamples");
+		audioPitch = jm.Get<float>("barrelRoll.audioPitch");
+
+		slowScale = jm.Get<float>("barrelRoll.BulletTime.slowScale");
+		enterDur = jm.Get<float>("barrelRoll.BulletTime.enterDur");
+		holdDur = jm.Get<float>("barrelRoll.BulletTime.holdDur");
+		exitDur = jm.Get<float>("barrelRoll.BulletTime.exitDur");
+
+		secondHalfTime = wholeEffectTime - firstHalfTime;
+	}
+
+	// タイムラインによるエフェクト強度の制御（前半フェードイン、後半フェードアウト）
+	float GetTimelineT()
+	{
+		return (rollEffectTimer <= firstHalfTime)
+			? (rollEffectTimer / firstHalfTime)
+			: (secondHalfTime - (rollEffectTimer - firstHalfTime) / secondHalfTime);
+	}
+	// 通常ロール演出
+	float GetRollT()
+	{
+		return (rollEffectTimer <= secondHalfTime)
+			? (rollEffectTimer / secondHalfTime)
+			: (secondHalfTime - (rollEffectTimer - secondHalfTime) / secondHalfTime);
+	}
+};
+
+// 戦法宣言
+class EnemyManager;
+class Enemy;
+/// <summary>プレイヤーのロックオン関連。</summary>
+struct PlayerLockOn
+{
+	EnemyManager* enemyManager = nullptr; // 敵マネージャへのアクセス用
+	std::vector<Enemy*> lockedEnemies;
+	int maxLockCount = 0;          // 最大ロックオン数
+	float lockOnRadius = 0.0f;     // ロックオン判定の広さ
+	bool wasPressingShot = false;  // 前フレームでボタンを押していたか
+	float maxLockOnCool = 0.0f;
+	float lockOnTimer = 0.0f;
+	float spreadX = 0.0f;
+	float spreadY = 0.0f;
+	/// <summary>ロックオンスプライト。</summary>
+	std::vector<std::unique_ptr<TYEngine::Graphics::Sprite>> lockOnSpr;
+
+	void Load(const TYEngine::Utility::JsonManager& jm, const std::string& lockOnSprPath = "Resources/Texture/reticle.png")
+	{
+		maxLockCount = jm.Get<int>("lockOn.maxLockCount");
+		lockOnRadius = jm.Get<float>("lockOn.lockOnRadius");
+		maxLockOnCool = jm.Get<float>("lockOn.maxLockOnCool");
+		spreadX = jm.Get<float>("lockOn.spreadX");
+		spreadY = jm.Get<float>("lockOn.spreadY");
+		lockOnSpr.resize(maxLockCount);
+		for (auto&& spr : lockOnSpr)
+		{
+			spr = std::make_unique<TYEngine::Graphics::Sprite>();
+			spr->Initialize(lockOnSprPath);
+			spr->SetAnchorPoint(jm.Get<TYEngine::Utility::Vector2>("lockOn.texture.AnchorPoint"));
+			spr->SetColor(jm.Get<TYEngine::Utility::Vector4>("lockOn.texture.Color"));
+		}
+	}
+};
+
+/// <summary>プレイヤーの弾関連。</summary>
+struct PlayerBullets
+{
+	// 弾関連
+	/// <summary>弾管理マネージャ。</summary>
+	std::unique_ptr<PlayerBulletManager> bulletManager;
+	/// <summary>現在の弾タイプ。</summary>
+	PlayerBulletType currentBulletType = PlayerBulletType::NORMAL;
+	/// <summary>発射クールタイム。</summary>
+	float bulletCoolTime = 0.0f;
+	/// <summary>発射タイマー。</summary>
+	float bulletTimer = 0.0f;
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		bulletCoolTime = jm.Get<float>("bullets.bulletCoolTime");
+	}
+};
+
+struct PlayerJetEffect
+{
+	int count = 0;
+	float offSet = 0.0f;
+	float speed = 0.0f;
+	float frequency = 0.0f;
+	TYEngine::Utility::Vector3 scale = { 0.0f,0.0f,0.0f };
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		count = jm.Get<int>("jetEffect.count");
+		offSet = jm.Get<float>("jetEffect.offSet");
+		speed = jm.Get<float>("jetEffect.speed");
+		frequency = jm.Get<float>("jetEffect.frequency");
+		scale = jm.Get<TYEngine::Utility::Vector3>("jetEffect.scale");
+	}
+};
+
+struct PlayerDestroyEffect
+{
+	int count = 0;
+	float frequency = 0.0f;
+	TYEngine::Utility::Vector3 scale = { 0.0f, 0.0f, 0.0f };
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		count = jm.Get<int>("destroyEffect.count");
+		frequency = jm.Get<float>("destroyEffect.frequency");
+		scale = jm.Get<TYEngine::Utility::Vector3>("destroyEffect.scale");
+	}
+};
+
+
+============================================================
 File Path: project/application/Object/Player/Reticle/Reticle.cpp
 ============================================================
 #include "Reticle.h"
@@ -6072,8 +6270,9 @@ File Path: project/application/Object/Player/Reticle/Reticle.cpp
 #include "Camera.h"
 #include "Input.h"
 
-using namespace TYEngine::Utility;
 using namespace TYEngine;
+using namespace Utility;
+using namespace Graphics;
 
 Reticle::~Reticle()
 {
@@ -6094,6 +6293,17 @@ void Reticle::Init()
 	ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	targetDistance_ = defaultDistance_;
+
+#ifdef _DEBUG // デバッグ用
+	reticleObj_ = std::make_unique<Object3d>();
+	reticleObj_->Initialize();
+	reticleObj_->SetModel("cube.obj");
+	reticleObj_->SetIsLighting(false);
+	reticleObj_->SetColor({ 0,1,0,1 });
+	reticleWT_.Initialize();
+	reticleWT_.SetScale(0.2f);
+	reticleWT_.Update();
+#endif // _DEBUG
 }
 
 void Reticle::Update()
@@ -6107,11 +6317,17 @@ void Reticle::Update()
 	
 	// マウス位置に基づくワールドレイ情報の更新
 	ScreenToWorld();
+#ifdef _DEBUG
+	reticleWT_.SetTranslation(GetTarget());
+	reticleWT_.Update();
+#endif // _DEBUG
 }
 
 void Reticle::Draw()
 {
-
+#ifdef _DEBUG
+	reticleObj_->Draw(reticleWT_);
+#endif // _DEBUG
 }
 
 void Reticle::ScreenToWorld()
@@ -6148,6 +6364,8 @@ File Path: project/application/Object/Player/Reticle/Reticle.h
 ============================================================
 #pragma once
 #include "ReticleCollider.h"
+#include "WorldTransform.h"
+#include "Object3d.h"
 #include <memory>
 
 
@@ -6203,6 +6421,11 @@ private:
 	float targetDistance_ = 0.0f;
 	float frameDistance_ = 0.0f;
 	const float defaultDistance_ = 50.0f; // 非調整項目のため const float
+
+	/// <summary>デバッグ用レティクルオブジェクト。</summary>
+	std::unique_ptr<TYEngine::Graphics::Object3d> reticleObj_;
+	/// <summary>レティクルワールド変換。</summary>
+	TYEngine::Utility::WorldTransform reticleWT_;
 };
 
 
@@ -7212,7 +7435,7 @@ using namespace TYEngine;
 #define GAME_SCENE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(GameScene, stateEnum, funcName)
 
-const std::vector<StateMachine<GameScene, GameSceneState>::StateFunctionSet>& GameScene::GetStateTable()
+const std::vector<GameScene::StateFunctionSet>& GameScene::GetStateTable()
 {
 	using enum GameSceneState;
 	static const std::vector<StateFunctionSet> stateTable =
@@ -7234,7 +7457,7 @@ const std::vector<StateMachine<GameScene, GameSceneState>::StateFunctionSet>& Ga
 
 GameScene::GameScene()
 {
-	RegisterFromDefaultTable(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 }
 
 GameScene::~GameScene()
@@ -7288,7 +7511,7 @@ void GameScene::Init()
 	UIInit();
 	
 	// フェードインから開始
-	ChangeState(GameSceneState::FADE_IN);
+	stateMachine_.ChangeState(GameSceneState::FADE_IN);
 
 	bulletTime_ = Utility::BulletTimeController::GetInstance();
 }
@@ -7297,7 +7520,7 @@ void GameScene::Update()
 {
 #ifdef _DEBUG
 	ImGui::Begin("GameScene State Debug");
-	DebugImGui("GameScene");
+	stateMachine_.DebugImGui("GameScene");
 	ImGui::End();
 
 	// ImGui で編集
@@ -7321,7 +7544,7 @@ void GameScene::Update()
 	bulletTime_->Update();
 
 	// 現在のシーンステートの更新処理を実行
-	UpdateState(Timer::GetInstance()->GetDeltaTime());
+	stateMachine_.UpdateState(Timer::GetInstance()->GetDeltaTime());
 	
 	// デバッグ用エディタ切り替え処理（デバッグビルドのみ）
 	SwitchEdit();
@@ -7392,9 +7615,12 @@ enum class GameSceneState {
 /// ゲームシーン
 /// </summary>
 class GameScene : 
-	public TYEngine::Framework::IScene, public TYEngine::Utility::StateMachine<GameScene, GameSceneState>
+	public TYEngine::Framework::IScene
 {
-public: // 関数テーブル
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<GameScene, GameSceneState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
@@ -7530,28 +7756,12 @@ private: // メンバ変数
 	/// <summary>設定エラーメッセージ。</summary>
 	std::string errConfig_;
 
+
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_;
+
 private: // シーン内のState関連関数
 #pragma region // State関連関数
-	// 列挙名を文字列化（ImGui表示用）
-	std::string GetStateName(State state) const override 
-	{
-		switch (state) 
-		{
-		case State::LOAD: return "LOAD";
-		case State::FADE_IN: return "FADE_IN";
-		case State::READY: return "READY";
-		case State::PLAY: return "PLAY";
-		case State::PAUSE: return "PAUSE";
-		case State::DEAD: return "DEAD";
-		case State::CLEAR: return "CLEAR";
-		case State::RESULT: return "RESULT";
-		case State::RETRY: return "RETRY";
-		case State::FADE_OUT: return "FADE_OUT";
-		case State::DEBUG_EDIT: return "DEBUG_EDIT";
-		default: return "Unknown";
-		}
-	}
-
 	// ロード
 	void InitLoad();
 	void UpdateLoad();
@@ -7670,12 +7880,12 @@ void GameScene::SwitchEdit()
 	if (otherEditorSwitch_)
 	{
 		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
-		if (!otherEditorSwitch_) ChangeState(GameSceneState::PLAY);
+		if (!otherEditorSwitch_) stateMachine_.ChangeState(GameSceneState::PLAY);
 	}
 	else
 	{
 		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
-		if (otherEditorSwitch_) ChangeState(GameSceneState::DEBUG_EDIT);
+		if (otherEditorSwitch_) stateMachine_.ChangeState(GameSceneState::DEBUG_EDIT);
 	}
 	ImGui::End();
 #endif // _DEBUG
@@ -7711,7 +7921,7 @@ void GameScene::UpdateFadeIn()
 
 	if (!TransitionManager::GetInstance()->IsBusy())
 	{
-		ChangeState(GameSceneState::READY);
+		stateMachine_.ChangeState(GameSceneState::READY);
 	}
 
 }
@@ -7776,17 +7986,17 @@ void GameScene::UpdatePause()
 	pauseMenu_->Update();
 	if (input_->TriggerKey(DIK_ESCAPE)) 
 	{
-		ChangeState(GameSceneState::PLAY);
+		stateMachine_.ChangeState(GameSceneState::PLAY);
 		gameAudio_->Play("close", false, SoundCategory::UI);
 	}
 	if (pauseMenu_->GetElements() == ButtonElements::RESUME) 
 	{
-		ChangeState(GameSceneState::PLAY);
+		stateMachine_.ChangeState(GameSceneState::PLAY);
 		gameAudio_->Play("close", false, SoundCategory::UI);
 	}
 	if (pauseMenu_->GetElements() == ButtonElements::RETURN_TITLE)
 	{
-		ChangeState(GameSceneState::FADE_OUT);
+		stateMachine_.ChangeState(GameSceneState::FADE_OUT);
 		gameAudio_->Play("enter", false, SoundCategory::UI);
 	}
 }
@@ -7816,7 +8026,7 @@ void GameScene::UpdatePlay()
 	stageManager_->Update();
 
 	// レール終端到達でリザルトへ
-	if (stageManager_->EndRail()) ChangeState(GameSceneState::RESULT);
+	if (stageManager_->EndRail()) stateMachine_.ChangeState(GameSceneState::RESULT);
 
 	PlayUIUpdate();
 
@@ -7824,7 +8034,7 @@ void GameScene::UpdatePlay()
 	if (input_->TriggerKey(DIK_ESCAPE)) 
 	{
 		gameAudio_->Play("open", false, SoundCategory::UI);
-		ChangeState(GameSceneState::PAUSE);
+		stateMachine_.ChangeState(GameSceneState::PAUSE);
 	}
 
 	// プレイヤー死亡時はリトライ誘導画面へ
@@ -7836,7 +8046,7 @@ void GameScene::UpdatePlay()
 		params.frequency = 20.0f;
 
 		camera_->StartShake(params);
-		ChangeState(GameSceneState::RETRY);
+		stateMachine_.ChangeState(GameSceneState::RETRY);
 	}
 }
 void GameScene::ExitPlay()
@@ -7848,7 +8058,7 @@ void GameScene::PlayUIUpdate()
 	scoreDraw_->Update();
 
 	// バレルロール中以外はジャスト回避判定などをUIに反映
-	if(stageManager_->GetPlayer()->GetCurrentState() != PlayerState::BARREL_ROLL) 
+	if(stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() != PlayerState::BARREL_ROLL)
 	{
 		playUI_->SetJust(stageManager_->GetPlayer()->IsJust());
 		stageManager_->GetPlayer()->OffJust();
@@ -7919,7 +8129,7 @@ void GameScene::StartCamera()
 {
 	Vector3 pos = { 0,0,7 };
 
-	float cur = GetStateElapsedTime();
+	float cur = stateMachine_.GetStateElapsedTime();
 	float prev = prevStateElapsed_;
 
 	// 演出タイマーのリセット用
@@ -7966,21 +8176,21 @@ void GameScene::StartCamera()
 	resetTimer(13.0f);
 
 	// カメラ旋回演出
-	if (GetStateElapsedTime() <= 3.0f)
+	if (stateMachine_.GetStateElapsedTime() <= 3.0f)
 	{
 		Matrix4x4 rotY = MakeRotateYMatrix((startCameraTimer_ - 7.0f) / 3.0f);
 		pos = TransformM(pos, rotY);
 
 		applyCameraWork(pos);
 	}
-	else if (GetStateElapsedTime() <= 6.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 6.0f)
 	{
 		Matrix4x4 rotY = MakeRotateYMatrix((-startCameraTimer_ + 7.0f) / 3.0f);
 		pos = TransformM(pos, rotY);
 
 		applyCameraWork(pos);
 	}
-	else if (GetStateElapsedTime() <= 10.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 10.0f)
 	{
 		Matrix4x4 rotX = MakeRotateXMatrix((startCameraTimer_) / 5.0f);
 		pos = TransformM(pos, rotX);
@@ -7989,9 +8199,9 @@ void GameScene::StartCamera()
 
 		applyCameraWork(pos);
 	}
-	else if (GetStateElapsedTime() <= 13.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 13.0f)
 	{
-		if (GetStateElapsedTime() <= 12.0f)
+		if (stateMachine_.GetStateElapsedTime() <= 12.0f)
 		{
 			startDraw_->Start();
 		}
@@ -8000,12 +8210,12 @@ void GameScene::StartCamera()
 
 		applyCameraWork(pos);
 	}
-	else if (GetStateElapsedTime() <= 16.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 16.0f)
 	{
 	}
 	else
 	{
-		ChangeState(GameSceneState::PLAY);
+		stateMachine_.ChangeState(GameSceneState::PLAY);
 	}
 
 
@@ -8043,7 +8253,7 @@ void GameScene::StartCamera()
 		pos = TransformM(pos, rotY);
 	}
 
-	if (input_->TriggerKey(DIK_SPACE)) ChangeState(GameSceneState::PLAY);
+	if (input_->TriggerKey(DIK_SPACE)) stateMachine_.ChangeState(GameSceneState::PLAY);
 
 	ImGui::Begin("StartCamera");
 	ImGui::DragFloat3("pos", &pos.x);
@@ -8102,12 +8312,12 @@ void GameScene::InitResult()
 void GameScene::UpdateResult()
 {
 	resultMenu_->Update();
-	scoreDraw_->UpdateResult(GetStateElapsedTime());
+	scoreDraw_->UpdateResult(stateMachine_.GetStateElapsedTime());
 
 	// UIとの衝突判定を更新
 	uiCollider_.BuildAABBs(false);
 
-	if(GetStateElapsedTime() > 1.0f)
+	if(stateMachine_.GetStateElapsedTime() > 1.0f)
 	{
 		// 常に少しずつ追加して降り続ける
 		confetti_.Emit(2);
@@ -8115,16 +8325,16 @@ void GameScene::UpdateResult()
 	}
 
 	// 時間経過でブラー強度を変化、その後入力待ち
-	if (GetStateElapsedTime() < 4.0f)
+	if (stateMachine_.GetStateElapsedTime() < 4.0f)
 	{
-		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((GetStateElapsedTime()) / 4.0f) * 13.0f);
+		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((stateMachine_.GetStateElapsedTime()) / 4.0f) * 13.0f);
 	}
-	else if (GetStateElapsedTime() > 4.5f)
+	else if (stateMachine_.GetStateElapsedTime() > 4.5f)
 	{
 		if (input_->TriggerKey(DIK_SPACE)) 
 		{
 			gameAudio_->Play("enter", false, SoundCategory::UI);
-			ChangeState(GameSceneState::FADE_OUT);
+			stateMachine_.ChangeState(GameSceneState::FADE_OUT);
 		}
 	}
 }
@@ -8160,16 +8370,16 @@ void GameScene::UpdateRetry()
 {
 	retryDraw_->Update();
 	scoreDraw_->Update();
-	if (GetStateElapsedTime() < 2.5f)
+	if (stateMachine_.GetStateElapsedTime() < 2.5f)
 	{
-		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((GetStateElapsedTime() - 0.5f) / 2.0f) * 7.0f);
+		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((stateMachine_.GetStateElapsedTime() - 0.5f) / 2.0f) * 7.0f);
 	}
 	else
 	{
 		if (input_->TriggerKey(DIK_SPACE))
 		{
 			gameAudio_->Play("enter", false, SoundCategory::UI);
-			ChangeState(GameSceneState::FADE_OUT);
+			stateMachine_.ChangeState(GameSceneState::FADE_OUT);
 		}
 	}
 }
@@ -8230,41 +8440,41 @@ void GameScene::UIDraw()
 	SpriteBasis::GetInstance()->BasisDrawSetting();
 
 	// フェード中は描画しない
-	if (GetCurrentState() != GameSceneState::FADE_OUT)
+	if (stateMachine_.GetCurrentState() != GameSceneState::FADE_OUT)
 	{
-		if (GetCurrentState() != GameSceneState::RESULT &&
-			GetCurrentState() != GameSceneState::RETRY)
+		if (stateMachine_.GetCurrentState() != GameSceneState::RESULT &&
+			stateMachine_.GetCurrentState() != GameSceneState::RETRY)
 		{
 			playUI_->Draw();
 		}
-		if (GetCurrentState() != GameSceneState::RESULT &&
-			GetCurrentState() != GameSceneState::READY &&
-			GetCurrentState() != GameSceneState::RETRY &&
-			GetCurrentState() != GameSceneState::FADE_IN)
+		if (stateMachine_.GetCurrentState() != GameSceneState::RESULT &&
+			stateMachine_.GetCurrentState() != GameSceneState::READY &&
+			stateMachine_.GetCurrentState() != GameSceneState::RETRY &&
+			stateMachine_.GetCurrentState() != GameSceneState::FADE_IN)
 		{
 			playUI_->DrawRT();
 		}
 		stageManager_->DrawUI();
 
-		if (GetCurrentState() == GameSceneState::READY)
+		if (stateMachine_.GetCurrentState() == GameSceneState::READY)
 		{
 			startDraw_->Draw();
 		}
 
-		if (GetCurrentState() == GameSceneState::RESULT)
+		if (stateMachine_.GetCurrentState() == GameSceneState::RESULT)
 		{
 			resultMenu_->Draw();
 			scoreDraw_->Draw();
 			confetti_.Draw();
 		}
 
-		if (GetCurrentState() == GameSceneState::RETRY)
+		if (stateMachine_.GetCurrentState() == GameSceneState::RETRY)
 		{
 			retryDraw_->Draw();
 			scoreDraw_->Draw();
 		}
 
-		if (GetCurrentState() == GameSceneState::PAUSE)
+		if (stateMachine_.GetCurrentState() == GameSceneState::PAUSE)
 		{
 			pauseMenu_->Draw();
 		}
@@ -9644,7 +9854,7 @@ void ResultClass::Move()
 		timer_ += Timer::GetInstance()->GetDeltaTime();
 
 		float t = timer_ / maxTime_;
-		float y = Lerp(jm_->Get<float>("Result.startY"), 0.0f, EaseFixed::InBounce(t));
+		float y = Lerp(jm_->Get<float>("Result.startY"), 0.0f, EaseFixed::OutBounce(t));
 		sprites_[RESULT]->SetPosition(jm_->Get<Vector2>("Result.offset") + Vector2{ 0, y });
 		sprites_[SCORE]->SetAlpha(t);
 		sprites_[SPACE]->SetAlpha(t);
@@ -9811,7 +10021,7 @@ void RetryUI::Move()
 		timer_ += Timer::GetInstance()->GetDeltaTime();
 
 		float t = timer_ / maxTime_;
-		float y = Lerp(jm_->Get<float>("RetryUI.ease.startY"), jm_->Get<float>("RetryUI.ease.goalY"), EaseFixed::InBounce(t));
+		float y = Lerp(jm_->Get<float>("RetryUI.ease.startY"), jm_->Get<float>("RetryUI.ease.goalY"), EaseFixed::OutBounce(t));
 		sprites_[GAMEOVER]->SetPosition({ 0, y });
 		sprites_[SCORE_TEXT]->SetAlpha(t);
 		sprites_[SPACE]->SetAlpha(t);
@@ -10178,6 +10388,68 @@ void TitleScene::DebugJMApply()
 }
 
 ============================================================
+File Path: project/application/Scene/TitleScene/TItleSceneStates/TitleSceneFadeIn.cpp
+============================================================
+#include "../TitleScene.h"
+#include "../../Transition/TransitionManager.h"
+
+void TitleScene::InitFadeIn()
+{}
+void TitleScene::UpdateFadeIn()
+{
+
+	if (!TransitionManager::GetInstance()->IsBusy())
+	{
+		stateMachine_.ChangeState(TitleSceneState::READY);
+	}
+
+}
+void TitleScene::ExitFadeIn()
+{}
+
+============================================================
+File Path: project/application/Scene/TitleScene/TItleSceneStates/TitleSceneFadeOut.cpp
+============================================================
+#include "../TitleScene.h"
+#include "../../Transition/Fade2/BlockFadeTransition.h"
+#include "../../Transition/TransitionManager.h"
+#include "SceneManager.h"
+#include "../../../AppSystem/Audio/GameAudio.h"
+
+
+using namespace TYEngine;
+using namespace AudioSystem;
+
+void TitleScene::InitFadeOut()
+{
+#ifdef _DEBUG
+	sceneManager_->ChangeScene("GAME");
+	gameAudio_->Stop(bgmHandle_);
+#else
+	// 決定音再生
+	gameAudio_->Play("enter", false, SoundCategory::UI);
+
+	// ブロックフェード演出を開始してゲームシーンへ遷移
+	BlockFadeConfig cfg;
+	auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
+	transition->SetOnFinishCallback([this]()
+		{
+			BlockFadeConfig cfg1;
+			sceneManager_->ChangeScene("GAME");
+			TransitionManager::GetInstance()->Enqueue(std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_OUT, cfg1));
+			gameAudio_->Stop(bgmHandle_);
+		});
+	TransitionManager::GetInstance()->Start(std::move(transition));
+#endif // _DEBUG
+}
+
+void TitleScene::UpdateFadeOut()
+{}
+
+void TitleScene::ExitFadeOut()
+{}
+
+============================================================
 File Path: project/application/Scene/TitleScene/TItleSceneStates/TitleSceneLoad.cpp
 ============================================================
 #include "../TitleScene.h"
@@ -10224,6 +10496,68 @@ void TitleScene::Load()
 }
 
 ============================================================
+File Path: project/application/Scene/TitleScene/TItleSceneStates/TitleScenePlay.cpp
+============================================================
+#include "../TitleScene.h"
+
+using namespace TYEngine;
+using namespace Utility;
+
+void TitleScene::InitPlay()
+{}
+
+void TitleScene::UpdatePlay()
+{
+	beatAnalyzer_.Update();
+	audioAnalyzer_.Update();
+	(enterSpr_->IsMouseHover()) ? enterSpr_->SetScale(1.2f) : enterSpr_->SetScale(1.0f);
+
+	player_->Update();
+	skybox_->Update();
+	Vector3 pos = player_->GetWorldPosition();
+	enemyMgr_.SetTargetPos(&pos);
+	enemyMgr_.Update();
+	Vector2 mouse = input_->GetMousePosition();
+	reticle_->SetPosition(mouse);
+
+	enterSpr_->SetAlpha(0.5f + (0.5f * oscillator_.GetValue()));
+	text_->SetScale(1.0f + (0.15f * oscillator_.GetValue()));
+
+#ifdef _DEBUG
+	if (enterSpr_->IsMouseClicked(0))
+	{
+		stateMachine_.ChangeState(TitleSceneState::FADE_OUT);
+	}
+#else
+	if (input_->TriggerKey(DIK_RETURN) || enterSpr_->IsMouseClicked(0))
+	{
+		stateMachine_.ChangeState(TitleSceneState::FADE_OUT);
+	}
+#endif // _DEBUG
+}
+
+void TitleScene::ExitPlay()
+{}
+
+
+============================================================
+File Path: project/application/Scene/TitleScene/TItleSceneStates/TitleSceneReady.cpp
+============================================================
+#include "../TitleScene.h"
+#include "Timer.h"
+
+void TitleScene::InitReady()
+{
+}
+void TitleScene::UpdateReady()
+{
+	stateMachine_.ChangeState(TitleSceneState::PLAY);
+}
+void TitleScene::ExitReady()
+{
+}
+
+============================================================
 File Path: project/application/Scene/TitleScene/TitleScene.cpp
 ============================================================
 #include "TitleScene.h"
@@ -10240,12 +10574,33 @@ File Path: project/application/Scene/TitleScene/TitleScene.cpp
 #include "imgui.h"
 #endif // _DEBUG
 
-using namespace TYEngine::Utility;
-using namespace TYEngine::Debugger;
-using namespace TYEngine::AudioSystem;
-using namespace TYEngine::Graphics;
 using namespace TYEngine;
+using namespace Utility;
+using namespace Debugger;
+using namespace AudioSystem;
+using namespace Graphics;
 
+#define TITLE_SCENE_ENTRY(stateEnum, funcName) \
+    STATE_ENTRY_FOR(TitleScene, stateEnum, funcName)
+
+const std::vector<TitleScene::StateFunctionSet>& TitleScene::GetStateTable()
+{
+	using enum TitleSceneState;
+	static const std::vector<StateFunctionSet> stateTable =
+	{
+		TITLE_SCENE_ENTRY(FADE_IN, FadeIn),
+		TITLE_SCENE_ENTRY(READY, Ready),
+		TITLE_SCENE_ENTRY(PLAY, Play),
+		TITLE_SCENE_ENTRY(PAUSE, Pause),
+		TITLE_SCENE_ENTRY(FADE_OUT, FadeOut)
+	};
+	return stateTable;
+}
+
+TitleScene::TitleScene()
+{
+	stateMachine_.RegisterFromDefaultTable(this);
+}
 
 TitleScene::~TitleScene()
 {
@@ -10257,7 +10612,7 @@ void TitleScene::Init()
 
 	beatAnalyzer_.Init("gameBGM", gameAudio_->CategoryToString(SoundCategory::BGM));
 
-	bgmHandle_ = gameAudio_->Play("gameBGM", false, SoundCategory::BGM);
+	bgmHandle_ = gameAudio_->Play("gameBGM", true, SoundCategory::BGM);
 	gameAudio_->SetSoundVolume(bgmHandle_, 1.0f);
 
 
@@ -10277,6 +10632,7 @@ void TitleScene::Init()
 	text_ = std::make_unique<Sprite>();
 	text_->Initialize("Resources/Texture/Title.png");
 	text_->SetPosition(titleJM.Get<Vector2>("config.texture.Title.Position"));
+	text_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.Title.AnchorPoint"));
 
 	operation_ = std::make_unique<Sprite>();
 	operation_->Initialize("Resources/Texture/Operation.png");
@@ -10319,37 +10675,30 @@ void TitleScene::Init()
 	// タイトル画面の敵マネージャ
 	enemyMgr_.Init(camera_);
 	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
+	enemyMgr_.SetIsInGame(false);
 
 	player_->SetEnemyManager(&enemyMgr_);
+
+	oscillator_.SetDuration(2.0f);
+	oscillator_.SetType(Oscillator::Type::Sine);
+
+	stateMachine_.ChangeState(TitleSceneState::FADE_IN);
 }
 
 void TitleScene::Update() {
-	// シーン遷移更新
-	Transition();
-	beatAnalyzer_.Update();
-	audioAnalyzer_.Update();
-
 	// デバッグ用更新処理
 	DebugUpdate();
 
+	oscillator_.Update();
+
+	stateMachine_.UpdateState(Timer::GetInstance()->GetDeltaTime());
+
 	// UI更新
-	(enterSpr_->IsMouseHover()) ? enterSpr_->SetScale({ 1.2f,1.2f }) : enterSpr_->SetScale({ 1.0f,1.0f });
 	enterSpr_->Update();
 	text_->Update();
 	operation_->Update();
 	reticle_->Update();
 
-	// 演出用プレイヤー更新
-	player_->Update();
-
-	skybox_->Update();
-
-	// エイム用照準位置の更新
-	Vector3 pos = player_->GetWorldPosition();
-	enemyMgr_.SetTargetPos(&pos);
-
-	// 敵管理更新
-	enemyMgr_.Update();
 	
 	// 地面の回転演出
 	Vector3 rotate = groundWT_.GetRotate();
@@ -10357,8 +10706,6 @@ void TitleScene::Update() {
 	groundWT_.SetRotate(rotate);
 	groundWT_.Update();
 
-	Vector2 mouse = input_->GetMousePosition();
-	reticle_->SetPosition(mouse);
 }
 
 void TitleScene::Draw() 
@@ -10385,41 +10732,13 @@ void TitleScene::UIDraw()
 	reticle_->Draw();
 }
 
-void TitleScene::Transition()
-{
-#ifdef _DEBUG
-	if (input_->TriggerKey(DIK_RETURN) || enterSpr_->IsMouseClicked(0))
-	{
-		sceneManager_->ChangeScene("GAME");
-		gameAudio_->Stop(bgmHandle_);
-	}
-#else
-	if (input_->TriggerKey(DIK_RETURN) || enterSpr_->IsMouseClicked(0))
-	{
-		// 決定音再生
-		gameAudio_->Play("enter", false, SoundCategory::UI);
-		
-		// ブロックフェード演出を開始してゲームシーンへ遷移
-		BlockFadeConfig cfg;
-		auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
-		transition->SetOnFinishCallback([this]()
-			{
-				BlockFadeConfig cfg1;
-				sceneManager_->ChangeScene("GAME");
-				TransitionManager::GetInstance()->Enqueue(std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_OUT, cfg1));
-				gameAudio_->Stop(bgmHandle_);
-			});
-		TransitionManager::GetInstance()->Start(std::move(transition));
-	}
-#endif // _DEBUG
-}
-
 
 ============================================================
 File Path: project/application/Scene/TitleScene/TitleScene.h
 ============================================================
 #pragma once
 #include "IScene.h"
+#include "StateMachine.h"
 #include "ObjectCubemap.h"
 #include "Object/Player/Player.h"
 #include "../../Object/Enemy/EnemyManager/EnemyManager.h"
@@ -10432,14 +10751,34 @@ File Path: project/application/Scene/TitleScene/TitleScene.h
 
 #include "Sprite.h"
 
+#include "Oscillator.h"
+
 class GameAudio;
+
+enum class TitleSceneState
+{
+	FADE_IN,	// シーン開始時のフェードイン
+	READY,		// シーン開始時の演出
+	PLAY,		// 通常の進行
+	PAUSE,		// 一時停止状態（メニューなど）
+	FADE_OUT,	// シーン遷移時のフェードアウト
+};
 
 /// <summary>
 /// タイトル画面シーン。
 /// ゲーム開始前の演出、操作説明、ゲーム本編への遷移を管理する。
 /// </summary>
-class TitleScene : public TYEngine::Framework::IScene {
+class TitleScene : 
+	public TYEngine::Framework::IScene 
+{
 public:
+	using StateMachineType = TYEngine::Utility::StateMachine<TitleScene, TitleSceneState>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
+
+public:
+	TitleScene();
 	~TitleScene();
 
 	/// <summary>
@@ -10465,11 +10804,6 @@ public:
 	void UIDraw() override;
 
 private:
-	/// <summary>
-	/// シーン遷移処理。ゲーム本編へ切り替える。
-	/// </summary>
-	void Transition();
-
 	/// <summary>JSONパラメータの反映（デバッグ用）。</summary>
 	void DebugJMApply();
 
@@ -10499,6 +10833,8 @@ private:
 	EnemyManager enemyMgr_;
 
 
+	TYEngine::Utility::Oscillator oscillator_;
+
 	/// <summary>背景（地面）。</summary>
 	std::unique_ptr<TYEngine::Graphics::Object3d> ground_;
 	/// <summary>背景のワールド変換情報。</summary>
@@ -10517,9 +10853,42 @@ private:
 	/// <summary>ビートアナライザー（演出用）。</summary>
 	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
 
+	/// <summary>BGM再生ハンドル。</summary>
 	int bgmHandle_ = -1;
 
+	/// <summary>ゲームオーディオ管理クラスのポインタ。</summary>
 	GameAudio* gameAudio_ = nullptr;
+
+	/// <summary>ステートマシーン。</summary>
+	StateMachineType stateMachine_; 
+
+private: // シーン内のState関連関数
+#pragma region // State関連関数
+		// フェードイン
+		void InitFadeIn();
+		void UpdateFadeIn();
+		void ExitFadeIn();
+
+		// ゲーム開始直前の演出
+		void InitReady();
+		void UpdateReady();
+		void ExitReady();
+
+		// 通常のゲーム進行
+		void InitPlay();
+		void UpdatePlay();
+		void ExitPlay();
+
+		// 一時停止状態（メニューなど/未実装）
+		void InitPause() {};
+		void UpdatePause() {};
+		void ExitPause() {};
+
+		// フェードアウト
+		void InitFadeOut();
+		void UpdateFadeOut();
+		void ExitFadeOut();
+#pragma endregion
 };
 
 
@@ -10540,7 +10909,7 @@ using namespace TYEngine::Graphics;
 #define FADE_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(FadeTransition, stateEnum, funcName)
 
-const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSet>& FadeTransition::GetStateTable()
+const std::vector<FadeTransition::StateFunctionSet>& FadeTransition::GetStateTable()
 {
 	using enum TransitionStage;
 	static const std::vector<StateFunctionSet> stateTable = {
@@ -10553,20 +10922,20 @@ const std::vector<StateMachine<FadeTransition, TransitionStage>::StateFunctionSe
 
 FadeTransition::FadeTransition(FadeTransition::Type type, float duration)
 {
-	this->template RegisterFromDefaultTable<FadeTransition>(this);
+	stateMachine_.RegisterFromDefaultTable(this);
 
 
 	duration_ = duration;
 	switch (type)
 	{
 	case Type::IDLE:
-		ChangeState(TransitionStage::IDLE);
+		stateMachine_.ChangeState(TransitionStage::IDLE);
 		break;
 	case Type::FADE_IN:
-		ChangeState(TransitionStage::ENTERING);
+		stateMachine_.ChangeState(TransitionStage::ENTERING);
 		break;
 	case Type::FADE_OUT:
-		ChangeState(TransitionStage::EXITING);
+		stateMachine_.ChangeState(TransitionStage::EXITING);
 		break;
 	}
 }
@@ -10616,8 +10985,8 @@ void FadeTransition::InitEntering()
 void FadeTransition::UpdateEntering()
 {
 	// フェードイン：不透明(1.0) -> 透明(0.0)
-	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f - std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
-	if (GetStateElapsedTime() >= duration_)
+	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f - std::clamp(stateMachine_.GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
+	if (stateMachine_.GetStateElapsedTime() >= duration_)
 	{
 		finished_ = true;
 		sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
@@ -10637,8 +11006,8 @@ void FadeTransition::InitExiting()
 void FadeTransition::UpdateExiting()
 {
 	// フェードアウト：透明(0.0) -> 不透明(1.0)
-	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, std::clamp(GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
-	if (GetStateElapsedTime() >= duration_)
+	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, std::clamp(stateMachine_.GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
+	if (stateMachine_.GetStateElapsedTime() >= duration_)
 	{
 		finished_ = true;
 		sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
@@ -10669,8 +11038,10 @@ namespace TYEngine::Graphics
 /// </summary>
 class FadeTransition : public StateMachineTransition<FadeTransition>
 {
-public: // 関数テーブル
-	static const std::vector<TYEngine::Utility::StateMachine<FadeTransition, TransitionStage>::StateFunctionSet>& GetStateTable();
+public:
+	using StateFunctionSet = TYEngine::Utility::StateMachine<FadeTransition, TransitionStage>::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
 	/// <summary>
@@ -10758,22 +11129,22 @@ const std::vector<StateMachine<BlockFadeTransition, TransitionStage>::StateFunct
 BlockFadeTransition::BlockFadeTransition(BlockFadeTransition::Type type, const BlockFadeConfig& cfg)
 {
     cfg_ = cfg;
-	this->template RegisterFromDefaultTable<BlockFadeTransition>(this);
+    stateMachine_.RegisterFromDefaultTable(this);
 
 
 	switch (type)
 	{
 	case Type::IDLE:
-		ChangeState(TransitionStage::IDLE);
+        stateMachine_.ChangeState(TransitionStage::IDLE);
 		break;
 	case Type::FADE_IN:
-		ChangeState(TransitionStage::ENTERING);
+        stateMachine_.ChangeState(TransitionStage::ENTERING);
 		break;
 	case Type::HOLD:
-		ChangeState(TransitionStage::HOLD);
+        stateMachine_.ChangeState(TransitionStage::HOLD);
 		break;
 	case Type::FADE_OUT:
-		ChangeState(TransitionStage::EXITING);
+        stateMachine_.ChangeState(TransitionStage::EXITING);
 		break;
 	}
 }
@@ -10817,7 +11188,7 @@ void BlockFadeTransition::Init()
 
 void BlockFadeTransition::Draw()
 {
-    if (GetCurrentState() == TransitionStage::IDLE) return;
+    if (stateMachine_.GetCurrentState() == TransitionStage::IDLE) return;
 
     const int cols = std::max<int>(1, cfg_.cols);
     const int rows = std::max<int>(1, cfg_.rows);
@@ -10826,17 +11197,17 @@ void BlockFadeTransition::Draw()
 
     // 進行度
     float t = 0.0f;
-    if (GetCurrentState() == TransitionStage::ENTERING) t = saturate(GetStateElapsedTime() / cfg_.inSec);
-    else if (GetCurrentState() == TransitionStage::HOLD) t = 1.0f;
-    else if (GetCurrentState() == TransitionStage::EXITING) t = 1.0f - saturate(GetStateElapsedTime() / cfg_.outSec);
+    if (stateMachine_.GetCurrentState() == TransitionStage::ENTERING) t = saturate(stateMachine_.GetStateElapsedTime() / cfg_.inSec);
+    else if (stateMachine_.GetCurrentState() == TransitionStage::HOLD) t = 1.0f;
+    else if (stateMachine_.GetCurrentState() == TransitionStage::EXITING) t = 1.0f - saturate(stateMachine_.GetStateElapsedTime() / cfg_.outSec);
     t = std::powf(t, cfg_.easePow);
 
     // 胴体左端の基準シフト（列単位）
     const float startIn = float(-(cfg_.cols + cfg_.headCols));   // 完全オフスクリーンから
     float shiftF = 0.0f;
-    if (GetCurrentState() == TransitionStage::ENTERING)        shiftF = std::lerp(startIn, 0.0f, t);
-    else if (GetCurrentState() == TransitionStage::HOLD)     shiftF = 0.0f;
-    else if (GetCurrentState() == TransitionStage::EXITING)  shiftF = std::lerp(0.0f, float(cols + cfg_.headCols), 1.0f - t);
+    if (stateMachine_.GetCurrentState() == TransitionStage::ENTERING)        shiftF = std::lerp(startIn, 0.0f, t);
+    else if (stateMachine_.GetCurrentState() == TransitionStage::HOLD)     shiftF = 0.0f;
+    else if (stateMachine_.GetCurrentState() == TransitionStage::EXITING)  shiftF = std::lerp(0.0f, float(cols + cfg_.headCols), 1.0f - t);
 
     int shiftCols = int(std::floor(shiftF));
 
@@ -10876,7 +11247,7 @@ void BlockFadeTransition::Draw()
             }
         }
 
-        if (GetCurrentState() == TransitionStage::EXITING)
+        if (stateMachine_.GetCurrentState() == TransitionStage::EXITING)
         {
             if (drawMin <= drawMax)
             {
@@ -10945,7 +11316,7 @@ void BlockFadeTransition::InitEntering()
 void BlockFadeTransition::UpdateEntering()
 {
 	// イージングを適用した進行度tを計算
-	float t = std::powf(saturate(GetStateElapsedTime() / cfg_.inSec), cfg_.easePow);
+	float t = std::powf(saturate(stateMachine_.GetStateElapsedTime() / cfg_.inSec), cfg_.easePow);
 	
 	// 左から右への波及計算
 	float shiftF = std::lerp(float(-(cfg_.cols + cfg_.headCols + 0)), 0.0f, t);
@@ -10956,7 +11327,7 @@ void BlockFadeTransition::UpdateEntering()
 	// 画面全体が覆われたらHOLDへ
 	if (rightOK)
 	{
-		ChangeState(TransitionStage::HOLD);
+        stateMachine_.ChangeState(TransitionStage::HOLD);
 	}
 }
 void BlockFadeTransition::ExitEntering()
@@ -10971,7 +11342,7 @@ void BlockFadeTransition::InitHold()
 }
 void BlockFadeTransition::UpdateHold()
 {
-	if (GetStateElapsedTime() >= cfg_.holdSec)
+	if (stateMachine_.GetStateElapsedTime() >= cfg_.holdSec)
 	{
 		finished_ = true;
 	}
@@ -10988,7 +11359,7 @@ void BlockFadeTransition::InitExiting()
 }
 void BlockFadeTransition::UpdateExiting()
 {
-	if (GetStateElapsedTime() >= cfg_.outSec + (cfg_.holdSec / 4.0f))
+	if (stateMachine_.GetStateElapsedTime() >= cfg_.outSec + (cfg_.holdSec / 4.0f))
 	{
 		finished_ = true;
 	}
@@ -11032,8 +11403,10 @@ struct BlockFadeConfig
 
 class BlockFadeTransition : public StateMachineTransition<BlockFadeTransition>
 {
-public: // 関数テーブル
-	static const std::vector<TYEngine::Utility::StateMachine<BlockFadeTransition, TransitionStage>::StateFunctionSet>& GetStateTable();
+public:
+	using StateFunctionSet = TYEngine::Utility::StateMachine<BlockFadeTransition, TransitionStage>::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 public:
 	enum class Type
@@ -11170,39 +11543,34 @@ enum class TransitionStage
 	EXITING,	// 遷移終了（シーンを出る）
 };
 
-// CRTP化したステートマシン遷移テンプレート
+// ステートマシン遷移テンプレート
 // 'Class' = 継承先クラス（例：FadeTransition）
 template<typename Class>
-class StateMachineTransition : public ITransition, public TYEngine::Utility::StateMachine<Class, TransitionStage>
+class StateMachineTransition : 
+    public ITransition
 {
 public:
     void Update(float dt) override 
     {
-        this->UpdateState(dt);
+        stateMachine_.UpdateState(dt);
     }
 
 protected:
-    std::string GetStateName(TransitionStage state) const override 
-    {
-        switch (state) {
-        case TransitionStage::IDLE: return "IDLE";
-        case TransitionStage::ENTERING: return "ENTERING";
-        case TransitionStage::HOLD: return "HOLD";
-        case TransitionStage::EXITING: return "EXITING";
-        default: return "Unknown";
-        }
-    }
+    TYEngine::Utility::StateMachine<Class, TransitionStage> stateMachine_;
 };
 
 // 関数テーブル等の宣言例
 /* 
 .h
-static const std::vector<StateMachine<Class, TransitionStage>::StateFunctionSet>& GetStateTable();
+public:
+	using StateFunctionSet = TYEngine::Utility::StateMachine<Class, TransitionStage>::StateFunctionSet;
+	// 関数テーブル
+	static const std::vector<StateFunctionSet>& GetStateTable();
 
 .cpp
 Class()
 {
-    this->template RegisterFromDefaultTable<Class>(this);
+    stateMachine_.RegisterFromDefaultTable(this);
 }
 */
 
@@ -11644,6 +12012,7 @@ void Stage::Init()
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
     enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
     enemyMgr_.Init(camera_);
+    enemyMgr_.SetIsInGame(true);
 
     player_->SetEnemyManager(&enemyMgr_);
 
@@ -26659,12 +27028,12 @@ namespace TYEngine
 
 			float InBounce(float t)
 			{
-				return BounceOut(t);
+				return 1.0f - BounceOut(1.0f - t);
 			}
 
 			float OutBounce(float t)
 			{
-				return 1.0f - BounceOut(1.0f - t);
+				return BounceOut(t);
 			}
 
 			float InOutBounce(float t)
@@ -27843,6 +28212,8 @@ namespace TYEngine
 			void SetMapWorld(const Matrix4x4& world) { constMap->World = world; }
 			/// <summary>ローカルスケールを設定する。</summary>
 			void SetScale(const Vector3& scale) { scale_ = scale; }
+			/// <summary>ローカルスケールを設定する。</summary>
+			void SetScale(float scale) { scale_ = { scale,scale,scale }; }
 			/// <summary>ローカル回転（オイラー角）を設定する。</summary>
 			void SetRotate(const Vector3& rotate) { rotation_ = rotate; }
 			/// <summary>ローカル座標を設定する。</summary>
@@ -28857,6 +29228,12 @@ namespace TYEngine
 			virtual void SetScale(const Vector3& scale) { worldTransform_.SetScale(scale); }
 
 			/// <summary>
+			/// ローカルスケールを設定する。
+			/// </summary>
+			/// <param name="scale">スケール値。</param>
+			virtual void SetScale(float scale) { worldTransform_.SetScale(scale); }
+
+			/// <summary>
 			/// ローカル回転を設定する。
 			/// </summary>
 			/// <param name="rotate">回転角（ラジアン）。</param>
@@ -28993,6 +29370,7 @@ File Path: project/engine/Utility/Utils/JSON/JsonManager.h
 #include <nlohmann/json.hpp>
 
 #include "struct.h"
+#include <imgui.h>
 
 namespace TYEngine
 {
@@ -29511,7 +29889,6 @@ namespace TYEngine
 
 
 #ifdef JSONMGR_WITH_IMGUI
-#include <imgui.h>
 		// =========================================================
 		//   Vector 判定
 		// =========================================================
@@ -30232,11 +30609,6 @@ File Path: project/engine/Utility/Utils/StateMachine.h
 #include <cassert>
 #include <string>
 #include <imgui.h>
-/// --------------------------------------------------------------------------------- ///
-/// !!!!!!!!!!!!!!!!!!!!!!!継承より委譲の方が適切なようなので後に修正!!!!!!!!!!!!!!!!!!!!!!! ///
-/// --------------------------------------------------------------------------------- ///
-
-
 
 namespace TYEngine
 {
@@ -30266,10 +30638,11 @@ namespace TYEngine
 			using StateFunc = void (Class::*)();
 
 			// 関数テーブル用
-			// 要素：{ StateEnum, InitFunc, UpdateFunc, ExitFunc }
+			// 要素：{ StateEnum, StateName, InitFunc, UpdateFunc, ExitFunc }
 			struct StateFunctionSet
 			{
 				State state;      ///<対象ステート
+				std::string name; ///<ステート名（ImGui等デバッグ用） // 追加
 				StateFunc init;   ///<初期化関数
 				StateFunc update; ///<更新関数
 				StateFunc exit;   ///<終了関数
@@ -30284,10 +30657,12 @@ namespace TYEngine
 			void RegisterFromDefaultTable(C* instance)
 			{
 				stateList_.clear();
+				stateNames_.clear();
 
 				for (const auto& entry : C::GetStateTable())
 				{
 					stateList_.push_back(entry.state);
+					stateNames_[entry.state] = entry.name;
 					SetInitFunction(entry.state, [instance, f = entry.init]() { (instance->*f)(); });
 					SetUpdateFunction(entry.state, [instance, f = entry.update]() { (instance->*f)(); });
 					SetExitFunction(entry.state, [instance, f = entry.exit]() { (instance->*f)(); });
@@ -30392,9 +30767,15 @@ namespace TYEngine
 			// 現在のステートの固定を解除
 			void UnlockState() { allowExit_ = true; }
 
-		protected:
-			// オーバーライドで列挙名を文字列化（ImGui表示用）
-			virtual std::string GetStateName(State state) const = 0;
+			// 列挙名を文字列化（ImGui表示用）
+			std::string GetStateName(State state) const
+			{
+				if (stateNames_.contains(state))
+				{
+					return stateNames_.at(state);
+				}
+				return "Unknown";
+			}
 
 		private: // 関数テーブルsetter
 			void SetInitFunction(State state, std::function<void()> func) { initTable_[state] = func; }
@@ -30423,8 +30804,9 @@ namespace TYEngine
 			/// <summary>終了関数テーブル。</summary>
 			std::unordered_map<State, std::function<void()>> exitTable_;
 
-			// ★ 追加：利用可能なステート一覧（ImGui用）
+			// 利用可能なステート一覧（ImGui用）
 			std::vector<State> stateList_;
+			std::unordered_map<State, std::string> stateNames_;
 		};
 
 	} // namespace Utility
@@ -30433,7 +30815,7 @@ namespace TYEngine
 // StateMachine.h
 // 関数テーブルの登録用マクロ
 #define STATE_ENTRY_FOR(cls, stateEnum, funcName) \
-    { stateEnum, &cls::Init##funcName, &cls::Update##funcName, &cls::Exit##funcName }
+    { stateEnum, #stateEnum, &cls::Init##funcName, &cls::Update##funcName, &cls::Exit##funcName }
 
 
 // 使い方
@@ -30450,27 +30832,21 @@ enum class State
 	THREE
 };
 
-class Class : public StateMachine<State>
+class Class
 {
 public:
 	Class()
 	{
-		RegisterFromDefaultTable(this);
+		stateMachine_.RegisterFromDefaultTable(this);
 	}
-
+public:
+	using StateMachineType = TYEngine::Utility::StateMachine<Class, State>;
+	using StateFunctionSet = StateMachineType::StateFunctionSet;
+	// 関数テーブル
 	static const std::vector<StateFunctionSet>& GetStateTable();
 
 private:
-	std::string GetStateName(State state) const override
-	{
-		switch (state)
-		{
-		case State::ONE: return "ONE";
-		case State::TWO: return "TWO";
-		case State::THREE: return "THREE";
-		default: return "Unknown";
-		}
-	}
+	StateMachineType　stateMachine_;
 
 private:
 	void InitOne() {}
@@ -30490,7 +30866,7 @@ private:
 #define CLASS_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Class, stateEnum, funcName)
 
-const std::vector<StateMachine<Class, State>::StateFunctionSet>& Class::GetStateTable()
+const std::vector<Class::StateFunctionSet>& Class::GetStateTable()
 {
 	using enum State;
 	static const std::vector<StateFunctionSet> stateTable = {
@@ -30606,7 +30982,7 @@ namespace TYEngine
 	{
 
 
-		const std::vector<StateMachine<BulletTimeController, BulletTimeState>::StateFunctionSet>& BulletTimeController::GetStateTable()
+		const std::vector<BulletTimeController::StateFunctionSet>& BulletTimeController::GetStateTable()
 		{
 			using enum BulletTimeState;
 			static const std::vector<StateFunctionSet> stateTable = {
@@ -30620,14 +30996,14 @@ namespace TYEngine
 
 		BulletTimeController::BulletTimeController()
 		{
-			RegisterFromDefaultTable(this);
+			stateMachine_.RegisterFromDefaultTable(this);
 			timer_ = Timer::GetInstance();
-			ChangeState(BulletTimeState::NONE);
+			stateMachine_.ChangeState(BulletTimeState::NONE);
 		}
 
 		void BulletTimeController::Update()
 		{
-			UpdateState(timer_->GetRawDeltaTime());
+			stateMachine_.UpdateState(timer_->GetRawDeltaTime());
 		}
 
 		void BulletTimeController::Trigger(
@@ -30643,22 +31019,22 @@ namespace TYEngine
 
 			elapsed_ = 0.0f;
 			// 強制的に状態遷移
-			UnlockState();
-			ChangeState(BulletTimeState::ENTER);
+			stateMachine_.UnlockState();
+			stateMachine_.ChangeState(BulletTimeState::ENTER);
 		}
 
 		void BulletTimeController::CallStateExit()
 		{
-			UnlockState();
-			ChangeState(BulletTimeState::EXIT);
+			stateMachine_.UnlockState();
+			stateMachine_.ChangeState(BulletTimeState::EXIT);
 		}
 
 		void BulletTimeController::ForceExitNow()
 		{
 			// 即時終了
 			timer_->SetTimeScale(1.0f);
-			UnlockState();
-			ChangeState(BulletTimeState::NONE);
+			stateMachine_.UnlockState();
+			stateMachine_.ChangeState(BulletTimeState::NONE);
 		}
 
 
@@ -30667,7 +31043,7 @@ namespace TYEngine
 		void BulletTimeController::InitNone()
 		{
 			// スロー終了後に再びトリガーを呼ばないとスローが発生しないように
-			LockState();
+			stateMachine_.LockState();
 		}
 		void BulletTimeController::UpdateNone() {}
 		void BulletTimeController::ExitNone() {}
@@ -30690,7 +31066,7 @@ namespace TYEngine
 			{
 				timer_->SetTimeScale(params_.slowScale);
 				elapsed_ = 0.0f;
-				ChangeState(BulletTimeState::HOLD);
+				stateMachine_.ChangeState(BulletTimeState::HOLD);
 			}
 		}
 		void BulletTimeController::ExitEnter() {}
@@ -30707,7 +31083,7 @@ namespace TYEngine
 			{
 				elapsed_ = 0.0f;
 				// 維持時間終了、Exitへ
-				ChangeState(BulletTimeState::EXIT);
+				stateMachine_.ChangeState(BulletTimeState::EXIT);
 			}
 		}
 		void BulletTimeController::ExitHold() {}
@@ -30729,7 +31105,7 @@ namespace TYEngine
 			if (elapsed_ >= params_.exitDuration)
 			{
 				timer_->SetTimeScale(1.0f);
-				ChangeState(BulletTimeState::NONE);
+				stateMachine_.ChangeState(BulletTimeState::NONE);
 			}
 		}
 		void BulletTimeController::ExitExit() {}
@@ -30769,8 +31145,7 @@ namespace TYEngine
 		/// バレットタイム（スローモーション）への遷移・維持・解除をイージング付きで管理する。
 		/// </summary>
 		class BulletTimeController
-			: public StateMachine<BulletTimeController, BulletTimeState>,
-			public SingletonObject<BulletTimeController>
+			: public SingletonObject<BulletTimeController>
 		{
 			friend class SingletonObject<BulletTimeController>;
 			friend struct std::default_delete<BulletTimeController>;
@@ -30780,7 +31155,10 @@ namespace TYEngine
 			BulletTimeController();
 			~BulletTimeController() = default;
 
-		public: // 関数テーブル
+		public:
+			using StateMachineType = TYEngine::Utility::StateMachine<BulletTimeController, BulletTimeState>;
+			using StateFunctionSet = StateMachineType::StateFunctionSet;
+			// 関数テーブル
 			static const std::vector<StateFunctionSet>& GetStateTable();
 
 		public: // メンバ関数
@@ -30832,21 +31210,11 @@ namespace TYEngine
 			// タイマーインスタンスの保持用
 			Timer* timer_ = nullptr;
 
+			/// <summary>ステートマシーン。</summary>
+			StateMachineType stateMachine_;
+
 		private: // State関連関数
 #pragma region // State関連関数
-			// 状態名を文字列化（デバッグ・ImGui表示用）
-			std::string GetStateName(BulletTimeState state) const override
-			{
-				switch (state)
-				{
-				case BulletTimeState::NONE: return "NONE";
-				case BulletTimeState::ENTER: return "ENTER";
-				case BulletTimeState::HOLD:  return "HOLD";
-				case BulletTimeState::EXIT:  return "EXIT";
-				default: return "Unknown";
-				}
-			}
-
 			// 通常時
 			void InitNone();
 			void UpdateNone();
@@ -30873,6 +31241,109 @@ namespace TYEngine
 } // namespace TYEngine
 
 
+
+============================================================
+File Path: project/engine/Utility/Utils/Time/Oscillator.h
+============================================================
+#pragma once
+#include "Timer.h"
+#include <cmath>
+#include <algorithm>
+#include <numbers>
+
+namespace TYEngine
+{
+	namespace Utility
+	{
+		/// <summary>
+		/// 0.0f ～ 1.0f の間を指定時間で行き来させる計算クラス。
+		/// </summary>
+		class Oscillator
+		{
+		public:
+			enum class Type
+			{
+				Sine,   // サイン波（滑らかに行き来する）
+				Linear, // 直線的（一定速度で行き来する：ピンポン）
+			};
+
+		public:
+			/// <summary>
+			/// コンストラクタ
+			/// </summary>
+			/// <param name="cycleDuration">0→1→0 の1往復にかかる時間（秒）</param>
+			Oscillator(float cycleDuration = 1.0f, Type type = Type::Sine)
+				: duration_(cycleDuration), type_(type)
+			{}
+
+			/// <summary>
+			/// 時間を進めて現在の値(0.0~1.0)を取得する。
+			/// Update内で呼び出してください。
+			/// </summary>
+			float Update()
+			{
+				// Timerクラスから DeltaTime を取得
+				float dt = Timer::GetInstance()->GetDeltaTime();
+				timer_ += dt;
+
+				return GetValue();
+			}
+
+			/// <summary>
+			/// 計算結果だけを取得する（時間は進めない）
+			/// </summary>
+			float GetValue() const
+			{
+				// 0除算防止
+				if (duration_ <= 0.0f) return 0.0f;
+
+				float t = timer_;
+				float val = 0.0f;
+
+				switch (type_)
+				{
+				case Type::Sine:
+				{
+					// Sin波: -1~1 を 0~1 に変換
+					// 2PI * (t / duration) で1周
+					float sinVal = std::sinf(2.0f * std::numbers::pi_v<float> *(t / duration_));
+					// -1~1 -> 0~1 に正規化 ( (sin + 1) / 2 )
+					val = (sinVal + 1.0f) * 0.5f;
+					break;
+				}
+				case Type::Linear:
+				{
+					// ピンポン動作 (0 -> 1 -> 0)
+					// 時間を 0 ~ duration_ の範囲に収める
+					float cyclePos = std::fmod(t, duration_);
+
+					// 半分の時間 (halfDur) で 1.0 に到達させたい
+					float halfDur = duration_ * 0.5f;
+
+					// cyclePos を halfDur で割ると 0.0 ~ 2.0 の値になる
+					float normalized = cyclePos / halfDur;
+
+					// 1.0 - abs(normalized - 1.0) で 0 -> 1 -> 0 の三角波(Linear)を作る
+					val = 1.0f - std::abs(normalized - 1.0f);
+					break;
+				}
+				}
+
+				return std::clamp(val, 0.0f, 1.0f);
+			}
+
+			// パラメータ変更用
+			void SetDuration(float duration) { duration_ = duration; }
+			void SetType(Type type) { type_ = type; }
+			void Reset() { timer_ = 0.0f; }
+
+		private:
+			float timer_ = 0.0f;
+			float duration_ = 1.0f;
+			Type type_ = Type::Sine;
+		};
+	}
+}
 
 ============================================================
 File Path: project/engine/Utility/Utils/Time/Timer.cpp

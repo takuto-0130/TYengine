@@ -21,6 +21,9 @@
     "ground": {
       "rotateSpeed": 0.15000000596046448
     },
+    "oscillator": {
+      "floatingDuration": 2.0
+    },
     "texture": {
       "Enter": {
         "AnchorPoint": {

@@ -21,7 +21,7 @@ void TitleScene::UpdatePlay()
 	reticle_->SetPosition(mouse);
 
 	enterSpr_->SetAlpha(0.5f + (0.5f * oscillator_.GetValue()));
-	text_->SetScale(1.0f + (0.15f * oscillator_.GetValue()));
+	text_->SetScale(1.0f + (0.07f * oscillator_.GetValue()));
 
 #ifdef _DEBUG
 	if (enterSpr_->IsMouseClicked(0))

@@ -117,7 +117,6 @@ void TitleScene::Init()
 
 	player_->SetEnemyManager(&enemyMgr_);
 
-	oscillator_.SetDuration(2.0f);
 	oscillator_.SetType(Oscillator::Type::Sine);
 
 	stateMachine_.ChangeState(TitleSceneState::FADE_IN);

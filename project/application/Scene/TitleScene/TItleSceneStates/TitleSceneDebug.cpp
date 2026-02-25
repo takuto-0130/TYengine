@@ -12,7 +12,7 @@ void TitleScene::DebugUpdate()
 #ifdef _DEBUG
 	audioAnalyzer_.Draw();
 	beatAnalyzer_.Draw();
-	static int bgmH = -1;
+	/*static int bgmH = -1;
 
 	if (input_->TriggerKey(DIK_M))
 	{
@@ -26,7 +26,7 @@ void TitleScene::DebugUpdate()
 	if (input_->TriggerKey(DIK_O))
 	{
 		gameAudio_->Resume(bgmH);
-	}
+	}*/
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");
@@ -41,12 +41,12 @@ void TitleScene::DebugUpdate()
 	if (beatAnalyzer_.GetBeat())
 	{
 		timer = 0.0f;
-		player_->SetScale({ 0.3f,0.3f,0.3f });
+		player_->SetScale(0.3f);
 	}
 	else
 	{
 		timer += Timer::GetInstance()->GetDeltaTime();
-		player_->SetScale(Lerp(Vector3{ 0.3f,0.3f,0.3f }, Vector3{ 0.2f,0.2f,0.2f }, timer));
+		player_->SetScale(Lerp(0.3f, 0.2f, timer));
 	}
 #endif // _DEBUG
 }
@@ -61,4 +61,5 @@ void TitleScene::DebugJMApply()
 	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
 	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
 	rotateSpeed_ = titleJM.Get<float>("config.ground.rotateSpeed");
+	oscillator_.SetDuration(titleJM.Get<float>("config.oscillator.floatingDuration"));
 }

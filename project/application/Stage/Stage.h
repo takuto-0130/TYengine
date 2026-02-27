@@ -2,6 +2,7 @@
 
 #include "Audio.h"
 #include "BeatAnalyzer.h"
+#include "LevelObject.h"
 #include "Object/Player/Player.h"
 #include "Object/Enemy/EnemyManager/EnemyManager.h"
 #include "Object/Rail/RailManager.h"
@@ -117,6 +118,8 @@ private:
 
 	/// <summary>背景（地面）オブジェクト。</summary>
 	std::unique_ptr<TYEngine::Graphics::Object3d> ground_;
+
+	std::vector<std::unique_ptr<TYEngine::Utility::LevelObject>> stageObject_;
 	
 	/// <summary>背景のワールド変換情報。</summary>
 	TYEngine::Utility::WorldTransform groundWT_;

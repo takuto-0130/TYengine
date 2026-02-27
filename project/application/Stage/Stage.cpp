@@ -1,4 +1,5 @@
 #include "Stage.h"
+#include "BlenderLevelLoader.h"
 #include "../Object/Rail/RailEditor.h"
 #include "../AppSystem//Audio//GameAudio.h"
 
@@ -42,6 +43,9 @@ void Stage::Init()
     ground_->SetModel("ground.obj");
     groundWT_.Initialize();
     groundWT_.Update();
+
+    BlenderLevelLoader loader;
+    loader.DataToObject(loader.Load("stage_object.json"), stageObject_);
 }
 
 void Stage::Reset()
@@ -67,6 +71,11 @@ void Stage::Update()
         // トリガーに到達したとき（敵出現など）
     }
 
+    for (auto&& o : stageObject_)
+    {
+        o->Update();
+    }
+
     // プレイヤー更新
     player_->Update();
 
@@ -84,10 +93,16 @@ void Stage::Update()
 void Stage::Draw()
 {
     // 背景描画
-    ground_->Draw(groundWT_);
+    //ground_->Draw(groundWT_);
 
     // レール・敵・プレイヤー描画
     railManager_->Draw();
+
+    for (auto&& o : stageObject_)
+    {
+        o->Draw();
+    }
+    
     enemyMgr_.Draw();
     player_->Draw();
 }

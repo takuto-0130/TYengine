@@ -1,5 +1,6 @@
 #include "BlenderLevelLoader.h"
 #include <fstream>
+#include <numbers>
 
 #include "LevelObject.h"
 
@@ -76,24 +77,31 @@ namespace TYEngine
 					if (transform.contains("translation") && transform["translation"].size() >= 3)
 					{
 						objectData.translation.x = static_cast<float>(transform["translation"][0]);
-						objectData.translation.y = static_cast<float>(transform["translation"][2]);
-						objectData.translation.z = static_cast<float>(transform["translation"][1]);
+						objectData.translation.y = static_cast<float>(transform["translation"][2]); // Z
+						objectData.translation.z = static_cast<float>(transform["translation"][1]); // Y
 					}
 
-					// 回転角
+					constexpr float kDegToRad = std::numbers::pi_v<float> / 180.0f;
+
 					if (transform.contains("rotation") && transform["rotation"].size() >= 3)
 					{
-						objectData.rotation.x = static_cast<float>(transform["rotation"][0]);
-						objectData.rotation.y = static_cast<float>(transform["rotation"][2]);
-						objectData.rotation.z = static_cast<float>(transform["rotation"][1]);
+						// エンジンの座標系に合わせて補正
+						float rawDegX = static_cast<float>(transform["rotation"][0]);
+						float rawDegY = static_cast<float>(transform["rotation"][2]); // Z
+						float rawDegZ = static_cast<float>(transform["rotation"][1]); // Y
+
+						// XY軸の補正を加算してラジアン変換
+						objectData.rotation.x = (rawDegX + 90.0f) * kDegToRad;
+						objectData.rotation.y = (rawDegY + 180.0f)*kDegToRad;
+						objectData.rotation.z = rawDegZ * kDegToRad;
 					}
 
 					// スケーリング
 					if (transform.contains("scaling") && transform["scaling"].size() >= 3)
 					{
 						objectData.scaling.x = static_cast<float>(transform["scaling"][0]);
-						objectData.scaling.y = static_cast<float>(transform["scaling"][2]);
-						objectData.scaling.z = static_cast<float>(transform["scaling"][1]);
+						objectData.scaling.y = static_cast<float>(transform["scaling"][2]); // Z
+						objectData.scaling.z = static_cast<float>(transform["scaling"][1]); // Y
 					}
 
 					// 再帰的に枝を走査する

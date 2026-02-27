@@ -777,7 +777,8 @@ namespace TYEngine
 				case Type::object: drawObject(label, node); break;
 				case Type::array:  drawArray(label, node); break;
 				case Type::string: drawString(label, node); break;
-				case Type::number_integer: drawInt(label, node); break;
+				case Type::number_integer:
+				case Type::number_unsigned: drawInt(label, node); break;
 				case Type::number_float: drawFloat(label, node); break;
 				case Type::boolean: drawBool(label, node); break;
 				case Type::null: drawNull(); break;

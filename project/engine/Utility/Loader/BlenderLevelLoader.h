@@ -49,8 +49,8 @@ namespace TYEngine
 			/// <summary>
 			/// コンストラクタ。
 			/// </summary>
-			/// <param name="directoryPath">モデルファイルのベースディレクトリパス。</param>
-			BlenderLevelLoader(const std::string& directoryPath) : kBaseDirectoryName_(directoryPath) {}
+			/// <param name="directoryPath">JSONファイルのベースディレクトリパス。</param>
+			BlenderLevelLoader(const std::string& directoryPath = "Resources/JSON/") : kBaseDirectoryName_(directoryPath) {}
 
 			/// <summary>
 			/// 指定されたJSONファイルからレベルデータを読み込む。
@@ -71,7 +71,7 @@ namespace TYEngine
 			void ObjectTraversal(LevelData* levelData, nlohmann::json& j, std::string contains);
 
 		private:
-			/// <summary>モデルファイルのベースディレクトリパス。</summary>
+			/// <summary>JSONファイルのベースディレクトリパス。</summary>
 			std::string kBaseDirectoryName_;
 
 			/// <summary>ロードされたレベルデータ。</summary>

@@ -36,18 +36,6 @@ void TitleScene::DebugUpdate()
 	ImGui::End();
 
 	DebugJMApply();
-
-	static float timer = 0.0f;
-	if (beatAnalyzer_.GetBeat())
-	{
-		timer = 0.0f;
-		player_->SetScale(0.3f);
-	}
-	else
-	{
-		timer += Timer::GetInstance()->GetDeltaTime();
-		player_->SetScale(Lerp(0.3f, 0.2f, timer));
-	}
 #endif // _DEBUG
 }
 

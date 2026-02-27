@@ -58,8 +58,8 @@ void Player::Init()
 	// 3Dオブジェクトの生成と初期化
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
-	obj_->SetModel("jett.obj");
-	obj_->SetIsLighting(false);
+	obj_->SetModel("elementary_air_plane.obj");
+	obj_->SetIsLighting(true);
 	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// ワールドトランスフォームの設定

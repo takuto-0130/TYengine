@@ -119,13 +119,8 @@ private:
 	/// <summary>スコア計測・管理用マネージャ。</summary>
 	std::unique_ptr<ScoreManager> scoreManager_;
 
-	/// <summary>背景（地面）オブジェクト。</summary>
-	std::unique_ptr<TYEngine::Graphics::Object3d> ground_;
-
+	/// <summary>背景（地形）オブジェクト。</summary>
 	std::vector<std::unique_ptr<TYEngine::Utility::LevelObject>> stageObject_;
-	
-	/// <summary>背景のワールド変換情報。</summary>
-	TYEngine::Utility::WorldTransform groundWT_;
 
 	/// <summary>レールエディタによる編集モードフラグ。</summary>
 	bool isEdit_ = false;

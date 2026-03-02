@@ -39,12 +39,6 @@ void Stage::Init()
     railManager_->Reset();
 
     // 背景（地面）オブジェクト初期化
-    ground_ = std::make_unique<Object3d>();
-    ground_->Initialize();
-    ground_->SetModel("ground.obj");
-    groundWT_.Initialize();
-    groundWT_.Update();
-
     BlenderLevelLoader loader;
     loader.DataToObject(loader.Load("stage_object.json"), stageObject_);
 }
@@ -96,7 +90,6 @@ void Stage::Update()
 void Stage::Draw()
 {
     // 背景描画
-    //ground_->Draw(groundWT_);
 
     // レール・敵・プレイヤー描画
     railManager_->Draw();

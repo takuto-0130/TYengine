@@ -27,6 +27,9 @@ namespace TYEngine
 			void SetPosition(const Vector3& pos) { worldTransform_.SetTranslation(pos); }
 			void SetRotation(const Vector3& rotate) { worldTransform_.SetRotate(rotate); }
 			void SetScale(const Vector3& scale) { worldTransform_.SetScale(scale); }
+			void SetScale(float scale) { worldTransform_.SetScale(scale); }
+
+			const std::string& GetModelName() { return modelName_; }
 
 		private:
 			std::string modelName_;

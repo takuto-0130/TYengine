@@ -1,4 +1,5 @@
 #include "Stage.h"
+#include "Timer.h"
 #include "BlenderLevelLoader.h"
 #include "../Object/Rail/RailEditor.h"
 #include "../AppSystem//Audio//GameAudio.h"
@@ -72,6 +73,7 @@ void Stage::Update()
         enemyMgr_.DisablePopFlag();
     }
 
+    StageObjectBeatScale();
     for (auto&& o : stageObject_)
     {
         o->Update();
@@ -137,4 +139,28 @@ void Stage::FromJson(const nlohmann::json& j) {
     
     // ロード後にレールマネージャを再初期化
     railManager_->Reset();
+}
+
+void Stage::StageObjectBeatScale()
+{
+    static float timer = 0.0f;
+    for (auto& o : stageObject_)
+    {
+        if (o->GetModelName() == "conifer.obj")
+        {
+            if (beatAnalyzer_.GetBeat())
+            {
+                timer = 0.0f;
+                o->SetScale(1.05f);
+            }
+            else
+            {
+                if (timer < 1.0f)
+                {
+                    timer += Timer::GetInstance()->GetDeltaTime();
+                }
+                o->SetScale(Lerp(1.05f, 1.0f, timer));
+            }
+        }
+    }
 }

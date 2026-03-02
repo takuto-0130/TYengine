@@ -98,6 +98,9 @@ public:
 	Player* GetPlayer() { return player_.get(); }
 
 private:
+	void StageObjectBeatScale();
+
+private:
 	/// <summary>カメラへのポインタ（借用）。</summary>
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 	

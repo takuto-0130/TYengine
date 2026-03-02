@@ -163,25 +163,28 @@ Vector3 EnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 
 void EnemyManager::Pop()
 {
-	std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-	enemy->Init();
+	if (isPopFlag_)
+	{
+		std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
+		enemy->Init();
 
-	// 画面座標系でのランダムな出現位置決定
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+		// 画面座標系でのランダムな出現位置決定
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
-	enemy->SetScreenPos({ dist(gen), dist(gen) });
-	// スクリーン座標をワールド座標へ変換して設定
-	enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
-	
-	// 出現演出開始等
-	enemy->Pop();
-	
-	// 依存関係の注入
-	enemy->SetEnemyBulletManager(&bulletManager_);
-	enemy->SetEventListener(comboAndScoreHandler_.get());
-	enemy->SetIsInGame(isInGame_);
-	enemy->SetCamera(camera_);
-	
-	enemies_.push_back(std::move(enemy));
+		enemy->SetScreenPos({ dist(gen), dist(gen) });
+		// スクリーン座標をワールド座標へ変換して設定
+		enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
+
+		// 出現演出開始等
+		enemy->Pop();
+
+		// 依存関係の注入
+		enemy->SetEnemyBulletManager(&bulletManager_);
+		enemy->SetEventListener(comboAndScoreHandler_.get());
+		enemy->SetIsInGame(isInGame_);
+		enemy->SetCamera(camera_);
+
+		enemies_.push_back(std::move(enemy));
+	}
 }

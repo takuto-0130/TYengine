@@ -5,8 +5,6 @@ namespace TYEngine
 {
 	namespace Utility
 	{
-
-
 		/// <summary>
 		/// Blender等のDCCツールで配置されたレベルオブジェクト。
 		/// モデル名やトランスフォーム情報を保持し、描画を行う。

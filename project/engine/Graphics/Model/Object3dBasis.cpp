@@ -21,7 +21,7 @@ namespace TYEngine
 			directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
 
 			directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-			directionalLightData->direction = { 0.0f,-1.0f,0.0f };
+			directionalLightData->direction = Utility::Normalize({ 0.0f,-1.0f,1.0f });
 			directionalLightData->intensity = 1.0f;
 
 		}

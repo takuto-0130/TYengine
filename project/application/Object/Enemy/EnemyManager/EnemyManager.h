@@ -59,6 +59,8 @@ public:
 		return false;
 	}
 
+	void DisablePopFlag() { isPopFlag_ = false; }
+
 private:
 	/// <summary>
 	/// スクリーン座標オフセットをワールド座標に変換する。
@@ -99,6 +101,9 @@ private:
 
 	/// <summary>ゲームシーンかどうか。</summary>
 	bool isInGame_ = false;
+
+	/// <summary>ポップするかどうか。</summary>
+	bool isPopFlag_ = true;
 
 	/// <summary>コンボ・スコア処理ハンドラ。</summary>
 	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;

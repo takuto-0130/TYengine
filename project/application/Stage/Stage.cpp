@@ -68,7 +68,8 @@ void Stage::Update()
 
     if (railManager_->RailTrigger())
     {
-        // トリガーに到達したとき（敵出現など）
+        // トリガーに到達したとき（敵出現停止）
+        enemyMgr_.DisablePopFlag();
     }
 
     for (auto&& o : stageObject_)

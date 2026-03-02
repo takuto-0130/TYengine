@@ -5,14 +5,18 @@
     └── ├── JSON/
     └── ├── Models/
     └── └── ├── Ground/
+    └── └── ├── conifer/
     └── └── ├── crystal/
     └── └── ├── crystal1/
     └── └── ├── crystal2/
     └── └── ├── crystal4/
     └── └── ├── cube/
+    └── └── ├── elementary_air_plane/
+    └── └── ├── green/
     └── └── ├── ground/
     └── └── ├── jett/
     └── └── ├── plane/
+    └── └── ├── plateau/
     └── └── ├── skydome/
     └── └── ├── titleground/
     └── └── ├── unitSphere/
@@ -3924,27 +3928,30 @@ Vector3 EnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 
 void EnemyManager::Pop()
 {
-	std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-	enemy->Init();
+	if (isPopFlag_)
+	{
+		std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
+		enemy->Init();
 
-	// 画面座標系でのランダムな出現位置決定
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+		// 画面座標系でのランダムな出現位置決定
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
-	enemy->SetScreenPos({ dist(gen), dist(gen) });
-	// スクリーン座標をワールド座標へ変換して設定
-	enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
-	
-	// 出現演出開始等
-	enemy->Pop();
-	
-	// 依存関係の注入
-	enemy->SetEnemyBulletManager(&bulletManager_);
-	enemy->SetEventListener(comboAndScoreHandler_.get());
-	enemy->SetIsInGame(isInGame_);
-	enemy->SetCamera(camera_);
-	
-	enemies_.push_back(std::move(enemy));
+		enemy->SetScreenPos({ dist(gen), dist(gen) });
+		// スクリーン座標をワールド座標へ変換して設定
+		enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
+
+		// 出現演出開始等
+		enemy->Pop();
+
+		// 依存関係の注入
+		enemy->SetEnemyBulletManager(&bulletManager_);
+		enemy->SetEventListener(comboAndScoreHandler_.get());
+		enemy->SetIsInGame(isInGame_);
+		enemy->SetCamera(camera_);
+
+		enemies_.push_back(std::move(enemy));
+	}
 }
 
 
@@ -4012,6 +4019,8 @@ public:
 		return false;
 	}
 
+	void DisablePopFlag() { isPopFlag_ = false; }
+
 private:
 	/// <summary>
 	/// スクリーン座標オフセットをワールド座標に変換する。
@@ -4052,6 +4061,9 @@ private:
 
 	/// <summary>ゲームシーンかどうか。</summary>
 	bool isInGame_ = false;
+
+	/// <summary>ポップするかどうか。</summary>
+	bool isPopFlag_ = true;
 
 	/// <summary>コンボ・スコア処理ハンドラ。</summary>
 	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;
@@ -4190,8 +4202,8 @@ void Player::Init()
 	// 3Dオブジェクトの生成と初期化
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize();
-	obj_->SetModel("jett.obj");
-	obj_->SetIsLighting(false);
+	obj_->SetModel("elementary_air_plane.obj");
+	obj_->SetIsLighting(true);
 	obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// ワールドトランスフォームの設定
@@ -10336,7 +10348,7 @@ void TitleScene::DebugUpdate()
 #ifdef _DEBUG
 	audioAnalyzer_.Draw();
 	beatAnalyzer_.Draw();
-	static int bgmH = -1;
+	/*static int bgmH = -1;
 
 	if (input_->TriggerKey(DIK_M))
 	{
@@ -10350,7 +10362,7 @@ void TitleScene::DebugUpdate()
 	if (input_->TriggerKey(DIK_O))
 	{
 		gameAudio_->Resume(bgmH);
-	}
+	}*/
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");
@@ -10360,18 +10372,6 @@ void TitleScene::DebugUpdate()
 	ImGui::End();
 
 	DebugJMApply();
-
-	static float timer = 0.0f;
-	if (beatAnalyzer_.GetBeat())
-	{
-		timer = 0.0f;
-		player_->SetScale({ 0.3f,0.3f,0.3f });
-	}
-	else
-	{
-		timer += Timer::GetInstance()->GetDeltaTime();
-		player_->SetScale(Lerp(Vector3{ 0.3f,0.3f,0.3f }, Vector3{ 0.2f,0.2f,0.2f }, timer));
-	}
 #endif // _DEBUG
 }
 
@@ -10385,6 +10385,7 @@ void TitleScene::DebugJMApply()
 	operation_->SetPosition(titleJM.Get<Vector2>("config.texture.Operation.Position"));
 	reticle_->SetAnchorPoint(titleJM.Get<Vector2>("config.texture.reticle.AnchorPoint"));
 	rotateSpeed_ = titleJM.Get<float>("config.ground.rotateSpeed");
+	oscillator_.SetDuration(titleJM.Get<float>("config.oscillator.floatingDuration"));
 }
 
 ============================================================
@@ -10521,7 +10522,7 @@ void TitleScene::UpdatePlay()
 	reticle_->SetPosition(mouse);
 
 	enterSpr_->SetAlpha(0.5f + (0.5f * oscillator_.GetValue()));
-	text_->SetScale(1.0f + (0.15f * oscillator_.GetValue()));
+	text_->SetScale(1.0f + (0.07f * oscillator_.GetValue()));
 
 #ifdef _DEBUG
 	if (enterSpr_->IsMouseClicked(0))
@@ -10679,7 +10680,6 @@ void TitleScene::Init()
 
 	player_->SetEnemyManager(&enemyMgr_);
 
-	oscillator_.SetDuration(2.0f);
 	oscillator_.SetType(Oscillator::Type::Sine);
 
 	stateMachine_.ChangeState(TitleSceneState::FADE_IN);
@@ -11986,6 +11986,8 @@ private:
 File Path: project/application/Stage/Stage.cpp
 ============================================================
 #include "Stage.h"
+#include "Timer.h"
+#include "BlenderLevelLoader.h"
 #include "../Object/Rail/RailEditor.h"
 #include "../AppSystem//Audio//GameAudio.h"
 
@@ -12029,6 +12031,9 @@ void Stage::Init()
     ground_->SetModel("ground.obj");
     groundWT_.Initialize();
     groundWT_.Update();
+
+    BlenderLevelLoader loader;
+    loader.DataToObject(loader.Load("stage_object.json"), stageObject_);
 }
 
 void Stage::Reset()
@@ -12051,7 +12056,14 @@ void Stage::Update()
 
     if (railManager_->RailTrigger())
     {
-        // トリガーに到達したとき（敵出現など）
+        // トリガーに到達したとき（敵出現停止）
+        enemyMgr_.DisablePopFlag();
+    }
+
+    StageObjectBeatScale();
+    for (auto&& o : stageObject_)
+    {
+        o->Update();
     }
 
     // プレイヤー更新
@@ -12071,10 +12083,16 @@ void Stage::Update()
 void Stage::Draw()
 {
     // 背景描画
-    ground_->Draw(groundWT_);
+    //ground_->Draw(groundWT_);
 
     // レール・敵・プレイヤー描画
     railManager_->Draw();
+
+    for (auto&& o : stageObject_)
+    {
+        o->Draw();
+    }
+    
     enemyMgr_.Draw();
     player_->Draw();
 }
@@ -12110,6 +12128,30 @@ void Stage::FromJson(const nlohmann::json& j) {
     railManager_->Reset();
 }
 
+void Stage::StageObjectBeatScale()
+{
+    static float timer = 0.0f;
+    for (auto& o : stageObject_)
+    {
+        if (o->GetModelName() == "conifer.obj")
+        {
+            if (beatAnalyzer_.GetBeat())
+            {
+                timer = 0.0f;
+                o->SetScale(1.05f);
+            }
+            else
+            {
+                if (timer < 1.0f)
+                {
+                    timer += Timer::GetInstance()->GetDeltaTime();
+                }
+                o->SetScale(Lerp(1.05f, 1.0f, timer));
+            }
+        }
+    }
+}
+
 
 ============================================================
 File Path: project/application/Stage/Stage.h
@@ -12118,6 +12160,7 @@ File Path: project/application/Stage/Stage.h
 
 #include "Audio.h"
 #include "BeatAnalyzer.h"
+#include "LevelObject.h"
 #include "Object/Player/Player.h"
 #include "Object/Enemy/EnemyManager/EnemyManager.h"
 #include "Object/Rail/RailManager.h"
@@ -12213,6 +12256,9 @@ public:
 	Player* GetPlayer() { return player_.get(); }
 
 private:
+	void StageObjectBeatScale();
+
+private:
 	/// <summary>カメラへのポインタ（借用）。</summary>
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 	
@@ -12233,6 +12279,8 @@ private:
 
 	/// <summary>背景（地面）オブジェクト。</summary>
 	std::unique_ptr<TYEngine::Graphics::Object3d> ground_;
+
+	std::vector<std::unique_ptr<TYEngine::Utility::LevelObject>> stageObject_;
 	
 	/// <summary>背景のワールド変換情報。</summary>
 	TYEngine::Utility::WorldTransform groundWT_;
@@ -20917,7 +20965,7 @@ namespace TYEngine
 			directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
 
 			directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-			directionalLightData->direction = { 0.0f,-1.0f,0.0f };
+			directionalLightData->direction = Utility::Normalize({ 0.0f,-1.0f,1.0f });
 			directionalLightData->intensity = 1.0f;
 
 		}
@@ -26706,6 +26754,7 @@ File Path: project/engine/Utility/Loader/BlenderLevelLoader.cpp
 ============================================================
 #include "BlenderLevelLoader.h"
 #include <fstream>
+#include <numbers>
 
 #include "LevelObject.h"
 
@@ -26782,24 +26831,31 @@ namespace TYEngine
 					if (transform.contains("translation") && transform["translation"].size() >= 3)
 					{
 						objectData.translation.x = static_cast<float>(transform["translation"][0]);
-						objectData.translation.y = static_cast<float>(transform["translation"][2]);
-						objectData.translation.z = static_cast<float>(transform["translation"][1]);
+						objectData.translation.y = static_cast<float>(transform["translation"][2]); // Z
+						objectData.translation.z = static_cast<float>(transform["translation"][1]); // Y
 					}
 
-					// 回転角
+					constexpr float kDegToRad = std::numbers::pi_v<float> / 180.0f;
+
 					if (transform.contains("rotation") && transform["rotation"].size() >= 3)
 					{
-						objectData.rotation.x = static_cast<float>(transform["rotation"][0]);
-						objectData.rotation.y = static_cast<float>(transform["rotation"][2]);
-						objectData.rotation.z = static_cast<float>(transform["rotation"][1]);
+						// エンジンの座標系に合わせて補正
+						float rawDegX = static_cast<float>(transform["rotation"][0]);
+						float rawDegY = static_cast<float>(transform["rotation"][2]); // Z
+						float rawDegZ = static_cast<float>(transform["rotation"][1]); // Y
+
+						// XY軸の補正を加算してラジアン変換
+						objectData.rotation.x = (rawDegX + 90.0f) * kDegToRad;
+						objectData.rotation.y = (rawDegY + 180.0f)*kDegToRad;
+						objectData.rotation.z = rawDegZ * kDegToRad;
 					}
 
 					// スケーリング
 					if (transform.contains("scaling") && transform["scaling"].size() >= 3)
 					{
 						objectData.scaling.x = static_cast<float>(transform["scaling"][0]);
-						objectData.scaling.y = static_cast<float>(transform["scaling"][2]);
-						objectData.scaling.z = static_cast<float>(transform["scaling"][1]);
+						objectData.scaling.y = static_cast<float>(transform["scaling"][2]); // Z
+						objectData.scaling.z = static_cast<float>(transform["scaling"][1]); // Y
 					}
 
 					// 再帰的に枝を走査する
@@ -26870,8 +26926,8 @@ namespace TYEngine
 			/// <summary>
 			/// コンストラクタ。
 			/// </summary>
-			/// <param name="directoryPath">モデルファイルのベースディレクトリパス。</param>
-			BlenderLevelLoader(const std::string& directoryPath) : kBaseDirectoryName_(directoryPath) {}
+			/// <param name="directoryPath">JSONファイルのベースディレクトリパス。</param>
+			BlenderLevelLoader(const std::string& directoryPath = "Resources/JSON/") : kBaseDirectoryName_(directoryPath) {}
 
 			/// <summary>
 			/// 指定されたJSONファイルからレベルデータを読み込む。
@@ -26892,7 +26948,7 @@ namespace TYEngine
 			void ObjectTraversal(LevelData* levelData, nlohmann::json& j, std::string contains);
 
 		private:
-			/// <summary>モデルファイルのベースディレクトリパス。</summary>
+			/// <summary>JSONファイルのベースディレクトリパス。</summary>
 			std::string kBaseDirectoryName_;
 
 			/// <summary>ロードされたレベルデータ。</summary>
@@ -29303,8 +29359,6 @@ namespace TYEngine
 {
 	namespace Utility
 	{
-
-
 		/// <summary>
 		/// Blender等のDCCツールで配置されたレベルオブジェクト。
 		/// モデル名やトランスフォーム情報を保持し、描画を行う。
@@ -29327,6 +29381,9 @@ namespace TYEngine
 			void SetPosition(const Vector3& pos) { worldTransform_.SetTranslation(pos); }
 			void SetRotation(const Vector3& rotate) { worldTransform_.SetRotate(rotate); }
 			void SetScale(const Vector3& scale) { worldTransform_.SetScale(scale); }
+			void SetScale(float scale) { worldTransform_.SetScale(scale); }
+
+			const std::string& GetModelName() { return modelName_; }
 
 		private:
 			std::string modelName_;
@@ -30119,7 +30176,8 @@ namespace TYEngine
 				case Type::object: drawObject(label, node); break;
 				case Type::array:  drawArray(label, node); break;
 				case Type::string: drawString(label, node); break;
-				case Type::number_integer: drawInt(label, node); break;
+				case Type::number_integer:
+				case Type::number_unsigned: drawInt(label, node); break;
 				case Type::number_float: drawFloat(label, node); break;
 				case Type::boolean: drawBool(label, node); break;
 				case Type::null: drawNull(); break;

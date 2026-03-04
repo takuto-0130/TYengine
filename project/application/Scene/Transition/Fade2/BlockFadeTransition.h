@@ -1,5 +1,6 @@
 #pragma once
 #include "../StateMachineTransition.h"
+#include "Object3d.h"
 #include <memory>
 
 namespace TYEngine::Graphics
@@ -60,6 +61,8 @@ private:
 	BlockFadeConfig cfg_;
 	std::vector<TYEngine::Graphics::Sprite> sprites_;   // タイル＝スプライト
 	std::vector<float> viewSprites_;
+
+	std::unique_ptr<TYEngine::Graphics::Sprite> pSpr_;
 
 	float baseW_ = 0.0f, baseH_ = 0.0f;
 

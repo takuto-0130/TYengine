@@ -53,6 +53,7 @@ void BlockFadeTransition::Init()
 	baseW_ = WindowsApp::kClientWidth; baseH_ = WindowsApp::kClientHeight;
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Transition01.png");
+    TextureManager::GetInstance()->LoadTexture("Resources/Texture/Player.png");
 
 	// タイル数ぶん Sprite を確保（各タイル=1スプライト）
 	sprites_.clear();
@@ -60,6 +61,11 @@ void BlockFadeTransition::Init()
 	viewSprites_.clear();
 	viewSprites_.resize(cfg_.cols * cfg_.rows);
 	std::fill(viewSprites_.begin(), viewSprites_.end(), 0.0f);
+
+    pSpr_ = std::make_unique<Sprite>();
+    pSpr_->Initialize("Resources/Texture/Player.png");
+    pSpr_->SetAnchorPoint({ 0.5f,0.5f });
+    pSpr_->SetScale(2.0f);
 
 	const float colW = baseW_ / cfg_.cols;
 	const float rowH = baseH_ / cfg_.rows;
@@ -183,6 +189,12 @@ void BlockFadeTransition::Draw()
             }
         }
 
+        if (stateMachine_.GetCurrentState() == TransitionStage::ENTERING)
+        {
+            pSpr_->SetPosition(Lerp(Vector2{ 128, 360 }, Vector2{ 1800, 360 }, t));
+            pSpr_->Update();
+            pSpr_->Draw();
+        }
     }
 }
 

@@ -4,7 +4,6 @@
     ├── Resources/
     └── ├── JSON/
     └── ├── Models/
-    └── └── ├── Ground/
     └── └── ├── conifer/
     └── └── ├── crystal/
     └── └── ├── crystal1/
@@ -13,7 +12,6 @@
     └── └── ├── cube/
     └── └── ├── elementary_air_plane/
     └── └── ├── green/
-    └── └── ├── ground/
     └── └── ├── jett/
     └── └── ├── plane/
     └── └── ├── plateau/
@@ -11154,6 +11152,7 @@ void BlockFadeTransition::Init()
 	baseW_ = WindowsApp::kClientWidth; baseH_ = WindowsApp::kClientHeight;
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Transition01.png");
+    TextureManager::GetInstance()->LoadTexture("Resources/Texture/Player.png");
 
 	// タイル数ぶん Sprite を確保（各タイル=1スプライト）
 	sprites_.clear();
@@ -11161,6 +11160,11 @@ void BlockFadeTransition::Init()
 	viewSprites_.clear();
 	viewSprites_.resize(cfg_.cols * cfg_.rows);
 	std::fill(viewSprites_.begin(), viewSprites_.end(), 0.0f);
+
+    pSpr_ = std::make_unique<Sprite>();
+    pSpr_->Initialize("Resources/Texture/Player.png");
+    pSpr_->SetAnchorPoint({ 0.5f,0.5f });
+    pSpr_->SetScale(2.0f);
 
 	const float colW = baseW_ / cfg_.cols;
 	const float rowH = baseH_ / cfg_.rows;
@@ -11284,6 +11288,12 @@ void BlockFadeTransition::Draw()
             }
         }
 
+        if (stateMachine_.GetCurrentState() == TransitionStage::ENTERING)
+        {
+            pSpr_->SetPosition(Lerp(Vector2{ 128, 360 }, Vector2{ 1800, 360 }, t));
+            pSpr_->Update();
+            pSpr_->Draw();
+        }
     }
 }
 
@@ -11374,6 +11384,7 @@ File Path: project/application/Scene/Transition/Fade2/BlockFadeTransition.h
 ============================================================
 #pragma once
 #include "../StateMachineTransition.h"
+#include "Object3d.h"
 #include <memory>
 
 namespace TYEngine::Graphics
@@ -11434,6 +11445,8 @@ private:
 	BlockFadeConfig cfg_;
 	std::vector<TYEngine::Graphics::Sprite> sprites_;   // タイル＝スプライト
 	std::vector<float> viewSprites_;
+
+	std::unique_ptr<TYEngine::Graphics::Sprite> pSpr_;
 
 	float baseW_ = 0.0f, baseH_ = 0.0f;
 
@@ -12026,12 +12039,6 @@ void Stage::Init()
     railManager_->Reset();
 
     // 背景（地面）オブジェクト初期化
-    ground_ = std::make_unique<Object3d>();
-    ground_->Initialize();
-    ground_->SetModel("ground.obj");
-    groundWT_.Initialize();
-    groundWT_.Update();
-
     BlenderLevelLoader loader;
     loader.DataToObject(loader.Load("stage_object.json"), stageObject_);
 }
@@ -12083,7 +12090,6 @@ void Stage::Update()
 void Stage::Draw()
 {
     // 背景描画
-    //ground_->Draw(groundWT_);
 
     // レール・敵・プレイヤー描画
     railManager_->Draw();
@@ -12277,13 +12283,8 @@ private:
 	/// <summary>スコア計測・管理用マネージャ。</summary>
 	std::unique_ptr<ScoreManager> scoreManager_;
 
-	/// <summary>背景（地面）オブジェクト。</summary>
-	std::unique_ptr<TYEngine::Graphics::Object3d> ground_;
-
+	/// <summary>背景（地形）オブジェクト。</summary>
 	std::vector<std::unique_ptr<TYEngine::Utility::LevelObject>> stageObject_;
-	
-	/// <summary>背景のワールド変換情報。</summary>
-	TYEngine::Utility::WorldTransform groundWT_;
 
 	/// <summary>レールエディタによる編集モードフラグ。</summary>
 	bool isEdit_ = false;

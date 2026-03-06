@@ -112,9 +112,6 @@ private:
 	void SwitchEdit();
 
 private: // メンバ変数
-
-	/// <summary>カメラのピッチ角。</summary>
-	float pitch_ = 1.0f;
 	/// <summary>カメラのオフセット位置。</summary>
 	TYEngine::Utility::Vector3 cameraOffset_ = {};
 
@@ -123,10 +120,8 @@ private: // メンバ変数
 	/// <summary>オーディオマネージャ。</summary>
 	GameAudio* gameAudio_ = nullptr;
 
-
 	/// <summary>ステージ管理マネージャ。</summary>
 	std::unique_ptr<StageManager> stageManager_;
-
 
 	/// <summary>汎用パーティクルエミッター。</summary>
 	TYEngine::Effect::IParticleRenderer::Emitter emitter;
@@ -141,7 +136,6 @@ private: // メンバ変数
 	/// <summary>バレットタイムコントローラー。</summary>
 	TYEngine::Utility::BulletTimeController* bulletTime_ = nullptr;
 
-	
 	// UIクラス群
 	/// <summary>プレイ中UI。</summary>
 	std::unique_ptr<PlayUI> playUI_;
@@ -175,7 +169,7 @@ private: // メンバ変数
 	/// <summary>前回のステート経過時間。</summary>
 	float prevStateElapsed_ = 0.0f;
 
-
+	// JSONマネージャ
 	/// <summary>ゲームUI用JSONマネージャ。</summary>
 	std::unique_ptr<TYEngine::Utility::JsonManager> gameUIJM_;
 	/// <summary>UI設定エラーメッセージ。</summary>

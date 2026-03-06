@@ -1,7 +1,12 @@
 #include "Audio.h"
 #include "BPMDetector.h"
+#include "Logger.h"
+#include <mfapi.h>
+#include <mfreadwrite.h>
 #include <cassert>
-#include <Logger.h>
+
+#pragma comment(lib, "mfplat.lib")
+#pragma comment(lib, "Mfreadwrite.lib")
 
 namespace TYEngine
 {
@@ -62,6 +67,17 @@ namespace TYEngine
 			}
 
 			soundDataMap_.clear();
+
+			HRESULT result = MFShutdown();
+			if (FAILED(result))
+			{
+				// ログに警告を出す（デバッグ用）
+				Log("Audio Warning: Failed to shutdown media foundation.\n");
+
+				assert(SUCCEEDED(result));
+			}
+
+
 			xAudio2_.Reset();
 		}
 
@@ -80,6 +96,16 @@ namespace TYEngine
 			{
 				// ログに警告を出す（デバッグ用）
 				Log("Audio Warning: Failed to initialize audio client.\n");
+
+				assert(SUCCEEDED(result));
+			}
+
+			result = MFStartup(MF_VERSION, MFSTARTUP_NOSOCKET);
+
+			if (FAILED(result))
+			{
+				// ログに警告を出す（デバッグ用）
+				Log("Audio Warning: Failed to initialize media foundation.\n");
 
 				assert(SUCCEEDED(result));
 			}
@@ -366,7 +392,7 @@ namespace TYEngine
 			return volume;
 		}
 
-		void Audio::LoadWave(const std::string& filename)
+		void Audio::LoadWave(const std::string& filename, const std::string& extension)
 		{
 			if (soundDataMap_.count(filename))
 			{
@@ -378,7 +404,7 @@ namespace TYEngine
 			std::ifstream file;
 			std::string filePath = directoryPath_;
 			filePath += filename;
-			filePath += ".wav";
+			filePath += extension;
 			file.open(filePath, std::ios_base::binary);
 			assert(file.is_open());
 

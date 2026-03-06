@@ -174,6 +174,7 @@ void GameCore::Update()
 		
 		// 各種マネージャ・システムの更新
 		Timer::GetInstance()->Update();
+		GameAudio::GetInstance()->Update();
 		Audio::GetInstance()->Update();
 		TYFrameWork::Update(); // 入力系などの更新
 		particleManager_->UpdateAll();
@@ -204,7 +205,7 @@ void GameCore::Draw()
 	directXBasis_->DrawBegin();
 
 	// ポストエフェクトを適用してSwapChainに転送
-	// 第二引数にnullptrを指定しているため、最終結果はバックバッファに書き込まれる
+	// 第二引数に nullptr を指定しているため、最終結果はバックバッファに書き込まれる
 	postEffectManager_->Apply(renderTexture_.get(), nullptr); 
 
 	// ポストエフェクトの影響を受けないUIを描画

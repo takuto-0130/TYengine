@@ -7,6 +7,7 @@
 #include "Effect/PlaneParticle.h"
 #include "Effect/ContrailBehaviour.h"
 #include "Effect/ParticleManager.h"
+#include "PostEffectManager.h"
 #include "../../AppSystem/Audio/GameAudio.h"
 #include "../Enemy/EnemyManager/EnemyManager.h"
 
@@ -37,6 +38,9 @@ Player::~Player()
 {
 	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 	ColliderManager::GetInstance()->RemoveCollider(justCollider_.get());
+	auto* pem = OffScreen::PostEffectManager::GetInstance();
+	pem->SetEffectEnabled("RadialBlur", false);
+	pem->SetEffectEnabled("Vignette", false);
 }
 
 void Player::Init()

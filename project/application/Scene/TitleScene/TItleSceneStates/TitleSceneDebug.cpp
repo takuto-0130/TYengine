@@ -11,7 +11,8 @@ void TitleScene::DebugUpdate()
 {
 #ifdef _DEBUG
 	audioAnalyzer_.Draw();
-	beatAnalyzer_.Draw();
+	gameAudio_->GetBeatAnalyzer().Draw();
+	//beatAnalyzer_.Draw();
 	/*static int bgmH = -1;
 
 	if (input_->TriggerKey(DIK_M))

@@ -8,6 +8,7 @@
 #include "Object/Rail/RailManager.h"
 #include "../AppSystem/Combo/ComboManager.h"
 #include "../AppSystem/Score/ScoreManager.h"
+#include "../AppSystem/Audio/GameAudio.h"
 #include <memory>
 #include <json.hpp>
 
@@ -126,6 +127,6 @@ private:
 	bool isEdit_ = false;
 
 	/// <summary>ビートアナライザー（演出用）。</summary>
-	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
+	GameAudio* gameAudio_ = nullptr;
 };
 

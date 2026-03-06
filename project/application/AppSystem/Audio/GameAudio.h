@@ -1,5 +1,6 @@
 #pragma once
 #include "AudioSystemBase.h"
+#include "BeatAnalyzer.h"
 #include "SingletonObject.h"
 
 /// <summary>
@@ -34,14 +35,13 @@ private:
     /// 初期ロード時に呼び出される。
     /// BGM, SE, UI の各カテゴリを作成・登録する。
     /// </summary>
-    void OnInit() override
-    {
-        CreateCategory(SoundCategory::BGM, "BGM");
-        CreateCategory(SoundCategory::SE, "SE");
-        CreateCategory(SoundCategory::UI, "UI");
-    } 
+    void OnInit() override;
 
 public:
+    void Update();
+
+    void InitBeatAnalyzer(const std::string& filename, SoundCategory soundCategory = SoundCategory::BGM);
+
     void Stop(int resourceNum)
     {
         GetAudio()->Stop(resourceNum);
@@ -60,4 +60,9 @@ public:
         GetAudio()->Pitch(resourceNum, pitch);
     }
 
+    TYEngine::AudioSystem::BeatAnalyzer& GetBeatAnalyzer() { return beatAnalyzer_; }
+
+private:
+    /// <summary>ビートアナライザー（演出用）。</summary>
+    TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
 };

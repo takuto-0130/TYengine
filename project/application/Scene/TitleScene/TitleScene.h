@@ -112,9 +112,6 @@ private:
 	/// <summary>オーディオスペクトラムアナライザー（演出用）。</summary>
 	TYEngine::AudioSystem::AudioAnalyzer audioAnalyzer_;
 
-	/// <summary>ビートアナライザー（演出用）。</summary>
-	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
-
 	/// <summary>BGM再生ハンドル。</summary>
 	int bgmHandle_ = -1;
 

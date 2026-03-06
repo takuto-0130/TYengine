@@ -32,6 +32,8 @@ void TitleScene::Load()
 	gameAudio_->LoadSound("attack");
 	gameAudio_->LoadSound("418");
 
+	gameAudio_->InitBeatAnalyzer("gameBGM", SoundCategory::BGM);
+
 	//========== テクスチャロード ==========//
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Enter.png");

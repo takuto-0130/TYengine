@@ -9,7 +9,9 @@ using namespace TYEngine::Graphics;
 
 void Stage::Init()
 {
-    beatAnalyzer_.Init("418", GameAudio::GetInstance()->CategoryToString(SoundCategory::BGM));
+    gameAudio_ = GameAudio::GetInstance();
+
+    gameAudio_->InitBeatAnalyzer("418", SoundCategory::BGM);
 
 	// プレイヤー生成と初期化
     player_ = std::make_unique<Player>();
@@ -25,7 +27,7 @@ void Stage::Init()
 
     // 敵マネージャ設定（スコア/コンボ関連付け）
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
-    enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
+    enemyMgr_.SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
     enemyMgr_.Init(camera_);
     enemyMgr_.SetIsInGame(true);
 
@@ -54,9 +56,6 @@ void Stage::Reset()
 void Stage::Update()
 {
     isEdit_ = false;
-
-    beatAnalyzer_.Update();
-    beatAnalyzer_.Draw();
 
     // レール更新（カメラ移動・トリガー判定）
     railManager_->Update();
@@ -141,7 +140,7 @@ void Stage::StageObjectBeatScale()
     {
         if (o->GetModelName() == "conifer.obj")
         {
-            if (beatAnalyzer_.GetBeat())
+            if (gameAudio_->GetBeatAnalyzer().GetBeat())
             {
                 timer = 0.0f;
                 o->SetScale(1.05f);

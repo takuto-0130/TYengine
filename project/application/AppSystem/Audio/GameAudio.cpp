@@ -1,5 +1,20 @@
 #include "GameAudio.h"
 
 // GameAudio クラスの実装
-// 現在、初期化ロジック (OnInit) はヘッダー内でインライン定義されているため、
-// ここには追加の実装は存在しない。将来的な拡張用。
+void GameAudio::OnInit()
+{
+    CreateCategory(SoundCategory::BGM, "BGM");
+    CreateCategory(SoundCategory::SE, "SE");
+    CreateCategory(SoundCategory::UI, "UI");
+    InitBeatAnalyzer("gameBGM");
+}
+
+void GameAudio::Update()
+{
+    beatAnalyzer_.Update();
+}
+
+void GameAudio::InitBeatAnalyzer(const std::string& filename, SoundCategory soundCategory)
+{
+    beatAnalyzer_.Init(filename, CategoryToString(soundCategory));
+}

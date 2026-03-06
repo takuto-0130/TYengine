@@ -48,8 +48,6 @@ void TitleScene::Init()
 {
 	Load();
 
-	beatAnalyzer_.Init("gameBGM", gameAudio_->CategoryToString(SoundCategory::BGM));
-
 	bgmHandle_ = gameAudio_->Play("gameBGM", true, SoundCategory::BGM);
 	gameAudio_->SetSoundVolume(bgmHandle_, 1.0f);
 
@@ -112,7 +110,7 @@ void TitleScene::Init()
 
 	// タイトル画面の敵マネージャ
 	enemyMgr_.Init(camera_);
-	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
+	enemyMgr_.SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
 	enemyMgr_.SetIsInGame(false);
 
 	player_->SetEnemyManager(&enemyMgr_);

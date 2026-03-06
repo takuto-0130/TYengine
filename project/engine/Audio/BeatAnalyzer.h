@@ -14,7 +14,7 @@ namespace TYEngine
 			BeatAnalyzer();
 
 			void Init(const std::string& filename, const std::string& soundCategory = "");
-			// BPMを手動で指定
+			// BPMを手動で指定 ver
 			void Init(float bpm, const std::string& soundCategory);
 
 			/// <summary>

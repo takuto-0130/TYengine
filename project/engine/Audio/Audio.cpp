@@ -1,12 +1,15 @@
 #include "Audio.h"
 #include "BPMDetector.h"
 #include "Logger.h"
+#include "StringUtility.h"
 #include <mfapi.h>
+#include <mfidl.h>
 #include <mfreadwrite.h>
 #include <cassert>
 
 #pragma comment(lib, "mfplat.lib")
 #pragma comment(lib, "Mfreadwrite.lib")
+#pragma comment(lib, "mfuuid.lib")
 
 namespace TYEngine
 {
@@ -408,69 +411,147 @@ namespace TYEngine
 			file.open(filePath, std::ios_base::binary);
 			assert(file.is_open());
 
-			// .wavデータ読み込み開始
-			// RIFFヘッダーの読み込み
-			RiffHeader riff;
-			file.read((char*)&riff, sizeof(riff));
+//#pragma region // 旧
+//			// .wavデータ読み込み開始
+//			// RIFFヘッダーの読み込み
+//			RiffHeader riff;
+//			file.read((char*)&riff, sizeof(riff));
+//
+//			// ファイル形式チェック (RIFF / WAVE)
+//			if (strncmp(riff.chunk.id, "RIFF", 4) != 0)
+//			{
+//				assert(0);
+//			}
+//			if (strncmp(riff.type, "WAVE", 4) != 0)
+//			{
+//				assert(0);
+//			}
+//
+//			// チャンク情報を順次読み込む
+//			FormatChunk format = {};
+//			ChunkHeader data = {};
+//
+//			// 無限ループ防止のため、ある程度チャンクを検索
+//			while (true)
+//			{
+//				ChunkHeader chunkHead;
+//				file.read((char*)&chunkHead, sizeof(ChunkHeader));
+//				if (file.eof()) break;
+//
+//				if (strncmp(chunkHead.id, "fmt ", 4) == 0)
+//				{
+//					// Formatチャンク
+//					format.chunk = chunkHead;
+//					assert(format.chunk.size <= sizeof(format.fmt));
+//					file.read((char*)&format.fmt, format.chunk.size);
+//				}
+//				else if (strncmp(chunkHead.id, "data", 4) == 0)
+//				{
+//					// Dataチャンク（ここが見つかったら読み込みへ）
+//					data = chunkHead;
+//					break;
+//				}
+//				else
+//				{
+//					// JUNK, LIST, INFO などはスキップ
+//					file.seekg(chunkHead.size, std::ios_base::cur);
+//				}
+//			}
+//
+//			// Dataチャンクの読み込み (波形データ本体)
+//			SoundData soundData = {};
+//			soundData.wfex = format.fmt;
+//			soundData.playSoundLength = data.size / format.fmt.nBlockAlign;
+//
+//			// バッファを確保して一気に読み込み
+//			soundData.buffer.resize(data.size);
+//			file.read(reinterpret_cast<char*>(soundData.buffer.data()), data.size);
+//
+//			soundData.bpm = BPMDetector::AnalyzeBPM(soundData.buffer.data(), data.size, soundData.wfex);
+//
+//			Log(filename + ": BPM " + std::to_string(soundData.bpm) + "\n");
+//
+//			file.close();
+//#pragma endregion // 旧
 
-			// ファイル形式チェック (RIFF / WAVE)
-			if (strncmp(riff.chunk.id, "RIFF", 4) != 0)
+
+			// 文字列変換
+			std::wstring filePathW = Utility::StringUtility::ConvertString(filePath);
+			HRESULT result;
+			// SourceReader作成
+			Microsoft::WRL::ComPtr<IMFSourceReader> pReader;
+			result = MFCreateSourceReaderFromURL(filePathW.c_str(), nullptr, &pReader);
+			if (FAILED(result))
 			{
-				assert(0);
+				// ログに警告を出す（デバッグ用）
+				Log("Audio Warning: " + filePath + " not found.\n");
+
+				assert(SUCCEEDED(result));
 			}
-			if (strncmp(riff.type, "WAVE", 4) != 0)
+			// フォーマット指定
+			Microsoft::WRL::ComPtr<IMFMediaType> pPMCType;
+			MFCreateMediaType(&pPMCType);
+			pPMCType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
+			pPMCType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
+			result = pReader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, pPMCType.Get());
+			if (FAILED(result))
 			{
-				assert(0);
+				// ログに警告を出す（デバッグ用）
+				Log("Audio Warning: Failed to PCM format.\n");
+
+				assert(SUCCEEDED(result));
 			}
+			// フォーマット取得
+			Microsoft::WRL::ComPtr<IMFMediaType> pOutType;
+			pReader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &pOutType);
+			WAVEFORMATEX* waveFormat = nullptr;
+			MFCreateWaveFormatExFromMFMediaType(pOutType.Get(), &waveFormat, nullptr);
 
-			// チャンク情報を順次読み込む
-			FormatChunk format = {};
-			ChunkHeader data = {};
+			SoundData sData = {};
+			sData.wfex = *waveFormat;
 
-			// 無限ループ防止のため、ある程度チャンクを検索
+			CoTaskMemFree(waveFormat);
+
 			while (true)
 			{
-				ChunkHeader chunkHead;
-				file.read((char*)&chunkHead, sizeof(ChunkHeader));
-				if (file.eof()) break;
+				Microsoft::WRL::ComPtr<IMFSample> pSample;
+				DWORD streamIndex = 0, flags = 0;
+				LONGLONG llTimeStamp = 0;
+				// 読み込み
+				result = pReader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, &streamIndex, &flags, &llTimeStamp, &pSample);
+				// ストリームの末尾に達したら抜ける
+				if (flags & MF_SOURCE_READERF_ENDOFSTREAM) break;
 
-				if (strncmp(chunkHead.id, "fmt ", 4) == 0)
+				if (pSample)
 				{
-					// Formatチャンク
-					format.chunk = chunkHead;
-					assert(format.chunk.size <= sizeof(format.fmt));
-					file.read((char*)&format.fmt, format.chunk.size);
-				}
-				else if (strncmp(chunkHead.id, "data", 4) == 0)
-				{
-					// Dataチャンク（ここが見つかったら読み込みへ）
-					data = chunkHead;
-					break;
-				}
-				else
-				{
-					// JUNK, LIST, INFO などはスキップ
-					file.seekg(chunkHead.size, std::ios_base::cur);
+					Microsoft::WRL::ComPtr<IMFMediaBuffer> pBuffer;
+					pSample->ConvertToContiguousBuffer(&pBuffer);
+
+					BYTE* pData = nullptr;
+					DWORD maxLength = 0, currentLength = 0;
+					pBuffer->Lock(&pData, &maxLength, &currentLength);
+					sData.buffer.insert(sData.buffer.end(), pData, pData + currentLength);
+					pBuffer->Unlock();
 				}
 			}
+			// 1. 全データサイズを取得
+			size_t totalDataSize = sData.buffer.size();
 
-			// Dataチャンクの読み込み (波形データ本体)
-			SoundData soundData = {};
-			soundData.wfex = format.fmt;
-			soundData.playSoundLength = data.size / format.fmt.nBlockAlign;
+			if (totalDataSize > 0)
+			{
+				// 2. 再生時間の長さを計算 (データサイズ / ブロックアラインメント)
+				// ※ nBlockAlign は (チャンネル数 * ビット数 / 8)
+				sData.playSoundLength = static_cast<uint32_t>(totalDataSize / sData.wfex.nBlockAlign);
 
-			// バッファを確保して一気に読み込み
-			soundData.buffer.resize(data.size);
-			file.read(reinterpret_cast<char*>(soundData.buffer.data()), data.size);
+				// 3. BPM解析の実行
+				sData.bpm = BPMDetector::AnalyzeBPM(sData.buffer.data(), static_cast<UINT32>(totalDataSize), sData.wfex);
 
-			soundData.bpm = BPMDetector::AnalyzeBPM(soundData.buffer.data(), data.size, soundData.wfex);
+				// 4. ログ出力
+				Log(filename + ": BPM " + std::to_string(sData.bpm) + "\n");
+			}
 
-			Log(filename + ": BPM " + std::to_string(soundData.bpm) + "\n");
-
-			file.close();
-
-			// マップに登録
-			soundDataMap_[filename] = std::move(soundData);
+			// 最後にマップへ登録
+			soundDataMap_[filename] = std::move(sData);
 		}
 
 		void Audio::SoundUnload(const std::string& filename)

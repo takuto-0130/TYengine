@@ -75,10 +75,10 @@ void GameScene::StartCamera()
 		};
 
 
+	resetTimer(1.0f);
+	resetTimer(2.0f);
 	resetTimer(3.0f);
-	resetTimer(6.0f);
-	resetTimer(10.0f);
-	resetTimer(13.0f);
+	resetTimer(8.5f);
 
 	// カメラ旋回演出
 	if (stateMachine_.GetStateElapsedTime() <= 1.0f)
@@ -104,9 +104,9 @@ void GameScene::StartCamera()
 
 		applyCameraWork(pos);
 	}
-	else if (stateMachine_.GetStateElapsedTime() <= 4.5f)
+	else if (stateMachine_.GetStateElapsedTime() <= 5.0f)
 	{
-		if (stateMachine_.GetStateElapsedTime() <= 5.0f)
+		if (stateMachine_.GetStateElapsedTime() <= 6.5f)
 		{
 			startDraw_->Start();
 		}
@@ -115,8 +115,9 @@ void GameScene::StartCamera()
 
 		applyCameraWork(pos);
 	}
-	else if (stateMachine_.GetStateElapsedTime() <= 5.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 8.5f)
 	{
+		//startDraw_->SetGOAlpha(1.0f - (startCameraTimer_ / 1.5f));
 	}
 	else
 	{

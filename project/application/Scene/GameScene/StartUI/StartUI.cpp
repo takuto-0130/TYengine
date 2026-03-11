@@ -23,6 +23,11 @@ void StartUI::Init()
 	maxTime_ = jm_->Get<float>("RetryUI.timer.max");
 }
 
+void StartUI::SetGOAlpha(float t)
+{
+	sprites_[GO]->SetAlpha(t);
+}
+
 void StartUI::DebugJMApply()
 {
 }

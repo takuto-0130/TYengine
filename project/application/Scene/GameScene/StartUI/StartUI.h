@@ -33,6 +33,8 @@ public:
 
 	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
+	void SetGOAlpha(float t);
+
 private:
 	void DebugJMApply();
 

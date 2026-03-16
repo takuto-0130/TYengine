@@ -28,16 +28,10 @@ void GameScene::UpdatePlay()
 		stateMachine_.ChangeState(GameSceneState::PAUSE);
 	}
 
-	// プレイヤー死亡時はリトライ誘導画面へ
+	// プレイヤー死亡時は死亡演出へ
 	if (stageManager_->GetPlayer()->IsDead())
 	{
-		CameraShake::ShakeParams params;
-		params.duration = 0.6f;
-		params.amplitude = 0.15f;
-		params.frequency = 20.0f;
-
-		camera_->StartShake(params);
-		stateMachine_.ChangeState(GameSceneState::RETRY);
+		stateMachine_.ChangeState(GameSceneState::DEAD);
 	}
 }
 void GameScene::ExitPlay()

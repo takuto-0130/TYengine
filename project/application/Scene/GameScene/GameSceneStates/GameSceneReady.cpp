@@ -97,7 +97,7 @@ void GameScene::StartCamera()
 	}
 	else if (stateMachine_.GetStateElapsedTime() <= 3.0f)
 	{
-		Matrix4x4 rotX = MakeRotateXMatrix((startCameraTimer_) / 5.0f);
+		Matrix4x4 rotX = MakeRotateXMatrix((startCameraTimer_) / 3.0f);
 		pos = TransformM(pos, rotX);
 		Matrix4x4 rotA = MakeRotateYMatrix(std::numbers::pi_v<float>);
 		pos = TransformM(pos, rotA);
@@ -110,7 +110,7 @@ void GameScene::StartCamera()
 		{
 			startDraw_->Start();
 		}
-		Matrix4x4 rotX = MakeRotateXMatrix((-startCameraTimer_) / 5.0f);
+		Matrix4x4 rotX = MakeRotateXMatrix((-startCameraTimer_) / 3.0f);
 		pos = TransformM(pos, rotX);
 
 		applyCameraWork(pos);

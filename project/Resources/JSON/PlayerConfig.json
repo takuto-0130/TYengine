@@ -101,7 +101,7 @@
     "yRange": 0.7649999856948853
   },
   "status": {
-    "maxHitPoint": 1,
+    "maxHitPoint": 100,
     "texture": {
       "Position": {
         "x": 368.0,

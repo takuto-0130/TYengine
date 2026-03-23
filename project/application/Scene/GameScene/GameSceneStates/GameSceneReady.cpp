@@ -117,7 +117,6 @@ void GameScene::StartCamera()
 	}
 	else if (stateMachine_.GetStateElapsedTime() <= 8.5f)
 	{
-		//startDraw_->SetGOAlpha(1.0f - (startCameraTimer_ / 1.5f));
 	}
 	else
 	{

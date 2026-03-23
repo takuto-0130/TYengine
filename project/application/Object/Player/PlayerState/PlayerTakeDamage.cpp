@@ -1,9 +1,12 @@
 #include "../Player.h"
+#include "../../../AppSystem/Audio/GameAudio.h"
 
-using namespace TYEngine::CameraSystem;
+using namespace TYEngine;
+using namespace CameraSystem;
 
 void Player::InitTakeDamage()
 {
+	GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
 	// 被弾時に色を加算（白く光らせる）
 	obj_->SetAddColor({ 1,1,1,1 });
 

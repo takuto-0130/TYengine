@@ -96,11 +96,11 @@ void GameCore::Initialize()
 	debris->SetBehaviour(std::make_unique<DebrisBehaviour>());
 
 	// パーティクルの登録
-	int index = particleManager_->Add(std::move(plane));		// 0
+	int index = particleManager_->Add(std::move(plane));	// 0
 	int indexRing = particleManager_->Add(std::move(ring));	// 1
 	particleManager_->Add(std::move(cylinder));				// 2
 	particleManager_->Add(std::move(contrail));				// 3
-	particleManager_->Add(std::move(explosion));				// 4
+	particleManager_->Add(std::move(explosion));			// 4
 	particleManager_->Add(std::move(debris));				// 5
 
 	// 全パーティクルの一括初期化

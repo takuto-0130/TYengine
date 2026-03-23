@@ -29,7 +29,7 @@ void GameScene::UpdatePlay()
 	}
 
 	// プレイヤー死亡時は死亡演出へ
-	if (stageManager_->GetPlayer()->IsDead())
+	if (stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() == PlayerState::DEAD)
 	{
 		stateMachine_.ChangeState(GameSceneState::DEAD);
 	}

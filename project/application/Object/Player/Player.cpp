@@ -103,6 +103,16 @@ void Player::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 
+#ifdef _DEBUG
+	ImGui::Begin("Player State Debug");
+	if (ImGui::Button("Reset"))
+	{
+		Reset();
+	}
+	stateMachine_.DebugImGui("Player");
+	ImGui::End();
+#endif // _DEBUG
+
 	DebugUpdate();
 
 	// 色のリセット
@@ -200,11 +210,14 @@ void Player::DrawUI()
 }
 
 
-////////////////////// ちょっとおかしいので後に修正 //////////////////////
 void Player::TakeDamage()
 {
 #ifdef _DEBUG
 	// デバッグ時ダメージ処理（現在はなし）
+	if (input_->TriggerKey(DIK_DOWNARROW))
+	{
+		--status_.hitPoint;
+	}
 #else
 	// 通常ダメージ処理：HP減少
 	if(isInGame_)
@@ -213,35 +226,25 @@ void Player::TakeDamage()
 	}
 #endif // _DEBUG
 
-	if (status_.hitPoint > 0)
-	{
-		// 生存していれば被弾音声再生・被弾ステートへ遷移
-		GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
-		stateMachine_.ChangeState(PlayerState::TAKE_DAMAGE);
-	}
-	else
-	{
-		// HP0なら死亡処理
-		OnCollision();
-	}
+	OnCollision();
 }
 
 void Player::OnCollision()
 {
-	isDead_ = true;
-
-	GameAudio::GetInstance()->Play("gekiha", false, SoundCategory::SE);
-
-	IParticleRenderer::Emitter e;
-	e.transform.translate = GetWorldPosition();
-	e.count = destroyEffect_.count;
-	e.frequency = destroyEffect_.frequency;
-	e.transform.scale = destroyEffect_.scale;
-	ParticleManager::GetInstance()->SetEmitter(4, e);
-
-	ParticleManager::GetInstance()->TriggerEmit(4, true);
+	if (status_.hitPoint > 0)
+	{
+		// 生存していれば被弾ステートへ遷移
+		stateMachine_.ChangeState(PlayerState::TAKE_DAMAGE);
+	}
+	else
+	{
+		// HP0以下なら死亡処理
+		if (stateMachine_.GetCurrentState() != PlayerState::DEAD)
+		{
+			stateMachine_.ChangeState(PlayerState::DEAD);
+		}
+	}
 }
-////////////////////// ちょっとおかしいので後に修正 //////////////////////
 
 
 void Player::PostStateUpdate()
@@ -273,6 +276,9 @@ void Player::PostStateUpdate()
 
 void Player::Attack()
 {
+	// 死亡時は攻撃処理を行わない
+	if (stateMachine_.GetCurrentState() == PlayerState::DEAD) return;
+
 	// クールタイムの減算
 	if (lockOn_.lockOnTimer > 0)
 	{
@@ -381,6 +387,9 @@ void Player::Attack()
 
 void Player::Move()
 {
+	// 死亡時は操作処理を行わない
+	if (stateMachine_.GetCurrentState() == PlayerState::DEAD) return;
+
 	movement_.inputDir = {};
 	movement_.roll = 0.0f;
 	movement_.movePitch = 0.0f;
@@ -431,7 +440,7 @@ void Player::RotationOffsetLocal()
 	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, movement_.movePitch);
 
 	// 好みで順序調整（ここでは Roll→Pitch）
-	worldTransform_.SetRotateQuaternion(Multiply(qRoll, qPitch));
+	worldTransform_.SetRotateQuaternion(Multiply(qPitch, qRoll));
 	worldTransform_.Update();
 }
 
@@ -485,4 +494,46 @@ void Player::DebugGUI()
 	ImGui::DragFloat3("target", &target.x);
 	ImGui::End();
 #endif // _DEBUG
+}
+
+void Player::Reset()
+{
+	// ステータス・生存フラグのリセット
+	status_.HPReset();
+	isDead_ = false;
+
+	//座標・姿勢のオフセットを初期位置(中央)へ戻す
+	screenOffset_ = { 0.0f, 0.0f };
+	movement_.inputDir = { 0.0f, 0.0f };
+	movement_.roll = 0.0f;
+	movement_.movePitch = 0.0f;
+
+	// バレルロール（回避）関連のリセット
+	barrelRoll_.isJust = false;
+	barrelRoll_.justRoll = false;
+	barrelRoll_.rollEffectTimer = 0.0f;
+
+	// 攻撃・ロックオン関連のリセット
+	lockOn_.lockedEnemies.clear();
+	lockOn_.lockOnTimer = 0.0f;
+	lockOn_.wasPressingShot = false;
+	bullets_.bulletTimer = 0.0f;
+	
+	if (bullets_.bulletManager) bullets_.bulletManager->Clear();
+
+	// 3Dモデルの状態リセット
+	if (obj_)
+	{
+		obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+
+	// コライダーの状態更新
+	collider_->Update(GetWorldPosition());
+	justCollider_->Update(GetWorldPosition());
+
+	// ステートマシンを初期ステート（ROUTE）に戻す
+	stateMachine_.ChangeState(PlayerState::ROUTE);
+
+	// 一度ポストアップデートを呼んで、ワールドトランスフォームなどを即座に初期値へ反映させる
+	PostStateUpdate();
 }

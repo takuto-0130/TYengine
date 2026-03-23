@@ -13,8 +13,9 @@ void GameScene::InitDead()
 }
 void GameScene::UpdateDead()
 {
+	stageManager_->GetPlayer()->Update();
 	// 演出終了後、リトライ誘導画面へ
-	if (!camera_->ShakeActive())
+	if (stageManager_->GetPlayer()->IsDead())
 	{
 		stateMachine_.ChangeState(GameSceneState::RETRY);
 	}

@@ -1032,6 +1032,7 @@
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
     <ClInclude Include="engine\Utility\Utils\Time\Oscillator.h" />
+    <ClInclude Include="application\AppSystem\ParticleType.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

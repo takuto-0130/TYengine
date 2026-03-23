@@ -43,6 +43,12 @@ public:
     /// </summary>
     void Init() override;
 
+	/// <summary>
+	/// プレイヤーの状態を初期状態にリセットする。
+	/// リトライ時などに使用する。
+	/// </summary>
+	void Reset();
+
     /// <summary>
     /// 毎フレーム更新処理。
     /// 入力に応じた移動、攻撃、状態遷移を行う。
@@ -187,6 +193,8 @@ private:
 	PlayerJetEffect jetEffect_;
 
 	PlayerDestroyEffect destroyEffect_;
+	// キリモミ落下時のパラメータ
+	PlayerDeadMotion deadMotion_;
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;

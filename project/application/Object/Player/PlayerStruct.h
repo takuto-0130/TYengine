@@ -251,3 +251,13 @@ struct PlayerDestroyEffect
 		scale = jm.Get<TYEngine::Utility::Vector3>("destroyEffect.scale");
 	}
 };
+
+// キリモミ落下時のパラメータ
+struct PlayerDeadMotion
+{
+	float fallSpeedY = -0.5f;   // 落下速度（最初は少し上に跳ねさせるためマイナス値）
+	float gravity = 3.0f;       // 重力加速度
+	float spinSpeed = 7.0f;    // キリモミの回転速度
+	float targetPitch = 1.0f;   // 機体を下に傾ける目標角度（ラジアン）
+	float depthSpeed = 0.0f;    // 画面奥へ遠ざかる速度
+};

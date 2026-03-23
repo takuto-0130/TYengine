@@ -25,7 +25,7 @@
         "y": 0.0,
         "z": 0.4000000059604645
       },
-      "HomingTime": 3.0,
+      "HomingTime": 1.0,
       "colliderScale": 0.10000000149011612,
       "defaultSpeed": 25.0,
       "lifeTime": 4.0,
@@ -75,7 +75,7 @@
   },
   "lockOn": {
     "lockOnRadius": 10.0,
-    "maxLockCount": 8,
+    "maxLockCount": 10,
     "maxLockOnCool": 0.30000001192092896,
     "spreadX": 1.0,
     "spreadY": 0.5,
@@ -101,7 +101,7 @@
     "yRange": 0.7649999856948853
   },
   "status": {
-    "maxHitPoint": 5,
+    "maxHitPoint": 1,
     "texture": {
       "Position": {
         "x": 368.0,

@@ -34,21 +34,21 @@ void GameScene::UpdateRetry()
 			gameAudio_->Play("enter", false, SoundCategory::UI);
 			stateMachine_.ChangeState(GameSceneState::FADE_OUT);
 		}
-		if (input_->TriggerKey(DIK_RETURN))
-		{
-			gameAudio_->Play("enter", false, SoundCategory::UI);
-			// ブロックフェード演出を開始してゲームシーンへ遷移
-			BlockFadeConfig cfg;
-			auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
-			transition->SetOnFinishCallback([this]()
-				{
-					BlockFadeConfig cfg1;
-					sceneManager_->ChangeScene("GAME");
-					TransitionManager::GetInstance()->Enqueue(std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_OUT, cfg1));
-					gameAudio_->Stop(BGMHandle_);
-				});
-			TransitionManager::GetInstance()->Start(std::move(transition));
-		}
+		//if (input_->TriggerKey(DIK_RETURN))
+		//{
+		//	gameAudio_->Play("enter", false, SoundCategory::UI);
+		//	// ブロックフェード演出を開始してゲームシーンへ遷移
+		//	BlockFadeConfig cfg;
+		//	auto transition = std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_IN, cfg);
+		//	transition->SetOnFinishCallback([this]()
+		//		{
+		//			BlockFadeConfig cfg1;
+		//			sceneManager_->ChangeScene("GAME");
+		//			TransitionManager::GetInstance()->Enqueue(std::make_unique<BlockFadeTransition>(BlockFadeTransition::Type::FADE_OUT, cfg1));
+		//			gameAudio_->Stop(BGMHandle_);
+		//		});
+		//	TransitionManager::GetInstance()->Start(std::move(transition));
+		//}
 	}
 }
 

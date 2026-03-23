@@ -181,6 +181,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp" />
     <ClCompile Include="engine\Audio\BeatAnalyzer.cpp" />
+    <ClCompile Include="engine\Audio\BiquadFilter.cpp" />
     <ClCompile Include="engine\Audio\BPMDetector.cpp" />
     <ClCompile Include="engine\Audio\AudioAnalyzer.cpp" />
     <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
@@ -300,6 +301,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h" />
     <ClInclude Include="engine\Audio\BeatAnalyzer.h" />
+    <ClInclude Include="engine\Audio\BiquadFilter.h" />
     <ClInclude Include="engine\Audio\BPMDetector.h" />
     <ClInclude Include="engine\Audio\MyAnalyzerXAPO.h" />
     <ClInclude Include="engine\Audio\AudioAnalyzer.h" />

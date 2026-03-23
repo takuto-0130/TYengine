@@ -609,6 +609,7 @@
     <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp">
       <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="engine\Audio\BiquadFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
@@ -1033,6 +1034,7 @@
     </ClInclude>
     <ClInclude Include="engine\Utility\Utils\Time\Oscillator.h" />
     <ClInclude Include="application\AppSystem\ParticleType.h" />
+    <ClInclude Include="engine\Audio\BiquadFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

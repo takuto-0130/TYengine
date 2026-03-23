@@ -5,7 +5,9 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-using namespace TYEngine::Utility;
+using namespace TYEngine;
+using namespace Utility;
+using namespace AudioSystem;
 
 void TitleScene::DebugUpdate()
 {
@@ -28,6 +30,10 @@ void TitleScene::DebugUpdate()
 	{
 		gameAudio_->Resume(bgmH);
 	}*/
+
+	ImGui::Begin("EQ");
+	Audio::GetInstance()->GetAnalyzerXAPO()->EQImGui();
+	ImGui::End();
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");

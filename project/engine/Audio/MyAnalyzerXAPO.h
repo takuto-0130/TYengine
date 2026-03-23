@@ -2,6 +2,9 @@
 #include <xapobase.h>
 #include <wrl.h>
 #include <vector>
+#include <atomic>
+
+#include "BiquadFilter.h"
 
 namespace TYEngine
 {
@@ -77,6 +80,8 @@ namespace TYEngine
 			
 			float GetSpectralFlux() const { return latestSpectralFlux_; }
 
+			void EQImGui();
+
 		private:
 			void ComputeFFT();
 
@@ -84,6 +89,8 @@ namespace TYEngine
 			/// 拍の解析
 			/// </summary>
 			void AnalyzeBeat();
+
+			void UpdateEQ();
 
 		private:
 			/// <summary>入力チャンネル数。</summary>
@@ -112,6 +119,26 @@ namespace TYEngine
 			std::vector<float> prevMag_;
 			/// <summary>計算された低域エネルギー（またはFlux値）</summary>
 			float latestSpectralFlux_ = 0.0f;
+
+
+			enum EQBand
+			{
+				Low,
+				Mid,
+				High,
+				BandNum
+			};
+
+			// イコライザー用フィルタ (外側: バンド数, 内側: チャンネル数)
+			// 例: index 0=Low, 1=Mid, 2=High
+			std::vector<std::vector<BiquadFilter>> eqFilters_;
+
+			// 現在のサンプリングレート
+			UINT32 sampleRate_ = 44100;
+			// Gain 用パラメータ
+			std::atomic<float> lowGain_ = 0.0f;
+			std::atomic<float> midGain_ = 0.0f;
+			std::atomic<float> highGain_ = 0.0f;
 
 		};
 

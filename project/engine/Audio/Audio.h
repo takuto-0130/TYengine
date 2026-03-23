@@ -162,7 +162,7 @@ namespace TYEngine
 			/// WAVファイルを読み込み、メモリにキャッシュする。
 			/// </summary>
 			/// <param name="filename">ファイル名（パス含む）。</param>
-			void LoadWave(const std::string& filename, const std::string& extension = ".wav");
+			void Load(const std::string& filename, const std::string& extension = ".wav");
 
 			/// <summary>
 			/// 指定したファイルの音声データをメモリから解放する。

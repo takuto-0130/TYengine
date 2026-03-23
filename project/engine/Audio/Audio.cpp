@@ -395,7 +395,7 @@ namespace TYEngine
 			return volume;
 		}
 
-		void Audio::LoadWave(const std::string& filename, const std::string& extension)
+		void Audio::Load(const std::string& filename, const std::string& extension)
 		{
 			if (soundDataMap_.count(filename))
 			{
@@ -410,70 +410,6 @@ namespace TYEngine
 			filePath += extension;
 			file.open(filePath, std::ios_base::binary);
 			assert(file.is_open());
-
-//#pragma region // 旧
-//			// .wavデータ読み込み開始
-//			// RIFFヘッダーの読み込み
-//			RiffHeader riff;
-//			file.read((char*)&riff, sizeof(riff));
-//
-//			// ファイル形式チェック (RIFF / WAVE)
-//			if (strncmp(riff.chunk.id, "RIFF", 4) != 0)
-//			{
-//				assert(0);
-//			}
-//			if (strncmp(riff.type, "WAVE", 4) != 0)
-//			{
-//				assert(0);
-//			}
-//
-//			// チャンク情報を順次読み込む
-//			FormatChunk format = {};
-//			ChunkHeader data = {};
-//
-//			// 無限ループ防止のため、ある程度チャンクを検索
-//			while (true)
-//			{
-//				ChunkHeader chunkHead;
-//				file.read((char*)&chunkHead, sizeof(ChunkHeader));
-//				if (file.eof()) break;
-//
-//				if (strncmp(chunkHead.id, "fmt ", 4) == 0)
-//				{
-//					// Formatチャンク
-//					format.chunk = chunkHead;
-//					assert(format.chunk.size <= sizeof(format.fmt));
-//					file.read((char*)&format.fmt, format.chunk.size);
-//				}
-//				else if (strncmp(chunkHead.id, "data", 4) == 0)
-//				{
-//					// Dataチャンク（ここが見つかったら読み込みへ）
-//					data = chunkHead;
-//					break;
-//				}
-//				else
-//				{
-//					// JUNK, LIST, INFO などはスキップ
-//					file.seekg(chunkHead.size, std::ios_base::cur);
-//				}
-//			}
-//
-//			// Dataチャンクの読み込み (波形データ本体)
-//			SoundData soundData = {};
-//			soundData.wfex = format.fmt;
-//			soundData.playSoundLength = data.size / format.fmt.nBlockAlign;
-//
-//			// バッファを確保して一気に読み込み
-//			soundData.buffer.resize(data.size);
-//			file.read(reinterpret_cast<char*>(soundData.buffer.data()), data.size);
-//
-//			soundData.bpm = BPMDetector::AnalyzeBPM(soundData.buffer.data(), data.size, soundData.wfex);
-//
-//			Log(filename + ": BPM " + std::to_string(soundData.bpm) + "\n");
-//
-//			file.close();
-//#pragma endregion // 旧
-
 
 			// 文字列変換
 			std::wstring filePathW = Utility::StringUtility::ConvertString(filePath);

@@ -46,7 +46,7 @@ namespace TYEngine
 
 			void LoadSound(const std::string& filename)
 			{
-				audio_->LoadWave(filename);
+				audio_->Load(filename);
 			}
 
 			/// <summary>

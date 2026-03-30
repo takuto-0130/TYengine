@@ -67,8 +67,8 @@ namespace TYEngine
 
             // --- 4. オーディオ適用 ---
             // LowPass: 拍動に合わせて 200Hz までこもらせる
-            float lpCutoff = std::lerp(7000.0f, 300.0f, intensityMod);
-            lpFilter.SetCoefficients(TYEngine::AudioSystem::FilterType::LowPassFilter, 48000.0f, lpCutoff, 0.707f);
+            float lpCutoff = std::lerp(7000.0f, 400.0f, intensityMod);
+            lpFilter.SetCoefficients(TYEngine::AudioSystem::FilterType::LowPassFilter, 48000.0f, lpCutoff);
 
             // LowShelf: 低音を 12dB ブースト
             float boostDb = std::lerp(0.0f, 12.0f, pulse * intensityMod);

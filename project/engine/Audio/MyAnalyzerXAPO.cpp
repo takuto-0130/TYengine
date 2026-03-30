@@ -74,6 +74,24 @@ namespace TYEngine
 			// Low(100Hz以下), Mid(1000Hz周辺), High(8000Hz以上)の設定
 			for (int ch = 0; ch < static_cast<int>(channels_); ch++)
 			{
+				eqFilters_[EQBand::LPF][ch].SetCoefficients(
+					FilterType::LowPassFilter,
+					static_cast<float>(sampleRate_),
+					LPHz_,
+					0.707f);
+
+				eqFilters_[EQBand::HPF][ch].SetCoefficients(
+					FilterType::HighPassFilter,
+					static_cast<float>(sampleRate_),
+					HPHz_,
+					0.707f);
+
+				eqFilters_[EQBand::BPF][ch].SetCoefficients(
+					FilterType::HighPassFilter,
+					static_cast<float>(sampleRate_),
+					BPHz_,
+					0.707f);
+
 				eqFilters_[EQBand::Low][ch].SetCoefficients(
 					FilterType::LowShelf,
 					static_cast<float>(sampleRate_),
@@ -102,18 +120,27 @@ namespace TYEngine
 			float low = lowGain_.load();
 			float mid = midGain_.load();
 			float high = highGain_.load();
+			float lp = LPHz_.load();
+			float hp = HPHz_.load();
+			float bp = BPHz_.load();
 
 			bool changed = false;
 
 			changed |= ImGui::DragFloat("Low Gain", &low, 0.1f);
 			changed |= ImGui::DragFloat("Mid Gain", &mid, 0.1f);
 			changed |= ImGui::DragFloat("High Gain", &high, 0.1f);
+			changed |= ImGui::DragFloat("LPF Hz", &lp, 10.0f);
+			changed |= ImGui::DragFloat("HPF Hz", &hp, 10.0f);
+			changed |= ImGui::DragFloat("BPF Hz", &bp, 10.0f);
 
 			if (changed)
 			{
 				lowGain_.store(low);
 				midGain_.store(mid);
 				highGain_.store(high);
+				LPHz_.store(lp);
+				HPHz_.store(hp);
+				BPHz_.store(bp);
 
 				UpdateEQ();
 			}
@@ -256,6 +283,9 @@ namespace TYEngine
 					sample = eqFilters_[EQBand::Low][ch].Process(sample);
 					sample = eqFilters_[EQBand::Mid][ch].Process(sample);
 					sample = eqFilters_[EQBand::High][ch].Process(sample);
+					/*sample = eqFilters_[EQBand::LPF][ch].Process(sample);
+					sample = eqFilters_[EQBand::HPF][ch].Process(sample);*/
+					//sample = eqFilters_[EQBand::BPF][ch].Process(sample);
 
 					// フィルタ計算結果が異常値になった場合の検知
 					if (std::isnan(sample))

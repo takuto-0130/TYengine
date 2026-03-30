@@ -10,6 +10,7 @@ namespace TYEngine
         {
             LowPassFilter,
             HighPassFilter,
+            BandPassFilter,
             LowShelf,
             HighShelf,
             Peaking
@@ -25,7 +26,7 @@ namespace TYEngine
             // frequency: 対象となる周波数Hz (例: 低音なら100, 高音なら8000など)
             // q: Q値 (帯域の広さ。通常は 0.707)
             // dbGain: ブースト/カットする量（デシベル。プラスで強調、マイナスで減衰）
-            void SetCoefficients(FilterType type, float sampleRate, float frequency, float q, float dbGain);
+            void SetCoefficients(FilterType type, float sampleRate, float frequency, float q = 0.707f, float dbGain = 0.0f);
 
             // 1サンプル分の処理を行う
             float Process(float input);

@@ -1,6 +1,6 @@
 #include "BiquadFilter.h"
 
-// "Audio EQ Cookbook" の計算式を用いています
+// "RBJ Audio EQ Cookbook" の計算式
 
 namespace TYEngine
 {
@@ -24,9 +24,30 @@ namespace TYEngine
             switch (type)
             {
             case FilterType::LowPassFilter:
+                b0_ = (1.0f - cosw0) / 2.0f;
+                b1_ = 1.0f - cosw0;
+                b2_ = (1.0f - cosw0) / 2.0f;
+                a0_ = 1.0f + alpha;
+                a1_ = -2.0f * cosw0;
+                a2_ = 1.0f - alpha;
                 break;
 
             case FilterType::HighPassFilter:
+                b0_ = (1.0f + cosw0) / 2.0f;
+                b1_ = -(1.0f + cosw0);
+                b2_ = (1.0f + cosw0) / 2.0f;
+                a0_ = 1.0f + alpha;
+                a1_ = -2.0f * cosw0;
+                a2_ = 1.0f - alpha;
+                break;
+
+            case FilterType::BandPassFilter:
+                b0_ = alpha;
+                b1_ = 0;
+                b2_ = -alpha;
+                a0_ = 1.0f + alpha;
+                a1_ = -2.0f * cosw0;
+                a2_ = 1.0f - alpha;
                 break;
 
             case FilterType::Peaking:

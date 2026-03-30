@@ -20,12 +20,12 @@ void GameScene::UpdateFadeIn()
 	{
 		++readyCount_;
 		// オープニングカメラ演出の開始
-		//StartCamera();
+		StartCamera();
 	}
 
 	if (!TransitionManager::GetInstance()->IsBusy())
 	{
-		stateMachine_.ChangeState(GameSceneState::PLAY);
+		stateMachine_.ChangeState(GameSceneState::READY);
 	}
 
 }

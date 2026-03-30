@@ -49,6 +49,17 @@ namespace TYEngine
 			static const UINT32 WAVEFORM_SIZE = 441; ///< 波形バッファサイズ
 			static const UINT32 BEAT_ANALYE_BUFFER = 64;
 
+			enum EQBand
+			{
+				LPF,
+				HPF,
+				BPF,
+				Low,
+				Mid,
+				High,
+				BandNum
+			};
+
 		public:
 			/// <summary>
 			/// プロセス前のロック処理。
@@ -81,6 +92,8 @@ namespace TYEngine
 			float GetSpectralFlux() const { return latestSpectralFlux_; }
 
 			void EQImGui();
+
+			std::vector<BiquadFilter>& GetBiquadFilter(EQBand type) { return eqFilters_[type]; }
 
 		private:
 			void ComputeFFT();
@@ -120,15 +133,6 @@ namespace TYEngine
 			/// <summary>計算された低域エネルギー（またはFlux値）</summary>
 			float latestSpectralFlux_ = 0.0f;
 
-
-			enum EQBand
-			{
-				Low,
-				Mid,
-				High,
-				BandNum
-			};
-
 			// イコライザー用フィルタ (外側: バンド数, 内側: チャンネル数)
 			// 例: index 0=Low, 1=Mid, 2=High
 			std::vector<std::vector<BiquadFilter>> eqFilters_;
@@ -139,6 +143,9 @@ namespace TYEngine
 			std::atomic<float> lowGain_ = 0.0f;
 			std::atomic<float> midGain_ = 0.0f;
 			std::atomic<float> highGain_ = 0.0f;
+			std::atomic<float> LPHz_ = 8000.0f;
+			std::atomic<float> HPHz_ = 100.0f;
+			std::atomic<float> BPHz_ = 2000.0f;
 
 		};
 

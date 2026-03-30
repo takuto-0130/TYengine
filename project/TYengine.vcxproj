@@ -185,6 +185,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\Audio\BPMDetector.cpp" />
     <ClCompile Include="engine\Audio\AudioAnalyzer.cpp" />
     <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
+    <ClCompile Include="engine\Audio\testHealthBeat.cpp" />
     <ClCompile Include="externals\xapobase.cpp" />
     <ClCompile Include="engine\Effect\ContrailBehaviour.cpp" />
     <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />

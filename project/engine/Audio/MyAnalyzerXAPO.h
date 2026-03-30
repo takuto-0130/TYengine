@@ -95,6 +95,16 @@ namespace TYEngine
 
 			std::vector<BiquadFilter>& GetBiquadFilter(EQBand type) { return eqFilters_[type]; }
 
+			void UpdateCriticalHealthEffects(
+				float deltaTime,
+				float healthPercent, // 0.0 (死亡) ～ 1.0 (満タン)
+				TYEngine::AudioSystem::BiquadFilter& lpFilter,
+				TYEngine::AudioSystem::BiquadFilter& lsFilter);
+
+			void TestBeat();
+
+			void PerfBeat(float perf);
+
 		private:
 			void ComputeFFT();
 
@@ -143,8 +153,8 @@ namespace TYEngine
 			std::atomic<float> lowGain_ = 0.0f;
 			std::atomic<float> midGain_ = 0.0f;
 			std::atomic<float> highGain_ = 0.0f;
-			std::atomic<float> LPHz_ = 8000.0f;
-			std::atomic<float> HPHz_ = 100.0f;
+			std::atomic<float> LPHz_ = 16000.0f;
+			std::atomic<float> HPHz_ = 10.0f;
 			std::atomic<float> BPHz_ = 2000.0f;
 
 		};

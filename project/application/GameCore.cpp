@@ -143,6 +143,8 @@ void GameCore::Initialize()
 	postEffectManager_->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
 	postEffectManager_->AddEffect("Random", std::make_unique<RandomEffect>());
 	postEffectManager_->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
+
+	postEffectManager_->AddEffect("HealthVignette", std::make_unique<VignetteEffect>());
 	
 	// 初期状態では全エフェクトを無効化
 	postEffectManager_->EffectAllDisable();

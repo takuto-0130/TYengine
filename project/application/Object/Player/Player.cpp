@@ -126,9 +126,18 @@ void Player::Update()
 	status_.hpSprBG->Update();
 	if (status_.hitPoint >= 0)
 	{
-		status_.hpSpr->SetScale({ static_cast<float>(status_.hitPoint) / static_cast<float>(status_.maxHitPoint),1.0f });
+		status_.hpSpr->SetScale({ status_.HPPerf(), 1.0f });
 	}
 	status_.hpSpr->Update();
+
+	if (status_.hitPoint > 0)
+	{
+		GameAudio::GetInstance()->SetHPPerf(status_.HPPerf());
+	}
+	else
+	{
+		GameAudio::GetInstance()->SetHPPerf(1.0f);
+	}
 
 	// ステート更新後の追加処理（移動反映や攻撃など）
 	PostStateUpdate();

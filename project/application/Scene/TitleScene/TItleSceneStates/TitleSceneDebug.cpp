@@ -32,6 +32,7 @@ void TitleScene::DebugUpdate()
 	}*/
 
 	ImGui::Begin("EQ");
+	Audio::GetInstance()->GetAnalyzerXAPO()->TestBeat();
 	Audio::GetInstance()->GetAnalyzerXAPO()->EQImGui();
 	ImGui::End();
 

@@ -62,6 +62,8 @@ public:
 
     TYEngine::AudioSystem::BeatAnalyzer& GetBeatAnalyzer() { return beatAnalyzer_; }
 
+    void SetHPPerf(float perf) { GetAudio()->GetAnalyzerXAPO()->PerfBeat(perf); }
+
 private:
     /// <summary>ビートアナライザー（演出用）。</summary>
     TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;

@@ -279,12 +279,12 @@ namespace TYEngine
 					// 入力に異常値(NaN)が混ざっていたら0にリセット (フィルタ汚染対策)
 					if (std::isnan(sample)) sample = 0.0f;
 
-					// 3つのフィルタを直列にかける
+					// フィルタを直列にかける
 					sample = eqFilters_[EQBand::Low][ch].Process(sample);
 					sample = eqFilters_[EQBand::Mid][ch].Process(sample);
 					sample = eqFilters_[EQBand::High][ch].Process(sample);
-					/*sample = eqFilters_[EQBand::LPF][ch].Process(sample);
-					sample = eqFilters_[EQBand::HPF][ch].Process(sample);*/
+					sample = eqFilters_[EQBand::LPF][ch].Process(sample);
+					//sample = eqFilters_[EQBand::HPF][ch].Process(sample);
 					//sample = eqFilters_[EQBand::BPF][ch].Process(sample);
 
 					// フィルタ計算結果が異常値になった場合の検知

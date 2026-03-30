@@ -69,6 +69,8 @@ struct PlayerStatus
 	/// <summary>ヒットポイントバー画像。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> hpSpr;
 
+	float HPPerf() { return static_cast<float>(hitPoint) / static_cast<float>(maxHitPoint); }
+
 	void Load(const TYEngine::Utility::JsonManager& jm)
 	{
 		maxHitPoint = jm.Get<int>("status.maxHitPoint");

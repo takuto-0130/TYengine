@@ -9,7 +9,7 @@ void TitleScene::InitPlay()
 void TitleScene::UpdatePlay()
 {
 	//beatAnalyzer_.Update();
-	audioAnalyzer_.Update();
+	//audioAnalyzer_.Update();
 	(enterSpr_->IsMouseHover()) ? enterSpr_->SetScale(1.2f) : enterSpr_->SetScale(1.0f);
 
 	player_->Update();

@@ -69,6 +69,7 @@ struct PlayerStatus
 	/// <summary>ヒットポイントバー画像。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> hpSpr;
 
+	/// <summary>ヒットポイントの残量を取得。（ 0 ~1 ）</summary>
 	float HPPerf() { return static_cast<float>(hitPoint) / static_cast<float>(maxHitPoint); }
 
 	void Load(const TYEngine::Utility::JsonManager& jm)

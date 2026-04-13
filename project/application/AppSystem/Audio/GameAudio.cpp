@@ -12,6 +12,8 @@ void GameAudio::OnInit()
 void GameAudio::Update()
 {
     beatAnalyzer_.Update();
+    audioAnalyzer_.Update();
+    audioAnalyzer_.Draw();
 }
 
 void GameAudio::InitBeatAnalyzer(const std::string& filename, SoundCategory soundCategory)

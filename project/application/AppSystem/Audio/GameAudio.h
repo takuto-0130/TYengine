@@ -1,5 +1,6 @@
 #pragma once
 #include "AudioSystemBase.h"
+#include "AudioAnalyzer.h"
 #include "BeatAnalyzer.h"
 #include "SingletonObject.h"
 
@@ -62,9 +63,16 @@ public:
 
     TYEngine::AudioSystem::BeatAnalyzer& GetBeatAnalyzer() { return beatAnalyzer_; }
 
+    TYEngine::AudioSystem::AudioAnalyzer& GetAnalyzer() { return audioAnalyzer_; }
+
+    float& GetWaveform() { return GetAudio()->GetAnalyzerXAPO()->GetWaveform()[0]; }
+
     void SetHPPerf(float perf) { GetAudio()->GetAnalyzerXAPO()->PerfBeat(perf); }
 
 private:
     /// <summary>ビートアナライザー（演出用）。</summary>
     TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
+
+    /// <summary>オーディオスペクトラムアナライザー（演出用）。</summary>
+    TYEngine::AudioSystem::AudioAnalyzer audioAnalyzer_;
 };

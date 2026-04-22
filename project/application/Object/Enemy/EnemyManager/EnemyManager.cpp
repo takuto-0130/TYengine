@@ -176,14 +176,14 @@ void EnemyManager::Pop()
 		// スクリーン座標をワールド座標へ変換して設定
 		enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
 
-		// 出現演出開始等
-		enemy->Pop();
-
 		// 依存関係の注入
 		enemy->SetEnemyBulletManager(&bulletManager_);
 		enemy->SetEventListener(comboAndScoreHandler_.get());
 		enemy->SetIsInGame(isInGame_);
 		enemy->SetCamera(camera_);
+
+		// 出現演出開始等
+		enemy->Pop();
 
 		enemies_.push_back(std::move(enemy));
 	}

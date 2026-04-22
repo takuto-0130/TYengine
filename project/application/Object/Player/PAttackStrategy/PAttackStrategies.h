@@ -108,11 +108,21 @@ namespace PlayerAttack
                 bullets.bulletTimer -= TYEngine::Utility::Timer::GetInstance()->GetRawDeltaTime();
             }
 
+            // コンボリセットタイマーの減算
+            if (comboResetTimer_ > 0)
+            {
+                comboResetTimer_ -= TYEngine::Utility::Timer::GetInstance()->GetRawDeltaTime();
+                if (comboResetTimer_ <= 0)
+                {
+                    comboStep_ = 0; // 時間経過でコンボを1段目に戻す
+                }
+            }
+
             // ホーミングボタンが押されていない時のみ通常射撃が可能
             bool isHomingPressing = input->PushKey(DIK_LCONTROL) || input->IsPressMouse(1);
             if (!isHomingPressing)
             {
-                if ((input->PushKey(DIK_SPACE) || input->IsPressMouse(0)) && bullets.bulletTimer <= 0)
+                if ((input->TriggerKey(DIK_SPACE) || input->IsTriggerMouse(0)) && bullets.bulletTimer <= 0)
                 {
                     // リズム判定
                     p->RhythmJudgment();
@@ -123,7 +133,6 @@ namespace PlayerAttack
                     TYEngine::Utility::Vector3 target = p->GetReticle()->GetTarget();
                     TYEngine::Utility::Vector3 forward = TYEngine::Utility::Normalize(target - origin);
 
-                    // 敵の攻撃(AttackStrategies.h)と同じ手法で、カメラや姿勢に依存しない Right と Up を算出
                     TYEngine::Utility::Vector3 worldUp = { 0.0f, 1.0f, 0.0f };
                     if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f };
                     TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
@@ -150,7 +159,7 @@ namespace PlayerAttack
                         TYEngine::Utility::Vector3 dirRight = TYEngine::Utility::Normalize(forward + right * 0.1f);
                         TYEngine::Utility::Vector3 dirLeft = TYEngine::Utility::Normalize(forward - right * 0.1f);
 
-                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, forward); // 中央
+                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, forward);  // 中央
                         bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirRight); // 右
                         bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirLeft);  // 左
                     }
@@ -204,6 +213,8 @@ namespace PlayerAttack
                     // クールタイム設定
                     bullets.bulletTimer = bullets.bulletCoolTime;
 
+                    comboResetTimer_ = kComboResetTime_;
+
 
                     // コンボの更新処理
                     if(p->GetStatus().currentJudgment == HitJudgment::Perfect ||
@@ -222,5 +233,7 @@ namespace PlayerAttack
         int comboStep_ = 0;
         int maxCombo_ = 4;
         int maxLockOn_ = 5;
+        float comboResetTimer_ = 0;
+        float kComboResetTime_ = 0.5f;
     };
 }

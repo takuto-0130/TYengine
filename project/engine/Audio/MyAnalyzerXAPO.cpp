@@ -130,8 +130,8 @@ namespace TYEngine
 			changed |= ImGui::DragFloat("Mid Gain", &mid, 0.1f);
 			changed |= ImGui::DragFloat("High Gain", &high, 0.1f);
 			changed |= ImGui::DragFloat("LPF Hz", &lp, 10.0f);
-			changed |= ImGui::DragFloat("HPF Hz", &hp, 10.0f);
-			changed |= ImGui::DragFloat("BPF Hz", &bp, 10.0f);
+			/*changed |= ImGui::DragFloat("HPF Hz", &hp, 10.0f);
+			changed |= ImGui::DragFloat("BPF Hz", &bp, 10.0f);*/
 
 			if (changed)
 			{

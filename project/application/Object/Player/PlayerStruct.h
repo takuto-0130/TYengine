@@ -55,6 +55,14 @@ struct PlayerMovement
 	}
 };
 
+enum HitJudgment
+{
+	Perfect,	// 最高判定
+	Good,		// 普通
+	Miss,		// 失敗
+	None		// 判定なし
+};
+
 /// <summary>プレイヤーのステータス。</summary>
 struct PlayerStatus
 {
@@ -68,6 +76,9 @@ struct PlayerStatus
 	std::unique_ptr<TYEngine::Graphics::Sprite> hpSprBG;
 	/// <summary>ヒットポイントバー画像。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> hpSpr;
+
+	/// <summary>タイミング良く押せているか。</summary>
+	HitJudgment currentJudgment = None;
 
 	/// <summary>ヒットポイントの残量を取得。（ 0 ~1 ）</summary>
 	float HPPerf() { return static_cast<float>(hitPoint) / static_cast<float>(maxHitPoint); }
@@ -217,9 +228,17 @@ struct PlayerBullets
 	/// <summary>発射タイマー。</summary>
 	float bulletTimer = 0.0f;
 
+	/// <summary>発射タイマー。</summary>
+	float perfectShotThreshold = 0.0f;
+	/// <summary>発射タイマー。</summary>
+	float goodShotThreshold = 0.0f;
+
+
 	void Load(const TYEngine::Utility::JsonManager& jm)
 	{
 		bulletCoolTime = jm.Get<float>("bullets.bulletCoolTime");
+		perfectShotThreshold = jm.Get<float>("bullets.perfectShotThreshold");
+		goodShotThreshold = jm.Get<float>("bullets.goodShotThreshold");
 	}
 };
 

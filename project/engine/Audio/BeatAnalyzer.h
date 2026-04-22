@@ -27,6 +27,20 @@ namespace TYEngine
 
 			bool GetBeat() { return isBeat_; }
 
+			/// <summary>
+			/// 現在の拍との一致率（0.0～1.0）を取得する。
+			/// 1.0に近いほど拍のジャストタイミングに近い。
+			/// </summary>
+			float GetBeatCloseness() const;
+
+			/// <summary>
+			/// ジャストタイミング判定（引数で許容範囲を指定）
+			/// </summary>
+			bool IsJustTiming(float threshold = 0.85f)
+			{
+				return GetBeatCloseness() >= threshold;
+			}
+
 		private:
 			void DetectBeat();
 

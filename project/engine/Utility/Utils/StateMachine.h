@@ -47,9 +47,9 @@ namespace TYEngine
 
 		public: // メンバ関数
 			/// <summary>
-			/// 関数テーブル登録用
+			/// 関数テーブル登録用(継承先クラスの基本ステート)
 			/// </summary>
-			/// <param name="instance"> 継承先時クラスのインスタンス </param>
+			/// <param name="instance"> 継承先クラスのインスタンス </param>
 			template<HasStateTable C>
 			void RegisterFromDefaultTable(C* instance)
 			{
@@ -57,6 +57,25 @@ namespace TYEngine
 				stateNames_.clear();
 
 				for (const auto& entry : C::GetStateTable())
+				{
+					stateList_.push_back(entry.state);
+					stateNames_[entry.state] = entry.name;
+					SetInitFunction(entry.state, [instance, f = entry.init]() { (instance->*f)(); });
+					SetUpdateFunction(entry.state, [instance, f = entry.update]() { (instance->*f)(); });
+					SetExitFunction(entry.state, [instance, f = entry.exit]() { (instance->*f)(); });
+				}
+			}
+
+			/// <summary>
+			/// 関数テーブル登録用
+			/// </summary>
+			/// <param name="table"> 継承先の関数テーブル </param>
+			/// <param name="instance"> 継承先クラスのインスタンス </param>
+			void RegisterFromTable(const std::vector<StateFunctionSet>& table, Class* instance)
+			{
+				stateList_.clear();
+				stateNames_.clear();
+				for (const auto& entry : table)
 				{
 					stateList_.push_back(entry.state);
 					stateNames_[entry.state] = entry.name;

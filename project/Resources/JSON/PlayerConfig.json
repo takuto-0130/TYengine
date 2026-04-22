@@ -50,7 +50,9 @@
       "lifeTime": 4.0,
       "scale": 0.05000000074505806
     },
-    "bulletCoolTime": 0.20000000298023224
+    "bulletCoolTime": 0.20000000298023224,
+    "goodShotThreshold": 0.699999988079071,
+    "perfectShotThreshold": 0.8999999761581421
   },
   "colliderScale": 0.20000000298023224,
   "destroyEffect": {

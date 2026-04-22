@@ -18,6 +18,7 @@ void Stage::Init()
     player_->SetCamera(camera_);
     player_->Init();
     player_->SetIsInGame(true);
+    player_->SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
 
     // マネージャ群（コンボ、スコア）初期化
     comboManager_ = std::make_unique<ComboManager>();

@@ -29,15 +29,33 @@ namespace TYEngine
 		void BeatAnalyzer::Draw()
 		{
 #ifdef _DEBUG
-
+			float closeness = GetBeatCloseness();
 			ImGui::Begin("Beat Analyzer");
 			ImGui::Text("BPM : %.2f", currentBPM_);
+			ImGui::Text("closeness : %.2f", closeness);
 			ImGui::Text("Beat : %d", isBeat_);
 
 			ImGui::End();
 
 #endif // _DEBUG
 		}
+
+		float BeatAnalyzer::GetBeatCloseness() const
+		{
+			// beatPhase_ は 0.0 (拍の瞬間) ～ 1.0 (次の拍の直前)
+			// 0.5 をピークに変換する計算
+			float closeness = 0.0f;
+			if (beatPhase_ < 0.5f)
+			{
+				closeness = 1.0f - (beatPhase_ * 2.0f); // 0.0のとき1.0
+			}
+			else
+			{
+				closeness = (beatPhase_ - 0.5f) * 2.0f; // 1.0のとき1.0
+			}
+			return closeness;
+		}
+
 		void BeatAnalyzer::DetectBeat()
 		{
 			// 無音判定

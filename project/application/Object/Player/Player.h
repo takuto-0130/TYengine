@@ -3,8 +3,10 @@
 #include "PlayerStruct.h"
 #include "PlayerCollider.h"
 #include "JustCollider.h"
+#include "./PAttackStrategy/IPAttackStrategy.h"
 #include "StateMachine.h"
 #include "Sprite.h"
+#include "BeatAnalyzer.h"
 #include "Reticle/Reticle.h"
 #include <numbers>
 
@@ -85,6 +87,9 @@ public:
 	/// <summary>ジャスト回避成功状態かを取得する。</summary>
 	bool IsJust() { return barrelRoll_.isJust; }
 
+	/// <summary>リズム判定処理。</summary>
+	void RhythmJudgment();
+
 	/// <summary>
 	/// 画面内での相対オフセット位置を設定する。
 	/// </summary>
@@ -101,9 +106,23 @@ public:
 	int GetHP() { return status_.hitPoint; }
 
 	/// <summary>現在の画面内オフセットを取得する。</summary>
-	TYEngine::Utility::Vector2 GetScreenOffset() { return screenOffset_; }
+	TYEngine::Utility::Vector2& GetScreenOffset() { return screenOffset_; }
 
 	StateMachineType GetStateMachine() { return stateMachine_; }
+
+	PlayerLockOn& GetLockOn() { return lockOn_; }
+
+	PlayerBullets& GetBullets() { return  bullets_; }
+
+	PlayerStatus& GetStatus() { return status_; }
+
+	Reticle* GetReticle() { return  reticle_.get(); }
+
+	TYEngine::Framework::Input* GetInput() { return input_; }
+
+	TYEngine::CameraSystem::Camera* GetCamera() { return camera_; }
+
+	TYEngine::AudioSystem::BeatAnalyzer* GetBeatAnalyzer() { return beatAnalyzer_; }
 
 	/// <summary>
 	/// 衝突時コールバック。
@@ -116,6 +135,17 @@ public:
 	void SetEnemyManager(EnemyManager* manager) { lockOn_.enemyManager = manager; }
 
 	void SetIsInGame(bool isInGame) { isInGame_ = isInGame; }
+
+	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
+
+	/// <summary>
+	/// 攻撃戦略（ストラテジーパターン）を設定する。
+	/// </summary>
+	/// <param name="strategy">攻撃アルゴリズムのインスタンス。</param>
+	void SetAttackStrategy(std::unique_ptr<PlayerAttack::IPAttackStrategy> strategy)
+	{
+		attackStrategy_ = std::move(strategy);
+	}
 
 private:
 	/// <summary>状態更新後の共通処理（フラグ管理など）。</summary>
@@ -148,6 +178,7 @@ private:
 	/// <summary>右方向へのロール。</summary>
 	void RightRoll(const TYEngine::Utility::Vector2& dir);
 
+	/// <summary>パーティクル演出の更新処理。</summary>
 	void ParticleUpdate();
 
 
@@ -190,6 +221,10 @@ private:
 	/// <summary>レティクル管理クラス。</summary>
 	std::unique_ptr<Reticle> reticle_;
 
+
+	/// <summary>現在の攻撃戦略。</summary>
+	std::unique_ptr<PlayerAttack::IPAttackStrategy> attackStrategy_;
+
 	PlayerJetEffect jetEffect_;
 
 	PlayerDestroyEffect destroyEffect_;
@@ -198,6 +233,9 @@ private:
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
+
+	/// <summary>BeatAnalyzerのポインタ。</summary>
+	TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer_ = nullptr;
 
 	/// <summary>プレイヤーの生成場所がインゲームかどうかのフラグ。</summary>
 	bool isInGame_ = false;

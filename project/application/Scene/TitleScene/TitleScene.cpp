@@ -103,6 +103,7 @@ void TitleScene::Init()
 	player_->Init();
 	player_->SetScreenOffset(titleJM.Get<Vector2>("config.Player.ScreenOffset"));
 	player_->SetBGMHandle(bgmHandle_);
+	player_->SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
 
 	// タイトル画面の敵マネージャ
 	enemyMgr_.Init(camera_);

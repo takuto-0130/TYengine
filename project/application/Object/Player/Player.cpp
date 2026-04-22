@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "PAttackStrategy/PAttackStrategies.h"
 #include "ColliderManager.h"
 #include "Input.h"
 #include "Timer.h"
@@ -15,6 +16,7 @@ using namespace TYEngine;
 using namespace Utility;
 using namespace Graphics;
 using namespace Effect;
+using namespace PlayerAttack;
 
 #define PLAYER_STATE_ENTRY(stateEnum, funcName) \
     STATE_ENTRY_FOR(Player, stateEnum, funcName)
@@ -97,6 +99,8 @@ void Player::Init()
 
 	// 初期ステートをROOTに設定
 	stateMachine_.ChangeState(PlayerState::ROUTE);
+
+	SetAttackStrategy(std::make_unique<PNormalRhythmAttackStrategy>());
 }
 
 void Player::Update()
@@ -323,110 +327,134 @@ void Player::Attack()
 	// 死亡時は攻撃処理を行わない
 	if (stateMachine_.GetCurrentState() == PlayerState::DEAD) return;
 
-	// クールタイムの減算
-	if (lockOn_.lockOnTimer > 0)
-	{
-		lockOn_.lockOnTimer -= Timer::GetInstance()->GetRawDeltaTime();
-	}
+	attackStrategy_->Update(this);
 
-	// 現在の射撃ボタン入力状態
-	bool isPressing = input_->PushKey(DIK_LCONTROL) || input_->IsPressMouse(1);
-
-	// ▼ ボタンを押し続けている間（ロックオン・サーチフェーズ）
-	if (isPressing && lockOn_.lockOnTimer <= 0)
+	if(false)
 	{
-		// まだ最大ロック数に達していない場合のみサーチ
-		if (lockOn_.lockedEnemies.size() < lockOn_.maxLockCount && lockOn_.enemyManager)
+		// クールタイムの減算
+		if (lockOn_.lockOnTimer > 0)
 		{
-			// reticle_ の画面座標は screenOffset_ とほぼ同義なのでそれを利用
-			Enemy* target = lockOn_.enemyManager->GetBestLockOnTarget(camera_, screenOffset_, lockOn_.lockOnRadius, lockOn_.lockedEnemies);
-
-			if (target)
-			{
-				lockOn_.lockedEnemies.push_back(target);
-				// TODO: ここで「カシュッ」というロックオン音を鳴らす
-				GameAudio::GetInstance()->Play("enter", false, SoundCategory::SE);
-				lockOn_.lockOnTimer = lockOn_.maxLockOnCool;
-			}
+			lockOn_.lockOnTimer -= Timer::GetInstance()->GetRawDeltaTime();
 		}
-	} // ▼ ボタンを離した瞬間（一斉発射フェーズ）
-	else if (lockOn_.wasPressingShot && !isPressing)
-	{
-		if (!lockOn_.lockedEnemies.empty())
+
+		// 現在の射撃ボタン入力状態
+		bool isPressing = input_->PushKey(DIK_LCONTROL) || input_->IsPressMouse(1);
+
+		// ▼ ボタンを押し続けている間（ロックオン・サーチフェーズ）
+		if (isPressing && lockOn_.lockOnTimer <= 0)
 		{
-			bullets_.currentBulletType = PlayerBulletType::HOMING; // ホーミング弾タイプ
-
-			// 散らすための角度計算用
-			int bulletCount = 0;
-			int totalBullets = static_cast<int>(lockOn_.lockedEnemies.size());
-
-			for (Enemy* target : lockOn_.lockedEnemies)
+			// まだ最大ロック数に達していない場合のみサーチ
+			if (lockOn_.lockedEnemies.size() < lockOn_.maxLockCount && lockOn_.enemyManager)
 			{
-				// ロックオン中に敵が倒されてポインタが無効になっていないか安全確認
-				if (lockOn_.enemyManager->IsValidEnemy(target))
+				// reticle_ の画面座標は screenOffset_ とほぼ同義なのでそれを利用
+				Enemy* target = lockOn_.enemyManager->GetBestLockOnTarget(camera_, screenOffset_, lockOn_.lockOnRadius, lockOn_.lockedEnemies);
+
+				if (target)
 				{
-					// 初期方向を散らす
-					// カメラの上方向と右方向を取得
-					Vector3 up = camera_->GetUp();
-					Vector3 right = camera_->GetRight();
-					Vector3 forward = camera_->GetForward();
-
-					// 弾のインデックスに応じて、左右・上に散らす角度を計算
-					// 例：-1.0 ~ 1.0 の間で左右に散らす
-					float spreadX = (totalBullets > 1) ? -lockOn_.spreadX + ((lockOn_.spreadX * 2.0f) * bulletCount / (totalBullets - 1)) : 0.0f;
-
-					// 上方向にも少し山なりに飛ばす
-					float spreadY = lockOn_.spreadY;
-
-					// 初期方向ベクトルを合成（前方に進みつつ、上と左右に広がる）
-					Vector3 initialDir = forward + (right * spreadX) + (up * spreadY);
-					initialDir = Normalize(initialDir);
-
-					// 発射
-					bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), initialDir, target, lockOn_.enemyManager);
-
-					bulletCount++;
-					// 発射音
-					GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+					lockOn_.lockedEnemies.push_back(target);
+					// TODO: ここで「カシュッ」というロックオン音を鳴らす
+					GameAudio::GetInstance()->Play("enter", false, SoundCategory::SE);
+					lockOn_.lockOnTimer = lockOn_.maxLockOnCool;
 				}
 			}
-
-
-			// ロックオンリストをクリア
-			lockOn_.lockedEnemies.clear();
-		}
-	}
-
-	// 次のフレームのために状態を保持
-	lockOn_.wasPressingShot = isPressing;
-
-
-	// クールタイムの減算
-	if (bullets_.bulletTimer > 0)
-	{
-		bullets_.bulletTimer -= Timer::GetInstance()->GetRawDeltaTime();
-	}
-	if (!isPressing)
-	{
-		// 攻撃入力があり、クールタイムが解消されていれば発射
-		if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bullets_.bulletTimer <= 0)
+		} // ▼ ボタンを離した瞬間（一斉発射フェーズ）
+		else if (lockOn_.wasPressingShot && !isPressing)
 		{
-			bullets_.currentBulletType = PlayerBulletType::NORMAL;
+			if (!lockOn_.lockedEnemies.empty())
+			{
+				bullets_.currentBulletType = PlayerBulletType::HOMING; // ホーミング弾タイプ
 
-			// レティクル方向への発射ベクトル計算
-			Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
+				// 散らすための角度計算用
+				int bulletCount = 0;
+				int totalBullets = static_cast<int>(lockOn_.lockedEnemies.size());
 
-			// 弾発射
-			bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), direction);
+				for (Enemy* target : lockOn_.lockedEnemies)
+				{
+					// ロックオン中に敵が倒されてポインタが無効になっていないか安全確認
+					if (lockOn_.enemyManager->IsValidEnemy(target))
+					{
+						// 初期方向を散らす
+						// カメラの上方向と右方向を取得
+						Vector3 up = camera_->GetUp();
+						Vector3 right = camera_->GetRight();
+						Vector3 forward = camera_->GetForward();
 
-			// 射撃音再生
-			GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+						// 弾のインデックスに応じて、左右・上に散らす角度を計算
+						// 例：-1.0 ~ 1.0 の間で左右に散らす
+						float spreadX = (totalBullets > 1) ? -lockOn_.spreadX + ((lockOn_.spreadX * 2.0f) * bulletCount / (totalBullets - 1)) : 0.0f;
 
-			// クールタイム設定
-			bullets_.bulletTimer = bullets_.bulletCoolTime;
+						// 上方向にも少し山なりに飛ばす
+						float spreadY = lockOn_.spreadY;
+
+						// 初期方向ベクトルを合成（前方に進みつつ、上と左右に広がる）
+						Vector3 initialDir = forward + (right * spreadX) + (up * spreadY);
+						initialDir = Normalize(initialDir);
+
+						// 発射
+						bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), initialDir, target, lockOn_.enemyManager);
+
+						bulletCount++;
+						// 発射音
+						GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+					}
+				}
+
+
+				// ロックオンリストをクリア
+				lockOn_.lockedEnemies.clear();
+			}
+		}
+
+		// 次のフレームのために状態を保持
+		lockOn_.wasPressingShot = isPressing;
+
+
+		// クールタイムの減算
+		if (bullets_.bulletTimer > 0)
+		{
+			bullets_.bulletTimer -= Timer::GetInstance()->GetRawDeltaTime();
+		}
+		if (!isPressing)
+		{
+			// 攻撃入力があり、クールタイムが解消されていれば発射
+			if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bullets_.bulletTimer <= 0)
+			{
+				bullets_.currentBulletType = PlayerBulletType::NORMAL;
+
+				// レティクル方向への発射ベクトル計算
+				Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
+
+				// 弾発射
+				bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), direction);
+
+				// 射撃音再生
+				GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+
+				// クールタイム設定
+				bullets_.bulletTimer = bullets_.bulletCoolTime;
+			}
 		}
 	}
 
+}
+
+void Player::RhythmJudgment()
+{
+	// パーフェクト判定
+	if (beatAnalyzer_->IsJustTiming(bullets_.perfectShotThreshold))
+	{
+		status_.currentJudgment = HitJudgment::Perfect;
+	}
+	// グッド判定
+	else if (beatAnalyzer_->IsJustTiming(bullets_.goodShotThreshold))
+	{
+		status_.currentJudgment = HitJudgment::Good;
+	}
+	// ミス or 通常判定
+	else
+	{
+		status_.currentJudgment = HitJudgment::Miss;
+	}
 }
 
 void Player::Move()

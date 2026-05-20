@@ -8,12 +8,12 @@ using namespace TYEngine::Utility;
 
 void RailManager::Init()
 {
-	// JSONからレールデータをロード
-	RailEditor::Instance()->Load("Resources/JSON/RailEditor.json");
-	
-	// ロードしたデータで初期化・再構築
-	Reset();
-	ResetRailCamera();
+	//// JSONからレールデータをロード
+	//RailEditor::Instance()->Load("Resources/JSON/RailEditor.json");
+	//
+	//// ロードしたデータで初期化・再構築
+	//Reset();
+	//ResetRailCamera();
 
 	railFinished_ = false;
 	railFinishedJustNow_ = false;
@@ -27,7 +27,12 @@ void RailManager::Init()
 
 void RailManager::Reset()
 {
-	controlPoints_ = RailEditor::Instance()->GetControlPoints();
+	// 動的モードでなければ、エディタからデータを取得する
+	if (!isDynamicMode_)
+	{
+		controlPoints_ = RailEditor::Instance()->GetControlPoints();
+	}
+
 	triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
 	triggerObjects_.clear();
 
@@ -56,6 +61,41 @@ void RailManager::Reset()
 	prevEyeS_ = eyeS_;
 }
 
+void RailManager::SetDynamicData(const std::vector<TYEngine::Utility::Vector3>& points, const std::vector<bool>& triggers)
+{
+	isDynamicMode_ = true;
+
+	// 1. 制御点を直接上書き
+	controlPoints_ = points;
+
+	// 2. トリガーフラグとオブジェクトの初期化
+	triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
+	triggerObjects_.clear();
+
+	// 3. 受け取ったトリガー情報をもとにオブジェクトを配置
+	for (size_t i = 0; i < controlPoints_.size(); ++i)
+	{
+		// triggers配列の範囲外アクセスを防ぎつつ取得
+		bool isTrigger = (i < triggers.size()) ? triggers[i] : false;
+
+		if (isTrigger)
+		{
+			triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
+			triggerObjects_.back()->world.Update();
+		}
+	}
+
+	// 4. スプライン路線の再計算と描画用オブジェクトの構築
+	SetSegment();
+	RailReDraw();
+
+	// 5. 進行状況やカメラをスタート地点にリセット
+	ResetRailCamera();
+
+	railFinished_ = false;
+	railFinishedJustNow_ = false;
+}
+
 void RailManager::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
@@ -70,9 +110,14 @@ void RailManager::Update()
 void RailManager::Draw()
 {
 #ifdef _DEBUG
+	int num = 0;
 	for (const auto& rail : rails_)
 	{
-		rail->Draw();
+		if(num % 5 == 0)
+		{
+			rail->Draw();
+		}
+		num++;
 	}
 
 	for (auto& triggerObj : triggerObjects_)

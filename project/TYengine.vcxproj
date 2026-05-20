@@ -143,6 +143,7 @@ if exist "externals\dxil.dll" (
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp" />
+    <ClCompile Include="application\AppSystem\RailGenerator\AppRailGenerator.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp" />
@@ -185,6 +186,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\Audio\BPMDetector.cpp" />
     <ClCompile Include="engine\Audio\AudioAnalyzer.cpp" />
     <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
+    <ClCompile Include="engine\Audio\OfflineAudioAnalyzer.cpp" />
     <ClCompile Include="engine\Audio\testHealthBeat.cpp" />
     <ClCompile Include="externals\xapobase.cpp" />
     <ClCompile Include="engine\Effect\ContrailBehaviour.cpp" />
@@ -283,6 +285,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\ComboAndScoreHandler.h" />
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener.h" />
     <ClInclude Include="application\AppSystem\ParticleType.h" />
+    <ClInclude Include="application\AppSystem\RailGenerator\AppRailGenerator.h" />
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
     <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h" />
     <ClInclude Include="application\Object\Enemy\AttackStrategy\AttackStrategies.h" />
@@ -303,11 +306,13 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h" />
+    <ClInclude Include="engine\Audio\AudioAnalysisResult.h" />
     <ClInclude Include="engine\Audio\BeatAnalyzer.h" />
     <ClInclude Include="engine\Audio\BiquadFilter.h" />
     <ClInclude Include="engine\Audio\BPMDetector.h" />
     <ClInclude Include="engine\Audio\MyAnalyzerXAPO.h" />
     <ClInclude Include="engine\Audio\AudioAnalyzer.h" />
+    <ClInclude Include="engine\Audio\OfflineAudioAnalyzer.h" />
     <ClInclude Include="engine\Effect\ContrailBehaviour.h" />
     <ClInclude Include="engine\Camera\CameraShake.h" />
     <ClInclude Include="engine\Effect\DebrisBehaviour.h" />

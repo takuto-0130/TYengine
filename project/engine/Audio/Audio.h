@@ -66,6 +66,7 @@ namespace TYEngine
 				WAVEFORMATEX fmt; // 波形フォーマット
 			};
 
+		public:
 			// 音声データ
 			struct SoundData
 			{
@@ -75,7 +76,6 @@ namespace TYEngine
 				float bpm; // BPMデータ
 			};
 
-		public:
 			/// <summary>
 			/// 初期化処理。
 			/// XAudio2エンジンの初期化、マスターボイスの生成を行う。

@@ -3,6 +3,7 @@
 #include "BlenderLevelLoader.h"
 #include "../Object/Rail/RailEditor.h"
 #include "../AppSystem//Audio//GameAudio.h"
+#include "../AppSystem/RailGenerator/AppRailGenerator.h"
 
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
@@ -30,7 +31,7 @@ void Stage::Init()
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
     enemyMgr_.SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
     enemyMgr_.Init(camera_);
-    enemyMgr_.SetIsInGame(true);
+    enemyMgr_.SetIsInGame(false);
 
     player_->SetEnemyManager(&enemyMgr_);
 
@@ -38,8 +39,8 @@ void Stage::Init()
     railManager_ = std::make_unique<RailManager>();
     railManager_->SetCamera(camera_);
     railManager_->Init();
-
-    railManager_->Reset();
+    GenerateStageFromAudio("418", railManager_.get());
+    //railManager_->Reset();
 
     // 背景（地面）オブジェクト初期化
     BlenderLevelLoader loader;
@@ -57,6 +58,8 @@ void Stage::Reset()
 void Stage::Update()
 {
     isEdit_ = false;
+
+    DebugUI();
 
     // レール更新（カメラ移動・トリガー判定）
     railManager_->Update();
@@ -77,11 +80,11 @@ void Stage::Update()
     player_->Update();
 
     // プレイヤー位置を敵側に通知（エイム等のため）
-    Vector3 pos = player_->GetWorldPosition();
-    enemyMgr_.SetTargetPos(&pos);
+    /*Vector3 pos = player_->GetWorldPosition();
+    enemyMgr_.SetTargetPos(&pos);*/
 
     // 敵群の更新
-    enemyMgr_.Update();
+    //enemyMgr_.Update();
 
     // コンボシステム更新
     comboManager_->Update();
@@ -156,4 +159,26 @@ void Stage::StageObjectBeatScale()
             }
         }
     }
+}
+
+void Stage::DebugUI()
+{
+    ImGui::Begin("Sound Selector");
+
+    // ImGui::Combo に渡すための C言語風文字列配列 (const char*) を作成
+    std::vector<const char*> comboItems;
+    for (const auto& song : songList_)
+    {
+        comboItems.push_back(song.c_str());
+    }
+
+    // プルダウンメニューの表示
+    // ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
+    if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
+    {
+        // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む
+        GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
+    }
+
+    ImGui::End();
 }

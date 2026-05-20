@@ -613,6 +613,8 @@
       <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
     <ClCompile Include="engine\Audio\testHealthBeat.cpp" />
+    <ClCompile Include="engine\Audio\OfflineAudioAnalyzer.cpp" />
+    <ClCompile Include="application\AppSystem\RailGenerator\AppRailGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
@@ -1046,6 +1048,9 @@
     </ClInclude>
     <ClInclude Include="application\Object\Player\PAttackStrategy\IPAttackStrategy.h" />
     <ClInclude Include="application\Object\Player\PAttackStrategy\PAttackStrategies.h" />
+    <ClInclude Include="engine\Audio\AudioAnalysisResult.h" />
+    <ClInclude Include="engine\Audio\OfflineAudioAnalyzer.h" />
+    <ClInclude Include="application\AppSystem\RailGenerator\AppRailGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

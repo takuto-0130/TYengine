@@ -67,6 +67,13 @@ public:
 	/// </summary>
 	void Reset();
 
+	/// <summary>
+	/// 外部（オーディオ解析など）から直接レールデータをセットして再構築する。
+	/// </summary>
+	/// <param name="points">レールの制御点リスト</param>
+	/// <param name="triggers">各制御点のトリガーフラグ</param>
+	void SetDynamicData(const std::vector<TYEngine::Utility::Vector3>& points, const std::vector<bool>& triggers);
+
 public:
 	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
@@ -235,5 +242,8 @@ private:
 	float lookAhead_ = 1.0f;
 	/// <summary>移動速度（m/s）。</summary>
 	float speedMps_ = 0.0f;
+
+	/// <summary>オーディオ解析などによる動的生成データを使用しているか</summary>
+	bool isDynamicMode_ = false;
 };
 

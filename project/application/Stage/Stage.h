@@ -101,6 +101,8 @@ public:
 private:
 	void StageObjectBeatScale();
 
+	void DebugUI();
+
 private:
 	/// <summary>カメラへのポインタ（借用）。</summary>
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
@@ -128,5 +130,11 @@ private:
 
 	/// <summary>ビートアナライザー（演出用）。</summary>
 	GameAudio* gameAudio_ = nullptr;
+
+	// 曲名のリスト
+	std::vector<std::string> songList_ = { "418", "gameBGM" };
+
+	// 現在選択されている曲のインデックス
+	int currentSongIndex_ = 0;
 };
 

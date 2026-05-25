@@ -27,12 +27,20 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
     newTriggerFlags.push_back(false);
 
     int span = 4;
-
     int index = 0;
+
+    // 前回の平滑化された座標を保持する変数
+    // スタート地点に合わせて 0.0f で初期化しておく
+    float lastSmoothedX = 0.0f;
+    float lastSmoothedY = 0.0f;
+
+    // 平滑化の度合いを決める係数 (0.0f ～ 1.0f)
+    // 1.0f だと平滑化なし（元のまま）。
+    const float SMOOTH_FACTOR = 1.0f;
 
     for (const auto& beat : analysisData.beats)
     {
-        if(index % span == 0)
+        if (index % span == 0)
         {
             currentZ += ADVANCE_Z;
 
@@ -44,7 +52,13 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
             if (targetX > 50.0f) targetX = 50.0f;
             if (targetX < -50.0f) targetX = -50.0f;
 
-            newControlPoints.push_back({ targetX, targetY, currentZ });
+            // 線形補間をかける
+            // 前回の値 × (1 - 係数) ＋ 目標値 × (係数)
+            lastSmoothedX = lastSmoothedX * (1.0f - SMOOTH_FACTOR) + targetX * SMOOTH_FACTOR;
+            lastSmoothedY = lastSmoothedY * (1.0f - SMOOTH_FACTOR) + targetY * SMOOTH_FACTOR;
+
+            // 平滑化された値(lastSmoothed)を配列に積む
+            newControlPoints.push_back({ lastSmoothedX, lastSmoothedY, currentZ });
             // newTriggerFlags.push_back(true); // ビート位置に敵配置トリガーを置く等
         }
         index++;
@@ -52,4 +66,5 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
 
     // 4. 生成したデータを RailManager に直接セットして再構築
     railManager->SetDynamicData(newControlPoints, newTriggerFlags);
+    railManager->GenerateForest();
 }

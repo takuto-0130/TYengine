@@ -83,6 +83,10 @@ public:
 
 	bool IsEndRail() { return railFinished_; }
 
+
+	/// <summary>森を生成する関数</summary>
+	void GenerateForest();
+
 private:
 	/// <summary>レールポイントを追加する。</summary>
 	void PopRail(const TYEngine::Utility::Vector3& position, const TYEngine::Utility::Vector3& rotate);
@@ -245,5 +249,28 @@ private:
 
 	/// <summary>オーディオ解析などによる動的生成データを使用しているか</summary>
 	bool isDynamicMode_ = false;
+
+
+	/// テスト
+	/// <summary>背景（森）のオブジェクト</summary>
+	struct EnvironmentObject
+	{
+		TYEngine::Utility::WorldTransform world;
+		TYEngine::Graphics::Object3d object;
+
+		// type: 0=木, 1=岩 などで使い分けるための変数
+		int type = 0;
+	};
+
+	/// <summary>生成された背景オブジェクトのリスト</summary>
+	std::vector<std::unique_ptr<EnvironmentObject>> environmentObjects_;
+
+	// 地形描画用のオブジェクトとモデル
+	std::unique_ptr<TYEngine::Graphics::Object3d> terrainObject_;
+	std::unique_ptr<TYEngine::Graphics::Model> terrainModel_; 
+	TYEngine::Utility::WorldTransform terrainTransform_; // 位置・回転・スケール管理用
+
+	// 地形メッシュを生成する関数
+	void GenerateTerrainMesh();
 };
 

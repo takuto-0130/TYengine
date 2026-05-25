@@ -90,6 +90,26 @@ namespace TYEngine
 			std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(VertexData) * modelData_.vertices.size());
 		}
 
+		void Model::InitializeDynamic(ModelLoader* modelLoader, const std::vector<VertexData>& vertices, const std::string& textureFilePath)
+		{
+			modelLoader_ = modelLoader;
+
+			// 1. 引数で渡された動的な頂点データをモデルデータに格納
+			modelData_.vertices = vertices;
+
+			// 2. 描画処理（Draw）で参照されるルートノードの行列を単位行列で初期化
+			modelData_.rootNode.localMatrix = MakeIdentity4x4();
+			modelData_.rootNode.name = "dynamic_root";
+
+			// 3. 頂点バッファ（VertexResource）の作成とマッピング（既存の関数を利用）
+			CreateVertexResource();
+
+			// 4. マテリアル用テクスチャの読み込みとインデックス取得
+			modelData_.material.textureFilePath = textureFilePath;
+			TextureManager::GetInstance()->LoadTexture(textureFilePath);
+			modelData_.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
+		}
+
 		Model::ModelData Model::LoadModelFile(const std::string& directoryPath, const std::string& filename)
 		{
 			ModelData modelData;

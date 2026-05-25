@@ -1,6 +1,7 @@
 #include "RailManager.h"
 #include "RailEditor.h"
 #include "Camera.h"
+#include "TextureManager.h"
 #include "TImer.h"
 #include <imgui.h>
 
@@ -14,6 +15,8 @@ void RailManager::Init()
 	//// ロードしたデータで初期化・再構築
 	//Reset();
 	//ResetRailCamera();
+
+	TYEngine::Graphics::TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 
 	railFinished_ = false;
 	railFinishedJustNow_ = false;
@@ -89,6 +92,15 @@ void RailManager::SetDynamicData(const std::vector<TYEngine::Utility::Vector3>& 
 	SetSegment();
 	RailReDraw();
 
+	// デバッグ出力: レールの描画用ポイントをCSVに書き出す
+	std::ofstream ofs("RailDebug.csv");
+	ofs << "X,Y,Z\n";
+	for (const auto& p : pointsDrawing_)
+	{
+		ofs << p.x << "," << p.y << "," << p.z << "\n";
+	}
+	ofs.close();
+
 	// 5. 進行状況やカメラをスタート地点にリセット
 	ResetRailCamera();
 
@@ -125,6 +137,17 @@ void RailManager::Draw()
 		triggerObj->object.Draw(triggerObj->world);
 	}
 #endif // _DEBUG
+
+	for (auto& envObj : environmentObjects_)
+	{
+		envObj->object.Draw(envObj->world);
+	}
+
+	// 地形メッシュの描画
+	if (terrainObject_)
+	{
+		terrainObject_->Draw(terrainTransform_);
+	}
 }
 
 void RailManager::UpdateEdit()
@@ -399,3 +422,440 @@ void RailManager::RebuildTriggerSFromSegments()
 	triggerS_.swap(sSorted);
 	triggerFired_.swap(fSorted);
 }
+
+void RailManager::GenerateForest()
+{
+	environmentObjects_.clear();
+	if (pointsDrawing_.size() < 2) return;
+
+	srand(12345);
+	const int SPAWN_INTERVAL = 5;
+
+	// =======================================================
+	// レールの進行度(s)を計算
+	// =======================================================
+	std::vector<float> sValues(pointsDrawing_.size(), 0.0f);
+	for (size_t i = 1; i < pointsDrawing_.size(); ++i)
+	{
+		float dx = pointsDrawing_[i].x - pointsDrawing_[i - 1].x;
+		float dy = pointsDrawing_[i].y - pointsDrawing_[i - 1].y;
+		float dz = pointsDrawing_[i].z - pointsDrawing_[i - 1].z;
+		sValues[i] = sValues[i - 1] + std::sqrt(dx * dx + dy * dy + dz * dz);
+	}
+
+	// =======================================================
+	// フラクタルノイズによる複雑な地形の起伏
+	// =======================================================
+	auto getTerrainHeight = [](float s, float lateral)
+		{
+			float absLat = std::abs(lateral);
+			float roadWidth = 8.0f; // 平らな道の半分の幅
+
+			if (absLat < roadWidth) return 0.0f;
+
+			// 大きなうねり
+			float noiseLarge = std::sin(s * 0.03f + lateral * 0.05f) * 6.0f
+				+ std::cos(s * 0.05f - lateral * 0.03f) * 4.0f;
+
+			// 小さなうねり
+			float noiseSmall = std::sin(s * 0.2f + lateral * 0.15f) * 1.5f
+				+ std::cos(s * 0.3f - lateral * 0.25f) * 0.8f;
+
+			float baseHeight = std::pow(absLat - roadWidth, 1.2f) * 0.25f; // U字谷のベース
+			float blend = std::min((absLat - roadWidth) / 5.0f, 1.0f);
+
+			return baseHeight + ((noiseLarge + noiseSmall) * blend);
+		};
+
+	// 乱数生成ヘルパー (min ～ max の間の小数を返す)
+	auto randomFloat = [](float min, float max)
+		{
+			return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / (max - min));
+		};
+
+	// =======================================================
+	// グリッドの構築（ワールドX軸固定 ＆ 動的ジッター）
+	// =======================================================
+	const int LATERAL_DIVISIONS = 10;
+	const float MAX_LATERAL_DIST = 60.0f;
+
+	// 横方向の1マスの道幅
+	const float COL_DIST = MAX_LATERAL_DIST / static_cast<float>(LATERAL_DIVISIONS);
+
+	std::vector<std::vector<TYEngine::Utility::Vector3>> crossSections(pointsDrawing_.size());
+
+	for (size_t i = 0; i < pointsDrawing_.size(); ++i)
+	{
+		TYEngine::Utility::Vector3 currentPos = pointsDrawing_[i];
+
+		TYEngine::Utility::Vector3 right = { 1.0f, 0.0f, 0.0f };
+
+		// 前後の頂点間隔（行の間隔）を動的に取得する
+		float rowDist = 1.0f;
+		if (i < pointsDrawing_.size() - 1)
+		{
+			rowDist = pointsDrawing_[i + 1].z - pointsDrawing_[i].z;
+		}
+		else if (i > 0)
+		{
+			rowDist = pointsDrawing_[i].z - pointsDrawing_[i - 1].z;
+		}
+		if (rowDist < 0.001f) rowDist = 1.0f;
+
+		// マスの大きさを超えないように、安全なジッターの最大量を「マスの40%まで」に制限する
+		float maxJitterX = COL_DIST * 0.4f;
+		float maxJitterZ = rowDist * 0.4f;
+
+		for (int j = -LATERAL_DIVISIONS; j <= LATERAL_DIVISIONS; ++j)
+		{
+			float t = static_cast<float>(j) / static_cast<float>(LATERAL_DIVISIONS);
+			float baseLateralDist = t * MAX_LATERAL_DIST;
+
+			// 道の中央（jが0付近）はレールに沿わせるためズラさない
+			float jitterAmountX = (std::abs(j) <= 1) ? 0.0f : maxJitterX;
+			float jitterAmountZ = (std::abs(j) <= 1) ? 0.0f : maxJitterZ;
+
+			// 端や境界は隙間防止のためズラさない
+			if (i == 0 || i == pointsDrawing_.size() - 1 || std::abs(j) == LATERAL_DIVISIONS)
+			{
+				jitterAmountX = 0.0f;
+				jitterAmountZ = 0.0f;
+			}
+
+			float jitterX = randomFloat(-jitterAmountX, jitterAmountX); // 横方向のズレ
+			float jitterZ = randomFloat(-jitterAmountZ, jitterAmountZ); // 進行方向のズレ
+
+			float finalLateralDist = baseLateralDist + jitterX;
+			float height = getTerrainHeight(sValues[i] + jitterZ, finalLateralDist);
+
+			// 世界軸（XとZ）に対して真っ直ぐグリッドを配置（中心のみレールの座標に追従）
+			TYEngine::Utility::Vector3 pos = {
+				currentPos.x + finalLateralDist,
+				currentPos.y - 2.0f + height,
+				currentPos.z + jitterZ
+			};
+			crossSections[i].push_back(pos);
+		}
+	}
+
+	// =======================================================
+	// オブジェクトの配置
+	// =======================================================
+	for (size_t i = 0; i < pointsDrawing_.size() - 1; i += SPAWN_INTERVAL)
+	{
+		TYEngine::Utility::Vector3 currentPos = pointsDrawing_[i];
+
+		TYEngine::Utility::Vector3 right = { 1.0f, 0.0f, 0.0f };
+
+		for (int side : {-1, 1})
+		{
+			bool isTree = (rand() % 100) < 70;
+			float baseDist = isTree ? 18.0f : 12.0f;
+			float randomOffset = static_cast<float>(rand() % 250) / 10.0f;
+			float lateralDist = (baseDist + randomOffset) * side;
+
+			if (std::abs(lateralDist) > MAX_LATERAL_DIST - 5.0f) lateralDist = (MAX_LATERAL_DIST - 5.0f) * side;
+
+			float height = getTerrainHeight(sValues[i], lateralDist);
+
+			TYEngine::Utility::Vector3 spawnPos = {
+				currentPos.x + right.x * lateralDist,
+				currentPos.y - 2.5f + height,
+				currentPos.z + right.z * lateralDist
+			};
+
+			auto envObj = std::make_unique<EnvironmentObject>();
+			envObj->type = isTree ? 0 : 1;
+			envObj->world.Initialize();
+			envObj->world.SetTranslation(spawnPos);
+
+			float randomRotY = randomFloat(0.0f, 360.0f) * 3.14159f / 180.0f;
+			envObj->world.SetRotate({ 0.0f, randomRotY, 0.0f });
+
+			float randomScale = 0.8f + randomFloat(0.0f, 0.7f);
+			if (isTree) envObj->world.SetScale({ randomScale, randomScale * 1.2f, randomScale });
+			else        envObj->world.SetScale({ randomScale, randomScale * 0.5f, randomScale });
+
+			envObj->object.Initialize();
+			envObj->object.SetModel("conifer.obj");
+			if (!isTree) envObj->object.SetColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+
+			envObj->world.Update();
+			environmentObjects_.push_back(std::move(envObj));
+		}
+	}
+
+	// =======================================================
+	// ポリゴンメッシュの構築
+	// =======================================================
+	std::vector<TYEngine::Graphics::Model::VertexData> vertices;
+	float currentV = 0.0f;
+
+	auto calcNormal = [](const TYEngine::Utility::Vector3& pA, const TYEngine::Utility::Vector3& pB, const TYEngine::Utility::Vector3& pC)
+		{
+			TYEngine::Utility::Vector3 v1 = { pB.x - pA.x, pB.y - pA.y, pB.z - pA.z };
+			TYEngine::Utility::Vector3 v2 = { pC.x - pA.x, pC.y - pA.y, pC.z - pA.z };
+			TYEngine::Utility::Vector3 cross = { v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x };
+			float len = std::sqrt(cross.x * cross.x + cross.y * cross.y + cross.z * cross.z);
+			if (len > 0.0001f) { cross.x /= len; cross.y /= len; cross.z /= len; }
+			return cross;
+		};
+
+	auto addQuad = [&](const TYEngine::Utility::Vector3& pA, const TYEngine::Utility::Vector3& pB, const TYEngine::Utility::Vector3& pC, const TYEngine::Utility::Vector3& pD, float uStart, float uEnd, float vStart, float vEnd)
+		{
+			TYEngine::Utility::Vector3 normal1 = calcNormal(pA, pB, pC);
+			TYEngine::Utility::Vector3 normal2 = calcNormal(pA, pC, pD);
+			vertices.push_back({ {pA.x, pA.y, pA.z, 1.0f}, {uStart, vStart}, normal1 });
+			vertices.push_back({ {pB.x, pB.y, pB.z, 1.0f}, {uStart, vEnd},   normal1 });
+			vertices.push_back({ {pC.x, pC.y, pC.z, 1.0f}, {uEnd,   vEnd},   normal1 });
+			vertices.push_back({ {pA.x, pA.y, pA.z, 1.0f}, {uStart, vStart}, normal2 });
+			vertices.push_back({ {pC.x, pC.y, pC.z, 1.0f}, {uEnd,   vEnd},   normal2 });
+			vertices.push_back({ {pD.x, pD.y, pD.z, 1.0f}, {uEnd,   vStart}, normal2 });
+		};
+
+	for (size_t i = 0; i < crossSections.size() - 1; ++i)
+	{
+		float dist = sValues[i + 1] - sValues[i];
+		float nextV = currentV + (dist * 0.1f);
+
+		int numPoints = LATERAL_DIVISIONS * 2 + 1;
+		for (int j = 0; j < numPoints - 1; ++j)
+		{
+			float uStart = static_cast<float>(j) / static_cast<float>(numPoints - 1);
+			float uEnd = static_cast<float>(j + 1) / static_cast<float>(numPoints - 1);
+
+			addQuad(
+				crossSections[i][j], crossSections[i + 1][j],
+				crossSections[i + 1][j + 1], crossSections[i][j + 1],
+				uStart, uEnd, currentV, nextV
+			);
+		}
+		currentV = nextV;
+	}
+
+	if (!vertices.empty())
+	{
+		terrainModel_.reset();
+		terrainModel_ = std::make_unique<TYEngine::Graphics::Model>();
+		terrainModel_->InitializeDynamic(TYEngine::Graphics::ModelManager::GetInstance()->GetModelLoader(), vertices, "Resources/Models/grassfloor1.dds");
+		terrainObject_ = std::make_unique<TYEngine::Graphics::Object3d>();
+		terrainObject_->Initialize();
+		terrainObject_->SetModel(terrainModel_.get());
+		terrainTransform_.Initialize();
+	}
+}
+
+//void RailManager::GenerateTerrainMesh()
+//{
+//	if (pointsDrawing_.size() < 2) return;
+//
+//	std::vector<TYEngine::Graphics::Model::VertexData> vertices;
+//
+//	float roadWidth = 20.0f;
+//	float slopeWidth = 40.0f;
+//	float slopeHeight = 25.0f;
+//
+//	// UVのV座標（縦方向の進行度）を計算するための距離アキュムレータ
+//	float currentV = 0.0f;
+//
+//	// レールの各ポイントを繋ぐ面（Quad = 2個の三角形 = 6頂点）を作っていく
+//	for (size_t i = 0; i < pointsDrawing_.size() - 1; ++i)
+//	{
+//		TYEngine::Utility::Vector3 p0 = pointsDrawing_[i];
+//		TYEngine::Utility::Vector3 p1 = pointsDrawing_[i + 1];
+//
+//		// --- ベクトルの計算 ---
+//		auto calcVectors = [](const TYEngine::Utility::Vector3& current, const TYEngine::Utility::Vector3& next,
+//			TYEngine::Utility::Vector3& outForward, TYEngine::Utility::Vector3& outRight, float& outDist)
+//			{
+//				outForward = { next.x - current.x, next.y - current.y, next.z - current.z };
+//				outDist = std::sqrt(outForward.x * outForward.x + outForward.y * outForward.y + outForward.z * outForward.z);
+//				if (outDist > 0.0001f) { outForward.x /= outDist; outForward.y /= outDist; outForward.z /= outDist; }
+//
+//				TYEngine::Utility::Vector3 up = { 0.0f, 1.0f, 0.0f };
+//				outRight = { up.y * outForward.z - up.z * outForward.y,
+//							 up.z * outForward.x - up.x * outForward.z,
+//							 up.x * outForward.y - up.y * outForward.x };
+//				float rLen = std::sqrt(outRight.x * outRight.x + outRight.y * outRight.y + outRight.z * outRight.z);
+//				if (rLen > 0.0001f) { outRight.x /= rLen; outRight.y /= rLen; outRight.z /= rLen; }
+//			};
+//
+//		TYEngine::Utility::Vector3 forward0, right0; float dist0;
+//		calcVectors(p0, p1, forward0, right0, dist0);
+//
+//		// ※本来は次の点でのベクトルも計算して滑らかに繋ぎますが、ここでは簡略化のため同じベクトルを使います
+//		TYEngine::Utility::Vector3 forward1 = forward0, right1 = right0;
+//
+//		// --- 頂点座標の計算関数 ---
+//		auto getCrossSection = [&](const TYEngine::Utility::Vector3& center, const TYEngine::Utility::Vector3& right)
+//			{
+//				TYEngine::Utility::Vector3 base = { center.x, center.y - 2.0f, center.z };
+//
+//				// L2(左崖上), L1(左道端), R1(右道端), R2(右崖上)
+//				return std::vector<TYEngine::Utility::Vector3>{
+//					{ base.x - right.x * (roadWidth / 2 + slopeWidth), base.y + slopeHeight, base.z - right.z * (roadWidth / 2 + slopeWidth) },
+//					{ base.x - right.x * (roadWidth / 2),              base.y,               base.z - right.z * (roadWidth / 2) },
+//					{ base.x + right.x * (roadWidth / 2),              base.y,               base.z + right.z * (roadWidth / 2) },
+//					{ base.x + right.x * (roadWidth / 2 + slopeWidth), base.y + slopeHeight, base.z + right.z * (roadWidth / 2 + slopeWidth) }
+//				};
+//			};
+//
+//		auto cross0 = getCrossSection(p0, right0);
+//		auto cross1 = getCrossSection(p1, right1);
+//
+//		// UV座標のV値 (前進するごとにテクスチャがスクロールする)
+//		float nextV = currentV + (dist0 * 0.1f); // 0.1fはテクスチャの繰り返し密度
+//
+//		// --- ポリゴン（三角形リスト）の構築 ---
+//		// 四角形(Quad)を作るためのヘルパー関数 (pA, pB, pC, pD は反時計回りになるように渡す)
+//		auto addQuad = [&](
+//			const TYEngine::Utility::Vector3& pA, const TYEngine::Utility::Vector3& pB,
+//			const TYEngine::Utility::Vector3& pC, const TYEngine::Utility::Vector3& pD,
+//			float uStart, float uEnd, float vStart, float vEnd, const TYEngine::Utility::Vector3& normal)
+//			{
+//				// 三角形1 (A -> B -> C)
+//				vertices.push_back({ {pA.x, pA.y, pA.z, 1.0f}, {uStart, vStart}, normal });
+//				vertices.push_back({ {pB.x, pB.y, pB.z, 1.0f}, {uStart, vEnd},   normal });
+//				vertices.push_back({ {pC.x, pC.y, pC.z, 1.0f}, {uEnd,   vEnd},   normal });
+//				// 三角形2 (A -> C -> D)
+//				vertices.push_back({ {pA.x, pA.y, pA.z, 1.0f}, {uStart, vStart}, normal });
+//				vertices.push_back({ {pC.x, pC.y, pC.z, 1.0f}, {uEnd,   vEnd},   normal });
+//				vertices.push_back({ {pD.x, pD.y, pD.z, 1.0f}, {uEnd,   vStart}, normal });
+//			};
+//
+//		// 1. 左の斜面
+//		addQuad(cross0[0], cross1[0], cross1[1], cross0[1], 0.0f, 0.2f, currentV, nextV, { 0.8f, 0.6f, 0.0f }); // 法線は仮
+//		// 2. 中央の道
+//		addQuad(cross0[1], cross1[1], cross1[2], cross0[2], 0.2f, 0.8f, currentV, nextV, { 0.0f, 1.0f, 0.0f }); // 上向き
+//		// 3. 右の斜面
+//		addQuad(cross0[2], cross1[2], cross1[3], cross0[3], 0.8f, 1.0f, currentV, nextV, { -0.8f, 0.6f, 0.0f });
+//
+//		currentV = nextV;
+//	}
+//
+//	// 生成した頂点データからモデルとObject3dを作成する
+//	// ※ ModelLoader は既存の仕組みに合わせて適宜取得してください
+//	terrainModel_ = std::make_unique<TYEngine::Graphics::Model>();
+//	terrainModel_->InitializeDynamic(TYEngine::Graphics::ModelManager::GetInstance()->GetModelLoader(), vertices, "Resources/Texture/white2x2.png");
+//
+//	terrainObject_ = std::make_unique<TYEngine::Graphics::Object3d>();
+//	terrainObject_->Initialize();
+//
+//	// Object3dにモデルをセットする仕組みが必要（setterがない場合はObject3dクラスに追加してください）
+//	terrainObject_->SetModel(terrainModel_.get());
+//
+//	// 位置などの初期化
+//	terrainTransform_.Initialize();
+//	terrainTransform_.UpdateMatrix();
+//}
+//
+//void RailManager::GenerateForest()
+//{
+//	environmentObjects_.clear();
+//
+//	// レールの描画用ポイント（滑らかに分割された座標）が十分になければ終了
+//	if (pointsDrawing_.size() < 2) return;
+//
+//	// 曲ごとに同じ森が生成されるように、シード値を固定する(現在はテスト用)
+//	srand(12345);
+//
+//	// 密集しすぎないように、例えば 5ポイント（数メートル）ごとに判定する
+//	const int SPAWN_INTERVAL = 5;
+//
+//	for (size_t i = 0; i < pointsDrawing_.size() - 1; i += SPAWN_INTERVAL)
+//	{
+//		TYEngine::Utility::Vector3 currentPos = pointsDrawing_[i];
+//		TYEngine::Utility::Vector3 nextPos = pointsDrawing_[i + 1];
+//
+//		// --- 1. 進行方向(Forward)と右方向(Right)のベクトルを計算 ---
+//		TYEngine::Utility::Vector3 forward = {
+//			nextPos.x - currentPos.x,
+//			nextPos.y - currentPos.y,
+//			nextPos.z - currentPos.z
+//		};
+//
+//		// 進行方向ベクトルの正規化（長さを1にする）
+//		float fLen = std::sqrt(forward.x * forward.x + forward.y * forward.y + forward.z * forward.z);
+//		if (fLen > 0.0001f) { forward.x /= fLen; forward.y /= fLen; forward.z /= fLen; }
+//
+//		TYEngine::Utility::Vector3 up = { 0.0f, 1.0f, 0.0f };
+//
+//		// 外積(Cross)を使って右方向ベクトルを求める: Right = Up × Forward
+//		TYEngine::Utility::Vector3 right = {
+//			up.y * forward.z - up.z * forward.y,
+//			up.z * forward.x - up.x * forward.z,
+//			up.x * forward.y - up.y * forward.x
+//		};
+//		// 右方向ベクトルの正規化
+//		float rLen = std::sqrt(right.x * right.x + right.y * right.y + right.z * right.z);
+//		if (rLen > 0.0001f) { right.x /= rLen; right.y /= rLen; right.z /= rLen; }
+//
+//		// --- 2. 左右への配置（ランダム要素を加える） ---
+//
+//		// 両脇に配置するため、左(-1)と右(+1)でループ
+//		for (int side : {-1, 1})
+//		{
+//			// 70%の確率で木、30%の確率で岩を生成すると仮定
+//			bool isTree = (rand() % 100) < 70;
+//
+//			// レールからの基本距離（近すぎると自機と被るため少し離す）
+//			float baseDistance = isTree ? 15.0f : 8.0f;
+//
+//			// ランダムな揺らぎ（道幅のバラつき）を加える (0.0f ～ 10.0f)
+//			float randomOffset = static_cast<float>(rand() % 100) / 10.0f;
+//			float distance = baseDistance + randomOffset;
+//
+//			// 最終的な配置座標
+//			TYEngine::Utility::Vector3 spawnPos = {
+//				currentPos.x + (right.x * distance * side),
+//				currentPos.y + (right.y * distance * side),
+//				currentPos.z + (right.z * distance * side)
+//			};
+//
+//			// 少し高さを下げる（空中に浮かないようにレールより少し下にする）
+//			spawnPos.y -= 2.0f;
+//
+//			// --- 3. オブジェクトの生成と設定 ---
+//			auto envObj = std::make_unique<EnvironmentObject>();
+//			envObj->type = isTree ? 0 : 1;
+//
+//			envObj->world.Initialize();
+//			envObj->world.SetTranslation(spawnPos);
+//
+//			// 【重要】自然に見せるためのランダム回転とスケール
+//			// Y軸（縦軸）に対してランダムに回転させる
+//			float randomRotY = static_cast<float>(rand() % 360) * 3.14159f / 180.0f;
+//			envObj->world.SetRotate({ 0.0f, randomRotY, 0.0f });
+//
+//			// 大きさもバラバラにする (例: 0.8倍 ～ 1.5倍)
+//			float randomScale = 0.8f + static_cast<float>(rand() % 70) / 100.0f;
+//			if (isTree)
+//			{
+//				envObj->world.SetScale({ randomScale, randomScale * 1.2f, randomScale }); // 木は縦長に
+//			}
+//			else
+//			{
+//				envObj->world.SetScale({ randomScale, randomScale * 0.5f, randomScale }); // 岩は平べったく
+//			}
+//
+//			envObj->object.Initialize();
+//
+//			// モデルの割り当て（プロジェクト内にある obj ファイル名に変更してください）
+//			if (isTree)
+//			{
+//				envObj->object.SetModel("conifer.obj");
+//			}
+//			else
+//			{
+//				envObj->object.SetModel("conifer.obj");
+//				envObj->object.SetColor({ 0.1f, 0.1f, 0.1f, 1.0f }); // 灰色
+//			}
+//
+//			// ワールド行列を更新してリストに追加
+//			envObj->world.Update();
+//			environmentObjects_.push_back(std::move(envObj));
+//		}
+//	}
+//
+//	GenerateTerrainMesh();
+//}

@@ -118,47 +118,94 @@ namespace TYEngine
 			return length * nSlerp;
 		}
 
-		Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t)
+
+		// 2点間の距離に基づいて「時間(t)」を計算するヘルパー関数（アルファ=0.5 が求心性）
+		static float GetCentripetalT(float t, const TYEngine::Utility::Vector3& p0, const TYEngine::Utility::Vector3& p1)
 		{
-			float s = 0.5f;		// 除算が重いので1/2の代用
-			float t2 = t * t;	// tの2乗
-			float t3 = t2 * t;	// tの3乗
+			// 2点間の距離の平方（ルート計算を減らすため）
+			float d2 = (p1.x - p0.x) * (p1.x - p0.x) +
+				(p1.y - p0.y) * (p1.y - p0.y) +
+				(p1.z - p0.z) * (p1.z - p0.z);
 
-			Vector3 e3 = -p0 + 3 * p1 - 3 * p2 + p3;
-			Vector3 e2 = 2 * p0 - 5 * p1 + 4 * p2 - p3;
-			Vector3 e1 = -p0 + p2;
-			Vector3 e0 = 2 * p1;
-
-			return s * (e3 * t3 + e2 * t2 + e1 * t + e0);
+			// 距離の0.5乗 (d2の0.25乗 = ルートのルート)
+			float a = std::sqrt(std::sqrt(d2));
+			return t + a;
 		}
 
-		Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t)
+		// ゼロ除算を回避しながら線形補間するヘルパー
+		static TYEngine::Utility::Vector3 RemapLerp(float t_a, float t_b, float t_curr, const TYEngine::Utility::Vector3& p_a, const TYEngine::Utility::Vector3& p_b)
+		{
+			if (t_a == t_b) return p_a;
+			float weight = (t_curr - t_a) / (t_b - t_a);
+			return {
+				p_a.x + (p_b.x - p_a.x) * weight,
+				p_a.y + (p_b.y - p_a.y) * weight,
+				p_a.z + (p_b.z - p_a.z) * weight
+			};
+		}
+
+		TYEngine::Utility::Vector3 CatmullRomInterpolation(const TYEngine::Utility::Vector3& p0, const TYEngine::Utility::Vector3& p1, const TYEngine::Utility::Vector3& p2, const TYEngine::Utility::Vector3& p3, float t)
+		{
+			// 各制御点の「到達時間」を距離（の0.5乗）ベースで算出
+			float t0 = 0.0f;
+			float t1 = GetCentripetalT(t0, p0, p1);
+			float t2 = GetCentripetalT(t1, p1, p2);
+			float t3 = GetCentripetalT(t2, p2, p3);
+
+			// p1 と p2 が全く同じ位置にある場合はそのまま返す
+			if (t1 == t2) return p1;
+
+			// 0.0～1.0 で渡される t を、実際の区間時間 (t1～t2) にマッピング
+			float t_local = t1 + (t2 - t1) * t;
+
+			// Barry-Goldmanのピラミッドアルゴリズムによる求心性補間
+			TYEngine::Utility::Vector3 A1 = RemapLerp(t0, t1, t_local, p0, p1);
+			TYEngine::Utility::Vector3 A2 = RemapLerp(t1, t2, t_local, p1, p2);
+			TYEngine::Utility::Vector3 A3 = RemapLerp(t2, t3, t_local, p2, p3);
+
+			TYEngine::Utility::Vector3 B1 = RemapLerp(t0, t2, t_local, A1, A2);
+			TYEngine::Utility::Vector3 B2 = RemapLerp(t1, t3, t_local, A2, A3);
+
+			TYEngine::Utility::Vector3 C = RemapLerp(t1, t2, t_local, B1, B2);
+
+			return C;
+		}
+
+		// ★ CatmullRomPosition はご提示いただいた元のコードをそのまま使います！
+		// （テンション引数などは削除して、元の状態に戻してOKです）
+		TYEngine::Utility::Vector3 CatmullRomPosition(const std::vector<TYEngine::Utility::Vector3>& points, float t)
 		{
 			assert(points.size() >= 4 && "制御点は4点以上必要です");
+
 			size_t division = points.size() - 1;
-			float areaWidth = 1.0f / division;
-			float t_2 = std::fmod(t, areaWidth) * division;
-			t_2 = std::clamp(t_2, 0.0f, 1.0f);
 
-			size_t index = static_cast<size_t>(t / areaWidth);
-			index = (std::min)(index, division - 1l);
+			// 全体の進行度 t (0.0～1.0) をセグメント数倍する (例: 0.0 ～ 4.0)
+			float globalT = t * static_cast<float>(division);
 
-			size_t index0 = index - 1;
+			// 整数部をインデックス、小数部をローカル時間 t_2 として「同時に」切り出す
+			size_t index = static_cast<size_t>(globalT);
+			float t_2 = globalT - static_cast<float>(index);
+
+			// t がちょうど 1.0f の時、または誤差で division 以上になった時の安全弁
+			if (index >= division)
+			{
+				index = division - 1;
+				t_2 = 1.0f;
+			}
+
+			// インデックスの前後関係を安全に割り振り
 			size_t index1 = index;
-			size_t index2 = index + 1;
-			size_t index3 = index + 2;
-			if (index == 0)
-			{
-				index0 = index1;
-			}
-			if (index3 >= points.size())
-			{
-				index3 = index2;
-			}
-			const Vector3& p0 = points[index0];
-			const Vector3& p1 = points[index1];
-			const Vector3& p2 = points[index2];
-			const Vector3& p3 = points[index3];
+			size_t index0 = (index1 == 0) ? index1 : index1 - 1;
+			size_t index2 = index1 + 1;
+			size_t index3 = index2 + 1;
+			if (index3 >= points.size()) { index3 = index2; }
+
+			const TYEngine::Utility::Vector3& p0 = points[index0];
+			const TYEngine::Utility::Vector3& p1 = points[index1];
+			const TYEngine::Utility::Vector3& p2 = points[index2];
+			const TYEngine::Utility::Vector3& p3 = points[index3];
+
+			// 先ほど作成した求心性（または通常版）の補間関数を呼び出す
 			return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
 		}
 

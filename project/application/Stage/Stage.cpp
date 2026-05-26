@@ -8,6 +8,10 @@
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
 
+Stage::~Stage()
+{
+}
+
 void Stage::Init()
 {
     gameAudio_ = GameAudio::GetInstance();
@@ -164,7 +168,7 @@ void Stage::DebugUI()
     // ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
     if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
     {
-        gameAudio_->Stop(BGMHandle_);
+        gameAudio_->Pause(BGMHandle_);
         BGMHandle_ = gameAudio_->Play(songList_[currentSongIndex_], true, SoundCategory::BGM);
         railManager_->Reset();
         // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む

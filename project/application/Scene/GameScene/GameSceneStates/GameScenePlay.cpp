@@ -7,6 +7,7 @@ using namespace TYEngine::CameraSystem;
 
 void GameScene::InitPlay()
 {
+	gameAudio_->Resume(BGMHandle_);
 }
 void GameScene::UpdatePlay()
 {

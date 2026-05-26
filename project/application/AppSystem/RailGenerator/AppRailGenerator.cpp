@@ -7,16 +7,15 @@ using namespace TYEngine::AudioSystem;
 
 void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railManager)
 {
-    // 1. エンジンからWAVEの生データを取得する
-    // （※ GetSoundData は既存のBeatAnalyzer.cppで使われているものを想定）
+    // エンジンからWAVEの生データを取得する
     auto soundData = Audio::GetInstance()->GetSoundData(soundFilename);
 
-    // 2. エンジンに解析を依頼し、純粋なオーディオ特徴量の配列をもらう
+    // エンジンに解析を依頼し、純粋なオーディオ特徴量の配列をもらう
     AudioAnalysisResult analysisData = OfflineAudioAnalyzer::Analyze(
         soundData.buffer.data(), static_cast<UINT32>(soundData.buffer.size()), soundData.wfex
     );
 
-    // 3. ゲーム固有のロジックでレール座標（制御点）に変換する
+    // ゲーム固有のロジックでレール座標（制御点）に変換する
     std::vector<TYEngine::Utility::Vector3> newControlPoints;
     std::vector<bool> newTriggerFlags;
 
@@ -64,7 +63,7 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
         index++;
     }
 
-    // 4. 生成したデータを RailManager に直接セットして再構築
+    // 生成したデータを RailManager に直接セットして再構築
     railManager->SetDynamicData(newControlPoints, newTriggerFlags);
     railManager->GenerateForest();
 }

@@ -89,7 +89,7 @@ void GameScene::Init()
 	// ステージデータ（レール・敵配置など）の管理クラス生成と初期化
 	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
-	stageManager_->GetPlayer()->SetBGMHandle(BGMHandle_);
+	stageManager_->SetBGMHandle(BGMHandle_);
 
 	// 開始時のカメラ位置などを保持
 	startCameraPos_ = camera_->GetPosition();

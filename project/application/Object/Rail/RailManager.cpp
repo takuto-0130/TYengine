@@ -48,7 +48,7 @@ void RailManager::Reset()
 	// 距離トリガーを再構築
 	RebuildTriggerSFromSegments();
 
-	speedMultiply_ = 0.35f;
+	speedMultiply_ = 1.0f;
 	speedMps_ = 3.5f;
 
 	// 弧長の初期値
@@ -84,6 +84,7 @@ void RailManager::SetDynamicData(const std::vector<TYEngine::Utility::Vector3>& 
 	// 4. スプライン路線の再計算と描画用オブジェクトの構築
 	SetSegment();
 	RailReDraw();
+#ifdef _DEBUG
 
 	// デバッグ出力: レールの描画用ポイントをCSVに書き出す
 	std::ofstream ofs("RailDebug.csv");
@@ -93,6 +94,8 @@ void RailManager::SetDynamicData(const std::vector<TYEngine::Utility::Vector3>& 
 		ofs << p.x << "," << p.y << "," << p.z << "\n";
 	}
 	ofs.close();
+
+#endif // _DEBUG
 
 	// 5. 進行状況やカメラをスタート地点にリセット
 	ResetRailCamera();
@@ -115,21 +118,21 @@ void RailManager::Update()
 void RailManager::Draw()
 {
 #ifdef _DEBUG
-	int num = 0;
-	for (const auto& rail : rails_)
-	{
-		if(num % 5 == 0)
-		{
-			rail->Draw();
-		}
-		num++;
-	}
 
 	for (auto& triggerObj : triggerObjects_)
 	{
 		triggerObj->object.Draw(triggerObj->world);
 	}
 #endif // _DEBUG
+	int num = 0;
+	for (const auto& rail : rails_)
+	{
+		if (num % 5 == 0)
+		{
+			rail->Draw();
+		}
+		num++;
+	}
 
 	for (auto& envObj : environmentObjects_)
 	{

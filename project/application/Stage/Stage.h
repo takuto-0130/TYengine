@@ -98,6 +98,10 @@ public:
 
 	Player* GetPlayer() { return player_.get(); }
 
+	RailManager* GetRailManager() { return railManager_.get(); }
+
+	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
+
 private:
 	void StageObjectBeatScale();
 
@@ -132,9 +136,12 @@ private:
 	GameAudio* gameAudio_ = nullptr;
 
 	// 曲名のリスト
-	std::vector<std::string> songList_ = { "418", "gameBGM" };
+	std::vector<std::string> songList_ = { "418", "gameBGM", "irodori" };
 
 	// 現在選択されている曲のインデックス
 	int currentSongIndex_ = 0;
+
+	/// <summary>BGM再生ハンドル。</summary>
+	int BGMHandle_ = -1;
 };
 

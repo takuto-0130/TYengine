@@ -57,6 +57,15 @@ public:
 
     Player* GetPlayer() { return GetCurrentStage()->GetPlayer(); }
 
+    RailManager* GetRailManager() { return GetCurrentStage()->GetRailManager(); }
+
+    void SetBGMHandle(int handle) 
+    { 
+        GetPlayer()->SetBGMHandle(handle);
+        GetRailManager()->SetBGMHandle(handle);
+        GetCurrentStage()->SetBGMHandle(handle);
+    }
+
 private:
     /// <summary>新しいステージを追加する。</summary>
     void AddStage();

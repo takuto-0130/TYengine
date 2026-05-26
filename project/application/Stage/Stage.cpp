@@ -35,16 +35,11 @@ void Stage::Init()
 
     player_->SetEnemyManager(&enemyMgr_);
 
-    // レール管理初期化
+    // レール管理/背景（地面）オブジェクト初期化
     railManager_ = std::make_unique<RailManager>();
     railManager_->SetCamera(camera_);
     railManager_->Init();
     GenerateStageFromAudio("418", railManager_.get());
-    //railManager_->Reset();
-
-    // 背景（地面）オブジェクト初期化
-    BlenderLevelLoader loader;
-    loader.DataToObject(loader.Load("stage_object.json"), stageObject_);
 }
 
 void Stage::Reset()
@@ -78,13 +73,6 @@ void Stage::Update()
 
     // プレイヤー更新
     player_->Update();
-
-    // プレイヤー位置を敵側に通知（エイム等のため）
-    /*Vector3 pos = player_->GetWorldPosition();
-    enemyMgr_.SetTargetPos(&pos);*/
-
-    // 敵群の更新
-    //enemyMgr_.Update();
 
     // コンボシステム更新
     comboManager_->Update();
@@ -176,6 +164,9 @@ void Stage::DebugUI()
     // ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
     if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
     {
+        gameAudio_->Stop(BGMHandle_);
+        BGMHandle_ = gameAudio_->Play(songList_[currentSongIndex_], true, SoundCategory::BGM);
+        railManager_->Reset();
         // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む
         GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
     }

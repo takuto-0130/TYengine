@@ -44,9 +44,9 @@ namespace TYEngine
 				isInit_ = true;
 			}
 
-			void LoadSound(const std::string& filename)
+			void LoadSound(const std::string& filename, const std::string& extension = ".wav")
 			{
-				audio_->Load(filename);
+				audio_->Load(filename, extension);
 			}
 
 			/// <summary>

@@ -84,6 +84,8 @@ public:
 	bool IsEndRail() { return railFinished_; }
 
 
+	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
+
 	/// <summary>森を生成する関数</summary>
 	void GenerateForest();
 
@@ -250,6 +252,10 @@ private:
 	/// <summary>オーディオ解析などによる動的生成データを使用しているか</summary>
 	bool isDynamicMode_ = false;
 
+
+
+	/// <summary>BGM再生ハンドル。</summary>
+	int BGMHandle_ = -1;
 
 	/// テスト
 	/// <summary>背景（森）のオブジェクト</summary>

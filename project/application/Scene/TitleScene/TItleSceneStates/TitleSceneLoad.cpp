@@ -31,7 +31,8 @@ void TitleScene::Load()
 	gameAudio_->LoadSound("roll");
 	gameAudio_->LoadSound("attack");
 	gameAudio_->LoadSound("418");
-
+	gameAudio_->LoadSound("irodori", ".mp3");
+	
 	gameAudio_->InitBeatAnalyzer("gameBGM", SoundCategory::BGM);
 
 	//========== テクスチャロード ==========//

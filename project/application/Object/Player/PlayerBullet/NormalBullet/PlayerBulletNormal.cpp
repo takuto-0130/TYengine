@@ -65,9 +65,6 @@ void PlayerBulletNormal::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 	
-	// カメラ移動分の補正（必要に応じて）
-	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
-	
 	// ステート更新（移動処理などはここで行われる）
 	stateMachine_.UpdateState(deltaTime_);
 	

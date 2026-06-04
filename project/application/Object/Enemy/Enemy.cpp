@@ -121,7 +121,7 @@ void Enemy::Update()
 	if(lifeTime_ > 0)
 	{
 		// カメラ移動に伴う相対位置更新
-		worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
+		/*worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());*/
 		
 		// ステート更新
 		stateMachine_.UpdateState(deltaTime_);

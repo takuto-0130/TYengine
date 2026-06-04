@@ -7,6 +7,8 @@
 
 class Camera;
 
+class RailManager;
+
 /// <summary>
 /// 敵管理クラス。
 /// 敵キャラクターの生成と管理を行う。
@@ -61,6 +63,8 @@ public:
 
 	void DisablePopFlag() { isPopFlag_ = false; }
 
+	void SetRailManager(RailManager* railManager) { railManager_ = railManager; }
+
 private:
 	/// <summary>
 	/// スクリーン座標オフセットをワールド座標に変換する。
@@ -78,6 +82,8 @@ private:
 
 	/// <summary>敵弾マネージャ。</summary>
 	EnemyBulletManager bulletManager_;
+
+	RailManager* railManager_ = nullptr;
 
 	/// <summary>敵の出現深度（最小）。</summary>
 	float enemyPopDepthMin_ = 0.0f;

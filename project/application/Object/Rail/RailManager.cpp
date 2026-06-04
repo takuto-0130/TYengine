@@ -424,6 +424,7 @@ void RailManager::GenerateForest()
 	environmentObjects_.clear();
 	if (pointsDrawing_.size() < 2) return;
 
+	// 固定シード
 	srand(12345);
 	const int SPAWN_INTERVAL = 5;
 
@@ -570,16 +571,29 @@ void RailManager::GenerateForest()
 
 			float randomScale = 0.8f + randomFloat(0.0f, 0.7f);
 			if (isTree) envObj->world.SetScale({ randomScale, randomScale * 1.2f, randomScale });
-			else        envObj->world.SetScale({ randomScale, randomScale * 0.5f, randomScale });
+			else        envObj->world.SetScale({ randomScale * 1.7f, randomScale * 1.2f, randomScale * 1.7f });
 
-			envObj->object.Initialize();
-			envObj->object.SetModel("conifer.obj");
-			if (!isTree) envObj->object.SetColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+			if (isTree)
+			{
+				envObj->object.Initialize();
+				envObj->object.SetModel("conifer.obj");
+			}
+			else
+			{
+				envObj->object.Initialize();
+				envObj->object.SetModel("rock.obj");
+				envObj->object.SetColor({ 0.4f, 0.4f, 0.4f, 1.0f });
+				spawnPos.y = currentPos.y - 2.0f + height;
+				envObj->world.SetTranslation(spawnPos);
+			}
+
 
 			envObj->world.Update();
 			environmentObjects_.push_back(std::move(envObj));
 		}
 	}
+
+
 
 	// =======================================================
 	// ポリゴンメッシュの構築
@@ -639,4 +653,51 @@ void RailManager::GenerateForest()
 		terrainObject_->SetModel(terrainModel_.get());
 		terrainTransform_.Initialize();
 	}
+}
+
+float RailManager::GetTerrainHeight(const TYEngine::Utility::Vector3& pos)
+{
+	// レールが生成されていない場合は基準値(0)を返す
+	if (pointsDrawing_.empty() || arcMap_.S.empty()) return 0.0f;
+
+	// 1. posに最も近いレール上の点（とインデックス）を探す
+	float minDistSq = 9999999.0f;
+	size_t minIdx = 0;
+	for (size_t i = 0; i < pointsDrawing_.size(); ++i)
+	{
+		float dx = pos.x - pointsDrawing_[i].x;
+		float dz = pos.z - pointsDrawing_[i].z;
+		float distSq = dx * dx + dz * dz;
+		if (distSq < minDistSq)
+		{
+			minDistSq = distSq;
+			minIdx = i;
+		}
+	}
+
+	// 2. その地点の進行度(s)と、レールからの横方向距離(lateral)を取得
+	// arcMap_.S は GenerateForest 内の sValues と全く同じ累積距離データです
+	float s = arcMap_.S[minIdx];
+	float lateral = std::sqrt(minDistSq);
+
+	// 3. GenerateForest 内の計算式と同じロジックで高さを計算
+	float roadWidth = 8.0f;
+	float height = 0.0f;
+
+	if (lateral >= roadWidth)
+	{
+		float noiseLarge = std::sin(s * 0.03f + lateral * 0.05f) * 6.0f
+			+ std::cos(s * 0.05f - lateral * 0.03f) * 4.0f;
+
+		float noiseSmall = std::sin(s * 0.2f + lateral * 0.15f) * 1.5f
+			+ std::cos(s * 0.3f - lateral * 0.25f) * 0.8f;
+
+		float baseHeight = std::pow(lateral - roadWidth, 1.2f) * 0.25f;
+		float blend = std::min((lateral - roadWidth) / 5.0f, 1.0f);
+
+		height = baseHeight + ((noiseLarge + noiseSmall) * blend);
+	}
+
+	// 実際のワールドY座標を返す (道の基本高さは currentPos.y - 2.0f)
+	return pointsDrawing_[minIdx].y - 2.0f + height;
 }

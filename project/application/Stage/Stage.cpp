@@ -35,7 +35,7 @@ void Stage::Init()
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
     enemyMgr_.SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
     enemyMgr_.Init(camera_);
-    enemyMgr_.SetIsInGame(false);
+    enemyMgr_.SetIsInGame(true);
 
     player_->SetEnemyManager(&enemyMgr_);
 
@@ -43,6 +43,10 @@ void Stage::Init()
     railManager_ = std::make_unique<RailManager>();
     railManager_->SetCamera(camera_);
     railManager_->Init();
+
+    // EnemyManagerに地形の高さを計算させるために渡す
+    enemyMgr_.SetRailManager(railManager_.get());
+
     GenerateStageFromAudio("418", railManager_.get());
 }
 
@@ -68,6 +72,9 @@ void Stage::Update()
         // トリガーに到達したとき（敵出現停止）
         enemyMgr_.DisablePopFlag();
     }
+    Vector3 pos = player_->GetWorldPosition();
+    enemyMgr_.SetTargetPos(&pos);
+    enemyMgr_.Update();
 
     StageObjectBeatScale();
     for (auto&& o : stageObject_)

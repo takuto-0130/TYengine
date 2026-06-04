@@ -86,8 +86,11 @@ public:
 
 	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
 
-	/// <summary>森を生成する関数</summary>
+	/// <summary>森と地形メッシュを生成する関数</summary>
 	void GenerateForest();
+
+	/// <summary>指定したワールド座標(X, Z)における地形のY座標を取得する</summary>
+	float GetTerrainHeight(const TYEngine::Utility::Vector3& pos);
 
 private:
 	/// <summary>レールポイントを追加する。</summary>
@@ -275,8 +278,5 @@ private:
 	std::unique_ptr<TYEngine::Graphics::Object3d> terrainObject_;
 	std::unique_ptr<TYEngine::Graphics::Model> terrainModel_; 
 	TYEngine::Utility::WorldTransform terrainTransform_; // 位置・回転・スケール管理用
-
-	// 地形メッシュを生成する関数
-	void GenerateTerrainMesh();
 };
 

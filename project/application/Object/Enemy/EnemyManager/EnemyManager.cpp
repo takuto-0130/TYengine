@@ -1,5 +1,6 @@
 #include "EnemyManager.h"
 #include "Timer.h"
+#include "../../Rail/RailManager.h"
 
 using namespace TYEngine::Utility;
 using namespace TYEngine::AudioSystem;
@@ -9,8 +10,8 @@ void EnemyManager::Init(CameraSystem::Camera* camera)
 {
 	camera_ = camera;
 	bulletManager_.Init();
-	enemyPopDepthMin_ = 12.0f;
-	enemyPopDepthMax_ = 17.0f;
+	enemyPopDepthMin_ = 30.0f;
+	enemyPopDepthMax_ = 40.0f;
 	xRange = 16.0f * 0.09f * 2.0f;
 	yRange = 9.0f * 0.085f * 2.0f;
 	spawnReadyTimer_ = 0.8f;
@@ -155,8 +156,10 @@ Vector3 EnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dist(enemyPopDepthMin_, enemyPopDepthMax_);
 
+	float depth = dist(gen);
+
 	return camPos
-		+ camForward * 25.0f
+		+ camForward * depth
 		+ camRight * (offset.x * xRange)
 		+ camUp * (offset.y * yRange);
 }
@@ -172,9 +175,56 @@ void EnemyManager::Pop()
 		std::mt19937 gen(rd());
 		std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
-		enemy->SetScreenPos({ dist(gen), dist(gen) });
-		// スクリーン座標をワールド座標へ変換して設定
-		enemy->SetAndApplyPos(ConvertScreenOffsetToWorld(enemy->GetScreenPos()));
+		// 元となる -1.0 ～ 1.0 の乱数を取得
+		float rawX = dist(gen);
+		float rawY = dist(gen); 
+
+		// 中心部を避けて左右に広げる処理
+		float finalX = 0.0f;
+		float minX = 0.5f;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
+		float maxX = 1.5f;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
+
+		if (rawX >= 0.0f)
+		{
+			// 右側にスポーン（minX ～ maxX の範囲に変換）
+			finalX = minX + rawX * (maxX - minX);
+		}
+		else
+		{
+			// 左側にスポーン（-minX ～ -maxX の範囲に変換）
+			// rawXは負の数なので、(maxX - minX) を掛けてマイナス方向に引き延ばす
+			finalX = -minX + rawX * (maxX - minX);
+		}
+
+		// 補正したスクリーン座標を設定
+		enemy->SetScreenPos({ finalX, rawY });
+
+		// スクリーン座標をワールド座標へ変換
+		Vector3 spawnPos = ConvertScreenOffsetToWorld(enemy->GetScreenPos());
+
+		// --- 【ここから変更】地面基準でY座標をランダムな高さに設定 ---
+		if (railManager_)
+		{
+			float terrainY = railManager_->GetTerrainHeight(spawnPos);
+
+			// 地面からどれくらい浮かせるかのランダムな範囲
+			float minHeightOffset = 2.0f; // 最小の浮遊高度
+			float maxHeightOffset = 7.0f; // 最大の浮遊高度
+
+			// 新しく高さ用の乱数を生成
+			std::uniform_real_distribution<float> heightDist(minHeightOffset, maxHeightOffset);
+			float randomHeight = heightDist(gen);
+
+			// ConvertScreenOffsetToWorldで計算したY座標を捨てて、地面基準の高さで上書きする
+			spawnPos.y = terrainY + randomHeight;
+		}
+		// --- 【ここまで変更】 ---
+
+		// 補正した座標を設定
+		enemy->SetAndApplyPos(spawnPos);
+
+		// 補正した座標を設定
+		enemy->SetAndApplyPos(spawnPos);
 
 		// 依存関係の注入
 		enemy->SetEnemyBulletManager(&bulletManager_);

@@ -3,6 +3,7 @@
 #include "AudioAnalyzer.h"
 #include "BeatAnalyzer.h"
 #include "SingletonObject.h"
+#include "CriticalHealthAudioEffect.h"
 
 /// <summary>
 /// サウンドのカテゴリ定義。
@@ -67,7 +68,7 @@ public:
 
     float& GetWaveform() { return GetAudio()->GetAnalyzerXAPO()->GetWaveform()[0]; }
 
-    void SetHPPerf(float perf) { GetAudio()->GetAnalyzerXAPO()->PerfBeat(perf); }
+    void SetHPPerf(float perf) { hpPerf_ = perf; }
 
 private:
     /// <summary>ビートアナライザー（演出用）。</summary>
@@ -75,4 +76,10 @@ private:
 
     /// <summary>オーディオスペクトラムアナライザー（演出用）。</summary>
     TYEngine::AudioSystem::AudioAnalyzer audioAnalyzer_;
+
+    /// <summary>HP低下演出の制御クラス。</summary>
+    TYEngine::CriticalHealthAudioEffect criticalHealthEffect_;
+
+    /// <summary>HPの割合（演出用パラメータ）</summary>
+    float hpPerf_ = 1.0f;
 };

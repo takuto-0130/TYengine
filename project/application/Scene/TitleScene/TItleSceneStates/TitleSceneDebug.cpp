@@ -32,7 +32,11 @@ void TitleScene::DebugUpdate()
 	}*/
 
 	ImGui::Begin("EQ");
-	Audio::GetInstance()->GetAnalyzerXAPO()->TestBeat();
+	static float health = 1.0f;
+	if (ImGui::DragFloat("health per", &health, 0.01f))
+	{
+		gameAudio_->SetHPPerf(health);
+	}
 	Audio::GetInstance()->GetAnalyzerXAPO()->EQImGui();
 	ImGui::End();
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="application">
@@ -123,6 +123,15 @@
     </Filter>
     <Filter Include="engine\Audio">
       <UniqueIdentifier>{ac8edde8-aa86-4fb2-aa73-64570d301eac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Audio\Core">
+      <UniqueIdentifier>{ad8edde8-aa86-4fb2-aa73-64570d301eac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Audio\DSP">
+      <UniqueIdentifier>{ae8edde8-aa86-4fb2-aa73-64570d301eac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Audio\Analysis">
+      <UniqueIdentifier>{af8edde8-aa86-4fb2-aa73-64570d301eac}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Camera">
       <UniqueIdentifier>{a96c8800-1dcf-4e48-ac6d-5dbcc120e887}</UniqueIdentifier>
@@ -324,20 +333,20 @@
     <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp">
       <Filter>application\Scene\Transition\Fade2</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\BeatAnalyzer.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Analysis\BeatAnalyzer.cpp">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\BiquadFilter.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\DSP\BiquadFilter.cpp">
+      <Filter>engine\Audio\DSP</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\BPMDetector.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Analysis\BPMDetector.cpp">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\AudioAnalyzer.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Analysis\AudioAnalyzer.cpp">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\DSP\MyAnalyzerXAPO.cpp">
+      <Filter>engine\Audio\DSP</Filter>
     </ClCompile>
     <ClCompile Include="externals\xapobase.cpp">
       <Filter>externals</Filter>
@@ -390,8 +399,8 @@
     <ClCompile Include="engine\OffScreen\CopyPass.cpp">
       <Filter>engine\OffScreen</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\Audio.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Core\Audio.cpp">
+      <Filter>engine\Audio\Core</Filter>
     </ClCompile>
     <ClCompile Include="engine\Camera\Camera.cpp">
       <Filter>engine\Camera</Filter>
@@ -492,8 +501,8 @@
     <ClCompile Include="application\Scene\TitleScene\TitleScene.cpp">
       <Filter>application\Scene\TitleScene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\StreamingAudio.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Core\StreamingAudio.cpp">
+      <Filter>engine\Audio\Core</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp">
       <Filter>application\Scene\SceneFactory</Filter>
@@ -612,8 +621,12 @@
     <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp">
       <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\testHealthBeat.cpp" />
-    <ClCompile Include="engine\Audio\OfflineAudioAnalyzer.cpp" />
+    <ClCompile Include="application\AppSystem\Audio\CriticalHealthAudioEffect.cpp">
+      <Filter>application\AppSystem\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Audio\Analysis\OfflineAudioAnalyzer.cpp">
+      <Filter>engine\Audio\Analysis</Filter>
+    </ClCompile>
     <ClCompile Include="application\AppSystem\RailGenerator\AppRailGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -683,20 +696,20 @@
     <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h">
       <Filter>application\Scene\Transition\Fade2</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\BeatAnalyzer.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Analysis\BeatAnalyzer.h">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\BiquadFilter.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\DSP\BiquadFilter.h">
+      <Filter>engine\Audio\DSP</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\BPMDetector.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Analysis\BPMDetector.h">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\MyAnalyzerXAPO.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\DSP\MyAnalyzerXAPO.h">
+      <Filter>engine\Audio\DSP</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\AudioAnalyzer.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Analysis\AudioAnalyzer.h">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClInclude>
     <ClInclude Include="engine\Effect\ContrailBehaviour.h">
       <Filter>engine\Effect</Filter>
@@ -797,8 +810,8 @@
     <ClInclude Include="engine\OffScreen\CopyPass.h">
       <Filter>engine\OffScreen</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\Audio.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Core\Audio.h">
+      <Filter>engine\Audio\Core</Filter>
     </ClInclude>
     <ClInclude Include="engine\Camera\Camera.h">
       <Filter>engine\Camera</Filter>
@@ -914,8 +927,8 @@
     <ClInclude Include="application\Scene\TitleScene\TitleScene.h">
       <Filter>application\Scene\TitleScene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\StreamingAudio.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Core\StreamingAudio.h">
+      <Filter>engine\Audio\Core</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h">
       <Filter>application\Scene\SceneFactory</Filter>
@@ -1040,16 +1053,23 @@
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h">
       <Filter>application\Scene\GameScene\RetryUI</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\AudioSystemBase.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Core\AudioSystemBase.h">
+      <Filter>engine\Audio\Core</Filter>
     </ClInclude>
     <ClInclude Include="application\AppSystem\Audio\GameAudio.h">
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="application\AppSystem\Audio\CriticalHealthAudioEffect.h">
+      <Filter>application\AppSystem\Audio</Filter>
+    </ClInclude>
     <ClInclude Include="application\Object\Player\PAttackStrategy\IPAttackStrategy.h" />
     <ClInclude Include="application\Object\Player\PAttackStrategy\PAttackStrategies.h" />
-    <ClInclude Include="engine\Audio\AudioAnalysisResult.h" />
-    <ClInclude Include="engine\Audio\OfflineAudioAnalyzer.h" />
+    <ClInclude Include="engine\Audio\Analysis\AudioAnalysisResult.h">
+      <Filter>engine\Audio\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Audio\Analysis\OfflineAudioAnalyzer.h">
+      <Filter>engine\Audio\Analysis</Filter>
+    </ClInclude>
     <ClInclude Include="application\AppSystem\RailGenerator\AppRailGenerator.h" />
   </ItemGroup>
   <ItemGroup>

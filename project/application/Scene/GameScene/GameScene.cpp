@@ -1,7 +1,7 @@
 #include "GameScene.h"
 #include "WindowsApp.h"
 #include "Object3dBasis.h"
-#include "Audio/Audio.h"
+#include "Audio.h"
 #include "CubemapBasis.h"
 #include "Result/Result.h"
 #include "Pause/Pause.h"

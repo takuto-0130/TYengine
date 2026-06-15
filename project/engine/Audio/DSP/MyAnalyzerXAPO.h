@@ -95,15 +95,6 @@ namespace TYEngine
 
 			std::vector<BiquadFilter>& GetBiquadFilter(EQBand type) { return eqFilters_[type]; }
 
-			void UpdateCriticalHealthEffects(
-				float deltaTime,
-				float healthPercent, // 0.0 (死亡) ～ 1.0 (満タン)
-				TYEngine::AudioSystem::BiquadFilter& lpFilter,
-				TYEngine::AudioSystem::BiquadFilter& lsFilter);
-
-			void TestBeat();
-
-			void PerfBeat(float perf);
 
 		private:
 			void ComputeFFT();

@@ -163,39 +163,6 @@ void Player::ParticleUpdate()
 
 	ParticleManager::GetInstance()->SetEmitter(3, e);
 	ParticleManager::GetInstance()->TriggerEmit(3, true);
-
-	//// 1. 各種ベクトルの準備
- //   Matrix4x4 matWorld = worldTransform_.GetMatWorld();
- //   Vector3 right = { matWorld.m[0][0], matWorld.m[0][1], matWorld.m[0][2] };
- //   Vector3 up    = { matWorld.m[1][0], matWorld.m[1][1], matWorld.m[1][2] };
- //   Vector3 pos   = GetWorldPosition();
-
- //   // 2. AudioAnalyzerから現在の波形値を取得 (-1.0 ～ 1.0)
- //   // ここでは GameAudio経由などで AudioAnalyzer にアクセスする想定です
- //   float wave = GameAudio::GetInstance()->GetWaveform();
- //   
- //   float waveScale = 2.0f;  // 揺れ幅の倍率
- //   float wingSpan = 1.0f;   // 自機の中心からどれくらい離すか
- //   
- //   // 3. 左側のパーティクル生成（正位相）
- //   IParticleRenderer::Emitter eL;
- //   eL.transform.translate = pos - (right * wingSpan) + (up * (wave * waveScale));
- //   eL.transform.scale = {0.05f, 0.05f, 0.05f};
- //   eL.velocity = back * jetEffect_.speed; // その場に少し残るように低速に
- //   eL.count = 1;
- //   // 直接1発出すために TriggerEmit または Managerの直接生成関数を呼ぶ
- //   ParticleManager::GetInstance()->SetEmitter(3, eL); 
- //   ParticleManager::GetInstance()->TriggerEmit(3, true);
-
-    //// 4. 右側のパーティクル生成（逆位相）
-    //IParticleRenderer::Emitter eR;
-    //// waveにマイナスを掛けて逆位相にする
-    //eR.transform.translate = pos + (right * wingSpan) + (up * (-wave * waveScale));
-    //eR.transform.scale = {0.05f, 0.05f, 0.05f};
-    //eR.velocity = back * jetEffect_.speed;
-    //eR.count = 1;
-    //ParticleManager::GetInstance()->SetEmitter(3, eR); 
-    //ParticleManager::GetInstance()->TriggerEmit(3, true);
 }
 
 void Player::Draw()
@@ -261,10 +228,10 @@ void Player::DrawUI()
 void Player::TakeDamage()
 {
 #ifdef _DEBUG
-	// デバッグ時ダメージ処理（現在はなし）
-	if (input_->TriggerKey(DIK_DOWNARROW))
+	// デバッグ時ダメージ処理
+	if (input_->PushKey(DIK_DOWN))
 	{
-		--status_.hitPoint;
+		status_.hitPoint = status_.hitPoint / 2;
 	}
 #else
 	// 通常ダメージ処理：HP減少

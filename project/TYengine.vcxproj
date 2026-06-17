@@ -243,7 +243,6 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\Effect\ParticleManager.cpp" />
     <ClCompile Include="engine\Effect\PlaneParticle.cpp" />
     <ClCompile Include="engine\Effect\RingParticle.cpp" />
-    <ClCompile Include="application\Object\Rail\RailEditor.cpp" />
     <ClCompile Include="engine\OffScreen\RenderTexture.cpp" />
     <ClCompile Include="engine\Utility\SceneObjects\LevelObject.cpp" />
     <ClCompile Include="application\Stage\Stage.cpp" />
@@ -390,7 +389,6 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Effect\ParticleManager.h" />
     <ClInclude Include="engine\Effect\PlaneParticle.h" />
     <ClInclude Include="engine\Effect\RingParticle.h" />
-    <ClInclude Include="application\Object\Rail\RailEditor.h" />
     <ClInclude Include="engine\OffScreen\RenderTexture.h" />
     <ClInclude Include="engine\Utility\SceneObjects\LevelObject.h" />
     <ClInclude Include="application\Stage\Stage.h" />

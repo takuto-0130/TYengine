@@ -3,6 +3,7 @@
 #include "mathFunc.h"
 #include "TextureManager.h"
 #include "../../../ScoreUI/ScoreUI.h"
+#include <AppSystem/Audio/GameAudio.h>
 
 
 using namespace TYEngine::Framework;
@@ -13,13 +14,20 @@ using namespace TYEngine::Core;
 void PlayUI::Init()
 {
 	input_ = Input::GetInstance();
-
 	shakeTime_ = jm_->Get<float>("PlayUI.UIShake");
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/reticle.png");
 	reticle_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
+	reticle_->SetPosition({ 640,360 });
+
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
+	reticle2_ = std::make_unique<Sprite>();
+	reticle2_->Initialize("Resources/Texture/reticle.png");
+	reticle2_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
+	reticle2_->SetPosition({ 640,360 });
+	reticle2_->SetColor({ 1,0,0,1 });
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ComboText.png");
 	sprites_[COMBO_TEXT] = std::make_unique<Sprite>();
@@ -115,6 +123,7 @@ void PlayUI::Update()
 #ifdef _DEBUG
 	DebugJMApply();
 #endif // _DEBUG
+	reticle2_->SetScale(1.0f + (1.0f - GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
 
 	for (auto& sprite : sprites_)
 	{
@@ -127,6 +136,7 @@ void PlayUI::Update()
 void PlayUI::Draw()
 {
 	reticle_->Draw();
+	reticle2_->Draw();
 
 	for (int i = 0; i < SpriteNum; ++i)
 	{
@@ -149,12 +159,13 @@ void PlayUI::Draw()
 void PlayUI::DrawRT()
 {
 	reticle_->Update();
+	reticle2_->Update();
 }
 
 void PlayUI::ComboTexUpdate()
 {
-	Vector2 mouse = input_->GetMousePosition();
-	reticle_->SetPosition(mouse);
+	/*Vector2 mouse = input_->GetMousePosition();
+	reticle_->SetPosition(mouse);*/
 
 	// コンボ表示の透明度制御
 	float t = comboTimer_ / kComboTime_;

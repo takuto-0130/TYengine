@@ -516,9 +516,6 @@
     <ClCompile Include="engine\Effect\RingParticle.cpp">
       <Filter>engine\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Rail\RailEditor.cpp">
-      <Filter>application\Object\Rail</Filter>
-    </ClCompile>
     <ClCompile Include="engine\OffScreen\RenderTexture.cpp">
       <Filter>engine\OffScreen</Filter>
     </ClCompile>
@@ -941,9 +938,6 @@
     </ClInclude>
     <ClInclude Include="engine\Effect\RingParticle.h">
       <Filter>engine\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Object\Rail\RailEditor.h">
-      <Filter>application\Object\Rail</Filter>
     </ClInclude>
     <ClInclude Include="engine\OffScreen\RenderTexture.h">
       <Filter>engine\OffScreen</Filter>

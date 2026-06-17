@@ -248,7 +248,7 @@ private:
 	/// <summary>現在のカメラ注視点位置(s)。</summary>
 	float forwardS_ = 0.0f;
 	/// <summary>注視点への先読み距離。</summary>
-	float lookAhead_ = 1.0f;
+	float lookAhead_ = 12.0f;
 	/// <summary>移動速度（m/s）。</summary>
 	float speedMps_ = 0.0f;
 

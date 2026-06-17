@@ -6,6 +6,7 @@
 void GameScene::InitFadeIn()
 {
 }
+
 void GameScene::UpdateFadeIn()
 {
 	if (readyCount_ < 2)
@@ -29,6 +30,7 @@ void GameScene::UpdateFadeIn()
 	}
 
 }
+
 void GameScene::ExitFadeIn()
 {
 }

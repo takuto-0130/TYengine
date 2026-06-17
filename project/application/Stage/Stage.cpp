@@ -1,7 +1,6 @@
 #include "Stage.h"
 #include "Timer.h"
 #include "BlenderLevelLoader.h"
-#include "../Object/Rail/RailEditor.h"
 #include "../AppSystem//Audio//GameAudio.h"
 #include "../AppSystem/RailGenerator/AppRailGenerator.h"
 
@@ -124,14 +123,14 @@ void Stage::EditUpdate()
 
 nlohmann::json Stage::ToJson() const {
     nlohmann::json j;
-    j["rail"] = RailEditor::Instance()->ToJson();
+    //j["rail"] = RailEditor::Instance()->ToJson();
     return j;
 }
 
 void Stage::FromJson(const nlohmann::json& j) {
     // レールデータをJSONからデシリアライズ
-    RailEditor::Instance()->FromJson(j["rail"]);
-    
+    //RailEditor::Instance()->FromJson(j["rail"]);
+    (void)j;
     // ロード後にレールマネージャを再初期化
     railManager_->Reset();
 }

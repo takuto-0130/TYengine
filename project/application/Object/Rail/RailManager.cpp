@@ -1,9 +1,9 @@
 #include "RailManager.h"
-#include "RailEditor.h"
 #include "Camera.h"
 #include "TextureManager.h"
 #include "TImer.h"
 #include <imgui.h>
+#include <numeric>
 
 using namespace TYEngine::Utility;
 
@@ -23,24 +23,9 @@ void RailManager::Init()
 
 void RailManager::Reset()
 {
-	// 動的モードでなければ、エディタからデータを取得する
-	if (!isDynamicMode_)
-	{
-		controlPoints_ = RailEditor::Instance()->GetControlPoints();
-	}
-
 	triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
 	triggerObjects_.clear();
 
-	const auto& segments = RailEditor::Instance()->GetSegments();
-	for (size_t i = 0; i < controlPoints_.size(); ++i)
-	{
-		if (i < segments.size() && segments[i].triggerEvent)
-		{
-			triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-			triggerObjects_.back()->world.Update();
-		}
-	}
 
 	SetSegment();
 	RailReDraw();
@@ -167,27 +152,6 @@ void RailManager::PopRail(const Vector3& position, const Vector3& rotate)
 void RailManager::StageEdit()
 {
 #ifdef _DEBUG
-	RailEditor::Instance()->DrawEditorUI();
-	if (RailEditor::Instance()->NeedsPreviewUpdate())
-	{
-		controlPoints_ = RailEditor::Instance()->GetControlPoints();
-		triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
-		triggerObjects_.clear();
-
-		const auto& segments = RailEditor::Instance()->GetSegments();
-		for (size_t i = 0; i < controlPoints_.size(); ++i)
-		{
-			if (i < segments.size() && segments[i].triggerEvent)
-			{
-				triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-				triggerObjects_.back()->world.Update();
-			}
-		}
-
-		SetSegment();
-		RailReDraw();
-		RailEditor::Instance()->ResetPreviewFlag();
-	}
 #endif
 }
 
@@ -288,30 +252,30 @@ void RailManager::RailCameraMove()
 
 bool RailManager::RailTrigger()
 {
-	if (triggerS_.empty()) return false;
+	//if (triggerS_.empty()) return false;
 
-	// 通過方向に対応（通常は prevEyeS_ <= eyeS_）
-	const float s0 = std::min<float>(prevEyeS_, eyeS_);
-	const float s1 = std::max<float>(prevEyeS_, eyeS_);
+	//// 通過方向に対応（通常は prevEyeS_ <= eyeS_）
+	//const float s0 = std::min<float>(prevEyeS_, eyeS_);
+	//const float s1 = std::max<float>(prevEyeS_, eyeS_);
 
-	bool firedAny = false;
+	//bool firedAny = false;
 
-	// 昇順になっているので前から見るだけでOK
-	// 登録されたトリガー位置（距離s）が今回の移動区間内にあるかチェック
-	for (size_t i = 0; i < triggerS_.size(); ++i)
-	{
-		if (triggerFired_[i]) continue;
+	//// 昇順になっているので前から見るだけでOK
+	//// 登録されたトリガー位置（距離s）が今回の移動区間内にあるかチェック
+	//for (size_t i = 0; i < triggerS_.size(); ++i)
+	//{
+	//	if (triggerFired_[i]) continue;
 
-		const float s = triggerS_[i];
-		if (s > s1) break;                 // これより先はまだ到達していない
-		if (s >= s0 && s <= s1)            // 区間内に入ったらイベント発火
-		{
-			triggerFired_[i] = true;
-			firedAny = true;
-			// 複数個を同一フレームで通過しても全部拾える
-		}
-	}
-	return firedAny;
+	//	const float s = triggerS_[i];
+	//	if (s > s1) break;                 // これより先はまだ到達していない
+	//	if (s >= s0 && s <= s1)            // 区間内に入ったらイベント発火
+	//	{
+	//		triggerFired_[i] = true;
+	//		firedAny = true;
+	//		// 複数個を同一フレームで通過しても全部拾える
+	//	}
+	//}
+	return /*firedAny*/false;
 }
 
 void RailManager::RailCameraDebug()
@@ -332,6 +296,7 @@ void RailManager::RailCameraDebug()
 		RailCameraMove();
 	}
 	ImGui::DragFloat("SpeedMultiply", &speedMultiply_, 0.1f);
+	ImGui::DragFloat("LookAhead", &lookAhead_, 0.1f, 0.1f, 50.0f);
 	ImGui::End();
 #endif
 }
@@ -386,16 +351,14 @@ void RailManager::RebuildTriggerSFromSegments()
 	if (controlPoints_.size() < 2 || pointsDrawing_.size() < 2 || arcMap_.S.empty())
 		return;
 
-	const auto& segments = RailEditor::Instance()->GetSegments();
+	//const auto& segments = RailEditor::Instance()->GetSegments();
 
 	const size_t Nctrl = controlPoints_.size();
 	const size_t Npoly = pointsDrawing_.size();
 
 	// 制御点に対応する弧長（距離）を計算しトリガーリストに追加
-	for (size_t i = 0; i < Nctrl && i < segments.size(); ++i)
+	for (size_t i = 0; i < Nctrl; ++i)
 	{
-		if (!segments[i].triggerEvent) continue;
-
 		// 制御点のインデックスからスプライン全体のtを算出（近似）
 		float t = (Nctrl <= 1) ? 0.0f : static_cast<float>(i) / static_cast<float>(Nctrl - 1);
 		size_t idx = static_cast<size_t>(std::round(t * static_cast<float>(Npoly - 1)));

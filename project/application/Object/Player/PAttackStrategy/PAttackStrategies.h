@@ -138,73 +138,81 @@ namespace PlayerAttack
                     TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
                     TYEngine::Utility::Vector3 up = TYEngine::Utility::Normalize(Cross(forward, right));
 
+                    auto homing = [&](int num)
+                        {
+                            auto& lockOn = p->GetLockOn();
+                            for (int i = 0; i < num; i++)
+                            {
+                                if (lockOn.lockedEnemies.size() < num && lockOn.enemyManager)
+                                {
+                                    Enemy* targetE = lockOn.enemyManager->GetBestLockOnTarget(
+                                        p->GetCamera(), p->GetScreenOffset(), lockOn.lockOnRadius, lockOn.lockedEnemies);
+
+                                    if (targetE)
+                                    {
+                                        lockOn.lockedEnemies.push_back(targetE);
+                                    }
+                                }
+                            }
+                            if (!lockOn.lockedEnemies.empty())
+                            {
+                                p->GetBullets().currentBulletType = PlayerBulletType::HOMING;
+
+                                int bulletCount = 0;
+                                int totalBullets = static_cast<int>(lockOn.lockedEnemies.size());
+
+                                for (Enemy* targetE : lockOn.lockedEnemies)
+                                {
+                                    if (lockOn.enemyManager->IsValidEnemy(targetE))
+                                    {
+                                        up = p->GetCamera()->GetUp();
+                                        right = p->GetCamera()->GetRight();
+                                        forward = p->GetCamera()->GetForward();
+
+                                        float spreadX = (totalBullets > 1) ? -lockOn.spreadX + ((lockOn.spreadX * 2.0f) * bulletCount / (totalBullets - 1)) : 0.0f;
+                                        float spreadY = lockOn.spreadY;
+
+                                        TYEngine::Utility::Vector3 initialDir = Normalize(forward + (right * spreadX) + (up * spreadY));
+                                        p->GetBullets().bulletManager->Fire(p->GetBullets().currentBulletType, p->GetWorldPosition(), initialDir, targetE, lockOn.enemyManager);
+
+                                        bulletCount++;
+                                    }
+                                }
+                                lockOn.lockedEnemies.clear();
+                            }
+                        };
+
                     // ▼ コンボ段階に応じた発射パターンの分岐
                     if (comboStep_ == 0)
                     {
                         // 1段目: 通常の1発（中央）
-                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, forward);
+                        //bullets.bulletManager->Fire(bullets.currentBulletType, origin, forward);
+                        homing(1);
                     }
                     else if (comboStep_ == 1)
                     {
                         // 2段目: 左右2連装（水平に少しずらす）
-                        TYEngine::Utility::Vector3 dirRight = TYEngine::Utility::Normalize(forward + right * 0.05f);
+                        /*TYEngine::Utility::Vector3 dirRight = TYEngine::Utility::Normalize(forward + right * 0.05f);
                         TYEngine::Utility::Vector3 dirLeft = TYEngine::Utility::Normalize(forward - right * 0.05f);
 
                         bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirRight);
-                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirLeft);
+                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirLeft);*/
+                        homing(2);
                     }
                     else if (comboStep_ == 2)
                     {
                         // 3段目: 扇状3連装（中央＋左右広め）
-                        TYEngine::Utility::Vector3 dirRight = TYEngine::Utility::Normalize(forward + right * 0.1f);
-                        TYEngine::Utility::Vector3 dirLeft = TYEngine::Utility::Normalize(forward - right * 0.1f);
+                        //TYEngine::Utility::Vector3 dirRight = TYEngine::Utility::Normalize(forward + right * 0.1f);
+                        //TYEngine::Utility::Vector3 dirLeft = TYEngine::Utility::Normalize(forward - right * 0.1f);
 
-                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, forward);  // 中央
-                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirRight); // 右
-                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirLeft);  // 左
+                        //bullets.bulletManager->Fire(bullets.currentBulletType, origin, forward);  // 中央
+                        //bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirRight); // 右
+                        //bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirLeft);  // 左
+                        homing(3);
                     }
                     else if (comboStep_ >= 3)
                     {
-                        auto& lockOn = p->GetLockOn();
-                        for(int i = 0; i < maxLockOn_; i++)
-                        {
-                            if (lockOn.lockedEnemies.size() < maxLockOn_ && lockOn.enemyManager)
-                            {
-                                Enemy* targetE = lockOn.enemyManager->GetBestLockOnTarget(
-                                    p->GetCamera(), p->GetScreenOffset(), lockOn.lockOnRadius, lockOn.lockedEnemies);
-
-                                if (targetE)
-                                {
-                                    lockOn.lockedEnemies.push_back(targetE);
-                                }
-                            }
-                        }
-                        if (!lockOn.lockedEnemies.empty())
-                        {
-                            p->GetBullets().currentBulletType = PlayerBulletType::HOMING;
-
-                            int bulletCount = 0;
-                            int totalBullets = static_cast<int>(lockOn.lockedEnemies.size());
-
-                            for (Enemy* targetE : lockOn.lockedEnemies)
-                            {
-                                if (lockOn.enemyManager->IsValidEnemy(targetE))
-                                {
-                                    up = p->GetCamera()->GetUp();
-                                    right = p->GetCamera()->GetRight();
-                                    forward = p->GetCamera()->GetForward();
-
-                                    float spreadX = (totalBullets > 1) ? -lockOn.spreadX + ((lockOn.spreadX * 2.0f) * bulletCount / (totalBullets - 1)) : 0.0f;
-                                    float spreadY = lockOn.spreadY;
-
-                                    TYEngine::Utility::Vector3 initialDir = Normalize(forward + (right * spreadX) + (up * spreadY));
-                                    p->GetBullets().bulletManager->Fire(p->GetBullets().currentBulletType, p->GetWorldPosition(), initialDir, targetE, lockOn.enemyManager);
-
-                                    bulletCount++;
-                                }
-                            }
-                            lockOn.lockedEnemies.clear();
-                        }
+                        homing(maxLockOn_);
                     }
 
                     // 発射音

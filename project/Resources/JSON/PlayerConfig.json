@@ -51,8 +51,8 @@
       "scale": 0.05000000074505806
     },
     "bulletCoolTime": 0.20000000298023224,
-    "goodShotThreshold": 0.6000000238418579,
-    "perfectShotThreshold": 0.800000011920929
+    "goodShotThreshold": 0.4000000059604645,
+    "perfectShotThreshold": 0.699999988079071
   },
   "colliderScale": 0.20000000298023224,
   "destroyEffect": {

@@ -89,6 +89,7 @@ private:
 
 	/// <summary>レティクルスプライト。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> reticle_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> reticle2_;
 
 	/// <summary>コンボ表示中のタイマー。</summary>
 	float comboTimer_ = 0;

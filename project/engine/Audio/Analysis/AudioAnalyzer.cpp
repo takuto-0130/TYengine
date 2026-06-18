@@ -3,6 +3,8 @@
 #include "Timer.h"
 
 #include <algorithm>
+#include <cmath>
+#include <numbers>
 
 namespace TYEngine
 {
@@ -24,13 +26,35 @@ namespace TYEngine
 			waveformWriteIndex_ = 0;
 
 			soundCategory_ = soundCategory;
+
+			// メモリ事前確保
+			tempWaveform_.resize(FFT_SIZE, 0.0f);
+			fftInput_.resize(FFT_SIZE, 0.0f);
+			fftReal_.resize(FFT_SIZE, 0.0f);
+			fftImag_.resize(FFT_SIZE, 0.0f);
+			latestFFT_.resize(FFT_SIZE, 0.0f);
+			prevMag_.resize(FFT_SIZE, 0.0f);
+			logSpectrum_.resize(BANDS, 0.0f);
 		}
 
 		void AudioAnalyzer::Update()
 		{
-			// RMS（音量）更新 - XAPOから取得
+			// XAPOから最新波形を安全に取得
+			auto xapo = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_);
+			if (xapo)
+			{
+				xapo->GetLatestWaveform(tempWaveform_, FFT_SIZE);
+				
+				// FFT計算
+				ComputeFFT();
+				
+				// Spectral Flux計算
+				AnalyzeBeat();
+			}
+
+			// RMS（音量）更新
 			UpdateRMS();
-			// FFT（周波数解析）更新 - XAPOから取得
+			// FFT（周波数解析）更新
 			UpdateFFT();
 			// 波形データ更新
 			UpdateWaveform();
@@ -40,7 +64,13 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateRMS()
 		{
-			float rms = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetRMS();
+			// 最新サンプルのRMSを計算
+			double sum = 0.0;
+			for (int i = 0; i < FFT_SIZE; ++i)
+			{
+				sum += tempWaveform_[i] * tempWaveform_[i];
+			}
+			float rms = static_cast<float>(std::sqrt(sum / FFT_SIZE));
 
 			// 履歴
 			rmsHistory_[rmsIndex_] = rms;
@@ -55,26 +85,24 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateFFT()
 		{
-			const auto& fftNow = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetFFT();
-
 			// 遅延バッファにコピー
 			for (int i = 0; i < FFT_SIZE; i++)
-				fftDelay_[fftDelayIndex_][i] = fftNow[i];
+				fftDelay_[fftDelayIndex_][i] = latestFFT_[i];
 
 			fftDelayIndex_ = (fftDelayIndex_ + 1) % DELAY_FRAMES;
 		}
 
 		void AudioAnalyzer::UpdateWaveform()
 		{
-			auto* xapo = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_).Get();
-			const auto& src = xapo->GetWaveform();
-
-			int N = static_cast<int>(src.size());
+			// 可視化用の441サンプル（10ms分）を取得
+			// tempWaveform_ の末尾441個が最新のデータなので、それをスクロールバッファに追記する
+			int N = 441;
+			int startOffset = FFT_SIZE - N;
 
 			// リングバッファに書き込む（履歴保存）
 			for (int i = 0; i < N; i++)
 			{
-				waveformScroll_[waveformWriteIndex_] = src[i];
+				waveformScroll_[waveformWriteIndex_] = tempWaveform_[startOffset + i];
 
 				waveformWriteIndex_++;
 				if (waveformWriteIndex_ >= waveformScroll_.size())
@@ -82,8 +110,6 @@ namespace TYEngine
 			}
 
 			// 可視用（画面に表示する 441 サンプル分）
-			waveform_.resize(441);
-
 			for (int i = 0; i < 441; i++)
 			{
 				// 常に最新から過去へ遡って取得
@@ -92,6 +118,96 @@ namespace TYEngine
 
 				waveform_[i] = waveformScroll_[index];
 			}
+		}
+
+		void AudioAnalyzer::ComputeFFT()
+		{
+			// 窓関数の適用、虚数部は0初期化
+			for (int i = 0; i < FFT_SIZE; ++i)
+			{
+				float w = 0.5f - 0.5f * cosf(2.0f * std::numbers::pi_v<float> * i / (FFT_SIZE - 1));
+				fftReal_[i] = tempWaveform_[i] * w; // 窓をかけてからFFTへ
+				fftImag_[i] = 0.0f;
+			}
+
+			// ビット反転順序への並べ替え
+			int j = 0;
+			for (int i = 0; i < FFT_SIZE; i++)
+			{
+				if (i < j)
+				{
+					std::swap(fftReal_[i], fftReal_[j]);
+					std::swap(fftImag_[i], fftImag_[j]);
+				}
+				int bit = FFT_SIZE >> 1;
+				while (j & bit) { j ^= bit; bit >>= 1; }
+				j |= bit;
+			}
+
+			// バタフライ演算
+			for (int len = 2; len <= FFT_SIZE; len <<= 1)
+			{
+				float ang = -2.0f * std::numbers::pi_v<float> / len;
+				float wCos = cosf(ang);
+				float wSin = sinf(ang);
+
+				for (int i = 0; i < FFT_SIZE; i += len)
+				{
+					float uCos = 1.0f;
+					float uSin = 0.0f;
+
+					for (int k = 0; k < len / 2; k++)
+					{
+						int a = i + k;
+						int b = i + k + len / 2;
+
+						float xr = fftReal_[b] * uCos - fftImag_[b] * uSin;
+						float xi = fftReal_[b] * uSin + fftImag_[b] * uCos;
+
+						fftReal_[b] = fftReal_[a] - xr;
+						fftImag_[b] = fftImag_[a] - xi;
+
+						fftReal_[a] += xr;
+						fftImag_[a] += xi;
+
+						float ucos2 = uCos * wCos - uSin * wSin;
+						uSin = uCos * wSin + uSin * wCos;
+						uCos = ucos2;
+					}
+				}
+			}
+
+			// パワースペクトル（振幅）の計算
+			for (int i = 0; i < FFT_SIZE; i++)
+				latestFFT_[i] = sqrtf(fftReal_[i] * fftReal_[i] + fftImag_[i] * fftImag_[i]);
+		}
+
+		void AudioAnalyzer::AnalyzeBeat()
+		{
+			float flux = 0.0f;
+
+			// 解析帯域の指定 (FFT_SIZE=1024 の場合、1bin ≒ 43Hz)
+			// 2(約86Hz) ～ 60(約2.5kHz) あたりが打楽器の成分
+			int start = 2;
+			int end = 60;
+
+			for (int i = start; i < end; ++i)
+			{
+				// 現在の値と前回の値の差分（増加量）を取る
+				float diff = latestFFT_[i] - prevMag_[i];
+
+				// 音が大きくなった時だけを足し合わせる (Spectral Flux)
+				if (diff > 0.0f)
+				{
+					flux += diff;
+				}
+
+				// 次回のために現在の値を保存
+				prevMag_[i] = latestFFT_[i];
+			}
+
+			// 算出した Flux 値を保存
+			latestSpectralFlux_ = flux;
 		}
 
 		void AudioAnalyzer::UpdateSpectrumSmoothing()
@@ -107,8 +223,8 @@ namespace TYEngine
 			// 遅延FFTでスペクトラム作成
 			const auto& fft = fftDelay_[fftDelayIndex_];
 
-			auto spectrum = MakeLogSpectrum(
-				std::vector<float>(fft.begin(), fft.end()),
+			MakeLogSpectrum(
+				fft,
 				Audio::GetInstance()->GetAnalyzerSampleRate(),
 				BANDS
 			);
@@ -119,7 +235,7 @@ namespace TYEngine
 
 			for (int i = 0; i < BANDS; i++)
 			{
-				float v = spectrum[i];
+				float v = logSpectrum_[i];
 
 				if (v > spectrumSmoothed_[i])
 					spectrumSmoothed_[i] = spectrumSmoothed_[i] * (1.0f - attack) + v * attack;
@@ -212,13 +328,11 @@ namespace TYEngine
 			high_ = smooth(high_, highTarget);
 		}
 
-		std::vector<float> AudioAnalyzer::MakeLogSpectrum(
-			const std::vector<float>& fft,
+		void AudioAnalyzer::MakeLogSpectrum(
+			const std::array<float, FFT_SIZE>& fft,
 			int sampleRate,
 			int bands)
 		{
-			std::vector<float> out(bands, 0.0f);
-
 			float minF = 20.0f;              // 人間の可聴最低周波数
 			float maxF = sampleRate / 2.0f;  // ナイキスト周波数
 
@@ -254,10 +368,8 @@ namespace TYEngine
 					count++;
 				}
 
-				out[b] = (count > 0) ? sum / count : 0.0f;
+				logSpectrum_[b] = (count > 0) ? sum / count : 0.0f;
 			}
-
-			return out;
 		}
 
 		std::vector<AudioAnalyzer::BandInfo> AudioAnalyzer::CalcLogBands(int bands, float sampleRate)
@@ -283,9 +395,6 @@ namespace TYEngine
 
 		void AudioAnalyzer::DrawRSM(float width)
 		{
-			// ----------------------
-			// RMS パネル
-			// ----------------------
 			ImGui::Text("RMS: %.3f", syncedRMS_);
 			ImGui::SameLine();
 			ImGui::ProgressBar(syncedRMS_, ImVec2(width - 100.0f, 18));
@@ -298,9 +407,6 @@ namespace TYEngine
 
 		void AudioAnalyzer::DrawSpectrum(float width)
 		{
-			// ----------------------
-			// Spectrum パネル
-			// ----------------------
 			auto bandsInfo = CalcLogBands(
 				BANDS,
 				static_cast<float>(Audio::GetInstance()->GetAnalyzerSampleRate())
@@ -310,45 +416,31 @@ namespace TYEngine
 
 			ImGui::Text("SpectrumBar");
 
-			// 選択バンド（ハイライト用）
 			static int selectedBand = -1;
 
 			for (int i = 0; i < BANDS; i++)
 			{
 				float v = spectrumSmoothed_[i];
 
-				// normalize
 				float n = v / 2.0f;
 				if (n > 1.0f) n = 1.0f;
 
-				// ----------------------
-				// ハイライト色の設定
-				// ----------------------
 				ImVec4 col = (i == selectedBand)
-					? ImVec4(1.0f, 0.8f, 0.2f, 1.0f)   // 選択時（黄色）
-					: ImVec4(0.2f, 0.6f, 1.0f, 1.0f); // 通常（青）
+					? ImVec4(1.0f, 0.8f, 0.2f, 1.0f)
+					: ImVec4(0.2f, 0.6f, 1.0f, 1.0f);
 
 				ImGui::PushStyleColor(ImGuiCol_PlotHistogram, col);
 
-				// バー描画
 				ImGui::ProgressBar(n, ImVec2(barWidth, 8), "");
 
 				ImGui::PopStyleColor();
 
-
-				// ----------------------
-				// クリックでハイライト
-				// ----------------------
 				if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 					selectedBand = i;
 
 				if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
 					selectedBand = -1;
 
-
-				// ----------------------
-				// Tooltip（周波数帯 + dB）
-				// ----------------------
 				if (ImGui::IsItemHovered())
 				{
 					ImGui::BeginTooltip();
@@ -356,24 +448,20 @@ namespace TYEngine
 					ImGui::Text("Band %d", i);
 					ImGui::Separator();
 
-					// dB エネルギー
 					float dB = 20.0f * log10f(v + 1e-7f);
 					ImGui::Text("Energy: %.1f dB", dB);
 					ImGui::Separator();
 
-					// Low
 					if (bandsInfo[i].low >= 1000.0f)
 						ImGui::Text("Low:    %.2f kHz", bandsInfo[i].low / 1000.0f);
 					else
 						ImGui::Text("Low:    %.0f Hz", bandsInfo[i].low);
 
-					// Center
 					if (bandsInfo[i].center >= 1000.0f)
 						ImGui::Text("Center:  %.2f kHz", bandsInfo[i].center / 1000.0f);
 					else
 						ImGui::Text("Center:  %.0f Hz", bandsInfo[i].center);
 
-					// High
 					if (bandsInfo[i].high >= 1000.0f)
 						ImGui::Text("High:   %.2f kHz", bandsInfo[i].high / 1000.0f);
 					else
@@ -386,25 +474,17 @@ namespace TYEngine
 
 		void AudioAnalyzer::DrawWaveform(float width)
 		{
-			// ---------------------------
-			// 波形ビューワー
-			// ---------------------------
-
 			ImGui::Text("Waveform");
-			// --- サイズ指定 ---
 			ImVec2 size = ImVec2(width, 150);
-			ImVec2 pos = ImGui::GetCursorScreenPos();     // ウィンドウ内の描画開始位置
+			ImVec2 pos = ImGui::GetCursorScreenPos();
 			ImDrawList* dl = ImGui::GetWindowDrawList();
 
-			// --- 背景 ---
 			dl->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + size.y),
 				IM_COL32(30, 30, 30, 255));
 
-			// --- グリッド線 ---
 			const int gridX = 10;
 			const int gridY = 6;
 
-			// 縦線
 			for (int i = 1; i < gridX; i++)
 			{
 				float x = pos.x + (size.x / gridX) * i;
@@ -412,7 +492,6 @@ namespace TYEngine
 					IM_COL32(80, 80, 80, 255));
 			}
 
-			// 横線
 			for (int i = 1; i < gridY; i++)
 			{
 				float y = pos.y + (size.y / gridY) * i;
@@ -420,7 +499,6 @@ namespace TYEngine
 					IM_COL32(80, 80, 80, 255));
 			}
 
-			// --- 波形描画 ---
 			int N = static_cast<int>(waveform_.size());
 			if (N > 1)
 			{
@@ -431,7 +509,6 @@ namespace TYEngine
 					float x1 = pos.x + step * (i - 1);
 					float x2 = pos.x + step * i;
 
-					// float 波形は -1.0 ～ +1.0 範囲
 					float y1 = pos.y + size.y * (0.5f - waveform_[i - 1] * 0.45f);
 					float y2 = pos.y + size.y * (0.5f - waveform_[i] * 0.45f);
 
@@ -441,6 +518,31 @@ namespace TYEngine
 			}
 
 			ImGui::Dummy(size);
+		}
+
+		void AudioAnalyzer::DrawEQControl()
+		{
+			auto xapo = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_);
+			if (!xapo) return;
+
+			float low = 0.0f, mid = 0.0f, high = 0.0f;
+			xapo->GetEQGain(low, mid, high);
+			float lp = 0.0f, hp = 0.0f, bp = 0.0f;
+			xapo->GetFiltersHz(lp, hp, bp);
+
+			bool changed = false;
+
+			ImGui::Text("Equalizer Settings");
+			changed |= ImGui::DragFloat("Low Gain", &low, 0.1f, -15.0f, 15.0f, "%.1f dB");
+			changed |= ImGui::DragFloat("Mid Gain", &mid, 0.1f, -15.0f, 15.0f, "%.1f dB");
+			changed |= ImGui::DragFloat("High Gain", &high, 0.1f, -15.0f, 15.0f, "%.1f dB");
+			changed |= ImGui::DragFloat("LPF Hz", &lp, 10.0f, 1000.0f, 20000.0f, "%.0f Hz");
+
+			if (changed)
+			{
+				xapo->SetEQGain(low, mid, high);
+				xapo->SetFiltersHz(lp, hp, bp);
+			}
 		}
 
 		void AudioAnalyzer::Draw()
@@ -461,6 +563,11 @@ namespace TYEngine
 			ImGui::Text("Low : %.2f", low_);
 			ImGui::Text("Mid : %.2f", mid_);
 			ImGui::Text("High : %.2f", high_);
+
+			// イコライザー制御表示
+			ImGui::Separator();
+			DrawEQControl();
+			ImGui::Separator();
 
 			// 波形描画
 			DrawWaveform(width);

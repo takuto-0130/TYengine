@@ -37,7 +37,7 @@ void TitleScene::DebugUpdate()
 	{
 		gameAudio_->SetHPPerf(health);
 	}
-	Audio::GetInstance()->GetAnalyzerXAPO()->EQImGui();
+	gameAudio_->GetAnalyzer().DrawEQControl();
 	ImGui::End();
 
 	// ImGui で編集

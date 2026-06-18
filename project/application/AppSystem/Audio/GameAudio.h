@@ -66,7 +66,7 @@ public:
 
     TYEngine::AudioSystem::AudioAnalyzer& GetAnalyzer() { return audioAnalyzer_; }
 
-    float& GetWaveform() { return GetAudio()->GetAnalyzerXAPO()->GetWaveform()[0]; }
+    float& GetWaveform() { return const_cast<float&>(audioAnalyzer_.GetWaveform()[0]); }
 
     void SetHPPerf(float perf) { hpPerf_ = perf; }
 

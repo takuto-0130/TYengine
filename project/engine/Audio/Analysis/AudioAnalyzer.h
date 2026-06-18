@@ -53,6 +53,15 @@ namespace TYEngine
 			/// <summary>高音域の強度（0.0～1.0）。</summary>
 			float GetHigh() const { return high_; }
 
+			/// <summary>最新のSpectral Flux値を取得する。</summary>
+			float GetSpectralFlux() const { return latestSpectralFlux_; }
+
+			/// <summary>最新の波形データを取得する。</summary>
+			const std::vector<float>& GetWaveform() const { return waveform_; }
+
+			/// <summary>イコライザーの調整用UIを描画する。</summary>
+			void DrawEQControl();
+
 		private:
 			// 内部処理
 			void UpdateRMS();
@@ -63,8 +72,8 @@ namespace TYEngine
 			// Low/Mid/High 更新
 			void UpdateBand();
 
-			std::vector<float> MakeLogSpectrum(
-				const std::vector<float>& fft,
+			void MakeLogSpectrum(
+				const std::array<float, FFT_SIZE>& fft,
 				int sampleRate,
 				int bands);
 
@@ -80,7 +89,22 @@ namespace TYEngine
 			void DrawSpectrum(float width);
 			void DrawWaveform(float width);
 
+			// FFT計算（メインスレッド側）
+			void ComputeFFT();
+			void AnalyzeBeat();
+
 		private:
+			// ---- FFT/解析 関連 ----
+			std::vector<float> tempWaveform_; // XAPOからデータを一時抽出するバッファ
+			std::vector<float> fftInput_;
+			std::vector<float> fftReal_;
+			std::vector<float> fftImag_;
+			std::vector<float> latestFFT_;
+			std::vector<float> prevMag_;
+			float latestSpectralFlux_ = 0.0f;
+
+			std::vector<float> logSpectrum_; // 対数スペクトルの一時保存用
+
 			// ---- RMS 関連 ----
 			float rmsHistory_[RMS_HISTORY_SIZE] = {};
 			int rmsIndex_ = 0;

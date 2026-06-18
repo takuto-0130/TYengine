@@ -2,30 +2,41 @@
 #include "Audio.h"
 #include "Timer.h"
 #include "imgui.h"
-
+#include "AppSystem/Audio/GameAudio.h"
+#include <algorithm>
 
 namespace TYEngine
 {
 	namespace AudioSystem
 	{
 		BeatAnalyzer::BeatAnalyzer()
+			: beatPhase_(0.0f)
+			, isBeat_(false)
+			, currentBPM_(0.0f)
+			, syncCooldown_(0.0f)
+			, fluxHistoryIndex_(0)
+			, fluxHistoryCount_(0)
 		{
-		
+			std::fill(std::begin(fluxHistory_), std::end(fluxHistory_), 0.0f);
 		}
+
 		void BeatAnalyzer::Init(const std::string& filename, const std::string& soundCategory)
 		{
 			currentBPM_ = Audio::GetInstance()->GetSoundData(filename).bpm;
 			soundCategory_ = soundCategory;
 		}
+
 		void BeatAnalyzer::Init(float bpm, const std::string& soundCategory)
 		{
 			currentBPM_ = bpm;
 			soundCategory_ = soundCategory;
 		}
+
 		void BeatAnalyzer::Update()
 		{
 			DetectBeat();
 		}
+
 		void BeatAnalyzer::Draw()
 		{
 #ifdef _DEBUG
@@ -58,24 +69,34 @@ namespace TYEngine
 
 		void BeatAnalyzer::DetectBeat()
 		{
+			auto* gameAudio = GameAudio::GetInstance();
+			auto& analyzer = gameAudio->GetAnalyzer();
+
 			// 無音判定
-			if (Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetRMS() < 0.00001f)
+			if (analyzer.GetSyncedRMS() < 0.00001f)
 			{
 				isBeat_ = false;
 				beatPhase_ = 0.0f;
 				return;
 			}
 
-			// XAPOからSpectral Flux取得
-			float currentFlux = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_)->GetSpectralFlux();
+			// AudioAnalyzerからSpectral Flux取得
+			float currentFlux = analyzer.GetSpectralFlux();
 
 			// 1. 平均Flux計算
-			fluxHistory_.push_back(currentFlux);
-			if (fluxHistory_.size() > 60) fluxHistory_.erase(fluxHistory_.begin());
+			fluxHistory_[fluxHistoryIndex_] = currentFlux;
+			fluxHistoryIndex_ = (fluxHistoryIndex_ + 1) % FLUX_HISTORY_SIZE;
+			if (fluxHistoryCount_ < FLUX_HISTORY_SIZE)
+			{
+				fluxHistoryCount_++;
+			}
 
-			float avgFlux = 0;
-			for (float f : fluxHistory_) avgFlux += f;
-			avgFlux /= fluxHistory_.size();
+			float avgFlux = 0.0f;
+			for (size_t i = 0; i < fluxHistoryCount_; i++)
+			{
+				avgFlux += fluxHistory_[i];
+			}
+			avgFlux /= fluxHistoryCount_;
 
 			// 2. 閾値計算
 			float threshold = avgFlux * 1.8f;

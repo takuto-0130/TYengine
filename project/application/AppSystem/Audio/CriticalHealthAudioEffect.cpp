@@ -24,21 +24,11 @@ namespace TYEngine
         const float threshold = 0.45f;
         auto* pem = PostEffectManager::GetInstance();
 
-        // チャンネル数を取得（MyAnalyzerXAPO側の情報）
-        auto& lpfList = analyzer->GetBiquadFilter(AudioSystem::MyAnalyzerXAPO::EQBand::LPF);
-        auto& lowList = analyzer->GetBiquadFilter(AudioSystem::MyAnalyzerXAPO::EQBand::Low);
-        size_t channels = lpfList.size();
-
         if (healthPercent > threshold)
         {
-            // 3割（閾値）以上の時はフィルターをリセットして効果を無効化
-            for (size_t ch = 0; ch < channels; ch++)
-            {
-                lpfList[ch].Reset();
-                lowList[ch].Reset();
-                lpfList[ch].SetCoefficients(AudioSystem::FilterType::LowPassFilter, 48000.0f, 20000.0f, 0.707f);
-                lowList[ch].SetCoefficients(AudioSystem::FilterType::LowShelf, 48000.0f, 10.0f, 0.707f, 0.0f);
-            }
+            // 閾値以上の時はフィルターを通常設定に戻す
+            analyzer->SetFiltersHz(20000.0f, 10.0f, 2000.0f);
+            analyzer->SetEQGain(0.0f, 0.0f, 0.0f);
 
             if (pem)
             {
@@ -80,11 +70,8 @@ namespace TYEngine
         // LowShelf: 低音を 12dB ブースト
         float boostDb = std::lerp(0.0f, 12.0f, pulse * intensityMod);
 
-        for (size_t ch = 0; ch < channels; ch++)
-        {
-            lpfList[ch].SetCoefficients(AudioSystem::FilterType::LowPassFilter, 48000.0f, lpCutoff);
-            lowList[ch].SetCoefficients(AudioSystem::FilterType::LowShelf, 48000.0f, 100.0f, 0.707f, boostDb);
-        }
+        analyzer->SetFiltersHz(lpCutoff, 10.0f, 2000.0f);
+        analyzer->SetEQGain(boostDb, 0.0f, 0.0f);
 
         // --- 5. ヴィネット適用 ---
         if (pem)

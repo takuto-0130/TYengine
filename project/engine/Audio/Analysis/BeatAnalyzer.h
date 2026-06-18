@@ -54,7 +54,10 @@ namespace TYEngine
 			float currentBPM_ = 0.0f;
 			float syncCooldown_ = 0.0f; // 同期処理の重複防止用
 
-			std::vector<float> fluxHistory_;
+			static const size_t FLUX_HISTORY_SIZE = 60;
+			float fluxHistory_[FLUX_HISTORY_SIZE] = {};
+			size_t fluxHistoryIndex_ = 0;
+			size_t fluxHistoryCount_ = 0;
 		};
 	}
 }

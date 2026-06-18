@@ -84,55 +84,52 @@ namespace TYEngine
 				BOOL IsEnabled
 			) override;
 
-			// getter
-			float GetRMS() { return latestRMS_; }
-			std::vector<float>& GetFFT() { return latestFFT_; }
-			std::vector<float>& GetWaveform() { return latestWaveform_; }
-			
-			float GetSpectralFlux() const { return latestSpectralFlux_; }
+			// スレッドセーフに最新波形データを取得する
+			void GetLatestWaveform(std::vector<float>& dest, size_t count);
 
-			void EQImGui();
+			// サンプリングレートとチャンネル数のゲッター
+			UINT32 GetSampleRate() const { return sampleRate_; }
+			UINT32 GetChannels() const { return channels_; }
+
+			// アトミックなイコライザーパラメータのセッター・ゲッター
+			void SetEQGain(float low, float mid, float high) {
+				lowGain_.store(low, std::memory_order_relaxed);
+				midGain_.store(mid, std::memory_order_relaxed);
+				highGain_.store(high, std::memory_order_relaxed);
+				parametersChanged_.store(true, std::memory_order_release);
+			}
+			void GetEQGain(float& low, float& mid, float& high) const {
+				low = lowGain_.load(std::memory_order_relaxed);
+				mid = midGain_.load(std::memory_order_relaxed);
+				high = highGain_.load(std::memory_order_relaxed);
+			}
+			void SetFiltersHz(float lp, float hp, float bp) {
+				LPHz_.store(lp, std::memory_order_relaxed);
+				HPHz_.store(hp, std::memory_order_relaxed);
+				BPHz_.store(bp, std::memory_order_relaxed);
+				parametersChanged_.store(true, std::memory_order_release);
+			}
+			void GetFiltersHz(float& lp, float& hp, float& bp) const {
+				lp = LPHz_.load(std::memory_order_relaxed);
+				hp = HPHz_.load(std::memory_order_relaxed);
+				bp = BPHz_.load(std::memory_order_relaxed);
+			}
 
 			std::vector<BiquadFilter>& GetBiquadFilter(EQBand type) { return eqFilters_[type]; }
 
-
 		private:
-			void ComputeFFT();
-
-			/// <summary>
-			/// 拍の解析
-			/// </summary>
-			void AnalyzeBeat();
-
 			void UpdateEQ();
 
 		private:
 			/// <summary>入力チャンネル数。</summary>
 			UINT32 channels_ = 0;
 
-			/// <summary>遅延バッファ（時間差計測用）。</summary>
-			std::vector<std::vector<float>> delayBuffer_;
-			/// <summary>遅延バッファの書き込みインデックス。</summary>
-			UINT32 delayIndex_ = 0;
+			// パラメータ更新通知用フラグ
+			std::atomic<bool> parametersChanged_{true};
 
-			/// <summary>FFT入力バッファ。</summary>
-			std::vector<float> fftInput_;
-			/// <summary>FFT実部。</summary>
-			std::vector<float> fftReal_;
-			/// <summary>FFT虚部。</summary>
-			std::vector<float> fftImag_;
-
-			/// <summary>最新のRMS（音圧）値。</summary>
-			float latestRMS_ = 0.0f;
-			/// <summary>最新のFFT解析結果。</summary>
-			std::vector<float> latestFFT_;
-			/// <summary>最新の波形データ（UI表示用）。</summary>
-			std::vector<float> latestWaveform_;  // タイムドメイン用
-
-			/// <summary>前フレームのFFTマグニチュード（Spectral Flux計算用）</summary>
-			std::vector<float> prevMag_;
-			/// <summary>計算された低域エネルギー（またはFlux値）</summary>
-			float latestSpectralFlux_ = 0.0f;
+			// スレッドセーフリングバッファ
+			std::vector<float> ringBuffer_;
+			std::atomic<size_t> writeIndex_{0};
 
 			// イコライザー用フィルタ (外側: バンド数, 内側: チャンネル数)
 			// 例: index 0=Low, 1=Mid, 2=High

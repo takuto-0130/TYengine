@@ -14,26 +14,13 @@ using namespace Debugger;
 using namespace AudioSystem;
 using namespace Graphics;
 
-#define TITLE_SCENE_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(TitleScene, stateEnum, funcName)
-
-const std::vector<TitleScene::StateFunctionSet>& TitleScene::GetStateTable()
-{
-	using enum TitleSceneState;
-	static const std::vector<StateFunctionSet> stateTable =
-	{
-		TITLE_SCENE_ENTRY(FADE_IN, FadeIn),
-		TITLE_SCENE_ENTRY(READY, Ready),
-		TITLE_SCENE_ENTRY(PLAY, Play),
-		TITLE_SCENE_ENTRY(PAUSE, Pause),
-		TITLE_SCENE_ENTRY(FADE_OUT, FadeOut)
-	};
-	return stateTable;
-}
-
 TitleScene::TitleScene()
 {
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<TitleSceneStateFadeIn>(TitleSceneState::FADE_IN, "FadeIn");
+	stateMachine_.RegisterState<TitleSceneStateReady>(TitleSceneState::READY, "Ready");
+	stateMachine_.RegisterState<TitleSceneStatePlay>(TitleSceneState::PLAY, "Play");
+	stateMachine_.RegisterState<TitleSceneStatePause>(TitleSceneState::PAUSE, "Pause");
+	stateMachine_.RegisterState<TitleSceneStateFadeOut>(TitleSceneState::FADE_OUT, "FadeOut");
 }
 
 TitleScene::~TitleScene()
@@ -123,7 +110,7 @@ void TitleScene::Update() {
 
 	oscillator_.Update();
 
-	stateMachine_.UpdateState(Timer::GetInstance()->GetDeltaTime());
+	stateMachine_.UpdateState(*this, Timer::GetInstance()->GetDeltaTime());
 
 	// UI更新
 	enterSpr_->Update();

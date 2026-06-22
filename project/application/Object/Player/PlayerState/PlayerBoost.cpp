@@ -1,16 +1,17 @@
 #include "../Player.h"
 
-void Player::InitBoost()
+void PlayerStateBoost::Init(Player& owner)
 {
-	// ブースト加速状態初期化（現在処理なし）
+	(void)owner;
 }
 
-void Player::UpdateBoost()
+void PlayerStateBoost::Update(Player& owner, float deltaTime)
 {
-
+	(void)owner;
+	(void)deltaTime;
 }
 
-void Player::ExitBoost()
+void PlayerStateBoost::Exit(Player& owner)
 {
-
+	(void)owner;
 }

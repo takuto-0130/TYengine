@@ -23,32 +23,19 @@ using namespace TYEngine::AudioSystem;
 using namespace TYEngine::Graphics;
 using namespace TYEngine;
 
-#define GAME_SCENE_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(GameScene, stateEnum, funcName)
-
-const std::vector<GameScene::StateFunctionSet>& GameScene::GetStateTable()
-{
-	using enum GameSceneState;
-	static const std::vector<StateFunctionSet> stateTable =
-	{
-		GAME_SCENE_ENTRY(LOAD, Load),
-		GAME_SCENE_ENTRY(FADE_IN, FadeIn),
-		GAME_SCENE_ENTRY(READY, Ready),
-		GAME_SCENE_ENTRY(PLAY, Play),
-		GAME_SCENE_ENTRY(PAUSE, Pause),
-		GAME_SCENE_ENTRY(DEAD, Dead),
-		GAME_SCENE_ENTRY(CLEAR, Clear),
-		GAME_SCENE_ENTRY(RESULT, Result),
-		GAME_SCENE_ENTRY(RETRY, Retry),
-		GAME_SCENE_ENTRY(FADE_OUT, FadeOut),
-		GAME_SCENE_ENTRY(DEBUG_EDIT, DebugEdit),
-	};
-	return stateTable;
-}
-
 GameScene::GameScene()
 {
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<GameSceneStateLoad>(GameSceneState::LOAD, "Load");
+	stateMachine_.RegisterState<GameSceneStateFadeIn>(GameSceneState::FADE_IN, "FadeIn");
+	stateMachine_.RegisterState<GameSceneStateReady>(GameSceneState::READY, "Ready");
+	stateMachine_.RegisterState<GameSceneStatePlay>(GameSceneState::PLAY, "Play");
+	stateMachine_.RegisterState<GameSceneStatePause>(GameSceneState::PAUSE, "Pause");
+	stateMachine_.RegisterState<GameSceneStateDead>(GameSceneState::DEAD, "Dead");
+	stateMachine_.RegisterState<GameSceneStateClear>(GameSceneState::CLEAR, "Clear");
+	stateMachine_.RegisterState<GameSceneStateResult>(GameSceneState::RESULT, "Result");
+	stateMachine_.RegisterState<GameSceneStateRetry>(GameSceneState::RETRY, "Retry");
+	stateMachine_.RegisterState<GameSceneStateFadeOut>(GameSceneState::FADE_OUT, "FadeOut");
+	stateMachine_.RegisterState<GameSceneStateDebugEdit>(GameSceneState::DEBUG_EDIT, "DebugEdit");
 }
 
 GameScene::~GameScene()
@@ -135,7 +122,7 @@ void GameScene::Update()
 	bulletTime_->Update();
 
 	// 現在のシーンステートの更新処理を実行
-	stateMachine_.UpdateState(Timer::GetInstance()->GetDeltaTime());
+	stateMachine_.UpdateState(*this, Timer::GetInstance()->GetDeltaTime());
 	
 	// デバッグ用エディタ切り替え処理（デバッグビルドのみ）
 	SwitchEdit();

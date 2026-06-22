@@ -1,5 +1,6 @@
 #pragma once
 #include "../StateMachineTransition.h"
+#include "State.h"
 #include "Object3d.h"
 #include <memory>
 
@@ -28,12 +29,18 @@ struct BlockFadeConfig
 	float tailPow = 1.0f; // テールプロファイル（大きいほど中央が深く尖る）
 };
 
+class BlockFadeTransitionStateIdle;
+class BlockFadeTransitionStateEntering;
+class BlockFadeTransitionStateHold;
+class BlockFadeTransitionStateExiting;
+
 class BlockFadeTransition : public StateMachineTransition<BlockFadeTransition>
 {
-public:
-	using StateFunctionSet = TYEngine::Utility::StateMachine<BlockFadeTransition, TransitionStage>::StateFunctionSet;
-	// 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
+	friend class BlockFadeTransitionStateIdle;
+	friend class BlockFadeTransitionStateEntering;
+	friend class BlockFadeTransitionStateHold;
+	friend class BlockFadeTransitionStateExiting;
+// 状態定義テーブル等のマクロ削除
 
 public:
 	enum class Type
@@ -68,26 +75,43 @@ private:
 
 	float duration_ = 0.0f;
 	bool finished_ = false;
+	float lastElapsed_ = 0.0f;
+};
 
-private:
-	// IDLE
-	virtual void InitIdle();
-	virtual void UpdateIdle();
-	virtual void ExitIdle();
+// --- 状態クラスの定義 ---
+class BlockFadeTransitionStateIdle : public TYEngine::Utility::State<TransitionStage, BlockFadeTransition>
+{
+public:
+	using State::State;
+	void Init(BlockFadeTransition& owner) override;
+	void Update(BlockFadeTransition& owner, float deltaTime) override;
+	void Exit(BlockFadeTransition& owner) override;
+};
 
-	// ENTERING
-	virtual void InitEntering();
-	virtual void UpdateEntering();
-	virtual void ExitEntering();
+class BlockFadeTransitionStateEntering : public TYEngine::Utility::State<TransitionStage, BlockFadeTransition>
+{
+public:
+	using State::State;
+	void Init(BlockFadeTransition& owner) override;
+	void Update(BlockFadeTransition& owner, float deltaTime) override;
+	void Exit(BlockFadeTransition& owner) override;
+};
 
-	// HOLD
-	virtual void InitHold();
-	virtual void UpdateHold();
-	virtual void ExitHold();
+class BlockFadeTransitionStateHold : public TYEngine::Utility::State<TransitionStage, BlockFadeTransition>
+{
+public:
+	using State::State;
+	void Init(BlockFadeTransition& owner) override;
+	void Update(BlockFadeTransition& owner, float deltaTime) override;
+	void Exit(BlockFadeTransition& owner) override;
+};
 
-	// EXITING
-	virtual void InitExiting();
-	virtual void UpdateExiting();
-	virtual void ExitExiting();
+class BlockFadeTransitionStateExiting : public TYEngine::Utility::State<TransitionStage, BlockFadeTransition>
+{
+public:
+	using State::State;
+	void Init(BlockFadeTransition& owner) override;
+	void Update(BlockFadeTransition& owner, float deltaTime) override;
+	void Exit(BlockFadeTransition& owner) override;
 };
 

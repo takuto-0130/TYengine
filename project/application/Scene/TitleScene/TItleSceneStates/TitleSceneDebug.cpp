@@ -14,23 +14,7 @@ void TitleScene::DebugUpdate()
 #ifdef _DEBUG
 	audioAnalyzer_.Draw();
 	gameAudio_->GetBeatAnalyzer().Draw();
-	//beatAnalyzer_.Draw();
-	/*static int bgmH = -1;
-
-	if (input_->TriggerKey(DIK_M))
-	{
-		bgmH = gameAudio_->Play("418", false, SoundCategory::BGM);
-		gameAudio_->SetSoundVolume(bgmH, 1.0f);
-	}
-	if (input_->TriggerKey(DIK_P))
-	{
-		gameAudio_->Pause(bgmH);
-	}
-	if (input_->TriggerKey(DIK_O))
-	{
-		gameAudio_->Resume(bgmH);
-	}*/
-
+	
 	ImGui::Begin("EQ");
 	static float health = 1.0f;
 	if (ImGui::DragFloat("health per", &health, 0.01f))
@@ -39,6 +23,8 @@ void TitleScene::DebugUpdate()
 	}
 	gameAudio_->GetAnalyzer().DrawEQControl();
 	ImGui::End();
+
+	stateMachine_.DebugImGui();
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");

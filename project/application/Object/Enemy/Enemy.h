@@ -2,6 +2,7 @@
 #include "../BaseCharacter/BaseCharacter.h"
 #include "EnemyCollider.h"
 #include "StateMachine.h"
+#include "State.h"
 #include "Ease.h"
 #include "IParticleRenderer.h"
 #include "../../AppSystem/EventListener/EnemyEvent/IEnemyEventListener.h"
@@ -10,6 +11,14 @@
 #include <random>
 
 class EnemyBulletManager;
+
+// 前方宣言
+class EnemyStatePreEnter;
+class EnemyStateEntering;
+class EnemyStateActive;
+class EnemyStateExiting;
+class EnemyStateDamaged;
+class EnemyStateDespawned;
 
 /// <summary>
 /// 敵の状態（ステート）定義。
@@ -42,12 +51,14 @@ enum EnemyType
 class Enemy :
     public BaseCharacter
 {
+	friend class EnemyStatePreEnter;
+	friend class EnemyStateEntering;
+	friend class EnemyStateActive;
+	friend class EnemyStateExiting;
+	friend class EnemyStateDamaged;
+	friend class EnemyStateDespawned;
 public:
-	using StateMachineType = TYEngine::Utility::StateMachine<Enemy, EnemyState>;
-	using StateFunctionSet = StateMachineType::StateFunctionSet;
-
-public: // 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
+	using StateMachineType = TYEngine::Utility::StateMachine<EnemyState, Enemy>;
 
 public:
 	~Enemy() override;
@@ -143,7 +154,7 @@ public:
 
 	const TYEngine::Utility::Vector3& GetDefaultScale() { return defaultScale_; }
 	const TYEngine::Utility::Vector3& GetUpScale() { return upScale_; }
-	StateMachineType GetStateMachine() { return stateMachine_; }
+	StateMachineType& GetStateMachine() { return stateMachine_; }
 
 private:
 	/// <summary>
@@ -227,36 +238,59 @@ private:
 	StateMachineType stateMachine_;
 
 
-private: // シーン内のState関連関数
-#pragma region // State関連関数
-	// 待機状態
-	void InitPreEnter() {};
-	void UpdatePreEnter() {};
-	void ExitPreEnter() {};
+};
 
-	// スポーン
-	void InitEntering() {};
-	void UpdateEntering();
-	void ExitEntering() { worldTransform_.SetScale(defaultScale_); }
+// --- 状態クラスの定義 ---
+class EnemyStatePreEnter : public TYEngine::Utility::State<EnemyState, Enemy>
+{
+public:
+	using State::State;
+	void Init(Enemy& owner) override;
+	void Update(Enemy& owner, float deltaTime) override;
+	void Exit(Enemy& owner) override;
+};
 
-	// 通常行動
-	void InitActive() {}
-	void UpdateActive();
-	void ExitActive() {}
+class EnemyStateEntering : public TYEngine::Utility::State<EnemyState, Enemy>
+{
+public:
+	using State::State;
+	void Init(Enemy& owner) override;
+	void Update(Enemy& owner, float deltaTime) override;
+	void Exit(Enemy& owner) override;
+};
 
-	// 退場演出
-	void InitExiting() {}
-	void UpdateExiting() {}
-	void ExitExiting() {}
+class EnemyStateActive : public TYEngine::Utility::State<EnemyState, Enemy>
+{
+public:
+	using State::State;
+	void Init(Enemy& owner) override;
+	void Update(Enemy& owner, float deltaTime) override;
+	void Exit(Enemy& owner) override;
+};
 
-	// 被弾
-	void InitDamaged();
-	void UpdateDamaged();
-	void ExitDamaged();
+class EnemyStateExiting : public TYEngine::Utility::State<EnemyState, Enemy>
+{
+public:
+	using State::State;
+	void Init(Enemy& owner) override;
+	void Update(Enemy& owner, float deltaTime) override;
+	void Exit(Enemy& owner) override;
+};
 
-	// 死亡
-	void InitDespawned();
-	void UpdateDespawned();
-	void ExitDespawned();
-#pragma endregion
+class EnemyStateDamaged : public TYEngine::Utility::State<EnemyState, Enemy>
+{
+public:
+	using State::State;
+	void Init(Enemy& owner) override;
+	void Update(Enemy& owner, float deltaTime) override;
+	void Exit(Enemy& owner) override;
+};
+
+class EnemyStateDespawned : public TYEngine::Utility::State<EnemyState, Enemy>
+{
+public:
+	using State::State;
+	void Init(Enemy& owner) override;
+	void Update(Enemy& owner, float deltaTime) override;
+	void Exit(Enemy& owner) override;
 };

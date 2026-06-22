@@ -5,40 +5,45 @@
 
 using namespace TYEngine::CameraSystem;
 
-void GameScene::InitPlay()
+void GameSceneStatePlay::Init(GameScene& owner)
 {
-	gameAudio_->Resume(BGMHandle_);
+	owner.gameAudio_->Resume(owner.BGMHandle_);
 }
-void GameScene::UpdatePlay()
+
+void GameSceneStatePlay::Update(GameScene& owner, float deltaTime)
 {
+	(void)deltaTime;
 	// コンボUIの更新
-	ComboUIUpdate();
+	owner.ComboUIUpdate();
 
 	// ステージ（レール進行・敵の発生など）更新
-	stageManager_->Update();
+	owner.stageManager_->Update();
 
 	// レール終端到達でリザルトへ
-	if (stageManager_->EndRail()) stateMachine_.ChangeState(GameSceneState::RESULT);
+	if (owner.stageManager_->EndRail()) owner.stateMachine_.ChangeState(GameSceneState::RESULT);
 
-	PlayUIUpdate();
+	owner.PlayUIUpdate();
 
 	// ポーズ画面へ
-	if (input_->TriggerKey(DIK_ESCAPE)) 
+	if (owner.input_->TriggerKey(DIK_ESCAPE)) 
 	{
-		gameAudio_->Play("open", false, SoundCategory::UI);
-		stateMachine_.ChangeState(GameSceneState::PAUSE);
+		owner.gameAudio_->Play("open", false, SoundCategory::UI);
+		owner.stateMachine_.ChangeState(GameSceneState::PAUSE);
 	}
 
 	// プレイヤー死亡時は死亡演出へ
-	if (stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() == PlayerState::DEAD)
+	if (owner.stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() == PlayerState::DEAD)
 	{
-		stateMachine_.ChangeState(GameSceneState::DEAD);
+		owner.stateMachine_.ChangeState(GameSceneState::DEAD);
 	}
 }
-void GameScene::ExitPlay()
+
+void GameSceneStatePlay::Exit(GameScene& owner)
 {
+	(void)owner;
 }
 
+// GameSceneのメンバ関数
 void GameScene::PlayUIUpdate()
 {
 	scoreDraw_->Update();

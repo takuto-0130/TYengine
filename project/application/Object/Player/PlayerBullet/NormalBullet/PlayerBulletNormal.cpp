@@ -6,22 +6,12 @@
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
 
-#define NORMAL_BULLET_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(PlayerBulletNormal, stateEnum, funcName)
-
-const std::vector<PlayerBulletNormal::StateFunctionSet>& PlayerBulletNormal::GetStateTable()
-{
-	using enum NormalBulletState;
-	static const std::vector<StateFunctionSet> stateTable = {
-		NORMAL_BULLET_ENTRY(LINEAR, Linear),
-		NORMAL_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
-	};
-	return stateTable;
-}
+// マクロ・テーブル削除
 
 PlayerBulletNormal::PlayerBulletNormal()
 {
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<NormalBulletStateLinear>(NormalBulletState::LINEAR, "Linear");
+	stateMachine_.RegisterState<NormalBulletStateAfterCollision>(NormalBulletState::AFTER_COLLISION, "AfterCollision");
 }
 
 PlayerBulletNormal::~PlayerBulletNormal()
@@ -66,7 +56,7 @@ void PlayerBulletNormal::Update()
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 	
 	// ステート更新（移動処理などはここで行われる）
-	stateMachine_.UpdateState(deltaTime_);
+	stateMachine_.UpdateState(*this, deltaTime_);
 	
 	// コライダー同期
 	collider_->Update(GetWorldPosition());
@@ -77,28 +67,32 @@ void PlayerBulletNormal::Draw()
 	obj_->Draw(worldTransform_);
 }
 
-//////////////////// Linear ////////////////////
-void PlayerBulletNormal::InitLinear()
-{}
-
-void PlayerBulletNormal::UpdateLinear()
+// --- 状態クラスのメソッド実装 ---
+void NormalBulletStateLinear::Init(PlayerBulletNormal&) {}
+void NormalBulletStateLinear::Update(PlayerBulletNormal& owner, float)
 {
 	// 寿命を超えたら死亡フラグを true にし、削除対象とする
-	if (stateMachine_.GetStateElapsedTime() > lifeTime_)
+	if (GetElapsed() > owner.lifeTime_)
 	{
-		isDead_ = true;
+		owner.isDead_ = true;
 	}
 
 	// 移動処理
-	Move();
+	owner.Move();
 	// 進行方向に合わせて回転
-	RotationDirection();
+	owner.RotationDirection();
 
-	worldTransform_.Update();
+	owner.worldTransform_.Update();
 }
+void NormalBulletStateLinear::Exit(PlayerBulletNormal&) {}
 
-void PlayerBulletNormal::ExitLinear()
-{}
+void NormalBulletStateAfterCollision::Init(PlayerBulletNormal& owner)
+{
+	// 着弾後は即座に消滅（エフェクトなどはOnCollisionで生成済み）
+	owner.isDead_ = true;
+}
+void NormalBulletStateAfterCollision::Update(PlayerBulletNormal&, float) {}
+void NormalBulletStateAfterCollision::Exit(PlayerBulletNormal&) {}
 
 void PlayerBulletNormal::Move()
 {
@@ -125,17 +119,4 @@ void PlayerBulletNormal::RotationDirection()
 	worldTransform_.SetRotate({ pitch, yaw, roll });
 	worldTransform_.Update();
 }
-
-//////////////////// AfterCollision ////////////////////
-void PlayerBulletNormal::InitAfterCollision()
-{
-	// 着弾後は即座に消滅（エフェクトなどはOnCollisionで生成済み）
-	isDead_ = true;
-}
-
-void PlayerBulletNormal::UpdateAfterCollision()
-{}
-
-void PlayerBulletNormal::ExitAfterCollision()
-{}
 

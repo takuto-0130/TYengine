@@ -9,23 +9,13 @@ using namespace TYEngine::Utility;
 using namespace TYEngine::Core;
 using namespace TYEngine::Graphics;
 
-#define FADE_STATE_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(FadeTransition, stateEnum, funcName)
-
-const std::vector<FadeTransition::StateFunctionSet>& FadeTransition::GetStateTable()
-{
-	using enum TransitionStage;
-	static const std::vector<StateFunctionSet> stateTable = {
-		FADE_STATE_ENTRY(IDLE, Idle),
-		FADE_STATE_ENTRY(ENTERING, Entering),
-		FADE_STATE_ENTRY(EXITING, Exiting)
-	};
-	return stateTable;
-}
+// マクロ・テーブルの削除
 
 FadeTransition::FadeTransition(FadeTransition::Type type, float duration)
 {
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<FadeTransitionStateIdle>(TransitionStage::IDLE, "Idle");
+	stateMachine_.RegisterState<FadeTransitionStateEntering>(TransitionStage::ENTERING, "Entering");
+	stateMachine_.RegisterState<FadeTransitionStateExiting>(TransitionStage::EXITING, "Exiting");
 
 
 	duration_ = duration;
@@ -64,60 +54,49 @@ bool FadeTransition::IsFinished() const
 }
 
 
-void FadeTransition::InitIdle()
+// --- 状態クラスのメソッド実装 ---
+void FadeTransitionStateIdle::Init(FadeTransition& owner)
 {
-	sprites_->SetColor(Vector4{ 1,1,1,1 });
-	sprites_->Update();
+	owner.sprites_->SetColor(Vector4{ 1,1,1,1 });
+	owner.sprites_->Update();
 }
-
-void FadeTransition::UpdateIdle()
+void FadeTransitionStateIdle::Update(FadeTransition& owner, float)
 {
-	sprites_->SetColor(Vector4{ 1,1,1,1 });
-	sprites_->Update();
+	owner.sprites_->SetColor(Vector4{ 1,1,1,1 });
+	owner.sprites_->Update();
 }
+void FadeTransitionStateIdle::Exit(FadeTransition&) {}
 
-void FadeTransition::ExitIdle()
+void FadeTransitionStateEntering::Init(FadeTransition& owner)
 {
+	owner.sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
 }
-
-void FadeTransition::InitEntering()
-{
-	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
-}
-
-void FadeTransition::UpdateEntering()
+void FadeTransitionStateEntering::Update(FadeTransition& owner, float)
 {
 	// フェードイン：不透明(1.0) -> 透明(0.0)
-	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f - std::clamp(stateMachine_.GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
-	if (stateMachine_.GetStateElapsedTime() >= duration_)
+	owner.sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f - std::clamp(GetElapsed() / owner.duration_, 0.0f, 1.0f) });
+	if (GetElapsed() >= owner.duration_)
 	{
-		finished_ = true;
-		sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
+		owner.finished_ = true;
+		owner.sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
 	}
-	sprites_->Update();
+	owner.sprites_->Update();
 }
+void FadeTransitionStateEntering::Exit(FadeTransition&) {}
 
-void FadeTransition::ExitEntering()
+void FadeTransitionStateExiting::Init(FadeTransition& owner)
 {
+	owner.sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
 }
-
-void FadeTransition::InitExiting()
-{
-	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
-}
-
-void FadeTransition::UpdateExiting()
+void FadeTransitionStateExiting::Update(FadeTransition& owner, float)
 {
 	// フェードアウト：透明(0.0) -> 不透明(1.0)
-	sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, std::clamp(stateMachine_.GetStateElapsedTime() / duration_, 0.0f, 1.0f) });
-	if (stateMachine_.GetStateElapsedTime() >= duration_)
+	owner.sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, std::clamp(GetElapsed() / owner.duration_, 0.0f, 1.0f) });
+	if (GetElapsed() >= owner.duration_)
 	{
-		finished_ = true;
-		sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
+		owner.finished_ = true;
+		owner.sprites_->SetColor(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
 	}
-	sprites_->Update();
+	owner.sprites_->Update();
 }
-
-void FadeTransition::ExitExiting()
-{
-}
+void FadeTransitionStateExiting::Exit(FadeTransition&) {}

@@ -7,22 +7,12 @@
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
 
-#define HOMING_BULLET_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(PlayerBulletHoming, stateEnum, funcName)
-
-const std::vector<PlayerBulletHoming::StateFunctionSet>& PlayerBulletHoming::GetStateTable()
-{
-	using enum HomingBulletState;
-	static const std::vector<StateFunctionSet> stateTable = {
-		HOMING_BULLET_ENTRY(SHOT, Shot),
-		HOMING_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
-	};
-	return stateTable;
-}
+// マクロ・テーブル削除
 
 PlayerBulletHoming::PlayerBulletHoming()
 {
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<HomingBulletStateShot>(HomingBulletState::SHOT, "Shot");
+	stateMachine_.RegisterState<HomingBulletStateAfterCollision>(HomingBulletState::AFTER_COLLISION, "AfterCollision");
 }
 
 PlayerBulletHoming::~PlayerBulletHoming()
@@ -73,7 +63,7 @@ void PlayerBulletHoming::Update()
 	worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());
 
 	// ステート更新（移動処理などはここで行われる）
-	stateMachine_.UpdateState(deltaTime_);
+	stateMachine_.UpdateState(*this, deltaTime_);
 
 	// コライダー同期
 	collider_->Update(GetWorldPosition());
@@ -86,25 +76,24 @@ void PlayerBulletHoming::Draw()
 
 
 /////////////////////////////////////////////////////////
-void PlayerBulletHoming::InitShot() {}
-
-void PlayerBulletHoming::UpdateShot()
+// --- 状態クラスのメソッド実装 ---
+void HomingBulletStateShot::Init(PlayerBulletHoming&) {}
+void HomingBulletStateShot::Update(PlayerBulletHoming& owner, float)
 {
 	// 寿命を超えたら死亡フラグを true にし、削除対象とする
-	if (stateMachine_.GetStateElapsedTime() > lifeTime_)
+	if (GetElapsed() > owner.lifeTime_)
 	{
-		isDead_ = true;
+		owner.isDead_ = true;
 	}
 
 	// 移動処理
-	Move();
+	owner.Move();
 	// 進行方向に合わせて回転
-	RotationDirection();
+	owner.RotationDirection();
 	
-	worldTransform_.Update();
+	owner.worldTransform_.Update();
 }
-
-void PlayerBulletHoming::ExitShot() {}
+void HomingBulletStateShot::Exit(PlayerBulletHoming&) {}
 
 void PlayerBulletHoming::Move()
 {
@@ -164,15 +153,13 @@ void PlayerBulletHoming::RotationDirection()
 
 
 /////////////////////////////////////////////////////////////////
-void PlayerBulletHoming::InitAfterCollision()
+void HomingBulletStateAfterCollision::Init(PlayerBulletHoming& owner)
 {
 	// 着弾後は即座に消滅（エフェクトなどはOnCollisionで生成済み）
-	isDead_ = true;
+	owner.isDead_ = true;
 }
-
-void PlayerBulletHoming::UpdateAfterCollision() {}
-
-void PlayerBulletHoming::ExitAfterCollision() {}
+void HomingBulletStateAfterCollision::Update(PlayerBulletHoming&, float) {}
+void HomingBulletStateAfterCollision::Exit(PlayerBulletHoming&) {}
 
 
 

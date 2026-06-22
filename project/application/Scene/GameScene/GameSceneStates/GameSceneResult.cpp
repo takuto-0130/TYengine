@@ -10,9 +10,9 @@ using namespace TYEngine::Core;
 using namespace TYEngine::Graphics;
 using namespace TYEngine::OffScreen;
 
-void GameScene::InitResult()
+void GameSceneStateResult::Init(GameScene& owner)
 {
-	gameAudio_->Play("fanfare", false, SoundCategory::BGM);
+	owner.gameAudio_->Play("fanfare", false, SoundCategory::BGM);
 
 	// ブラーエフェクトを有効化
 	PostEffectManager::GetInstance()->SetEffectEnabled("Gaussian", true);
@@ -20,61 +20,64 @@ void GameScene::InitResult()
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(0.0f);
 	
 	// リザルトUIの初期化・開始
-	resultMenu_->Start();
-	scoreDraw_->SetResult();
-	scoreDraw_->UpdateResult(0.0f);
+	owner.resultMenu_->Start();
+	owner.scoreDraw_->SetResult();
+	owner.scoreDraw_->UpdateResult(0.0f);
 
 	// 紙吹雪（Confetti）の衝突判定用にUIスプライトを登録
 	std::vector<Graphics::Sprite*> setSpr;
-	setSpr.insert(setSpr.end(), resultMenu_->GetSprite().begin(), resultMenu_->GetSprite().end());
-	setSpr.insert(setSpr.end(), scoreDraw_->GetSprite().begin(), scoreDraw_->GetSprite().end());
+	setSpr.insert(setSpr.end(), owner.resultMenu_->GetSprite().begin(), owner.resultMenu_->GetSprite().end());
+	setSpr.insert(setSpr.end(), owner.scoreDraw_->GetSprite().begin(), owner.scoreDraw_->GetSprite().end());
 
-	uiCollider_.SetSprites(setSpr);
+	owner.uiCollider_.SetSprites(setSpr);
 
-	confetti_.Init(
+	owner.confetti_.Init(
 		400,
 		"Resources/Texture/white2x2.png",
 		WindowsApp::kClientWidth,
 		WindowsApp::kClientHeight
 	);
 
-	confetti_.SetUIColliders(uiCollider_.GetAABBs());
+	owner.confetti_.SetUIColliders(owner.uiCollider_.GetAABBs());
 
 	// リザルト突入と同時に一気に出す
-	confetti_.Burst(70);
+	owner.confetti_.Burst(70);
 }
-void GameScene::UpdateResult()
+
+void GameSceneStateResult::Update(GameScene& owner, float deltaTime)
 {
-	resultMenu_->Update();
-	scoreDraw_->UpdateResult(stateMachine_.GetStateElapsedTime());
+	(void)deltaTime;
+	owner.resultMenu_->Update();
+	owner.scoreDraw_->UpdateResult(owner.stateMachine_.GetStateElapsedTime());
 
 	// UIとの衝突判定を更新
-	uiCollider_.BuildAABBs(false);
+	owner.uiCollider_.BuildAABBs(false);
 
-	if(stateMachine_.GetStateElapsedTime() > 1.0f)
+	if(owner.stateMachine_.GetStateElapsedTime() > 1.0f)
 	{
 		// 常に少しずつ追加して降り続ける
-		confetti_.Emit(2);
-		confetti_.Update(Utility::Timer::GetInstance()->GetDeltaTime());
+		owner.confetti_.Emit(2);
+		owner.confetti_.Update(Utility::Timer::GetInstance()->GetDeltaTime());
 	}
 
 	// 時間経過でブラー強度を変化、その後入力待ち
-	if (stateMachine_.GetStateElapsedTime() < 4.0f)
+	if (owner.stateMachine_.GetStateElapsedTime() < 4.0f)
 	{
-		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((stateMachine_.GetStateElapsedTime()) / 4.0f) * 13.0f);
+		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((owner.stateMachine_.GetStateElapsedTime()) / 4.0f) * 13.0f);
 	}
-	else if (stateMachine_.GetStateElapsedTime() > 4.5f)
+	else if (owner.stateMachine_.GetStateElapsedTime() > 4.5f)
 	{
-		if (input_->TriggerKey(DIK_SPACE)) 
+		if (owner.input_->TriggerKey(DIK_SPACE)) 
 		{
-			gameAudio_->Play("enter", false, SoundCategory::UI);
-			stateMachine_.ChangeState(GameSceneState::FADE_OUT);
+			owner.gameAudio_->Play("enter", false, SoundCategory::UI);
+			owner.stateMachine_.ChangeState(GameSceneState::FADE_OUT);
 		}
 	}
 }
-void GameScene::ExitResult()
+
+void GameSceneStateResult::Exit(GameScene& owner)
 {
 	PostEffectManager::GetInstance()->SetEffectEnabled("Gaussian", false);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(0.0f);
-	resultMenu_->Reset();
+	owner.resultMenu_->Reset();
 }

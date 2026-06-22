@@ -1,13 +1,17 @@
 #include "../TitleScene.h"
-#include "Timer.h"
 
-void TitleScene::InitReady()
+void TitleSceneStateReady::Init(TitleScene& owner)
 {
+	(void)owner;
 }
-void TitleScene::UpdateReady()
+
+void TitleSceneStateReady::Update(TitleScene& owner, float deltaTime)
 {
-	stateMachine_.ChangeState(TitleSceneState::PLAY);
+	(void)deltaTime;
+	owner.stateMachine_.ChangeState(TitleSceneState::PLAY);
 }
-void TitleScene::ExitReady()
+
+void TitleSceneStateReady::Exit(TitleScene& owner)
 {
+	(void)owner;
 }

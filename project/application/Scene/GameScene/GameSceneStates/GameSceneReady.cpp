@@ -7,28 +7,25 @@
 
 using namespace TYEngine::Utility;
 
-void GameScene::InitReady()
+void GameSceneStateReady::Init(GameScene& owner)
 {
-	startCameraTimer_ = 0;
-	prevStateElapsed_ = 0;
+	owner.startCameraTimer_ = 0;
+	owner.prevStateElapsed_ = 0;
 }
-void GameScene::UpdateReady()
+void GameSceneStateReady::Update(GameScene& owner, float deltaTime)
 {
-	startDraw_->Update();
-	startCameraTimer_ += Timer::GetInstance()->GetDeltaTime();
-	StartCamera();
+	(void)deltaTime;
+	owner.startDraw_->Update();
+	owner.startCameraTimer_ += Timer::GetInstance()->GetDeltaTime();
+	owner.StartCamera();
 }
-void GameScene::ExitReady()
+void GameSceneStateReady::Exit(GameScene& owner)
 {
-	gameAudio_->Resume(BGMHandle_);
-	startDraw_->Reset();
-	startCameraTimer_ = 0;
-	prevStateElapsed_ = 0;
+	owner.gameAudio_->Resume(owner.BGMHandle_);
+	owner.startDraw_->Reset();
+	owner.startCameraTimer_ = 0;
+	owner.prevStateElapsed_ = 0;
 }
-
-
-
-
 
 void GameScene::StartCamera()
 {

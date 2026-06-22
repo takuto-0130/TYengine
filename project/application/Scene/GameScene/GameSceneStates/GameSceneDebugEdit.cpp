@@ -1,17 +1,26 @@
 #include "../GameScene.h"
 #include "../../../Object/Rail/RailManager.h"
+#ifdef _DEBUG
+#include "imgui.h"
+#endif
 
-void GameScene::InitDebugEdit()
+void GameSceneStateDebugEdit::Init(GameScene& owner)
 {
-}
-void GameScene::UpdateDebugEdit()
-{
-	stageManager_->EditUpdate();
-}
-void GameScene::ExitDebugEdit()
-{
+	(void)owner;
 }
 
+void GameSceneStateDebugEdit::Update(GameScene& owner, float deltaTime)
+{
+	(void)deltaTime;
+	owner.stageManager_->EditUpdate();
+}
+
+void GameSceneStateDebugEdit::Exit(GameScene& owner)
+{
+	(void)owner;
+}
+
+// GameSceneのメンバ関数
 void GameScene::SwitchEdit()
 {
 #ifdef _DEBUG

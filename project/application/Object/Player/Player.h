@@ -5,6 +5,7 @@
 #include "JustCollider.h"
 #include "./PAttackStrategy/IPAttackStrategy.h"
 #include "StateMachine.h"
+#include "State.h"
 #include "Sprite.h"
 #include "BeatAnalyzer.h"
 #include "Reticle/Reticle.h"
@@ -28,14 +29,26 @@ class Camera;
 class EnemyManager;
 class Enemy;
 
+// 前方宣言
+class PlayerStateIdle;
+class PlayerStateRoute;
+class PlayerStateBoost;
+class PlayerStateBarrelRoll;
+class PlayerStateTakeDamage;
+class PlayerStateDead;
+
 class Player :
 	public BaseCharacter
 {
+	friend class PlayerStateIdle;
+	friend class PlayerStateRoute;
+	friend class PlayerStateBoost;
+	friend class PlayerStateBarrelRoll;
+	friend class PlayerStateTakeDamage;
+	friend class PlayerStateDead;
+
 public:
-	using StateMachineType = TYEngine::Utility::StateMachine<Player, PlayerState>;
-	using StateFunctionSet = StateMachineType::StateFunctionSet;
-	// 関数テーブル
-    static const std::vector<StateFunctionSet>& GetStateTable();
+	using StateMachineType = TYEngine::Utility::StateMachine<PlayerState, Player>;
 
 public:
 	virtual ~Player();
@@ -108,7 +121,7 @@ public:
 	/// <summary>現在の画面内オフセットを取得する。</summary>
 	TYEngine::Utility::Vector2& GetScreenOffset() { return screenOffset_; }
 
-	StateMachineType GetStateMachine() { return stateMachine_; }
+	StateMachineType& GetStateMachine() { return stateMachine_; }
 
 	PlayerLockOn& GetLockOn() { return lockOn_; }
 
@@ -248,37 +261,60 @@ private:
 	/// <summary>JSONエラーメッセージ。</summary>
 	std::string err_;
 
-private: // シーン内のState関連関数
-#pragma region // State関連関数
-	// 待機状態
-	void InitIdle();
-	void UpdateIdle();
-	void ExitIdle();
+};
 
-	// 通常行動
-	void InitRoute();
-	void UpdateRoute();
-	void ExitRoute();
+// --- 状態クラスの定義 ---
+class PlayerStateIdle : public TYEngine::Utility::State<PlayerState, Player>
+{
+public:
+	using State::State;
+	void Init(Player& owner) override;
+	void Update(Player& owner, float deltaTime) override;
+	void Exit(Player& owner) override;
+};
 
-	// 加速
-	void InitBoost();
-	void UpdateBoost();
-	void ExitBoost();
+class PlayerStateRoute : public TYEngine::Utility::State<PlayerState, Player>
+{
+public:
+	using State::State;
+	void Init(Player& owner) override;
+	void Update(Player& owner, float deltaTime) override;
+	void Exit(Player& owner) override;
+};
 
-	// 回避
-	void InitBarrelRoll();
-	void UpdateBarrelRoll();
-	void ExitBarrelRoll();
+class PlayerStateBoost : public TYEngine::Utility::State<PlayerState, Player>
+{
+public:
+	using State::State;
+	void Init(Player& owner) override;
+	void Update(Player& owner, float deltaTime) override;
+	void Exit(Player& owner) override;
+};
 
-	// 被弾
-	void InitTakeDamage();
-	void UpdateTakeDamage();
-	void ExitTakeDamage();
+class PlayerStateBarrelRoll : public TYEngine::Utility::State<PlayerState, Player>
+{
+public:
+	using State::State;
+	void Init(Player& owner) override;
+	void Update(Player& owner, float deltaTime) override;
+	void Exit(Player& owner) override;
+};
 
-	// 死亡
-	void InitDead();
-	void UpdateDead();
-	void ExitDead();
-#pragma endregion
+class PlayerStateTakeDamage : public TYEngine::Utility::State<PlayerState, Player>
+{
+public:
+	using State::State;
+	void Init(Player& owner) override;
+	void Update(Player& owner, float deltaTime) override;
+	void Exit(Player& owner) override;
+};
+
+class PlayerStateDead : public TYEngine::Utility::State<PlayerState, Player>
+{
+public:
+	using State::State;
+	void Init(Player& owner) override;
+	void Update(Player& owner, float deltaTime) override;
+	void Exit(Player& owner) override;
 };
 

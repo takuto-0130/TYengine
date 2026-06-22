@@ -9,24 +9,13 @@
 
 using namespace TYEngine::Utility;
 
-#define E_LINEAR_BULLET_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(Linear, stateEnum, funcName)
-
 namespace EnemyBullet
 {
-	const std::vector<Linear::StateFunctionSet>& Linear::GetStateTable()
-	{
-		using enum LinearState;
-		static const std::vector<StateFunctionSet> stateTable = {
-			E_LINEAR_BULLET_ENTRY(SHOT, Shot),
-			E_LINEAR_BULLET_ENTRY(AFTER_COLLISION, AfterCollision),
-		};
-		return stateTable;
-	}
 
 	Linear::Linear()
 	{
-		stateMachine_.RegisterFromDefaultTable(this);
+		stateMachine_.RegisterState<LinearStateShot>(LinearState::SHOT, "Shot");
+		stateMachine_.RegisterState<LinearStateAfterCollision>(LinearState::AFTER_COLLISION, "AfterCollision");
 	}
 
 	Linear::~Linear()
@@ -66,7 +55,7 @@ namespace EnemyBullet
 	void Linear::Update()
 	{
 		deltaTime_ = Timer::GetInstance()->GetDeltaTime();
-		stateMachine_.UpdateState(deltaTime_);
+		stateMachine_.UpdateState(*this, deltaTime_);
 		collider_->Update(GetWorldPosition());
 	}
 

@@ -2,24 +2,28 @@
 
 using namespace TYEngine::CameraSystem;
 
-void GameScene::InitDead()
+void GameSceneStateDead::Init(GameScene& owner)
 {
 	CameraShake::ShakeParams params;
 	params.duration = 1.6f;
 	params.amplitude = 0.15f;
 	params.frequency = 20.0f;
 
-	camera_->StartShake(params);
+	owner.camera_->StartShake(params);
 }
-void GameScene::UpdateDead()
+
+void GameSceneStateDead::Update(GameScene& owner, float deltaTime)
 {
-	stageManager_->GetPlayer()->Update();
+	(void)deltaTime;
+	owner.stageManager_->GetPlayer()->Update();
 	// 演出終了後、リトライ誘導画面へ
-	if (stageManager_->GetPlayer()->IsDead())
+	if (owner.stageManager_->GetPlayer()->IsDead())
 	{
-		stateMachine_.ChangeState(GameSceneState::RETRY);
+		owner.stateMachine_.ChangeState(GameSceneState::RETRY);
 	}
 }
-void GameScene::ExitDead()
+
+void GameSceneStateDead::Exit(GameScene& owner)
 {
+	(void)owner;
 }

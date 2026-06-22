@@ -1,6 +1,7 @@
 #pragma once
 #include "IScene.h"
 #include "StateMachine.h"
+#include "State.h"
 #include "ObjectCubemap.h"
 #include "Object/Player/Player.h"
 #include "../../Object/Enemy/EnemyManager/EnemyManager.h"
@@ -26,6 +27,13 @@ enum class TitleSceneState
 	FADE_OUT,	// シーン遷移時のフェードアウト
 };
 
+// 前方宣言
+class TitleSceneStateFadeIn;
+class TitleSceneStateReady;
+class TitleSceneStatePlay;
+class TitleSceneStatePause;
+class TitleSceneStateFadeOut;
+
 /// <summary>
 /// タイトル画面シーン。
 /// ゲーム開始前の演出、操作説明、ゲーム本編への遷移を管理する。
@@ -33,11 +41,14 @@ enum class TitleSceneState
 class TitleScene : 
 	public TYEngine::Framework::IScene 
 {
+	friend class TitleSceneStateFadeIn;
+	friend class TitleSceneStateReady;
+	friend class TitleSceneStatePlay;
+	friend class TitleSceneStatePause;
+	friend class TitleSceneStateFadeOut;
+
 public:
-	using StateMachineType = TYEngine::Utility::StateMachine<TitleScene, TitleSceneState>;
-	using StateFunctionSet = StateMachineType::StateFunctionSet;
-	// 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
+	using StateMachineType = TYEngine::Utility::StateMachine<TitleSceneState, TitleScene>;
 
 public:
 	TitleScene();
@@ -120,32 +131,50 @@ private:
 
 	/// <summary>ステートマシーン。</summary>
 	StateMachineType stateMachine_; 
+};
 
-private: // シーン内のState関連関数
-#pragma region // State関連関数
-		// フェードイン
-		void InitFadeIn();
-		void UpdateFadeIn();
-		void ExitFadeIn();
+// --- 状態クラスの定義 ---
+class TitleSceneStateFadeIn : public TYEngine::Utility::State<TitleSceneState, TitleScene>
+{
+public:
+	using State::State;
+	void Init(TitleScene& owner) override;
+	void Update(TitleScene& owner, float deltaTime) override;
+	void Exit(TitleScene& owner) override;
+};
 
-		// ゲーム開始直前の演出
-		void InitReady();
-		void UpdateReady();
-		void ExitReady();
+class TitleSceneStateReady : public TYEngine::Utility::State<TitleSceneState, TitleScene>
+{
+public:
+	using State::State;
+	void Init(TitleScene& owner) override;
+	void Update(TitleScene& owner, float deltaTime) override;
+	void Exit(TitleScene& owner) override;
+};
 
-		// 通常のゲーム進行
-		void InitPlay();
-		void UpdatePlay();
-		void ExitPlay();
+class TitleSceneStatePlay : public TYEngine::Utility::State<TitleSceneState, TitleScene>
+{
+public:
+	using State::State;
+	void Init(TitleScene& owner) override;
+	void Update(TitleScene& owner, float deltaTime) override;
+	void Exit(TitleScene& owner) override;
+};
 
-		// 一時停止状態（メニューなど/未実装）
-		void InitPause() {};
-		void UpdatePause() {};
-		void ExitPause() {};
+class TitleSceneStatePause : public TYEngine::Utility::State<TitleSceneState, TitleScene>
+{
+public:
+	using State::State;
+	void Init(TitleScene&) override {}
+	void Update(TitleScene&, float) override {}
+	void Exit(TitleScene&) override {}
+};
 
-		// フェードアウト
-		void InitFadeOut();
-		void UpdateFadeOut();
-		void ExitFadeOut();
-#pragma endregion
+class TitleSceneStateFadeOut : public TYEngine::Utility::State<TitleSceneState, TitleScene>
+{
+public:
+	using State::State;
+	void Init(TitleScene& owner) override;
+	void Update(TitleScene& owner, float deltaTime) override;
+	void Exit(TitleScene& owner) override;
 };

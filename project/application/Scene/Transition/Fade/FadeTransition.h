@@ -1,5 +1,6 @@
 #pragma once
 #include "../StateMachineTransition.h"
+#include "State.h"
 #include <memory>
 
 namespace TYEngine::Graphics
@@ -7,16 +8,20 @@ namespace TYEngine::Graphics
 	class Sprite;
 }
 
+class FadeTransitionStateIdle;
+class FadeTransitionStateEntering;
+class FadeTransitionStateExiting;
+
 /// <summary>
 /// フェードイン・フェードアウトを行うトランジションクラス。
 /// ステートマシンを使用して状態を管理する。
 /// </summary>
 class FadeTransition : public StateMachineTransition<FadeTransition>
 {
-public:
-	using StateFunctionSet = TYEngine::Utility::StateMachine<FadeTransition, TransitionStage>::StateFunctionSet;
-	// 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
+	friend class FadeTransitionStateIdle;
+	friend class FadeTransitionStateEntering;
+	friend class FadeTransitionStateExiting;
+// 状態定義テーブル等のマクロ削除
 
 public:
 	/// <summary>
@@ -45,27 +50,39 @@ public:
 	bool IsFinished() const override;
 
 private:
-	// IDLE
-	virtual void InitIdle();
-	virtual void UpdateIdle();
-	virtual void ExitIdle();
-
-	// ENTERING
-	virtual void InitEntering();
-	virtual void UpdateEntering();
-	virtual void ExitEntering();
-
-	// EXITING
-	virtual void InitExiting();
-	virtual void UpdateExiting();
-	virtual void ExitExiting();
-
-private:
 	/// <summary>フェード用スプライト（全画面矩形）。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> sprites_;
 	/// <summary>フェード時間。</summary>
 	float duration_ = 0.0f;
 	/// <summary>完了フラグ。</summary>
 	bool finished_ = false;
+};
+
+// --- 状態クラスの定義 ---
+class FadeTransitionStateIdle : public TYEngine::Utility::State<TransitionStage, FadeTransition>
+{
+public:
+	using State::State;
+	void Init(FadeTransition& owner) override;
+	void Update(FadeTransition& owner, float deltaTime) override;
+	void Exit(FadeTransition& owner) override;
+};
+
+class FadeTransitionStateEntering : public TYEngine::Utility::State<TransitionStage, FadeTransition>
+{
+public:
+	using State::State;
+	void Init(FadeTransition& owner) override;
+	void Update(FadeTransition& owner, float deltaTime) override;
+	void Exit(FadeTransition& owner) override;
+};
+
+class FadeTransitionStateExiting : public TYEngine::Utility::State<TransitionStage, FadeTransition>
+{
+public:
+	using State::State;
+	void Init(FadeTransition& owner) override;
+	void Update(FadeTransition& owner, float deltaTime) override;
+	void Exit(FadeTransition& owner) override;
 };
 

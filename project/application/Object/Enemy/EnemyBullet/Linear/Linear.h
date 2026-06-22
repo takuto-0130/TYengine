@@ -1,10 +1,15 @@
 #pragma once
 #include "../../../BaseBullet/BaseBullet.h"
 #include "StateMachine.h"
+#include "State.h"
 #include "../EBulletCollider.h"
 
 namespace EnemyBullet
 {
+	// 前方宣言
+	class LinearStateShot;
+	class LinearStateAfterCollision;
+
 	/// <summary>
 	/// 直線弾の状態定数。
 	/// </summary>
@@ -21,11 +26,10 @@ namespace EnemyBullet
 	class Linear :
 		public BaseBullet
 	{
+		friend class LinearStateShot;
+		friend class LinearStateAfterCollision;
 	public:
-		using StateMachineType = TYEngine::Utility::StateMachine<Linear, LinearState>;
-		using StateFunctionSet = StateMachineType::StateFunctionSet;
-		// 関数テーブル
-		static const std::vector<StateFunctionSet>& GetStateTable();
+		using StateMachineType = TYEngine::Utility::StateMachine<LinearState, Linear>;
 
 	public:
 		Linear();
@@ -50,20 +54,25 @@ namespace EnemyBullet
 		/// <summary>ステートマシーン。</summary>
 		StateMachineType stateMachine_;
 
-	private: // シーン内のState関連関数
-#pragma region // State関連関数
-		// 直線移動
-		// ShotState.cpp
-		void InitShot();
-		void UpdateShot();
-		void ExitShot();
+	};
 
-		// 衝突後処理
-		// AfterCollisionState.cpp
-		void InitAfterCollision();
-		void UpdateAfterCollision();
-		void ExitAfterCollision();
-#pragma endregion
+	// --- 状態クラスの定義 ---
+	class LinearStateShot : public TYEngine::Utility::State<LinearState, Linear>
+	{
+	public:
+		using State::State;
+		void Init(Linear& owner) override;
+		void Update(Linear& owner, float deltaTime) override;
+		void Exit(Linear& owner) override;
+	};
+
+	class LinearStateAfterCollision : public TYEngine::Utility::State<LinearState, Linear>
+	{
+	public:
+		using State::State;
+		void Init(Linear& owner) override;
+		void Update(Linear& owner, float deltaTime) override;
+		void Exit(Linear& owner) override;
 	};
 }
 

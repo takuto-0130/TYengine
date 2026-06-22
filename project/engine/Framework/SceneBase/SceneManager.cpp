@@ -35,6 +35,9 @@ namespace TYEngine
 
 				// シーンの初期化
 				scene_->Init();
+
+				// 初期化したフレームでは更新処理を行わずに終了する
+				return;
 			}
 
 			// 実行中シーンを更新する

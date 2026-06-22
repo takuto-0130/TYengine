@@ -10,25 +10,15 @@ using namespace TYEngine::Utility;
 using namespace TYEngine::Core;
 using namespace TYEngine::Graphics;
 
-#define BLOCKFADE_STATE_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(BlockFadeTransition, stateEnum, funcName)
-
-const std::vector<StateMachine<BlockFadeTransition, TransitionStage>::StateFunctionSet>& BlockFadeTransition::GetStateTable()
-{
-	using enum TransitionStage;
-	static const std::vector<StateFunctionSet> stateTable = {
-		BLOCKFADE_STATE_ENTRY(IDLE, Idle),
-		BLOCKFADE_STATE_ENTRY(ENTERING, Entering),
-		BLOCKFADE_STATE_ENTRY(HOLD, Hold),
-		BLOCKFADE_STATE_ENTRY(EXITING, Exiting)
-	};
-	return stateTable;
-}
+// マクロ・テーブルの削除
 
 BlockFadeTransition::BlockFadeTransition(BlockFadeTransition::Type type, const BlockFadeConfig& cfg)
 {
     cfg_ = cfg;
-    stateMachine_.RegisterFromDefaultTable(this);
+    stateMachine_.RegisterState<BlockFadeTransitionStateIdle>(TransitionStage::IDLE, "Idle");
+    stateMachine_.RegisterState<BlockFadeTransitionStateEntering>(TransitionStage::ENTERING, "Entering");
+    stateMachine_.RegisterState<BlockFadeTransitionStateHold>(TransitionStage::HOLD, "Hold");
+    stateMachine_.RegisterState<BlockFadeTransitionStateExiting>(TransitionStage::EXITING, "Exiting");
 
 
 	switch (type)
@@ -50,6 +40,7 @@ BlockFadeTransition::BlockFadeTransition(BlockFadeTransition::Type type, const B
 
 void BlockFadeTransition::Init()
 {
+	lastElapsed_ = 0.0f;
 	baseW_ = WindowsApp::kClientWidth; baseH_ = WindowsApp::kClientHeight;
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Transition01.png");
@@ -94,6 +85,11 @@ void BlockFadeTransition::Init()
 void BlockFadeTransition::Draw()
 {
     if (stateMachine_.GetCurrentState() == TransitionStage::IDLE) return;
+
+    float currentElapsed = stateMachine_.GetStateElapsedTime();
+    float dt = currentElapsed - lastElapsed_;
+    if (dt < 0.0f) dt = currentElapsed;
+    lastElapsed_ = currentElapsed;
 
     const int cols = std::max<int>(1, cfg_.cols);
     const int rows = std::max<int>(1, cfg_.rows);
@@ -142,7 +138,7 @@ void BlockFadeTransition::Draw()
                 int px = physX(x);
                 int idx = y * cols + px;
 
-                viewSprites_[idx] += Timer::GetInstance()->GetDeltaTime() / (cfg_.holdSec / 4.0f);
+                viewSprites_[idx] += dt / (cfg_.holdSec / 4.0f);
                 viewSprites_[idx] = std::min<float>(viewSprites_[idx], 1.0f);
                 const float colW = baseW_ / cfg_.cols;
                 const float rowH = baseH_ / cfg_.rows;
@@ -163,7 +159,7 @@ void BlockFadeTransition::Draw()
 
                     if (viewSprites_[idx] >= 1.0f)
                     {
-                        viewSprites_[idx] -= Timer::GetInstance()->GetDeltaTime() / (cfg_.holdSec / 4.0f);
+                        viewSprites_[idx] -= dt / (cfg_.holdSec / 4.0f);
                         viewSprites_[idx] = std::max<float>(viewSprites_[idx], 0.0f);
                     }
                 }
@@ -177,7 +173,7 @@ void BlockFadeTransition::Draw()
                 {
                     if (viewSprites_[idx] < 1.0f)
                     {
-                        viewSprites_[idx] -= Timer::GetInstance()->GetDeltaTime() / (cfg_.holdSec / 4.0f);
+                        viewSprites_[idx] -= dt / (cfg_.holdSec / 4.0f);
                         viewSprites_[idx] = std::max<float>(viewSprites_[idx], 0.0f);
                     }
                     const float colW = baseW_ / cfg_.cols;
@@ -205,77 +201,56 @@ bool BlockFadeTransition::IsFinished() const
 
 
 
-// IDLE
-void BlockFadeTransition::InitIdle()
-{
+// --- 状態クラスのメソッド実装 ---
+void BlockFadeTransitionStateIdle::Init(BlockFadeTransition&) {}
+void BlockFadeTransitionStateIdle::Update(BlockFadeTransition&, float) {}
+void BlockFadeTransitionStateIdle::Exit(BlockFadeTransition&) {}
 
-}
-void BlockFadeTransition::UpdateIdle()
+void BlockFadeTransitionStateEntering::Init(BlockFadeTransition& owner)
 {
-
+	std::fill(owner.viewSprites_.begin(), owner.viewSprites_.end(), 0.0f);
 }
-void BlockFadeTransition::ExitIdle()
-{
-
-}
-
-// ENTERING
-void BlockFadeTransition::InitEntering()
-{
-	std::fill(viewSprites_.begin(), viewSprites_.end(), 0.0f);
-}
-void BlockFadeTransition::UpdateEntering()
+void BlockFadeTransitionStateEntering::Update(BlockFadeTransition& owner, float)
 {
 	// イージングを適用した進行度tを計算
-	float t = std::powf(saturate(stateMachine_.GetStateElapsedTime() / cfg_.inSec), cfg_.easePow);
+	float t = std::powf(owner.saturate(GetElapsed() / owner.cfg_.inSec), owner.cfg_.easePow);
 	
 	// 左から右への波及計算
-	float shiftF = std::lerp(float(-(cfg_.cols + cfg_.headCols + 0)), 0.0f, t);
+	float shiftF = std::lerp(float(-(owner.cfg_.cols + owner.cfg_.headCols + 0)), 0.0f, t);
 	int   shiftCols = int(std::floor(shiftF));
 
-	bool rightOK = (shiftCols >= (cfg_.cols - cfg_.bodyCols));
+	bool rightOK = (shiftCols >= (owner.cfg_.cols - owner.cfg_.bodyCols));
 
 	// 画面全体が覆われたらHOLDへ
 	if (rightOK)
 	{
-        stateMachine_.ChangeState(TransitionStage::HOLD);
+		RequestStateChange(TransitionStage::HOLD);
 	}
 }
-void BlockFadeTransition::ExitEntering()
-{
+void BlockFadeTransitionStateEntering::Exit(BlockFadeTransition&) {}
 
-}
-
-// HOLD
-void BlockFadeTransition::InitHold()
+void BlockFadeTransitionStateHold::Init(BlockFadeTransition& owner)
 {
-    std::fill(viewSprites_.begin(), viewSprites_.end(), 1.0f);
+	std::fill(owner.viewSprites_.begin(), owner.viewSprites_.end(), 1.0f);
 }
-void BlockFadeTransition::UpdateHold()
+void BlockFadeTransitionStateHold::Update(BlockFadeTransition& owner, float)
 {
-	if (stateMachine_.GetStateElapsedTime() >= cfg_.holdSec)
+	if (GetElapsed() >= owner.cfg_.holdSec)
 	{
-		finished_ = true;
+		owner.finished_ = true;
 	}
 }
-void BlockFadeTransition::ExitHold()
-{
+void BlockFadeTransitionStateHold::Exit(BlockFadeTransition&) {}
 
-}
-
-// EXITING
-void BlockFadeTransition::InitExiting()
+void BlockFadeTransitionStateExiting::Init(BlockFadeTransition& owner)
 {
-    std::fill(viewSprites_.begin(), viewSprites_.end(), 1.0f);
+	std::fill(owner.viewSprites_.begin(), owner.viewSprites_.end(), 1.0f);
 }
-void BlockFadeTransition::UpdateExiting()
+void BlockFadeTransitionStateExiting::Update(BlockFadeTransition& owner, float)
 {
-	if (stateMachine_.GetStateElapsedTime() >= cfg_.outSec + (cfg_.holdSec / 4.0f))
+	if (GetElapsed() >= owner.cfg_.outSec + (owner.cfg_.holdSec / 4.0f))
 	{
-		finished_ = true;
+		owner.finished_ = true;
 	}
 }
-void BlockFadeTransition::ExitExiting()
-{
-
-}
+void BlockFadeTransitionStateExiting::Exit(BlockFadeTransition&) {}

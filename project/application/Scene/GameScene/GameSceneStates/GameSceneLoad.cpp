@@ -1,11 +1,17 @@
 #include "../GameScene.h"
 
-void GameScene::InitLoad()
+void GameSceneStateLoad::Init(GameScene& owner)
 {
+	(void)owner;
 }
-void GameScene::UpdateLoad()
+
+void GameSceneStateLoad::Update(GameScene& owner, float deltaTime)
 {
+	(void)owner;
+	(void)deltaTime;
 }
-void GameScene::ExitLoad()
+
+void GameSceneStateLoad::Exit(GameScene& owner)
 {
+	(void)owner;
 }

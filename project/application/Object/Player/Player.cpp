@@ -18,24 +18,6 @@ using namespace Graphics;
 using namespace Effect;
 using namespace PlayerAttack;
 
-#define PLAYER_STATE_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(Player, stateEnum, funcName)
-
-const std::vector<Player::StateFunctionSet>& Player::GetStateTable()
-{
-	using enum PlayerState;
-	static const std::vector<StateFunctionSet> stateTable =
-	{
-		PLAYER_STATE_ENTRY(IDLE, Idle),
-		PLAYER_STATE_ENTRY(ROUTE, Route),
-		PLAYER_STATE_ENTRY(BOOST, Boost),
-		PLAYER_STATE_ENTRY(BARREL_ROLL, BarrelRoll),
-		PLAYER_STATE_ENTRY(TAKE_DAMAGE, TakeDamage),
-		PLAYER_STATE_ENTRY(DEAD, Dead),
-	};
-	return stateTable;
-}
-
 Player::~Player()
 {
 	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
@@ -48,7 +30,12 @@ Player::~Player()
 void Player::Init()
 {
 	// ステートマシンの初期化
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<PlayerStateIdle>(PlayerState::IDLE, "Idle");
+	stateMachine_.RegisterState<PlayerStateRoute>(PlayerState::ROUTE, "Route");
+	stateMachine_.RegisterState<PlayerStateBoost>(PlayerState::BOOST, "Boost");
+	stateMachine_.RegisterState<PlayerStateBarrelRoll>(PlayerState::BARREL_ROLL, "BarrelRoll");
+	stateMachine_.RegisterState<PlayerStateTakeDamage>(PlayerState::TAKE_DAMAGE, "TakeDamage");
+	stateMachine_.RegisterState<PlayerStateDead>(PlayerState::DEAD, "Dead");
 	
 	// 入力マネージャ取得
 	input_ = Framework::Input::GetInstance();
@@ -123,7 +110,7 @@ void Player::Update()
 	if(obj_->GetColor() != Vector4{ 1.0f, 1.0f, 1.0f, 1.0f }) obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// ステートマシンの更新
-	stateMachine_.UpdateState(deltaTime_);
+	stateMachine_.UpdateState(*this, deltaTime_);
 
 	ParticleUpdate();
 

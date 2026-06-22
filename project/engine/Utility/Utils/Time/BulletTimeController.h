@@ -1,5 +1,6 @@
 #pragma once
 #include "StateMachine.h"
+#include "State.h"
 #include "SingletonObject.h"
 #include <functional>
 
@@ -9,6 +10,11 @@ namespace TYEngine
 	{
 
 		using EaseFunc = std::function<float(float)>;
+
+		class BulletTimeStateNone;
+		class BulletTimeStateEnter;
+		class BulletTimeStateHold;
+		class BulletTimeStateExit;
 
 		/// <summary> バレットタイム（スローモーション）の状態定義。 </summary>
 		enum class BulletTimeState
@@ -30,6 +36,10 @@ namespace TYEngine
 		{
 			friend class SingletonObject<BulletTimeController>;
 			friend struct std::default_delete<BulletTimeController>;
+			friend class BulletTimeStateNone;
+			friend class BulletTimeStateEnter;
+			friend class BulletTimeStateHold;
+			friend class BulletTimeStateExit;
 
 		private:
 			// 外部からの new/delete を禁止
@@ -37,10 +47,7 @@ namespace TYEngine
 			~BulletTimeController() = default;
 
 		public:
-			using StateMachineType = TYEngine::Utility::StateMachine<BulletTimeController, BulletTimeState>;
-			using StateFunctionSet = StateMachineType::StateFunctionSet;
-			// 関数テーブル
-			static const std::vector<StateFunctionSet>& GetStateTable();
+			using StateMachineType = TYEngine::Utility::StateMachine<BulletTimeState, BulletTimeController>;
 
 		public: // メンバ関数
 			/// <summary>
@@ -94,30 +101,44 @@ namespace TYEngine
 			/// <summary>ステートマシーン。</summary>
 			StateMachineType stateMachine_;
 
-		private: // State関連関数
-#pragma region // State関連関数
-			// 通常時
-			void InitNone();
-			void UpdateNone();
-			void ExitNone();
-
-			// 開始時
-			void InitEnter();
-			void UpdateEnter();
-			void ExitEnter();
-
-			// バレットタイム中
-			void InitHold();
-			void UpdateHold();
-			void ExitHold();
-
-			// 終了時
-			void InitExit();
-			void UpdateExit();
-			void ExitExit();
-#pragma endregion
 		};
 
+		// --- 状態クラスの定義 ---
+		class BulletTimeStateNone : public TYEngine::Utility::State<BulletTimeState, BulletTimeController>
+		{
+		public:
+			using State::State;
+			void Init(BulletTimeController& owner) override;
+			void Update(BulletTimeController& owner, float deltaTime) override;
+			void Exit(BulletTimeController& owner) override;
+		};
+
+		class BulletTimeStateEnter : public TYEngine::Utility::State<BulletTimeState, BulletTimeController>
+		{
+		public:
+			using State::State;
+			void Init(BulletTimeController& owner) override;
+			void Update(BulletTimeController& owner, float deltaTime) override;
+			void Exit(BulletTimeController& owner) override;
+		};
+
+		class BulletTimeStateHold : public TYEngine::Utility::State<BulletTimeState, BulletTimeController>
+		{
+		public:
+			using State::State;
+			void Init(BulletTimeController& owner) override;
+			void Update(BulletTimeController& owner, float deltaTime) override;
+			void Exit(BulletTimeController& owner) override;
+		};
+
+		class BulletTimeStateExit : public TYEngine::Utility::State<BulletTimeState, BulletTimeController>
+		{
+		public:
+			using State::State;
+			void Init(BulletTimeController& owner) override;
+			void Update(BulletTimeController& owner, float deltaTime) override;
+			void Exit(BulletTimeController& owner) override;
+		};
 	} // namespace Utility
 } // namespace TYEngine
 

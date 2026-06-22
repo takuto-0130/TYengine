@@ -14,16 +14,16 @@ enum class TransitionStage
 // 'Class' = 継承先クラス（例：FadeTransition）
 template<typename Class>
 class StateMachineTransition : 
-    public ITransition
+     public ITransition
 {
 public:
     void Update(float dt) override 
     {
-        stateMachine_.UpdateState(dt);
+        stateMachine_.UpdateState(*static_cast<Class*>(this), dt);
     }
 
 protected:
-    TYEngine::Utility::StateMachine<Class, TransitionStage> stateMachine_;
+    TYEngine::Utility::StateMachine<TransitionStage, Class> stateMachine_;
 };
 
 // 関数テーブル等の宣言例

@@ -1,9 +1,14 @@
 #pragma once
 #include "../../../BaseBullet/BaseBullet.h"
 #include "StateMachine.h"
+#include "State.h"
 
 #include "../PBulletCollider.h"
 #include "Utils/Json/JsonManager.h"
+
+// 前方宣言
+class NormalBulletStateLinear;
+class NormalBulletStateAfterCollision;
 
 /// <summary>
 /// 通常弾の状態定数。
@@ -21,11 +26,10 @@ enum class NormalBulletState
 class PlayerBulletNormal :
     public BaseBullet
 {
+	friend class NormalBulletStateLinear;
+	friend class NormalBulletStateAfterCollision;
 public:
-	using StateMachineType = TYEngine::Utility::StateMachine<PlayerBulletNormal, NormalBulletState>;
-	using StateFunctionSet = StateMachineType::StateFunctionSet;
-	// 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
+	using StateMachineType = TYEngine::Utility::StateMachine<NormalBulletState, PlayerBulletNormal>;
 
 public:
 	PlayerBulletNormal();
@@ -55,19 +59,24 @@ private:
 	/// <summary>ステートマシーン。</summary>
 	StateMachineType stateMachine_;
 
-private: // シーン内のState関連関数
-#pragma region // State関連関数
-	// 直線移動
-	// LinearState.cpp
-	void InitLinear();
-	void UpdateLinear();
-	void ExitLinear();
+};
 
-	// 衝突後処理
-	// AfterCollisionState.cpp
-	void InitAfterCollision();
-	void UpdateAfterCollision();
-	void ExitAfterCollision();
-#pragma endregion
+// --- 状態クラスの定義 ---
+class NormalBulletStateLinear : public TYEngine::Utility::State<NormalBulletState, PlayerBulletNormal>
+{
+public:
+	using State::State;
+	void Init(PlayerBulletNormal& owner) override;
+	void Update(PlayerBulletNormal& owner, float deltaTime) override;
+	void Exit(PlayerBulletNormal& owner) override;
+};
+
+class NormalBulletStateAfterCollision : public TYEngine::Utility::State<NormalBulletState, PlayerBulletNormal>
+{
+public:
+	using State::State;
+	void Init(PlayerBulletNormal& owner) override;
+	void Update(PlayerBulletNormal& owner, float deltaTime) override;
+	void Exit(PlayerBulletNormal& owner) override;
 };
 

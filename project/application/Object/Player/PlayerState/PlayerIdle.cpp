@@ -1,16 +1,17 @@
 #include "../Player.h"
 
-void Player::InitIdle()
+void PlayerStateIdle::Init(Player& owner)
 {
-	// アイドル状態初期化（現在処理なし）
+	(void)owner;
 }
 
-void Player::UpdateIdle()
+void PlayerStateIdle::Update(Player& owner, float deltaTime)
 {
-
+	(void)owner;
+	(void)deltaTime;
 }
 
-void Player::ExitIdle()
+void PlayerStateIdle::Exit(Player& owner)
 {
-
+	(void)owner;
 }

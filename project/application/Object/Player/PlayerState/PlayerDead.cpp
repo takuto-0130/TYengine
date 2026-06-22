@@ -9,58 +9,59 @@ using namespace Utility;
 using namespace Graphics;
 using namespace Effect;
 
-void Player::InitDead()
+void PlayerStateDead::Init(Player& owner)
 {
 	// 死亡時音声再生
 	GameAudio::GetInstance()->Play("gekiha", false, SoundCategory::SE);
 
 	// パーティクル再生
 	IParticleRenderer::Emitter e;
-	e.transform.translate = GetWorldPosition();
-	e.count = destroyEffect_.count;
-	e.frequency = destroyEffect_.frequency;
-	e.transform.scale = destroyEffect_.scale;
+	e.transform.translate = owner.GetWorldPosition();
+	e.count = owner.destroyEffect_.count;
+	e.frequency = owner.destroyEffect_.frequency;
+	e.transform.scale = owner.destroyEffect_.scale;
 	ParticleManager::GetInstance()->SetEmitter(4, e);
 
 	ParticleManager::GetInstance()->TriggerEmit(4, true);
 
 	// 当たり判定を消す
-	collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
+	owner.collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
 
 	// 落下パラメータの初期化
-	deadMotion_.fallSpeedY = -1.0f; // 少し上にフワッと浮いてから落ちる演出
+	owner.deadMotion_.fallSpeedY = -1.0f; // 少し上にフワッと浮いてから落ちる演出
 }
 
-void Player::UpdateDead()
+void PlayerStateDead::Update(Player& owner, float deltaTime)
 {
+	(void)deltaTime;
 	// キリモミ回転
-	movement_.roll += deadMotion_.spinSpeed * deltaTime_;
+	owner.movement_.roll += owner.deadMotion_.spinSpeed * owner.deltaTime_;
 
 	// 機体を少し下に傾ける
-	movement_.movePitch = Lerp(movement_.movePitch, deadMotion_.targetPitch, 3.0f * deltaTime_);
+	owner.movement_.movePitch = Lerp(owner.movement_.movePitch, owner.deadMotion_.targetPitch, 3.0f * owner.deltaTime_);
 
 	// 落下処理
-	deadMotion_.fallSpeedY += deadMotion_.gravity * deltaTime_;
-	screenOffset_.y -= deadMotion_.fallSpeedY * deltaTime_;
+	owner.deadMotion_.fallSpeedY += owner.deadMotion_.gravity * owner.deltaTime_;
+	owner.screenOffset_.y -= owner.deadMotion_.fallSpeedY * owner.deltaTime_;
 
 	// 画面奥へ遠ざかる（Z軸）
-	movement_.playerDepthFromCamera += deadMotion_.depthSpeed * deltaTime_;
+	owner.movement_.playerDepthFromCamera += owner.deadMotion_.depthSpeed * owner.deltaTime_;
 
 	// トランスフォームへの反映
-	worldTransform_.SetTranslation({
-		screenOffset_.x * movement_.xRange,
-		screenOffset_.y * movement_.yRange,
-		movement_.playerDepthFromCamera
+	owner.worldTransform_.SetTranslation({
+		owner.screenOffset_.x * owner.movement_.xRange,
+		owner.screenOffset_.y * owner.movement_.yRange,
+		owner.movement_.playerDepthFromCamera
 		});
 
 	// 6. 完全に画面下（または奥）へ消えたら処理を止める
-	if (screenOffset_.y < -2.5f) // 画面外に十分出たかを判定
+	if (owner.screenOffset_.y < -2.5f) // 画面外に十分出たかを判定
 	{
-		isDead_ = true;
+		owner.isDead_ = true;
 	}
 }
 
-void Player::ExitDead()
+void PlayerStateDead::Exit(Player& owner)
 {
-
+	(void)owner;
 }

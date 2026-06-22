@@ -12,67 +12,68 @@
 using namespace TYEngine::OffScreen;
 using namespace TYEngine::Utility;
 
-void Player::InitBarrelRoll()
+void PlayerStateBarrelRoll::Init(Player& owner)
 {
     // SE再生
     int h = GameAudio::GetInstance()->Play("roll", false, SoundCategory::SE);
 	
 	// ロール開始位置を記録
-    barrelRoll_.startRollPos = screenOffset_;
-    barrelRoll_.rollEffectTimer = 0.0f;
+    owner.barrelRoll_.startRollPos = owner.screenOffset_;
+    owner.barrelRoll_.rollEffectTimer = 0.0f;
     
     // ラジアルブラーエフェクトの有効化と初期化
     auto* pem = PostEffectManager::GetInstance();
     pem->SetEffectEnabled("RadialBlur", true);
     pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetBlurWidth(0.0f);
     // 中心は画面座標系（-1..1）→ [0..1] に変換して渡す想定
-    pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(screenOffset_);
-    pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetNumSamples(barrelRoll_.blurSamples);
+    pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetCenter(owner.screenOffset_);
+    pem->GetEffect<RadialBlurEffect>("RadialBlur")->SetNumSamples(owner.barrelRoll_.blurSamples);
 
 	
 	// ジャスト回避時の演出設定
-	if (barrelRoll_.justRoll)
+	if (owner.barrelRoll_.justRoll)
 	{
 		pem->SetEffectEnabled("Vignette", true);
 		pem->GetEffect<VignetteEffect>("Vignette")->SetPower(0.0f);
-        GameAudio::GetInstance()->Pitch(h, barrelRoll_.audioPitch);
+        GameAudio::GetInstance()->Pitch(h, owner.barrelRoll_.audioPitch);
 	}
     
     // 入力方向がある場合はその方向へ、なければランダム方向へロール
-    if (Length(movement_.inputDir) != 0)
+    if (Length(owner.movement_.inputDir) != 0)
     {
-        movement_.rollDir = movement_.inputDir;
+        owner.movement_.rollDir = owner.movement_.inputDir;
     }
     else
     {
-        movement_.rollDir = Normalize(Vector2(Random::GetInstance()->Float(-1,1), Random::GetInstance()->Float(-1, 1)));
+        owner.movement_.rollDir = Normalize(Vector2(Random::GetInstance()->Float(-1,1), Random::GetInstance()->Float(-1, 1)));
     }
     
     // ロール中は当たり判定を無効化
-    collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
+    owner.collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
 }
 
-void Player::UpdateBarrelRoll()
+void PlayerStateBarrelRoll::Update(Player& owner, float deltaTime)
 {
-	BarrelRoll();
-    GameAudio::GetInstance()->Pitch(BGMHandle_, Timer::GetInstance()->GetTimeScale());
+	(void)deltaTime;
+	owner.BarrelRoll();
+    GameAudio::GetInstance()->Pitch(owner.BGMHandle_, Timer::GetInstance()->GetTimeScale());
 }
 
-void Player::ExitBarrelRoll()
+void PlayerStateBarrelRoll::Exit(Player& owner)
 {
     // エフェクトの無効化
     auto* pem = PostEffectManager::GetInstance();
     pem->SetEffectEnabled("RadialBlur", false);
-	if (barrelRoll_.justRoll)
+	if (owner.barrelRoll_.justRoll)
 	{
 		pem->SetEffectEnabled("Vignette", false);
 	}
     // 当たり判定をプレイヤー用に戻す
-    collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::PLAYER));
+    owner.collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::PLAYER));
 }
 
 
-// magic
+// Playerのメンバ関数
 void Player::StartBarrelRoll()
 {
 	// LShiftキーでバレルロール開始
@@ -97,7 +98,6 @@ void Player::StartBarrelRoll()
 	}
 }
 
-// magic
 void Player::BarrelRoll()
 {
     // 入力方向に応じて左右（または上下）ロール
@@ -157,8 +157,6 @@ void Player::BarrelRoll()
         stateMachine_.ChangeState(PlayerState::ROUTE);
     }
 }
-
-
 
 void Player::LeftRoll(const Vector2& dir)
 {

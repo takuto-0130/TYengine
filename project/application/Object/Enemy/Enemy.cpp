@@ -9,28 +9,10 @@
 #include "Random.h"
 #include "../../AppSystem/Audio/GameAudio.h"
 
-#define ENEMY_STATE_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(Enemy, stateEnum, funcName)
-
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
 using namespace TYEngine::Effect;
 using namespace TYEngine::CameraSystem;
-
-const std::vector<Enemy::StateFunctionSet>& Enemy::GetStateTable()
-{
-	using enum EnemyState;
-	static const std::vector<StateFunctionSet> stateTable =
-	{
-		ENEMY_STATE_ENTRY(PRE_ENTER, PreEnter),
-		ENEMY_STATE_ENTRY(ENTERING, Entering),
-		ENEMY_STATE_ENTRY(ACTIVE, Active),
-		ENEMY_STATE_ENTRY(EXITING, Exiting),
-		ENEMY_STATE_ENTRY(DAMAGED, Damaged),
-		ENEMY_STATE_ENTRY(DESPAWNED, Despawned),
-	};
-	return stateTable;
-}
 
 Enemy::~Enemy()
 {
@@ -39,7 +21,12 @@ Enemy::~Enemy()
 
 void Enemy::Init()
 {
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<EnemyStatePreEnter>(EnemyState::PRE_ENTER, "PreEnter");
+	stateMachine_.RegisterState<EnemyStateEntering>(EnemyState::ENTERING, "Entering");
+	stateMachine_.RegisterState<EnemyStateActive>(EnemyState::ACTIVE, "Active");
+	stateMachine_.RegisterState<EnemyStateExiting>(EnemyState::EXITING, "Exiting");
+	stateMachine_.RegisterState<EnemyStateDamaged>(EnemyState::DAMAGED, "Damaged");
+	stateMachine_.RegisterState<EnemyStateDespawned>(EnemyState::DESPAWNED, "Despawned");
 
 	// 数値を適用
 	popTime_ = 1.0f;
@@ -124,7 +111,7 @@ void Enemy::Update()
 		/*worldTransform_.SetTranslation(worldTransform_.GetTranslation() - camera_->GetDeltaTranslate());*/
 		
 		// ステート更新
-		stateMachine_.UpdateState(deltaTime_);
+		stateMachine_.UpdateState(*this, deltaTime_);
 
 		// 行列更新と回転処理
 		UpdateTransform();
@@ -235,24 +222,113 @@ void Enemy::Rotate()
 	worldTransform_.SetRotateQuaternion(Normalize(q));
 }
 
-void Enemy::InitDespawned()
+// --- 状態クラスのメソッド実装 ---
+void EnemyStatePreEnter::Init(Enemy&) {}
+void EnemyStatePreEnter::Update(Enemy&, float) {}
+void EnemyStatePreEnter::Exit(Enemy&) {}
+
+void EnemyStateEntering::Init(Enemy&) {}
+void EnemyStateEntering::Update(Enemy& owner, float)
 {
-	collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
+	float t = GetElapsed() / owner.popTime_;
+	if (t <= 1.0f)
+	{
+		owner.worldTransform_.SetScale(Lerp(owner.ZeroScale, owner.defaultScale_, EaseFixed::InOutBounce(t)));
+	}
+	else
+	{
+		RequestStateChange(EnemyState::ACTIVE);
+	}
+}
+void EnemyStateEntering::Exit(Enemy& owner)
+{
+	owner.worldTransform_.SetScale(owner.defaultScale_);
+}
+
+void EnemyStateActive::Init(Enemy&) {}
+void EnemyStateActive::Update(Enemy& owner, float deltaTime)
+{
+	if (owner.bulletTimer_ > 0.0f)
+	{
+		owner.bulletTimer_ -= deltaTime;
+		if (owner.bulletTimer_ >= 1.5f)
+		{
+			float t = owner.bulletTimer_;
+			if (t < 1.5f)
+			{
+				t = 1.5f;
+			}
+			//owner.worldTransform_.SetScale(Lerp(owner.defaultScale_, owner.upScale_, EaseFixed::InOutBounce(t - 1.5f)));
+		}
+
+		if (owner.bulletTimer_ <= 0.5f)
+		{
+			float t = 1.0f - (owner.bulletTimer_ / 0.5f);
+			if (owner.enemyType_ == 1)
+			{
+				// 垂直2点
+				owner.shotPitch_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
+			}
+			else if (owner.enemyType_ == 2)
+			{
+				// 水平4点
+				owner.shotYaw_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
+			}
+			else if (owner.enemyType_ == 3)
+			{
+				// 3角形
+				owner.shotRoll_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
+			}
+		}
+	}
+	else if (owner.bulletTimer_ <= 0.0f)
+	{
+		owner.shotYaw_ = 0;
+		owner.shotPitch_ = 0;
+		owner.shotRoll_ = 0;
+		owner.IsShot();
+	}
+}
+void EnemyStateActive::Exit(Enemy&) {}
+
+void EnemyStateExiting::Init(Enemy&) {}
+void EnemyStateExiting::Update(Enemy&, float) {}
+void EnemyStateExiting::Exit(Enemy&) {}
+
+void EnemyStateDamaged::Init(Enemy& owner)
+{
+	owner.obj_->SetAddColor({ 1,1,1,1 });
+	owner.roll_ = 0.1f;
+}
+void EnemyStateDamaged::Update(Enemy&, float)
+{
+	if (GetElapsed() > 0.05f)
+		RequestStateChange(EnemyState::ACTIVE);
+}
+void EnemyStateDamaged::Exit(Enemy& owner)
+{
+	owner.obj_->SetAddColor({ 0,0,0,0 });
+	owner.roll_ = 0.0f;
+}
+
+void EnemyStateDespawned::Init(Enemy& owner)
+{
+	owner.collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
 
 	// 死亡通知
-	if (listener_ && isInGame_)
+	if (owner.listener_ && owner.isInGame_)
 	{
-		listener_->OnEnemyDied(this);
+		owner.listener_->OnEnemyDied(&owner);
 	}
 	CameraShake::ShakeParams params;
 	params.duration = 0.1f;
 	params.amplitude = 0.1f;
 	params.frequency = 20.0f;
-	camera_->StartShake(params);
+	owner.camera_->StartShake(params);
 
 	// 爆発エフェクト
 	IParticleRenderer::Emitter e;
-	e.transform.translate = GetWorldPosition();
+	e.transform.translate = owner.GetWorldPosition();
 	e.count = 20;
 	e.frequency = 5.0f;
 	e.transform.scale = { 0.3f, 0.3f, 0.3f };
@@ -261,7 +337,7 @@ void Enemy::InitDespawned()
 
 	// リング
 	IParticleRenderer::Emitter eR;
-	eR.transform.translate = GetWorldPosition();
+	eR.transform.translate = owner.GetWorldPosition();
 	eR.count = 1;
 	eR.frequency = 5.0f;
 	eR.transform.scale = { 0.5f, 0.5f, 0.5f };
@@ -271,7 +347,7 @@ void Enemy::InitDespawned()
 	// 破片
 	IParticleRenderer::Emitter eD;
 	eD.velocity = { 0.0f, 2.0f, 0.0f };
-	eD.transform.translate = GetWorldPosition();
+	eD.transform.translate = owner.GetWorldPosition();
 	eD.count = 30;
 	eD.frequency = 5.0f;
 	eD.transform.scale = { 0.1f, 0.1f, 0.1f };
@@ -279,101 +355,24 @@ void Enemy::InitDespawned()
 	ParticleManager::GetInstance()->SetEmitter(5, eD);
 	ParticleManager::GetInstance()->TriggerEmit(5, true);
 }
-
-void Enemy::UpdateEntering()
+void EnemyStateDespawned::Update(Enemy& owner, float)
 {
-	float t = stateMachine_.GetStateElapsedTime() / popTime_;
-	if (t <= 1.0f)
+	if (GetElapsed() < 2.0f)
 	{
-		worldTransform_.SetScale(Lerp(ZeroScale, defaultScale_, EaseFixed::InOutBounce(t)));
-	}
-	else
-	{
-		stateMachine_.ChangeState(EnemyState::ACTIVE);
-	}
-}
-
-void Enemy::UpdateActive()
-{
-	if (bulletTimer_ > 0.0f)
-	{
-		bulletTimer_ -= deltaTime_;
-		if (bulletTimer_ >= 1.5f)
-		{
-			float t = bulletTimer_;
-			if (t < 1.5f)
-			{
-				t = 1.5f;
-			}
-			//worldTransform_.SetScale(Lerp(defaultScale_, upScale_, EaseFixed::InOutBounce(t - 1.5f)));
-		}
-
-		if (bulletTimer_ <= 0.5f)
-		{
-			float t = 1.0f - (bulletTimer_ / 0.5f);
-			if (enemyType_ == 1)
-			{
-				// 垂直2点
-				shotPitch_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
-			}
-			else if (enemyType_ == 2)
-			{
-				// 水平4点
-				shotYaw_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
-			}
-			else if (enemyType_ == 3)
-			{
-				// 3角形
-				shotRoll_ = Lerp(0.0f, 2.0f * std::numbers::pi_v<float>, EaseFixed::InBack(t));
-			}
-		}
-	}
-	else if (bulletTimer_ <= 0.0f)
-	{
-		shotYaw_ = 0;
-		shotPitch_ = 0;
-		shotRoll_ = 0;
-		IsShot();
-	}
-}
-
-void Enemy::InitDamaged()
-{
-	obj_->SetAddColor({ 1,1,1,1 });
-	roll_ = 0.1f;
-}
-
-void Enemy::UpdateDamaged()
-{
-	if (stateMachine_.GetStateElapsedTime() > 0.05f)
-		stateMachine_.ChangeState(EnemyState::ACTIVE);
-}
-
-void Enemy::ExitDamaged()
-{
-	obj_->SetAddColor({ 0,0,0,0 });
-	roll_ = 0.0f;
-}
-
-void Enemy::UpdateDespawned()
-{
-	if (stateMachine_.GetStateElapsedTime() < 2.0f)
-	{
-		roll_ += 0.02f;
-		Vector3 pos = worldTransform_.GetTranslation();
+		owner.roll_ += 0.02f;
+		Vector3 pos = owner.worldTransform_.GetTranslation();
 		pos.y -= 0.02f;
-		worldTransform_.SetTranslation(pos);
-		float t = 1.0f - (stateMachine_.GetStateElapsedTime() / 2.0f);
-		obj_->SetAlpha(t / 2.0f);
-		worldTransform_.SetScale(defaultScale_ * t);
+		owner.worldTransform_.SetTranslation(pos);
+		float t = 1.0f - (GetElapsed() / 2.0f);
+		owner.obj_->SetAlpha(t / 2.0f);
+		owner.worldTransform_.SetScale(owner.defaultScale_ * t);
 	}
 	else
 	{
-		stateMachine_.ChangeState(EnemyState::EXITING);
+		RequestStateChange(EnemyState::EXITING);
 	}
 }
-
-void Enemy::ExitDespawned()
+void EnemyStateDespawned::Exit(Enemy& owner)
 {
-	isDead_ = true;
+	owner.isDead_ = true;
 }

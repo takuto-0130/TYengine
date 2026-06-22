@@ -5,19 +5,24 @@
 
 using namespace TYEngine;
 
-void GameScene::InitFadeOut()
+void GameSceneStateFadeOut::Init(GameScene& owner)
 {
-	AudioSystem::Audio::GetInstance()->Stop(BGMHandle_);
+	AudioSystem::Audio::GetInstance()->Stop(owner.BGMHandle_);
 	auto transition = std::make_unique<FadeTransition>(FadeTransition::Type::FADE_OUT, 1.0f);
-	transition->SetOnFinishCallback([this]() {
-		sceneManager_->ChangeScene("TITLE");
+	transition->SetOnFinishCallback([owner_ptr = &owner]() {
+		owner_ptr->sceneManager_->ChangeScene("TITLE");
 		TransitionManager::GetInstance()->Enqueue(std::make_unique<FadeTransition>(FadeTransition::Type::FADE_IN, 1.0f));
 		});
 	TransitionManager::GetInstance()->Start(std::move(transition));
 }
-void GameScene::UpdateFadeOut()
+
+void GameSceneStateFadeOut::Update(GameScene& owner, float deltaTime)
 {
+	(void)owner;
+	(void)deltaTime;
 }
-void GameScene::ExitFadeOut()
+
+void GameSceneStateFadeOut::Exit(GameScene& owner)
 {
+	(void)owner;
 }

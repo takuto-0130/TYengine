@@ -1,16 +1,17 @@
 #include "../GameScene.h"
 
-void GameScene::InitClear()
+void GameSceneStateClear::Init(GameScene& owner)
 {
-
+	(void)owner;
 }
 
-void GameScene::UpdateClear()
+void GameSceneStateClear::Update(GameScene& owner, float deltaTime)
 {
-
+	(void)owner;
+	(void)deltaTime;
 }
 
-void GameScene::ExitClear()
+void GameSceneStateClear::Exit(GameScene& owner)
 {
-
+	(void)owner;
 }

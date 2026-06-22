@@ -4,8 +4,8 @@
 #include "GaussianEffect.h"
 #include "../RetryUI/RetryUI.h"
 #include "../../../ScoreUI/ScoreUI.h"
-#include "../../Transition/Fade2/BlockFadeTransition.h"
-#include "../../Transition/TransitionManager.h"
+#include "../../Transition/BlockFadeTransition.h"
+#include "../../../../engine/Framework/SceneBase/Transition/TransitionManager.h"
 
 using namespace TYEngine::OffScreen;
 

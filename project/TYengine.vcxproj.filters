@@ -106,12 +106,7 @@
     <Filter Include="application\Scene\Transition">
       <UniqueIdentifier>{83fbd662-97d5-4bef-bb2f-aa747bf7389a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="application\Scene\Transition\Fade">
-      <UniqueIdentifier>{a78a9998-0e91-4202-b103-19a065067301}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="application\Scene\Transition\Fade2">
-      <UniqueIdentifier>{cf8f5f35-fba1-43a2-872d-6ba673304666}</UniqueIdentifier>
-    </Filter>
+
     <Filter Include="application\ScoreUI">
       <UniqueIdentifier>{c79c7faf-a0c8-4ed4-82cc-2afc923196a7}</UniqueIdentifier>
     </Filter>
@@ -153,6 +148,9 @@
     </Filter>
     <Filter Include="engine\Framework\SceneBase">
       <UniqueIdentifier>{5ea89ff9-6308-4c3c-887a-ffcc3c251945}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Framework\SceneBase\Transition">
+      <UniqueIdentifier>{e8b62fc4-b936-4f23-82b4-b394661e11e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics">
       <UniqueIdentifier>{24efe151-73f8-4226-82c8-908ae1c384f5}</UniqueIdentifier>
@@ -330,8 +328,8 @@
     <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp">
       <Filter>application\Object\Enemy\EnemyBullet</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp">
-      <Filter>application\Scene\Transition\Fade2</Filter>
+    <ClCompile Include="application\Scene\Transition\BlockFadeTransition.cpp">
+      <Filter>application\Scene\Transition</Filter>
     </ClCompile>
     <ClCompile Include="engine\Audio\Analysis\BeatAnalyzer.cpp">
       <Filter>engine\Audio\Analysis</Filter>
@@ -525,11 +523,11 @@
     <ClCompile Include="application\Stage\Stage.cpp">
       <Filter>application\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\Transition\Fade\FadeTransition.cpp">
-      <Filter>application\Scene\Transition\Fade</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\Transition\TransitionManager.cpp">
+    <ClCompile Include="application\Scene\Transition\FadeTransition.cpp">
       <Filter>application\Scene\Transition</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Framework\SceneBase\Transition\TransitionManager.cpp">
+      <Filter>engine\Framework\SceneBase\Transition</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp">
       <Filter>application\Scene\GameScene\Pause</Filter>
@@ -672,11 +670,11 @@
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiSystem.h">
       <Filter>application\Scene\GameScene\Result</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\Transition\ITransition.h">
-      <Filter>application\Scene\Transition</Filter>
+    <ClInclude Include="engine\Framework\SceneBase\Transition\ITransition.h">
+      <Filter>engine\Framework\SceneBase\Transition</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\Transition\StateMachineTransition.h">
-      <Filter>application\Scene\Transition</Filter>
+    <ClInclude Include="engine\Framework\SceneBase\Transition\StateMachineTransition.h">
+      <Filter>engine\Framework\SceneBase\Transition</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h">
       <Filter>application\Object\BaseBullet</Filter>
@@ -690,8 +688,8 @@
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h">
       <Filter>application\Object\Enemy\EnemyBullet</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h">
-      <Filter>application\Scene\Transition\Fade2</Filter>
+    <ClInclude Include="application\Scene\Transition\BlockFadeTransition.h">
+      <Filter>application\Scene\Transition</Filter>
     </ClInclude>
     <ClInclude Include="engine\Audio\Analysis\BeatAnalyzer.h">
       <Filter>engine\Audio\Analysis</Filter>
@@ -948,11 +946,11 @@
     <ClInclude Include="application\Stage\Stage.h">
       <Filter>application\Stage</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\Transition\Fade\FadeTransition.h">
-      <Filter>application\Scene\Transition\Fade</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\Transition\TransitionManager.h">
+    <ClInclude Include="application\Scene\Transition\FadeTransition.h">
       <Filter>application\Scene\Transition</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Framework\SceneBase\Transition\TransitionManager.h">
+      <Filter>engine\Framework\SceneBase\Transition</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\GameScene\Pause\Pause.h">
       <Filter>application\Scene\GameScene\Pause</Filter>

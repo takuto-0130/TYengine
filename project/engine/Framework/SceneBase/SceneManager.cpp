@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include "EngineConfig.h"
 #include "Timer.h"
-#include "../../../application/Scene/Transition/TransitionManager.h"
+#include "Transition/TransitionManager.h"
 
 namespace TYEngine
 {

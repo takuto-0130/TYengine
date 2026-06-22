@@ -1,7 +1,7 @@
 #include "FadeTransition.h"
 #include "Sprite.h"
 #include "TextureManager.h"
-#include "../TransitionManager.h"
+#include "../../../engine/Framework/SceneBase/Transition/TransitionManager.h"
 #include "SpriteBasis.h"
 #include <algorithm>
 

@@ -1,6 +1,6 @@
 #include "../TitleScene.h"
-#include "../../Transition/Fade2/BlockFadeTransition.h"
-#include "../../Transition/TransitionManager.h"
+#include "../../Transition/BlockFadeTransition.h"
+#include "../../../../engine/Framework/SceneBase/Transition/TransitionManager.h"
 #include "SceneManager.h"
 #include "../../../AppSystem/Audio/GameAudio.h"
 

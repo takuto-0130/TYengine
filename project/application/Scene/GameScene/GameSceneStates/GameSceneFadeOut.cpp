@@ -1,6 +1,6 @@
 #include "../GameScene.h"
-#include "../../Transition/Fade/FadeTransition.h"
-#include "../../Transition/TransitionManager.h"
+#include "../../Transition/FadeTransition.h"
+#include "../../../../engine/Framework/SceneBase/Transition/TransitionManager.h"
 #include "SceneManager.h"
 
 using namespace TYEngine;

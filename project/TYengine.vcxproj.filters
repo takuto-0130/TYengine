@@ -1,226 +1,235 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="application">
-      <UniqueIdentifier>{6a5424ae-5337-4993-8519-022f91b83939}</UniqueIdentifier>
+      <UniqueIdentifier>{1b29340a-04d9-4459-8020-46953104d6da}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem">
-      <UniqueIdentifier>{b2b62fc4-b936-4f23-82b4-b394661e11a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="application\AppSystem\UI">
-      <UniqueIdentifier>{6d256340-f443-4633-be03-a9682cad83ee}</UniqueIdentifier>
+      <UniqueIdentifier>{6a11d208-00cf-4490-99f3-1b1dfbb76aed}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Audio">
-      <UniqueIdentifier>{2f146ee2-15b9-4a21-9cad-dec0d514b4ed}</UniqueIdentifier>
+      <UniqueIdentifier>{ba8bd67f-87fd-4c24-a5bd-4c8814cf1bc3}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Combo">
-      <UniqueIdentifier>{a64ea486-3ea9-4087-b27e-7c586769eca0}</UniqueIdentifier>
+      <UniqueIdentifier>{8a28f2a2-129d-4d76-ab7d-031074c194ef}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener">
-      <UniqueIdentifier>{a3b7636a-afa1-499c-b7d9-4e249245a7b5}</UniqueIdentifier>
+      <UniqueIdentifier>{8fa7513a-999e-4c08-be39-bc86c21da8d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener\EnemyEvent">
-      <UniqueIdentifier>{e46b06c8-02f4-49d9-b810-f6081ffd7249}</UniqueIdentifier>
+      <UniqueIdentifier>{db059264-cf45-4162-a9db-8ec2a549653c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\AppSystem\RailGenerator">
+      <UniqueIdentifier>{6e8e24f6-cee0-4fb7-ad42-de90af7ad806}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Score">
-      <UniqueIdentifier>{b7fc30d0-a659-4630-bcf8-e196321dcd32}</UniqueIdentifier>
+      <UniqueIdentifier>{edabb84e-6548-4f30-ac0e-f52d4bf13c5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\AppSystem\UI">
+      <UniqueIdentifier>{5eeecd8f-2832-479f-affb-9bb6697b7651}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object">
-      <UniqueIdentifier>{f31d7d90-e987-41af-a467-1ab166130416}</UniqueIdentifier>
+      <UniqueIdentifier>{dcaaf621-13e7-414d-9c4e-dcb36ea8dbdd}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseBullet">
-      <UniqueIdentifier>{5e60b07a-8631-4814-9c49-bfc60d0e546a}</UniqueIdentifier>
+      <UniqueIdentifier>{d5852f80-8bc3-400f-8353-78ecff32c4c1}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseCharacter">
-      <UniqueIdentifier>{e8793df3-f53e-4a18-ac05-2b35a96e249c}</UniqueIdentifier>
+      <UniqueIdentifier>{7350c5dd-5860-4339-9848-9a3a22af3590}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\ColliderTypeID">
-      <UniqueIdentifier>{f33a3c40-b3d9-46bf-9120-9a340e444c60}</UniqueIdentifier>
+      <UniqueIdentifier>{fd7a19a6-b0ca-49e0-af94-946fda24e66f}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy">
-      <UniqueIdentifier>{74f18863-741c-4155-bf3c-ce2f95a615de}</UniqueIdentifier>
+      <UniqueIdentifier>{de98db8a-ccc3-4363-9b64-01439a4219ff}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\AttackStrategy">
-      <UniqueIdentifier>{8ff0294c-81cd-4e8a-8eb0-241c03aa67bf}</UniqueIdentifier>
+      <UniqueIdentifier>{422cae80-498b-49df-bfe8-0c19e26491cf}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet">
-      <UniqueIdentifier>{fe65312c-cf71-4069-acbb-fc30e67ac96b}</UniqueIdentifier>
+      <UniqueIdentifier>{64e5a576-c8a0-44da-a7ee-dacce666eba1}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet\Linear">
-      <UniqueIdentifier>{ad3b16c2-018f-4e61-8d06-f52bf56318ba}</UniqueIdentifier>
+      <UniqueIdentifier>{46949882-49c6-435c-9259-13effa0a92f8}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyManager">
-      <UniqueIdentifier>{685b3d22-28f4-4513-b2f2-0cd6a36cbe72}</UniqueIdentifier>
+      <UniqueIdentifier>{eddc54b0-927f-46f1-9201-b7674975a8d1}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player">
-      <UniqueIdentifier>{5e3a1dc1-a673-4772-b092-30897c5e9b1b}</UniqueIdentifier>
+      <UniqueIdentifier>{efe9640a-2f32-4122-85f7-6d5d8b102af6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\Object\Player\PAttackStrategy">
+      <UniqueIdentifier>{e0553585-5d97-4970-afdd-a3270c6c23dd}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet">
-      <UniqueIdentifier>{d39115c0-b00f-4e2e-9dc3-36f2b4aa3abd}</UniqueIdentifier>
+      <UniqueIdentifier>{cd5d5f05-f1af-4546-8d8a-d1144ae0db16}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet\HomingBullet">
-      <UniqueIdentifier>{80f301cc-8513-4cef-b4e1-f2b841995c64}</UniqueIdentifier>
+      <UniqueIdentifier>{29cf2356-a06c-4b2d-8e63-b61702640e92}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet\NormalBullet">
-      <UniqueIdentifier>{fb7cb71e-659d-47bd-a3e0-0ae89b4faf92}</UniqueIdentifier>
+      <UniqueIdentifier>{67880b51-ca31-40fe-b70c-205772703ab2}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerState">
-      <UniqueIdentifier>{d8dccc63-5203-4375-8c29-d2f2b553e024}</UniqueIdentifier>
+      <UniqueIdentifier>{9b1b3b67-bc69-4d1c-b03c-dd4f605c0e29}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\Reticle">
-      <UniqueIdentifier>{38d81c20-0bed-4a83-b662-07a84d6e5012}</UniqueIdentifier>
+      <UniqueIdentifier>{536ec532-2f9a-469b-9f08-179456ab7486}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Rail">
-      <UniqueIdentifier>{9f7f37dc-9e48-4fab-b34b-e4eb78406653}</UniqueIdentifier>
+      <UniqueIdentifier>{1599637e-e420-4a2f-8630-9d423611449d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene">
-      <UniqueIdentifier>{d79bad98-d1c6-4301-86de-d676f9ad7c66}</UniqueIdentifier>
+      <UniqueIdentifier>{a6174a6e-8366-4685-a2b4-04d370b0b3c7}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene">
-      <UniqueIdentifier>{550fdf2b-dc4e-48ea-850a-bcbaafae0038}</UniqueIdentifier>
+      <UniqueIdentifier>{2037672e-fd05-40e0-810d-88438c9d35e1}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\GameSceneStates">
-      <UniqueIdentifier>{e1f7f76d-1134-4762-9ed7-cf774ce24bc7}</UniqueIdentifier>
+      <UniqueIdentifier>{610cdd65-a63c-4457-b5d6-65699280f2ec}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Pause">
-      <UniqueIdentifier>{e510e17b-a478-4760-95fa-02663e22b052}</UniqueIdentifier>
+      <UniqueIdentifier>{4f452f29-8e29-43a5-b4ef-a81757196090}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\PlayUI">
-      <UniqueIdentifier>{8f7faab9-811f-4ae9-b40d-ae5319af5939}</UniqueIdentifier>
+      <UniqueIdentifier>{f6d2fa2b-ccd1-4829-9c2c-28fb5bb487fe}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Result">
-      <UniqueIdentifier>{bc7e4948-3a95-46cc-af17-00176039cc85}</UniqueIdentifier>
+      <UniqueIdentifier>{7bada5a2-668c-4397-8e11-6f7830d89203}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\RetryUI">
-      <UniqueIdentifier>{bee88c17-d618-44f8-a409-702e244b1d01}</UniqueIdentifier>
+      <UniqueIdentifier>{40fd3328-08bf-42b5-8a20-2f09f3608278}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\StartUI">
-      <UniqueIdentifier>{251c9d35-c1a2-4b6f-afd7-2a070e11d57a}</UniqueIdentifier>
+      <UniqueIdentifier>{9e014daa-feb2-45a9-a785-3c64187dabfb}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\SceneFactory">
-      <UniqueIdentifier>{6486615a-be75-4135-a88a-96d234abd41e}</UniqueIdentifier>
+      <UniqueIdentifier>{5c10ae73-e4f9-4f97-b7ab-e76a462997b9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\TitleScene">
-      <UniqueIdentifier>{a71caacf-9845-4665-95fb-74b583d62e54}</UniqueIdentifier>
+      <UniqueIdentifier>{68c3da24-21c8-4515-aeb1-1bbd4e3fb2e9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\TitleScene\TItleSceneStates">
-      <UniqueIdentifier>{9cda27a4-2d3f-46fe-ade8-c6befc8aa234}</UniqueIdentifier>
+      <UniqueIdentifier>{3f479e60-97bf-4db9-908f-099b643abb67}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition">
-      <UniqueIdentifier>{83fbd662-97d5-4bef-bb2f-aa747bf7389a}</UniqueIdentifier>
+      <UniqueIdentifier>{d14634a1-b3f7-4b0b-82ea-6f6e9708810d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\ScoreUI">
-      <UniqueIdentifier>{c79c7faf-a0c8-4ed4-82cc-2afc923196a7}</UniqueIdentifier>
+      <UniqueIdentifier>{1640310b-276b-41fe-912b-530a4eef0c02}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Stage">
-      <UniqueIdentifier>{1f705aa4-33f4-400c-a07e-883bce6193a2}</UniqueIdentifier>
+      <UniqueIdentifier>{1420bb3f-3d92-49a1-a12a-6338504ea0c1}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine">
-      <UniqueIdentifier>{52b7fd35-271f-4542-8182-bf06486fd80c}</UniqueIdentifier>
+      <UniqueIdentifier>{f46072df-62e6-4f5c-8479-869a40000b17}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio">
-      <UniqueIdentifier>{ac8edde8-aa86-4fb2-aa73-64570d301eac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\Audio\Core">
-      <UniqueIdentifier>{ad8edde8-aa86-4fb2-aa73-64570d301eac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\Audio\DSP">
-      <UniqueIdentifier>{ae8edde8-aa86-4fb2-aa73-64570d301eac}</UniqueIdentifier>
+      <UniqueIdentifier>{3af2ab70-a361-427b-a574-50a1b3ee1630}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio\Analysis">
-      <UniqueIdentifier>{af8edde8-aa86-4fb2-aa73-64570d301eac}</UniqueIdentifier>
+      <UniqueIdentifier>{c276db2b-47bd-4bc9-962c-f2e64b5122a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Audio\Core">
+      <UniqueIdentifier>{c66457bd-a19b-4c8c-9cd9-30b9aa681176}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Audio\DSP">
+      <UniqueIdentifier>{863170e9-2c67-470f-81be-ffd34c51ddf7}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Camera">
-      <UniqueIdentifier>{a96c8800-1dcf-4e48-ac6d-5dbcc120e887}</UniqueIdentifier>
+      <UniqueIdentifier>{569bea1a-a6d2-4fcd-a8bd-36447bc84864}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Debugger">
-      <UniqueIdentifier>{c1d438c1-25da-4c0a-91c5-53d7f89d2522}</UniqueIdentifier>
+      <UniqueIdentifier>{0a871fde-ca9b-49bd-806a-ac2001e0b180}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Effect">
-      <UniqueIdentifier>{23b77546-46fc-42d0-ab69-0833e759523d}</UniqueIdentifier>
+      <UniqueIdentifier>{578774ad-410b-4dd8-b99e-069a8bf6b4a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\EngineCore">
-      <UniqueIdentifier>{7686620a-f5b4-4cd3-98a7-7ef6b2a8c5e3}</UniqueIdentifier>
+      <UniqueIdentifier>{5ab5a5ee-9fe4-444f-bb29-3c9785f31356}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework">
-      <UniqueIdentifier>{24ad690f-3683-4a1a-a547-ad77961c542e}</UniqueIdentifier>
+      <UniqueIdentifier>{b1e795b4-61e0-47fa-abce-3ff86ffc77a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\Input">
-      <UniqueIdentifier>{659ef8eb-2b89-48a3-bd45-a08243e7f07d}</UniqueIdentifier>
+      <UniqueIdentifier>{8d42a761-a90d-42c2-b2c1-eb65ca95ea5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\SceneBase">
-      <UniqueIdentifier>{5ea89ff9-6308-4c3c-887a-ffcc3c251945}</UniqueIdentifier>
+      <UniqueIdentifier>{87db6c7a-078b-4ea0-8c7c-b4ea4dbd00d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\SceneBase\Transition">
-      <UniqueIdentifier>{e8b62fc4-b936-4f23-82b4-b394661e11e0}</UniqueIdentifier>
+      <UniqueIdentifier>{3c8cb5ea-06ca-4145-9cca-4726c85e4728}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics">
-      <UniqueIdentifier>{24efe151-73f8-4226-82c8-908ae1c384f5}</UniqueIdentifier>
+      <UniqueIdentifier>{011f00ad-2b27-418c-a60b-faca59abf17f}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Cubemap">
-      <UniqueIdentifier>{2fbc0ffd-bda8-4120-b544-eb9420064da6}</UniqueIdentifier>
+      <UniqueIdentifier>{675bcf55-fb1e-44d0-93f1-25eb052e9c3a}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Model">
-      <UniqueIdentifier>{6161afe7-1c63-4b23-b77f-492dad56bbdb}</UniqueIdentifier>
+      <UniqueIdentifier>{a0497f75-1638-431f-96d6-240ec2d204f0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Sprite">
-      <UniqueIdentifier>{f923c27c-6165-43ed-a5e0-7e48e0f32e26}</UniqueIdentifier>
+      <UniqueIdentifier>{32baa76c-7581-4bcc-a7c0-f395e5f01115}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\SRV">
-      <UniqueIdentifier>{46bbafac-f042-48b3-8010-752dee87ccda}</UniqueIdentifier>
+      <UniqueIdentifier>{8a1fafbd-c6d2-4adf-997b-3ce97c30a924}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen">
-      <UniqueIdentifier>{5e6ca9f2-f4ca-413b-a712-895a85096eaf}</UniqueIdentifier>
+      <UniqueIdentifier>{a9cc9325-ca5d-47be-83d4-ed58036d12b0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen\PostEffect">
-      <UniqueIdentifier>{52fd00a0-af3f-4e49-893d-55c07d1bc2b4}</UniqueIdentifier>
+      <UniqueIdentifier>{2f806d2b-87f2-4b0d-b93c-dedef1b6edac}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility">
-      <UniqueIdentifier>{466a0288-059e-4c34-bba2-411930034d18}</UniqueIdentifier>
+      <UniqueIdentifier>{75381342-3c3c-409c-90ca-ff0b043320d4}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider">
-      <UniqueIdentifier>{9aa18e36-3408-4709-8409-968bcb720ad3}</UniqueIdentifier>
+      <UniqueIdentifier>{218885b9-4c71-464b-b89c-a42fab007c07}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\2DCollider">
-      <UniqueIdentifier>{9bc1c702-fd55-47cb-b70f-7e422eb09ae9}</UniqueIdentifier>
+      <UniqueIdentifier>{4a4f8444-48a3-4cc7-b3ff-5c017cce7b61}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Ray">
-      <UniqueIdentifier>{7745ed78-944f-44c9-a8e1-93b1555f1914}</UniqueIdentifier>
+      <UniqueIdentifier>{1819cb92-6117-44d7-ad57-1aa51bbd3861}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Sphere">
-      <UniqueIdentifier>{beab8d5a-931b-44e3-807e-353b24fbe824}</UniqueIdentifier>
+      <UniqueIdentifier>{c60df5c5-0c68-4712-9f6d-ef101caa2113}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Loader">
-      <UniqueIdentifier>{1925e4e4-bc94-4061-84ea-5de23e51936e}</UniqueIdentifier>
+      <UniqueIdentifier>{bafbcee8-a403-4722-941a-1ada88d511a7}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Math">
-      <UniqueIdentifier>{d5612fcb-bebd-46f9-8f14-7cd20f5e9c36}</UniqueIdentifier>
+      <UniqueIdentifier>{fc773959-93c8-4d47-b069-dd984adc35a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\ObjectBasis">
-      <UniqueIdentifier>{bd2cd3ac-3acb-4af3-9b97-f642faf7aae6}</UniqueIdentifier>
+      <UniqueIdentifier>{fb4756c3-77bd-45a8-8729-f17b6fb090e3}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\SceneObjects">
-      <UniqueIdentifier>{85e21012-3dfa-468f-ad1e-5733e19f5a5b}</UniqueIdentifier>
+      <UniqueIdentifier>{de4e8bc0-6745-4ce0-9094-63700f7a22db}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils">
-      <UniqueIdentifier>{7ef2e20f-33a8-4b75-8349-1e28e653d6c4}</UniqueIdentifier>
+      <UniqueIdentifier>{8f8a121e-8ca7-4788-8912-c56420ff5680}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\JSON">
-      <UniqueIdentifier>{0c025634-f443-4633-be03-a9682cad83cc}</UniqueIdentifier>
+      <UniqueIdentifier>{004a6747-e660-41bb-80c0-0661166ee75e}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\Time">
-      <UniqueIdentifier>{7e92eb37-cc30-4e70-a1eb-ed4e940e4268}</UniqueIdentifier>
+      <UniqueIdentifier>{5ed83ca9-1af4-425d-a702-305549cc914b}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals">
-      <UniqueIdentifier>{c1d23794-20af-41b2-8ae8-e5fa2ed32ed2}</UniqueIdentifier>
+      <UniqueIdentifier>{ed17320a-689f-42a4-b53e-9e193ba03008}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals\imgui">
-      <UniqueIdentifier>{6f5bb256-563f-46cc-b65d-b90a8995a099}</UniqueIdentifier>
+      <UniqueIdentifier>{c7abb37f-ee56-41da-a7cd-efad4830cf17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp">
       <Filter>application\AppSystem\Combo</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AppSystem\RailGenerator\AppRailGenerator.cpp">
+      <Filter>application\AppSystem\RailGenerator</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp">
       <Filter>application\Object\Enemy\EnemyBullet\Linear</Filter>
@@ -347,6 +356,9 @@
     </ClCompile>
     <ClCompile Include="engine\Audio\DSP\MyAnalyzerXAPO.cpp">
       <Filter>engine\Audio\DSP</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Audio\Analysis\OfflineAudioAnalyzer.cpp">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClCompile>
     <ClCompile Include="externals\xapobase.cpp">
       <Filter>externals</Filter>
@@ -624,10 +636,6 @@
     <ClCompile Include="application\AppSystem\Audio\CriticalHealthAudioEffect.cpp">
       <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\Analysis\OfflineAudioAnalyzer.cpp">
-      <Filter>engine\Audio\Analysis</Filter>
-    </ClCompile>
-    <ClCompile Include="application\AppSystem\RailGenerator\AppRailGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
@@ -641,6 +649,9 @@
     </ClInclude>
     <ClInclude Include="application\AppSystem\ParticleType.h">
       <Filter>application\AppSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\RailGenerator\AppRailGenerator.h">
+      <Filter>application\AppSystem\RailGenerator</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h">
       <Filter>application\Object\BaseCharacter</Filter>
@@ -656,6 +667,12 @@
     </ClInclude>
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h">
       <Filter>application\Object\Enemy\EnemyBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PAttackStrategy\IPAttackStrategy.h">
+      <Filter>application\Object\Player\PAttackStrategy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PAttackStrategy\PAttackStrategies.h">
+      <Filter>application\Object\Player\PAttackStrategy</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h">
       <Filter>application\Object\Player\PlayerBullet\HomingBullet</Filter>
@@ -696,6 +713,9 @@
     <ClInclude Include="application\Scene\Transition\BlockFadeTransition.h">
       <Filter>application\Scene\Transition</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Audio\Analysis\AudioAnalysisResult.h">
+      <Filter>engine\Audio\Analysis</Filter>
+    </ClInclude>
     <ClInclude Include="engine\Audio\Analysis\BeatAnalyzer.h">
       <Filter>engine\Audio\Analysis</Filter>
     </ClInclude>
@@ -709,6 +729,9 @@
       <Filter>engine\Audio\DSP</Filter>
     </ClInclude>
     <ClInclude Include="engine\Audio\Analysis\AudioAnalyzer.h">
+      <Filter>engine\Audio\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Audio\Analysis\OfflineAudioAnalyzer.h">
       <Filter>engine\Audio\Analysis</Filter>
     </ClInclude>
     <ClInclude Include="engine\Effect\ContrailBehaviour.h">
@@ -772,6 +795,9 @@
       <Filter>engine\Utility\Utils</Filter>
     </ClInclude>
     <ClInclude Include="engine\Utility\Utils\SingletonObject.h">
+      <Filter>engine\Utility\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\State.h">
       <Filter>engine\Utility\Utils</Filter>
     </ClInclude>
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h">
@@ -1065,16 +1091,6 @@
     <ClInclude Include="application\AppSystem\Audio\CriticalHealthAudioEffect.h">
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Player\PAttackStrategy\IPAttackStrategy.h" />
-    <ClInclude Include="application\Object\Player\PAttackStrategy\PAttackStrategies.h" />
-    <ClInclude Include="engine\Audio\Analysis\AudioAnalysisResult.h">
-      <Filter>engine\Audio\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Audio\Analysis\OfflineAudioAnalyzer.h">
-      <Filter>engine\Audio\Analysis</Filter>
-    </ClInclude>
-    <ClInclude Include="application\AppSystem\RailGenerator\AppRailGenerator.h" />
-    <ClInclude Include="engine\Utility\Utils\State.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

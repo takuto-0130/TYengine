@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "Utils/Json/JsonManager.h"
+#include "BaseUI.h"
 
 namespace TYEngine::Graphics
 {
@@ -10,17 +10,17 @@ namespace TYEngine::Graphics
 /// <summary>
 /// ゲーム開始時のスタート演出（Ready -> Go）を管理するクラス。
 /// </summary>
-class StartUI
+class StartUI : public BaseUI
 {
 public:
 	/// <summary>初期化処理。</summary>
-	void Init();
+	void Init() override;
 
 	/// <summary>更新処理。</summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>描画処理。</summary>
-	void Draw();
+	void Draw() override;
 
 	/// <summary>スタート演出を開始する。</summary>
 	void Start();
@@ -30,8 +30,6 @@ public:
 
 	/// <summary>状態をリセットする。</summary>
 	void Reset();
-
-	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 	void SetGOAlpha(float t);
 
@@ -51,7 +49,5 @@ private:
 	float timer_ = 0.0f;
 
 	float maxTime_ = 0.0f;
-
-	TYEngine::Utility::JsonManager* jm_;
 };
 

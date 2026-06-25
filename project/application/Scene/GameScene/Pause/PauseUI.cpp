@@ -1,4 +1,4 @@
-#include "Pause.h"
+#include "PauseUI.h"
 #include "Sprite.h"
 #include "TextureManager.h"
 #include "mathFunc.h"
@@ -11,7 +11,7 @@ using namespace TYEngine::Utility;
 using namespace TYEngine::Framework;
 using namespace TYEngine::Graphics;
 
-void PauseClass::Init()
+void PauseUI::Init()
 {
 	input_ = Input::GetInstance();
 	audio_ = GameAudio::GetInstance();
@@ -147,7 +147,7 @@ void PauseClass::Init()
 	}
 }
 
-void PauseClass::Reset()
+void PauseUI::Reset()
 {
 	elements_ = ButtonElements::Num;
 	isPush_ = false;
@@ -163,7 +163,7 @@ void PauseClass::Reset()
 	}
 }
 
-void PauseClass::Update()
+void PauseUI::Update()
 {
 #ifdef _DEBUG
 	DebugJMApply();
@@ -210,7 +210,7 @@ void PauseClass::Update()
 	}
 }
 
-void PauseClass::Draw()
+void PauseUI::Draw()
 {
 	back_->Draw();
 	text_->Draw();
@@ -228,7 +228,7 @@ void PauseClass::Draw()
 	}
 }
 
-void PauseClass::DebugJMApply()
+void PauseUI::DebugJMApply()
 {
 	back_->SetSize(jm_->Get<Vector2>("Pause.blackScreen.Size"));
 	back_->SetTextureSize(jm_->Get<Vector2>("Pause.blackScreen.TextureSize"));
@@ -236,7 +236,7 @@ void PauseClass::DebugJMApply()
 	text_->SetPosition(jm_->Get<Vector2>("Pause.PauseText.Position"));
 }
 
-void PauseClass::ButtonProcess()
+void PauseUI::ButtonProcess()
 {
 	if (isPush_) return; // スライドバー操作中はボタン反応しない
 
@@ -284,7 +284,7 @@ void PauseClass::ButtonProcess()
 	}
 }
 
-void PauseClass::VolumeChange()
+void PauseUI::VolumeChange()
 {
 	float deltaTime = Timer::GetInstance()->GetDeltaTime();
 

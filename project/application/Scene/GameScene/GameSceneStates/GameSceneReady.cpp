@@ -1,6 +1,7 @@
 #include "../GameScene.h"
 #include "../StartUI/StartUI.h"
 #include "Timer.h"
+#include "UIManager.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
@@ -15,14 +16,17 @@ void GameSceneStateReady::Init(GameScene& owner)
 void GameSceneStateReady::Update(GameScene& owner, float deltaTime)
 {
 	(void)deltaTime;
-	owner.startDraw_->Update();
+	UIManager::GetInstance()->UpdateUI("Start");
 	owner.startCameraTimer_ += Timer::GetInstance()->GetDeltaTime();
 	owner.StartCamera();
 }
 void GameSceneStateReady::Exit(GameScene& owner)
 {
 	owner.gameAudio_->Resume(owner.BGMHandle_);
-	owner.startDraw_->Reset();
+	if (auto* start = UIManager::GetInstance()->GetUI<StartUI>("Start"))
+	{
+		start->Reset();
+	}
 	owner.startCameraTimer_ = 0;
 	owner.prevStateElapsed_ = 0;
 }
@@ -105,7 +109,10 @@ void GameScene::StartCamera()
 	{
 		if (stateMachine_.GetStateElapsedTime() <= 6.5f)
 		{
-			startDraw_->Start();
+			if (auto* start = UIManager::GetInstance()->GetUI<StartUI>("Start"))
+			{
+				start->Start();
+			}
 		}
 		Matrix4x4 rotX = MakeRotateXMatrix((-startCameraTimer_) / 3.0f);
 		pos = TransformM(pos, rotX);

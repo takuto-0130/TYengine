@@ -1,7 +1,7 @@
 #pragma once
 #include "Sprite.h"
 
-#include "Utils/Json/JsonManager.h"
+#include "BaseUI.h"
 
 #include <memory>
 
@@ -9,17 +9,17 @@
 /// スコア表示UIの管理クラス。
 /// 桁ごとのスプライト管理やスコア加算時のアニメーション制御を行う。
 /// </summary>
-class ScoreUI
+class ScoreUI : public BaseUI
 {
 public:
 	/// <summary>初期化処理。</summary>
-	void Init();
+	void Init() override;
 
 	/// <summary>更新処理。</summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>描画処理。</summary>
-	void Draw();
+	void Draw() override;
 
 	/// <summary>
 	/// リザルト画面用の演出更新処理。
@@ -50,8 +50,6 @@ public:
 
 	std::vector<TYEngine::Graphics::Sprite*>& GetSprite() { return setColliderSpr_; }
 
-	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
-
 private:
 	void OffsetPos(const TYEngine::Utility::Vector2& pos);
 
@@ -62,6 +60,7 @@ private:
 private:
 	enum RetryUISprites
 	{
+		TEN_THOUSANDS = 0,
 		THOUSANDS,
 		HUNDREDS,
 		TENS,
@@ -87,7 +86,5 @@ private:
 	float scoreViewTime_ = 0.0f;
 
 	float deltaTime_ = 0.0f;
-
-	TYEngine::Utility::JsonManager* jm_;
 };
 

@@ -2,6 +2,7 @@
 #include "../../../Object/Rail/RailManager.h"
 #include "../PlayUI/PlayUI.h"
 #include "../../../ScoreUI/ScoreUI.h"
+#include "UIManager.h"
 
 using namespace TYEngine::CameraSystem;
 
@@ -46,37 +47,54 @@ void GameSceneStatePlay::Exit(GameScene& owner)
 // GameSceneのメンバ関数
 void GameScene::PlayUIUpdate()
 {
-	scoreDraw_->Update();
+	auto* uiMgr = UIManager::GetInstance();
+	uiMgr->UpdateUI("Score");
 
-	// バレルロール中以外はジャスト回避判定などをUIに反映
-	if(stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() != PlayerState::BARREL_ROLL)
+	auto* play = uiMgr->GetUI<PlayUI>("Play");
+	if (play)
 	{
-		playUI_->SetJust(stageManager_->GetPlayer()->IsJust());
-		stageManager_->GetPlayer()->OffJust();
-		playUI_->SetShiftPos(stageManager_->GetPlayer()->GetScreenOffset());
+		// バレルロール中以外はジャスト回避判定などをUIに反映
+		if(stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() != PlayerState::BARREL_ROLL)
+		{
+			play->SetJust(stageManager_->GetPlayer()->IsJust());
+			stageManager_->GetPlayer()->OffJust();
+			play->SetShiftPos(stageManager_->GetPlayer()->GetScreenOffset());
+		}
+		else
+		{
+			play->SetJust(false);
+		}
+		play->Update();
 	}
-	else
-	{
-		playUI_->SetJust(false);
-	}
-
-	playUI_->Update();
 }
 
 void GameScene::ComboUIUpdate()
 {
-	ComboManager* combo = stageManager_->GetComboManager();
-	playUI_->SetComboTime(combo->GetStartComboTime());
-	playUI_->SetComboTimer(combo->GetCurrentComboTimer());
-	playUI_->SetComboNum(combo->GetComboCount());
-	playUI_->ComboTexUpdate();
-	scoreDraw_->SetScore(stageManager_->GetScoreManager()->GetScore());
-	if (stageManager_->GetPlayer())
+	auto* uiMgr = UIManager::GetInstance();
+	auto* play = uiMgr->GetUI<PlayUI>("Play");
+	auto* score = uiMgr->GetUI<ScoreUI>("Score");
+
+	HitStreakManager* combo = stageManager_->GetComboManager();
+	if (play)
 	{
-		playUI_->SetHPNum(stageManager_->GetPlayer()->GetHP());
+		play->SetComboTime(combo->GetStartComboTime());
+		play->SetComboTimer(combo->GetCurrentComboTimer());
+		play->SetComboNum(combo->GetComboCount());
+		play->ComboTexUpdate();
 	}
-	else
+	if (score)
 	{
-		playUI_->SetHPNum(0);
+		score->SetScore(stageManager_->GetScoreManager()->GetScore());
+	}
+	if (play)
+	{
+		if (stageManager_->GetPlayer())
+		{
+			play->SetHPNum(stageManager_->GetPlayer()->GetHP());
+		}
+		else
+		{
+			play->SetHPNum(0);
+		}
 	}
 }

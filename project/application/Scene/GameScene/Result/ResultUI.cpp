@@ -1,4 +1,4 @@
-#include "Result.h"
+#include "ResultUI.h"
 #include "Sprite.h"
 #include "TextureManager.h"
 #include "Timer.h"
@@ -8,7 +8,7 @@
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
 
-void ResultClass::Init()
+void ResultUI::Init()
 {
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/blackScreen.png");
 	sprites_[BLACK] = std::make_unique<Sprite>();
@@ -44,7 +44,7 @@ void ResultClass::Init()
 	setColliderSpr_.push_back(sprites_[SPACE].get());
 }
 
-void ResultClass::DebugJMApply()
+void ResultUI::DebugJMApply()
 {
 	sprites_[BLACK]->SetTextureSize(jm_->Get<Vector2>("Result.Texture.blackScreen.TextureSize"));
 	sprites_[BLACK]->SetSize(jm_->Get<Vector2>("Result.Texture.blackScreen.Size"));
@@ -56,12 +56,12 @@ void ResultClass::DebugJMApply()
 	sprites_[SPACE]->SetPosition(jm_->Get<Vector2>("Result.Texture.TitleSpace.Position"));
 }
 
-void ResultClass::Reset()
+void ResultUI::Reset()
 {
 	timer_ = jm_->Get<float>("Result.timer.reset");
 }
 
-void ResultClass::Update()
+void ResultUI::Update()
 {
 #ifdef _DEBUG
 	DebugJMApply();
@@ -74,7 +74,7 @@ void ResultClass::Update()
 	}
 }
 
-void ResultClass::Draw()
+void ResultUI::Draw()
 {
 	for (auto& sprite : sprites_)
 	{
@@ -82,12 +82,12 @@ void ResultClass::Draw()
 	}
 }
 
-void ResultClass::Start()
+void ResultUI::Start()
 {
 	timer_ = 0;
 }
 
-void ResultClass::Move()
+void ResultUI::Move()
 {
 	if (timer_ >= 0 && timer_ < maxTime_)
 	{

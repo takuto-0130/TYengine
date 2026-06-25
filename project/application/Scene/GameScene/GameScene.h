@@ -16,12 +16,6 @@
 #include <memory>
 #include <vector>
 
-class PauseClass;
-class ResultClass;
-class PlayUI;
-class ScoreUI;
-class StartUI;
-class RetryUI;
 class Audio;
 class RailManager;
 class Player;
@@ -159,19 +153,7 @@ private: // メンバ変数
 	/// <summary>バレットタイムコントローラー。</summary>
 	TYEngine::Utility::BulletTimeController* bulletTime_ = nullptr;
 
-	// UIクラス群
-	/// <summary>プレイ中UI。</summary>
-	std::unique_ptr<PlayUI> playUI_;
-	/// <summary>スタート画面UI。</summary>
-	std::unique_ptr<StartUI> startDraw_;
-	/// <summary>スコア表示UI。</summary>
-	std::unique_ptr<ScoreUI> scoreDraw_;
-	/// <summary>リトライ画面UI。</summary>
-	std::unique_ptr<RetryUI> retryDraw_;
-	/// <summary>ポーズメニュー。</summary>
-	std::unique_ptr<PauseClass> pauseMenu_;
-	/// <summary>リザルト画面。</summary>
-	std::unique_ptr<ResultClass> resultMenu_;
+
 
 	/// <summary>スカイボックス。</summary>
 	std::unique_ptr<TYEngine::Graphics::ObjectCubemap> skybox_;

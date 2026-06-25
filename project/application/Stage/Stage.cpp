@@ -25,7 +25,7 @@ void Stage::Init()
     player_->SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
 
     // マネージャ群（コンボ、スコア）初期化
-    comboManager_ = std::make_unique<ComboManager>();
+    comboManager_ = std::make_unique<HitStreakManager>();
     comboManager_->Init();
     scoreManager_ = std::make_unique<ScoreManager>();
     scoreManager_->Init();

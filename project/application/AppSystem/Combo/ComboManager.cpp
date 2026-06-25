@@ -3,19 +3,19 @@
 
 using namespace TYEngine::Utility;
 
-void ComboManager::Init()
+void HitStreakManager::Init()
 {
 	// 各変数を初期値にリセット
 	comboCount_ = 0;
 	comboTimer_ = 0;
-	comboCap_ = 9;
+	comboCap_ = 99;
 	// コンボ受付時間のデフォルト設定
 	kComboTime_ = 3.0f;
 	// シェイク演出時間の設定
 	shakeTime_ = 0.4f;
 }
 
-void ComboManager::Update()
+void HitStreakManager::Update()
 {
 	// コンボタイマーが有効な場合のみカウントダウン
 	if (comboTimer_ > 0)
@@ -31,7 +31,7 @@ void ComboManager::Update()
 	}
 }
 
-void ComboManager::OnEnemyDefeated()
+void HitStreakManager::OnEnemyDefeated()
 {
 	// コンボ数を加算（comboCap_まででキャップ）
 	if(comboCount_ < comboCap_)

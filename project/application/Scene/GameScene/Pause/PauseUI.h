@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "Utils/Json/JsonManager.h"
+#include "BaseUI.h"
 #include "Input.h"
 
 #include "../../../AppSystem/Audio/GameAudio.h"
@@ -25,22 +25,20 @@ enum ButtonElements
 /// ポーズ画面の管理クラス。
 /// ボタンの操作、音量設定の変更などを担当する。
 /// </summary>
-class PauseClass
+class PauseUI : public BaseUI
 {
 public:
 	/// <summary>初期化処理。</summary>
-	void Init();
+	void Init() override;
 
 	/// <summary>状態のリセット。</summary>
 	void Reset();
 
 	/// <summary>毎フレームの更新処理。</summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>描画処理。</summary>
-	void Draw();
-
-	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
+	void Draw() override;
 
 	void SetConfigJsonManager(TYEngine::Utility::JsonManager* jm) { configJM_ = jm; }
 
@@ -118,7 +116,6 @@ private:
 	std::unique_ptr<TYEngine::Graphics::Sprite> back_;
 	std::unique_ptr<TYEngine::Graphics::Sprite> text_;
 
-	TYEngine::Utility::JsonManager* jm_;
 	TYEngine::Utility::JsonManager* configJM_;
 };
 

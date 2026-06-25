@@ -1,7 +1,7 @@
 #pragma once
 #include "Sprite.h"
 
-#include "Utils/Json/JsonManager.h"
+#include "BaseUI.h"
 
 #include <memory>
 #include <random>
@@ -18,17 +18,17 @@ class ScoreUI;
 /// ゲームプレイ中のUI（HUD）を管理するクラス。
 /// スコア、コンボ、HP、操作ガイドなどの表示を行う。
 /// </summary>
-class PlayUI
+class PlayUI : public BaseUI
 {
 public:
 	/// <summary>初期化処理。スプライトの生成など。</summary>
-	void Init();
+	void Init() override;
 	/// <summary>更新処理。</summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// 描画処理（通常描画）。
 	/// </summary>
-	void Draw();
+	void Draw() override;
 
 	/// <summary>
 	/// レンダーターゲットへの描画が必要な場合に使用。
@@ -56,9 +56,6 @@ public:
 
 	/// <summary>ジャスト回避演出の有無を設定。</summary>
 	void SetJust(bool just) { isJust_ = just; }
-
-	/// <summary>JSONマネージャを設定（デバッグ調整用）。</summary>
-	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 private:
 	/// <summary>JSONからパラメータを適用する。</summary>
@@ -103,8 +100,5 @@ private:
 	std::random_device seedGene_;
 	/// <summary>シェイク時間。</summary>
 	float shakeTime_ = 0.0f;
-
-	/// <summary>JSONマネージャ。</summary>
-	TYEngine::Utility::JsonManager* jm_;
 };
 

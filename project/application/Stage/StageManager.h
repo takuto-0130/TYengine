@@ -45,7 +45,7 @@ public:
     /// <returns>終端なら true。</returns>
     bool EndRail() { return GetCurrentStage()->EndRail(); }
 
-    ComboManager* GetComboManager() 
+    HitStreakManager* GetComboManager() 
     {
         return GetCurrentStage() ? GetCurrentStage()->GetComboManager() : nullptr;
     }

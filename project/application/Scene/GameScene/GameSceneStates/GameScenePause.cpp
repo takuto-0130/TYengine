@@ -1,29 +1,41 @@
 #include "../GameScene.h"
-#include "../Pause/Pause.h"
+#include "../Pause/PauseUI.h"
+#include "UIManager.h"
 
 void GameSceneStatePause::Init(GameScene& owner)
 {
-	owner.pauseMenu_->Reset();
+	(void)owner;
+	if (auto* pause = UIManager::GetInstance()->GetUI<PauseUI>("Pause"))
+	{
+		pause->Reset();
+	}
 }
 
 void GameSceneStatePause::Update(GameScene& owner, float deltaTime)
 {
 	(void)deltaTime;
-	owner.pauseMenu_->Update();
+	auto* uiMgr = UIManager::GetInstance();
+	uiMgr->UpdateUI("Pause");
+
 	if (owner.input_->TriggerKey(DIK_ESCAPE)) 
 	{
 		owner.stateMachine_.ChangeState(GameSceneState::PLAY);
 		owner.gameAudio_->Play("close", false, SoundCategory::UI);
+		return;
 	}
-	if (owner.pauseMenu_->GetElements() == ButtonElements::RESUME) 
+
+	if (auto* pause = uiMgr->GetUI<PauseUI>("Pause"))
 	{
-		owner.stateMachine_.ChangeState(GameSceneState::PLAY);
-		owner.gameAudio_->Play("close", false, SoundCategory::UI);
-	}
-	if (owner.pauseMenu_->GetElements() == ButtonElements::RETURN_TITLE)
-	{
-		owner.stateMachine_.ChangeState(GameSceneState::FADE_OUT);
-		owner.gameAudio_->Play("enter", false, SoundCategory::UI);
+		if (pause->GetElements() == ButtonElements::RESUME) 
+		{
+			owner.stateMachine_.ChangeState(GameSceneState::PLAY);
+			owner.gameAudio_->Play("close", false, SoundCategory::UI);
+		}
+		if (pause->GetElements() == ButtonElements::RETURN_TITLE)
+		{
+			owner.stateMachine_.ChangeState(GameSceneState::FADE_OUT);
+			owner.gameAudio_->Play("enter", false, SoundCategory::UI);
+		}
 	}
 }
 

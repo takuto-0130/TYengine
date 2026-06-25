@@ -15,7 +15,7 @@ public:
     /// </summary>
     /// <param name="combo">コンボマネージャのポインタ。</param>
     /// <param name="score">スコアマネージャのポインタ。</param>
-    ComboAndScoreHandler(ComboManager* combo, ScoreManager* score) : combo_(combo), score_(score) {}
+    ComboAndScoreHandler(HitStreakManager* combo, ScoreManager* score) : combo_(combo), score_(score) {}
 
     void OnEnemyDied([[maybe_unused]]Enemy* enemy) override
     {
@@ -28,7 +28,7 @@ public:
 
 private:
     /// <summary>コンボマネージャへの参照。</summary>
-    ComboManager* combo_;
+    HitStreakManager* combo_;
     /// <summary>スコアマネージャへの参照。</summary>
     ScoreManager* score_;
 };

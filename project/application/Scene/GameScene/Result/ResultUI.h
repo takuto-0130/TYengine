@@ -2,23 +2,23 @@
 #include <memory>
 #include "Sprite/Sprite.h"
 
-#include "Utils/Json/JsonManager.h"
+#include "BaseUI.h"
 
 /// <summary>
 /// リザルト画面の管理クラス。
 /// スコア表示やタイマーによる演出制御を行う。
 /// </summary>
-class ResultClass
+class ResultUI : public BaseUI
 {
 public:
 	/// <summary>初期化処理。</summary>
-	void Init();
+	void Init() override;
 
 	/// <summary>更新処理。</summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>描画処理。</summary>
-	void Draw();
+	void Draw() override;
 
 	/// <summary>リザルト演出を開始する。</summary>
 	void Start();
@@ -33,8 +33,6 @@ public:
 	/// コライダーに設定するスプライトのリストを取得する。
 	/// </summary>
 	std::vector<TYEngine::Graphics::Sprite*>& GetSprite() { return setColliderSpr_; }
-
-	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 private:
 	void DebugJMApply();
@@ -60,8 +58,5 @@ private:
 
 	/// <summary>演出最大時間。</summary>
 	float maxTime_ = 0.0f;
-
-	/// <summary>JSONマネージャ。</summary>
-	TYEngine::Utility::JsonManager* jm_;
 };
 

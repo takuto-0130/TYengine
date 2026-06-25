@@ -7,6 +7,9 @@
     <Filter Include="application\AppSystem">
       <UniqueIdentifier>{b2b62fc4-b936-4f23-82b4-b394661e11a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\AppSystem\UI">
+      <UniqueIdentifier>{6d256340-f443-4633-be03-a9682cad83ee}</UniqueIdentifier>
+    </Filter>
     <Filter Include="application\AppSystem\Audio">
       <UniqueIdentifier>{2f146ee2-15b9-4a21-9cad-dec0d514b4ed}</UniqueIdentifier>
     </Filter>
@@ -529,11 +532,14 @@
     <ClCompile Include="engine\Framework\SceneBase\Transition\TransitionManager.cpp">
       <Filter>engine\Framework\SceneBase\Transition</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp">
+    <ClCompile Include="application\Scene\GameScene\Pause\PauseUI.cpp">
       <Filter>application\Scene\GameScene\Pause</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\Result\Result.cpp">
+    <ClCompile Include="application\Scene\GameScene\Result\ResultUI.cpp">
       <Filter>application\Scene\GameScene\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AppSystem\UI\UIManager.cpp">
+      <Filter>application\AppSystem\UI</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Rail\RailManager.cpp">
       <Filter>application\Object\Rail</Filter>
@@ -952,11 +958,17 @@
     <ClInclude Include="engine\Framework\SceneBase\Transition\TransitionManager.h">
       <Filter>engine\Framework\SceneBase\Transition</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\GameScene\Pause\Pause.h">
+    <ClInclude Include="application\Scene\GameScene\Pause\PauseUI.h">
       <Filter>application\Scene\GameScene\Pause</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\GameScene\Result\Result.h">
+    <ClInclude Include="application\Scene\GameScene\Result\ResultUI.h">
       <Filter>application\Scene\GameScene\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\UI\BaseUI.h">
+      <Filter>application\AppSystem\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\UI\UIManager.h">
+      <Filter>application\AppSystem\UI</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Rail\RailManager.h">
       <Filter>application\Object\Rail</Filter>

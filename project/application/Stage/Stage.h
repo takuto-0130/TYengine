@@ -95,7 +95,7 @@ public:
 	}
 
 public:
-	ComboManager* GetComboManager() { return comboManager_.get(); }
+	HitStreakManager* GetComboManager() { return comboManager_.get(); }
 	ScoreManager* GetScoreManager() { return scoreManager_.get(); }
 
 	Player* GetPlayer() { return player_.get(); }
@@ -123,7 +123,7 @@ private:
 	std::unique_ptr<RailManager> railManager_;
 
 	/// <summary>コンボ計測・管理用マネージャ。</summary>
-	std::unique_ptr<ComboManager> comboManager_;
+	std::unique_ptr<HitStreakManager> comboManager_;
 	
 	/// <summary>スコア計測・管理用マネージャ。</summary>
 	std::unique_ptr<ScoreManager> scoreManager_;

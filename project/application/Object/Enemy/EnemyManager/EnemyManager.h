@@ -22,7 +22,7 @@ public:
 	/// <summary>
 	/// スコア・コンボ管理ハンドラを生成・登録する。
 	/// </summary>
-	void MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score);
+	void MakeComboAndScoreHandler(HitStreakManager* combo, ScoreManager* score);
 
 	/// <summary>状態をリセットする。</summary>
 	void Reset();

@@ -3,8 +3,8 @@
 #include "Object3dBasis.h"
 #include "Audio.h"
 #include "CubemapBasis.h"
-#include "Result/Result.h"
-#include "Pause/Pause.h"
+#include "Result/ResultUI.h"
+#include "Pause/PauseUI.h"
 #include "PlayUI/PlayUI.h"
 #include "ScoreUI/ScoreUI.h"
 #include "StartUI/StartUI.h"
@@ -12,6 +12,7 @@
 #include "BulletTimeController.h"
 #include "Timer.h"
 #include "Ease.h"
+#include "UIManager.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -40,6 +41,7 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+	UIManager::GetInstance()->Clear();
 }
 
 void GameScene::Init()

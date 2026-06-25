@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "Utils/Json/JsonManager.h"
+#include "BaseUI.h"
 
 namespace TYEngine::Graphics
 {
@@ -11,17 +11,17 @@ namespace TYEngine::Graphics
 /// ゲームオーバー時のリトライUI管理クラス。
 /// 画面表示と入力待機演出を行う。
 /// </summary>
-class RetryUI
+class RetryUI : public BaseUI
 {
 public:
 	/// <summary>初期化処理。</summary>
-	void Init();
+	void Init() override;
 
 	/// <summary>更新処理。</summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>描画処理。</summary>
-	void Draw();
+	void Draw() override;
 
 	/// <summary>UI表示演出を開始する。</summary>
 	void Start();
@@ -31,8 +31,6 @@ public:
 
 	/// <summary>状態をリセットする。</summary>
 	void Reset();
-
-	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 private:
 	void DebugJMApply();
@@ -51,7 +49,5 @@ private:
 	float timer_ = 0.0f;
 
 	float maxTime_ = 0.0f;
-
-	TYEngine::Utility::JsonManager* jm_;
 };
 

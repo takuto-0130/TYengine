@@ -23,7 +23,7 @@ void EnemyManager::Reset()
 	enemies_.clear();
 }
 
-void EnemyManager::MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score)
+void EnemyManager::MakeComboAndScoreHandler(HitStreakManager* combo, ScoreManager* score)
 {
 	comboAndScoreHandler_ = std::make_unique<ComboAndScoreHandler>(combo, score);
 }

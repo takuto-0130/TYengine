@@ -1,9 +1,10 @@
 #include "../GameScene.h"
 #include "PostEffectManager.h"
 #include "GaussianEffect.h"
-#include "../Result/Result.h"
+#include "../Result/ResultUI.h"
 #include "../../../ScoreUI/ScoreUI.h"
 #include "Timer.h"
+#include "UIManager.h"
 
 using namespace TYEngine;
 using namespace TYEngine::Core;
@@ -19,15 +20,31 @@ void GameSceneStateResult::Init(GameScene& owner)
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetKernelSize(13);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(0.0f);
 	
+	auto* uiMgr = UIManager::GetInstance();
+	auto* result = uiMgr->GetUI<ResultUI>("Result");
+	auto* score = uiMgr->GetUI<ScoreUI>("Score");
+
 	// リザルトUIの初期化・開始
-	owner.resultMenu_->Start();
-	owner.scoreDraw_->SetResult();
-	owner.scoreDraw_->UpdateResult(0.0f);
+	if (result)
+	{
+		result->Start();
+	}
+	if (score)
+	{
+		score->SetResult();
+		score->UpdateResult(0.0f);
+	}
 
 	// 紙吹雪（Confetti）の衝突判定用にUIスプライトを登録
 	std::vector<Graphics::Sprite*> setSpr;
-	setSpr.insert(setSpr.end(), owner.resultMenu_->GetSprite().begin(), owner.resultMenu_->GetSprite().end());
-	setSpr.insert(setSpr.end(), owner.scoreDraw_->GetSprite().begin(), owner.scoreDraw_->GetSprite().end());
+	if (result)
+	{
+		setSpr.insert(setSpr.end(), result->GetSprite().begin(), result->GetSprite().end());
+	}
+	if (score)
+	{
+		setSpr.insert(setSpr.end(), score->GetSprite().begin(), score->GetSprite().end());
+	}
 
 	owner.uiCollider_.SetSprites(setSpr);
 
@@ -47,8 +64,13 @@ void GameSceneStateResult::Init(GameScene& owner)
 void GameSceneStateResult::Update(GameScene& owner, float deltaTime)
 {
 	(void)deltaTime;
-	owner.resultMenu_->Update();
-	owner.scoreDraw_->UpdateResult(owner.stateMachine_.GetStateElapsedTime());
+	auto* uiMgr = UIManager::GetInstance();
+	uiMgr->UpdateUI("Result");
+	
+	if (auto* score = uiMgr->GetUI<ScoreUI>("Score"))
+	{
+		score->UpdateResult(owner.stateMachine_.GetStateElapsedTime());
+	}
 
 	// UIとの衝突判定を更新
 	owner.uiCollider_.BuildAABBs(false);
@@ -77,7 +99,11 @@ void GameSceneStateResult::Update(GameScene& owner, float deltaTime)
 
 void GameSceneStateResult::Exit(GameScene& owner)
 {
+	(void)owner;
 	PostEffectManager::GetInstance()->SetEffectEnabled("Gaussian", false);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(0.0f);
-	owner.resultMenu_->Reset();
+	if (auto* result = UIManager::GetInstance()->GetUI<ResultUI>("Result"))
+	{
+		result->Reset();
+	}
 }

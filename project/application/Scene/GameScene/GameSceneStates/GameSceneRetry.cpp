@@ -6,23 +6,35 @@
 #include "../../../ScoreUI/ScoreUI.h"
 #include "../../Transition/BlockFadeTransition.h"
 #include "../../../../engine/Framework/SceneBase/Transition/TransitionManager.h"
+#include "UIManager.h"
 
 using namespace TYEngine::OffScreen;
 
 void GameSceneStateRetry::Init(GameScene& owner)
 {
+	(void)owner;
 	PostEffectManager::GetInstance()->SetEffectEnabled("Gaussian", true);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetKernelSize(9);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(0.0f);
-	owner.retryDraw_->Start();
-	owner.scoreDraw_->SetResult();
+	
+	auto* uiMgr = UIManager::GetInstance();
+	if (auto* retry = uiMgr->GetUI<RetryUI>("Retry"))
+	{
+		retry->Start();
+	}
+	if (auto* score = uiMgr->GetUI<ScoreUI>("Score"))
+	{
+		score->SetResult();
+	}
 }
 
 void GameSceneStateRetry::Update(GameScene& owner, float deltaTime)
 {
 	(void)deltaTime;
-	owner.retryDraw_->Update();
-	owner.scoreDraw_->Update();
+	auto* uiMgr = UIManager::GetInstance();
+	uiMgr->UpdateUI("Retry");
+	uiMgr->UpdateUI("Score");
+	
 	if (owner.stateMachine_.GetStateElapsedTime() < 2.5f)
 	{
 		PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(((owner.stateMachine_.GetStateElapsedTime() - 0.5f) / 2.0f) * 7.0f);
@@ -39,7 +51,11 @@ void GameSceneStateRetry::Update(GameScene& owner, float deltaTime)
 
 void GameSceneStateRetry::Exit(GameScene& owner)
 {
-	owner.retryDraw_->Reset();
+	(void)owner;
+	if (auto* retry = UIManager::GetInstance()->GetUI<RetryUI>("Retry"))
+	{
+		retry->Reset();
+	}
 	PostEffectManager::GetInstance()->SetEffectEnabled("Gaussian", false);
 	PostEffectManager::GetInstance()->GetEffect<GaussianEffect>("Gaussian")->SetSigma(0.0f);
 }

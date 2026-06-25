@@ -42,19 +42,6 @@ void PlayUI::Init()
 	sprites_[COMBO_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
 	sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo"));
 
-	/*TextureManager::GetInstance()->LoadTexture("Resources/Texture/HpText.png");
-	sprites_[HP_TEXT] = std::make_unique<Sprite>();
-	sprites_[HP_TEXT]->Initialize("Resources/Texture/HpText.png");
-	sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
-	sprites_[HP_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.HpText.Position"));
-
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
-	sprites_[HP_NUM_TEXT] = std::make_unique<Sprite>();
-	sprites_[HP_NUM_TEXT]->Initialize("Resources/Texture/number.png");
-	sprites_[HP_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
-	sprites_[HP_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
-	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));*/
-
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	sprites_[OPERATION] = std::make_unique<Sprite>();
 	sprites_[OPERATION]->Initialize("Resources/Texture/Operation.png");
@@ -164,9 +151,6 @@ void PlayUI::DrawRT()
 
 void PlayUI::ComboTexUpdate()
 {
-	/*Vector2 mouse = input_->GetMousePosition();
-	reticle_->SetPosition(mouse);*/
-
 	// コンボ表示の透明度制御
 	float t = comboTimer_ / kComboTime_;
 	t = 1.0f - powf(1.0f - t, jm_->Get<float>("PlayUI.AlphaEasePow"));

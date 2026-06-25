@@ -108,59 +108,9 @@ private:
 	/// <summary>レールカメラ位置をリセットする。</summary>
 	void ResetRailCamera();
 
-	static PolylineArc BuildPolylineArc(const std::vector<TYEngine::Utility::Vector3>& poly)
-	{
-		PolylineArc map;
+	static PolylineArc BuildPolylineArc(const std::vector<TYEngine::Utility::Vector3>& poly);
 
-		const size_t N = poly.size();
-		if (N == 0) {
-			map.S = {};
-			map.T = {};
-			map.total = 0.0f;
-			return map;
-		}
-		if (N == 1) {
-			map.S = { 0.0f };
-			map.T = { 0.0f };
-			map.total = 0.0f;
-			return map;
-		}
-
-		map.S.resize(N);
-		map.T.resize(N);
-
-		map.S[0] = 0.0f;
-		map.T[0] = 0.0f;
-
-		for (size_t i = 1; i < N; ++i) {
-			map.S[i] = map.S[i - 1] + Length(poly[i - 1] - poly[i]);
-			map.T[i] = static_cast<float>(i) / static_cast<float>(N - 1); // 等間隔 t
-		}
-
-		map.total = map.S.back();
-		return map;
-	}
-
-	static float DistanceToT_Hybrid(const PolylineArc& map, float s)
-	{
-		if (map.S.empty())  return 0.0f;
-		if (s <= 0.0f)      return 0.0f;
-		if (s >= map.total) return 1.0f;
-
-		size_t lo = 0, hi = map.S.size() - 1;
-		while (hi - lo > 1) {
-			const size_t mid = (lo + hi) / 2;
-			if (map.S[mid] <= s) lo = mid; else hi = mid;
-		}
-
-		const float s0 = map.S[lo];
-		const float s1 = map.S[lo + 1];
-		const float t0 = map.T[lo];
-		const float t1 = map.T[lo + 1];
-
-		const float a = (s - s0) / std::max<float>(1e-6f, (s1 - s0));
-		return TYEngine::Utility::Lerp(t0, t1, a); // 線形補間
-	}
+	static float DistanceToT_Hybrid(const PolylineArc& map, float s);
 
 private:
 	/// <summary>カメラへのポインタ。</summary>

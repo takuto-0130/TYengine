@@ -278,13 +278,6 @@ void ConfettiSystem::SpawnShatter(const Vector2& pos, const Vector4& color, floa
 
         p.pos = pos;
 
-        // ランダムな方向に飛ばす
-        /*float angle = rnd->Float(0.0f, 6.28318f);
-        float speed = rnd->Float(80.0f, 200.0f);
-
-        p.vel.x = std::cos(angle) * speed;
-        p.vel.y = std::sin(angle) * speed;*/
-
         // 上方向にだけ跳ねるようにする
         float speedUp = rnd->Float(100.0f, 200.0f);         // 上への基本速度
         float sideRate = rnd->Float(-0.6f, 0.6f);            // 左右への振り（-0.6〜0.6倍）

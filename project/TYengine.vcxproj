@@ -334,6 +334,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Utility\Utils\JSON\JsonManager.h" />
     <ClInclude Include="engine\Utility\Utils\Random.h" />
     <ClInclude Include="engine\Utility\Utils\SingletonObject.h" />
+    <ClInclude Include="engine\Utility\Utils\State.h" />
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
     <ClInclude Include="engine\Utility\Collider\Collider.h" />

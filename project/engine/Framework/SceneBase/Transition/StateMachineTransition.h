@@ -25,18 +25,3 @@ public:
 protected:
     TYEngine::Utility::StateMachine<TransitionStage, Class> stateMachine_;
 };
-
-// 関数テーブル等の宣言例
-/* 
-.h
-public:
-	using StateFunctionSet = TYEngine::Utility::StateMachine<Class, TransitionStage>::StateFunctionSet;
-	// 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
-
-.cpp
-Class()
-{
-    stateMachine_.RegisterFromDefaultTable(this);
-}
-*/

@@ -109,7 +109,6 @@
     <Filter Include="application\Scene\Transition">
       <UniqueIdentifier>{83fbd662-97d5-4bef-bb2f-aa747bf7389a}</UniqueIdentifier>
     </Filter>
-
     <Filter Include="application\ScoreUI">
       <UniqueIdentifier>{c79c7faf-a0c8-4ed4-82cc-2afc923196a7}</UniqueIdentifier>
     </Filter>
@@ -1075,6 +1074,7 @@
       <Filter>engine\Audio\Analysis</Filter>
     </ClInclude>
     <ClInclude Include="application\AppSystem\RailGenerator\AppRailGenerator.h" />
+    <ClInclude Include="engine\Utility\Utils\State.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

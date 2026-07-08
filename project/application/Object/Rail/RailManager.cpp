@@ -108,7 +108,6 @@ void RailManager::Draw()
 	{
 		triggerObj->object.Draw(triggerObj->world);
 	}
-#endif // _DEBUG
 	int num = 0;
 	for (const auto& rail : rails_)
 	{
@@ -118,6 +117,7 @@ void RailManager::Draw()
 		}
 		num++;
 	}
+#endif // _DEBUG
 
 	for (auto& envObj : environmentObjects_)
 	{

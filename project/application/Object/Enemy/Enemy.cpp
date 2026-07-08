@@ -182,10 +182,10 @@ void Enemy::IsShot()
 	GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
 	// 設定された攻撃パターンを実行
-	if (attackStrategy_)
+	/*if (attackStrategy_)
 	{
 		attackStrategy_->Attack(GetWorldPosition(), targetPos_, bulletManager_);
-	}
+	}*/
 }
 
 void Enemy::Rotate()

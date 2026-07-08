@@ -22,7 +22,7 @@ public:
         if (combo_)
         {
             combo_->OnEnemyDefeated();
-            if (score_) score_->AddScore(float(combo_->GetComboCount()));
+            if (score_) score_->AddScore(1.0f + (float(combo_->GetComboCount()) * 0.2f));
         }
     }
 

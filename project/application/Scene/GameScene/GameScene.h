@@ -128,6 +128,8 @@ private:
 	/// </summary>
 	void SwitchEdit();
 
+	void DebugDraw();
+
 private: // メンバ変数
 	/// <summary>カメラのオフセット位置。</summary>
 	TYEngine::Utility::Vector3 cameraOffset_ = {};

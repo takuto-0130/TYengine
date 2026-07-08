@@ -42,4 +42,6 @@ void TitleScene::Load()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/RhythmBar1.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/RhythmBar2.png");
 }

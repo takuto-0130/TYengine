@@ -45,6 +45,7 @@ void GameScene::UIDraw()
 			auto* uiMgr = UIManager::GetInstance();
 			GameSceneState state = stateMachine_.GetCurrentState().value();
 
+			stageManager_->DrawUI();
 			if (state != GameSceneState::RESULT &&
 				state != GameSceneState::RETRY)
 			{
@@ -60,7 +61,6 @@ void GameScene::UIDraw()
 					play->DrawRT();
 				}
 			}
-			stageManager_->DrawUI();
 
 			if (state == GameSceneState::READY)
 			{

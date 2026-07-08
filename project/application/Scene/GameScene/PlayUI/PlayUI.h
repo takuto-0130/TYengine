@@ -44,7 +44,15 @@ public:
 	/// <summary>コンボの最大時間を設定（ゲージ表示用）。</summary>
 	void SetComboTime(float time) { kComboTime_ = time; }
 	/// <summary>コンボ数の表示値を設定。</summary>
-	void SetComboNum(int comboNum) { sprites_[COMBO_NUM_TEXT]->SetTextureLeftTop({ sprites_[COMBO_NUM_TEXT]->GetSize().x * float(comboNum),0 }); }
+	void SetComboNum(int comboNum) 
+	{ 
+		int num = comboNum % 10;
+		sprites_[COMBO_NUM_TEXT]->SetTextureLeftTop({ sprites_[COMBO_NUM_TEXT]->GetSize().x * float(num),0 });
+		
+		num = comboNum / 10;
+		sprites_[COMBO_NUM2_TEXT]->SetTextureLeftTop({ sprites_[COMBO_NUM2_TEXT]->GetSize().x * float(num),0 });
+	}
+
 	/// <summary>スコア描画クラスへの参照を設定。</summary>
 	void SetScoreDraw(ScoreUI* scoreDraw) { scoreDraw_ = scoreDraw; }
 
@@ -69,6 +77,7 @@ private:
 	{
 		COMBO_TEXT,
 		COMBO_NUM_TEXT,
+		COMBO_NUM2_TEXT,
 		OPERATION,
 		OUTLINE,
 		PAUSE,
@@ -82,6 +91,7 @@ private:
 	/// <summary>レティクルスプライト。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> reticle_;
 	std::unique_ptr<TYEngine::Graphics::Sprite> reticle2_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> reticle3_;
 
 	/// <summary>コンボ表示中のタイマー。</summary>
 	float comboTimer_ = 0;

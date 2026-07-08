@@ -98,28 +98,6 @@ void GameScene::Init()
 
 void GameScene::Update()
 {
-#ifdef _DEBUG
-	ImGui::Begin("GameScene State Debug");
-	stateMachine_.DebugImGui("GameScene");
-	ImGui::End();
-
-	// ImGui で編集
-	// UI
-	ImGui::Begin("JSON Editor");
-	static Utility::JsonImGuiEditor inspectorUI(*gameUIJM_);
-	inspectorUI.Draw(gameUIJM_->Root(), "GameUI.json");
-	if (ImGui::Button("SaveUI")) gameUIJM_->Save();
-	// パラメータ
-	static Utility::JsonImGuiEditor inspectorParam(*paramJM_);
-	inspectorParam.Draw(paramJM_->Root(), "Param.json");
-	if (ImGui::Button("SaveParam")) paramJM_->Save();
-	// コンフィグ
-	static Utility::JsonImGuiEditor inspectorConfig(*configJM_);
-	inspectorConfig.Draw(configJM_->Root(), "Config.json");
-	if (ImGui::Button("SaveConfig")) configJM_->Save();
-	ImGui::End();
-#endif // _DEBUG
-
 	// バレットタイム（スローモーション等）の更新
 	bulletTime_->Update();
 
@@ -128,6 +106,7 @@ void GameScene::Update()
 	
 	// デバッグ用エディタ切り替え処理（デバッグビルドのみ）
 	SwitchEdit();
+	DebugDraw();
 
 	skybox_->Update();
 }

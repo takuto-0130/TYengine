@@ -80,6 +80,8 @@ private:
 	/// <summary>管理中の敵リスト。</summary>
 	std::list<std::unique_ptr<Enemy>> enemies_;
 
+	HitStreakManager* hitStreakManager_ = nullptr;
+
 	/// <summary>敵弾マネージャ。</summary>
 	EnemyBulletManager bulletManager_;
 

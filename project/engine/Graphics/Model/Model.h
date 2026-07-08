@@ -48,7 +48,6 @@ namespace TYEngine
 			/// </summary>
 			void CreateVertexResource();
 
-		private: // 構造体
 			/// <summary>
 			/// 頂点データ構造体。  
 			/// 各頂点の座標、UV 座標、法線ベクトルを保持する。
@@ -59,6 +58,7 @@ namespace TYEngine
 				Utility::Vector2 texCoord;  ///< テクスチャ座標。
 				Utility::Vector3 normal;    ///< 法線ベクトル。
 			};
+		private: // 構造体
 
 			/// <summary>
 			/// RGB カラー構造体。
@@ -132,6 +132,12 @@ namespace TYEngine
 			/// <param name="node">Assimp のノード構造体。</param>
 			/// <returns>変換後の Node 構造体。</returns>
 			static Node ReadNode(aiNode* node);
+
+			/// <summary>
+			/// プログラム上で動的に生成した頂点データからモデルを初期化する
+			/// </summary>
+			void InitializeDynamic(ModelLoader* modelLoader, const std::vector<VertexData>& vertices, const std::string& textureFilePath);
+
 
 		public:
 			/// <summary>

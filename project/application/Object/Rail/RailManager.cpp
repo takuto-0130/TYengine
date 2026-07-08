@@ -1,19 +1,15 @@
 #include "RailManager.h"
-#include "RailEditor.h"
 #include "Camera.h"
+#include "TextureManager.h"
 #include "TImer.h"
 #include <imgui.h>
+#include <numeric>
 
 using namespace TYEngine::Utility;
 
 void RailManager::Init()
 {
-	// JSONからレールデータをロード
-	RailEditor::Instance()->Load("Resources/JSON/RailEditor.json");
-	
-	// ロードしたデータで初期化・再構築
-	Reset();
-	ResetRailCamera();
+	TYEngine::Graphics::TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
 
 	railFinished_ = false;
 	railFinishedJustNow_ = false;
@@ -27,19 +23,9 @@ void RailManager::Init()
 
 void RailManager::Reset()
 {
-	controlPoints_ = RailEditor::Instance()->GetControlPoints();
 	triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
 	triggerObjects_.clear();
 
-	const auto& segments = RailEditor::Instance()->GetSegments();
-	for (size_t i = 0; i < controlPoints_.size(); ++i)
-	{
-		if (i < segments.size() && segments[i].triggerEvent)
-		{
-			triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-			triggerObjects_.back()->world.Update();
-		}
-	}
 
 	SetSegment();
 	RailReDraw();
@@ -47,13 +33,60 @@ void RailManager::Reset()
 	// 距離トリガーを再構築
 	RebuildTriggerSFromSegments();
 
-	speedMultiply_ = 0.35f;
+	speedMultiply_ = 1.0f;
 	speedMps_ = 3.5f;
 
 	// 弧長の初期値
 	eyeS_ = 0.0f;
 	forwardS_ = std::min(arcMap_.total, lookAhead_);
 	prevEyeS_ = eyeS_;
+}
+
+void RailManager::SetDynamicData(const std::vector<TYEngine::Utility::Vector3>& points, const std::vector<bool>& triggers)
+{
+	isDynamicMode_ = true;
+
+	// 1. 制御点を直接上書き
+	controlPoints_ = points;
+
+	// 2. トリガーフラグとオブジェクトの初期化
+	triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
+	triggerObjects_.clear();
+
+	// 3. 受け取ったトリガー情報をもとにオブジェクトを配置
+	for (size_t i = 0; i < controlPoints_.size(); ++i)
+	{
+		// triggers配列の範囲外アクセスを防ぎつつ取得
+		bool isTrigger = (i < triggers.size()) ? triggers[i] : false;
+
+		if (isTrigger)
+		{
+			triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
+			triggerObjects_.back()->world.Update();
+		}
+	}
+
+	// 4. スプライン路線の再計算と描画用オブジェクトの構築
+	SetSegment();
+	RailReDraw();
+#ifdef _DEBUG
+
+	// デバッグ出力: レールの描画用ポイントをCSVに書き出す
+	std::ofstream ofs("RailDebug.csv");
+	ofs << "X,Y,Z\n";
+	for (const auto& p : pointsDrawing_)
+	{
+		ofs << p.x << "," << p.y << "," << p.z << "\n";
+	}
+	ofs.close();
+
+#endif // _DEBUG
+
+	// 5. 進行状況やカメラをスタート地点にリセット
+	ResetRailCamera();
+
+	railFinished_ = false;
+	railFinishedJustNow_ = false;
 }
 
 void RailManager::Update()
@@ -70,16 +103,32 @@ void RailManager::Update()
 void RailManager::Draw()
 {
 #ifdef _DEBUG
-	for (const auto& rail : rails_)
-	{
-		rail->Draw();
-	}
 
 	for (auto& triggerObj : triggerObjects_)
 	{
 		triggerObj->object.Draw(triggerObj->world);
 	}
+	int num = 0;
+	for (const auto& rail : rails_)
+	{
+		if (num % 5 == 0)
+		{
+			rail->Draw();
+		}
+		num++;
+	}
 #endif // _DEBUG
+
+	for (auto& envObj : environmentObjects_)
+	{
+		envObj->object.Draw(envObj->world);
+	}
+
+	// 地形メッシュの描画
+	if (terrainObject_)
+	{
+		terrainObject_->Draw(terrainTransform_);
+	}
 }
 
 void RailManager::UpdateEdit()
@@ -103,27 +152,6 @@ void RailManager::PopRail(const Vector3& position, const Vector3& rotate)
 void RailManager::StageEdit()
 {
 #ifdef _DEBUG
-	RailEditor::Instance()->DrawEditorUI();
-	if (RailEditor::Instance()->NeedsPreviewUpdate())
-	{
-		controlPoints_ = RailEditor::Instance()->GetControlPoints();
-		triggeredFlags_ = std::vector<bool>(controlPoints_.size(), false);
-		triggerObjects_.clear();
-
-		const auto& segments = RailEditor::Instance()->GetSegments();
-		for (size_t i = 0; i < controlPoints_.size(); ++i)
-		{
-			if (i < segments.size() && segments[i].triggerEvent)
-			{
-				triggerObjects_.emplace_back(std::make_unique<TriggerObject>(controlPoints_[i]));
-				triggerObjects_.back()->world.Update();
-			}
-		}
-
-		SetSegment();
-		RailReDraw();
-		RailEditor::Instance()->ResetPreviewFlag();
-	}
 #endif
 }
 
@@ -224,30 +252,30 @@ void RailManager::RailCameraMove()
 
 bool RailManager::RailTrigger()
 {
-	if (triggerS_.empty()) return false;
+	//if (triggerS_.empty()) return false;
 
-	// 通過方向に対応（通常は prevEyeS_ <= eyeS_）
-	const float s0 = std::min<float>(prevEyeS_, eyeS_);
-	const float s1 = std::max<float>(prevEyeS_, eyeS_);
+	//// 通過方向に対応（通常は prevEyeS_ <= eyeS_）
+	//const float s0 = std::min<float>(prevEyeS_, eyeS_);
+	//const float s1 = std::max<float>(prevEyeS_, eyeS_);
 
-	bool firedAny = false;
+	//bool firedAny = false;
 
-	// 昇順になっているので前から見るだけでOK
-	// 登録されたトリガー位置（距離s）が今回の移動区間内にあるかチェック
-	for (size_t i = 0; i < triggerS_.size(); ++i)
-	{
-		if (triggerFired_[i]) continue;
+	//// 昇順になっているので前から見るだけでOK
+	//// 登録されたトリガー位置（距離s）が今回の移動区間内にあるかチェック
+	//for (size_t i = 0; i < triggerS_.size(); ++i)
+	//{
+	//	if (triggerFired_[i]) continue;
 
-		const float s = triggerS_[i];
-		if (s > s1) break;                 // これより先はまだ到達していない
-		if (s >= s0 && s <= s1)            // 区間内に入ったらイベント発火
-		{
-			triggerFired_[i] = true;
-			firedAny = true;
-			// 複数個を同一フレームで通過しても全部拾える
-		}
-	}
-	return firedAny;
+	//	const float s = triggerS_[i];
+	//	if (s > s1) break;                 // これより先はまだ到達していない
+	//	if (s >= s0 && s <= s1)            // 区間内に入ったらイベント発火
+	//	{
+	//		triggerFired_[i] = true;
+	//		firedAny = true;
+	//		// 複数個を同一フレームで通過しても全部拾える
+	//	}
+	//}
+	return /*firedAny*/false;
 }
 
 void RailManager::RailCameraDebug()
@@ -268,6 +296,7 @@ void RailManager::RailCameraDebug()
 		RailCameraMove();
 	}
 	ImGui::DragFloat("SpeedMultiply", &speedMultiply_, 0.1f);
+	ImGui::DragFloat("LookAhead", &lookAhead_, 0.1f, 0.1f, 50.0f);
 	ImGui::End();
 #endif
 }
@@ -314,6 +343,64 @@ void RailManager::ResetRailCamera()
 	prevEyeS_ = eyeS_;
 }
 
+PolylineArc RailManager::BuildPolylineArc(const std::vector<TYEngine::Utility::Vector3>& poly)
+{
+	PolylineArc map;
+
+	const size_t N = poly.size();
+	if (N == 0)
+	{
+		map.S = {};
+		map.T = {};
+		map.total = 0.0f;
+		return map;
+	}
+	if (N == 1)
+	{
+		map.S = { 0.0f };
+		map.T = { 0.0f };
+		map.total = 0.0f;
+		return map;
+	}
+
+	map.S.resize(N);
+	map.T.resize(N);
+
+	map.S[0] = 0.0f;
+	map.T[0] = 0.0f;
+
+	for (size_t i = 1; i < N; ++i)
+	{
+		map.S[i] = map.S[i - 1] + Length(poly[i - 1] - poly[i]);
+		map.T[i] = static_cast<float>(i) / static_cast<float>(N - 1); // 等間隔 t
+	}
+
+	map.total = map.S.back();
+	return map;
+}
+
+float RailManager::DistanceToT_Hybrid(const PolylineArc& map, float s)
+{
+	if (map.S.empty())  return 0.0f;
+	if (s <= 0.0f)      return 0.0f;
+	if (s >= map.total) return 1.0f;
+
+	size_t lo = 0, hi = map.S.size() - 1;
+	while (hi - lo > 1)
+	{
+		const size_t mid = (lo + hi) / 2;
+		if (map.S[mid] <= s) lo = mid; else hi = mid;
+	}
+
+	const float s0 = map.S[lo];
+	const float s1 = map.S[lo + 1];
+	const float t0 = map.T[lo];
+	const float t1 = map.T[lo + 1];
+
+	const float a = (s - s0) / std::max<float>(1e-6f, (s1 - s0));
+	return TYEngine::Utility::Lerp(t0, t1, a); // 線形補間
+}
+
 void RailManager::RebuildTriggerSFromSegments()
 {
 	triggerS_.clear();
@@ -322,16 +409,14 @@ void RailManager::RebuildTriggerSFromSegments()
 	if (controlPoints_.size() < 2 || pointsDrawing_.size() < 2 || arcMap_.S.empty())
 		return;
 
-	const auto& segments = RailEditor::Instance()->GetSegments();
+	//const auto& segments = RailEditor::Instance()->GetSegments();
 
 	const size_t Nctrl = controlPoints_.size();
 	const size_t Npoly = pointsDrawing_.size();
 
 	// 制御点に対応する弧長（距離）を計算しトリガーリストに追加
-	for (size_t i = 0; i < Nctrl && i < segments.size(); ++i)
+	for (size_t i = 0; i < Nctrl; ++i)
 	{
-		if (!segments[i].triggerEvent) continue;
-
 		// 制御点のインデックスからスプライン全体のtを算出（近似）
 		float t = (Nctrl <= 1) ? 0.0f : static_cast<float>(i) / static_cast<float>(Nctrl - 1);
 		size_t idx = static_cast<size_t>(std::round(t * static_cast<float>(Npoly - 1)));
@@ -353,4 +438,287 @@ void RailManager::RebuildTriggerSFromSegments()
 	for (size_t k : order) { sSorted.push_back(triggerS_[k]); fSorted.push_back(triggerFired_[k]); }
 	triggerS_.swap(sSorted);
 	triggerFired_.swap(fSorted);
+}
+
+void RailManager::GenerateForest()
+{
+	environmentObjects_.clear();
+	if (pointsDrawing_.size() < 2) return;
+
+	// 固定シード
+	srand(12345);
+	const int SPAWN_INTERVAL = 5;
+
+	// =======================================================
+	// レールの進行度(s)を計算
+	// =======================================================
+	std::vector<float> sValues(pointsDrawing_.size(), 0.0f);
+	for (size_t i = 1; i < pointsDrawing_.size(); ++i)
+	{
+		float dx = pointsDrawing_[i].x - pointsDrawing_[i - 1].x;
+		float dy = pointsDrawing_[i].y - pointsDrawing_[i - 1].y;
+		float dz = pointsDrawing_[i].z - pointsDrawing_[i - 1].z;
+		sValues[i] = sValues[i - 1] + std::sqrt(dx * dx + dy * dy + dz * dz);
+	}
+
+	// =======================================================
+	// フラクタルノイズによる複雑な地形の起伏
+	// =======================================================
+	auto getTerrainHeight = [](float s, float lateral)
+		{
+			float absLat = std::abs(lateral);
+			float roadWidth = 8.0f; // 平らな道の半分の幅
+
+			if (absLat < roadWidth) return 0.0f;
+
+			// 大きなうねり
+			float noiseLarge = std::sin(s * 0.03f + lateral * 0.05f) * 6.0f
+				+ std::cos(s * 0.05f - lateral * 0.03f) * 4.0f;
+
+			// 小さなうねり
+			float noiseSmall = std::sin(s * 0.2f + lateral * 0.15f) * 1.5f
+				+ std::cos(s * 0.3f - lateral * 0.25f) * 0.8f;
+
+			float baseHeight = std::pow(absLat - roadWidth, 1.2f) * 0.25f; // U字谷のベース
+			float blend = std::min((absLat - roadWidth) / 5.0f, 1.0f);
+
+			return baseHeight + ((noiseLarge + noiseSmall) * blend);
+		};
+
+	// 乱数生成ヘルパー (min ～ max の間の小数を返す)
+	auto randomFloat = [](float min, float max)
+		{
+			return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / (max - min));
+		};
+
+	// =======================================================
+	// グリッドの構築（ワールドX軸固定 ＆ 動的ジッター）
+	// =======================================================
+	const int LATERAL_DIVISIONS = 10;
+	const float MAX_LATERAL_DIST = 60.0f;
+
+	// 横方向の1マスの道幅
+	const float COL_DIST = MAX_LATERAL_DIST / static_cast<float>(LATERAL_DIVISIONS);
+
+	std::vector<std::vector<TYEngine::Utility::Vector3>> crossSections(pointsDrawing_.size());
+
+	for (size_t i = 0; i < pointsDrawing_.size(); ++i)
+	{
+		TYEngine::Utility::Vector3 currentPos = pointsDrawing_[i];
+
+		TYEngine::Utility::Vector3 right = { 1.0f, 0.0f, 0.0f };
+
+		// 前後の頂点間隔（行の間隔）を動的に取得する
+		float rowDist = 1.0f;
+		if (i < pointsDrawing_.size() - 1)
+		{
+			rowDist = pointsDrawing_[i + 1].z - pointsDrawing_[i].z;
+		}
+		else if (i > 0)
+		{
+			rowDist = pointsDrawing_[i].z - pointsDrawing_[i - 1].z;
+		}
+		if (rowDist < 0.001f) rowDist = 1.0f;
+
+		// マスの大きさを超えないように、安全なジッターの最大量を「マスの40%まで」に制限する
+		float maxJitterX = COL_DIST * 0.4f;
+		float maxJitterZ = rowDist * 0.4f;
+
+		for (int j = -LATERAL_DIVISIONS; j <= LATERAL_DIVISIONS; ++j)
+		{
+			float t = static_cast<float>(j) / static_cast<float>(LATERAL_DIVISIONS);
+			float baseLateralDist = t * MAX_LATERAL_DIST;
+
+			// 道の中央（jが0付近）はレールに沿わせるためズラさない
+			float jitterAmountX = (std::abs(j) <= 1) ? 0.0f : maxJitterX;
+			float jitterAmountZ = (std::abs(j) <= 1) ? 0.0f : maxJitterZ;
+
+			// 端や境界は隙間防止のためズラさない
+			if (i == 0 || i == pointsDrawing_.size() - 1 || std::abs(j) == LATERAL_DIVISIONS)
+			{
+				jitterAmountX = 0.0f;
+				jitterAmountZ = 0.0f;
+			}
+
+			float jitterX = randomFloat(-jitterAmountX, jitterAmountX); // 横方向のズレ
+			float jitterZ = randomFloat(-jitterAmountZ, jitterAmountZ); // 進行方向のズレ
+
+			float finalLateralDist = baseLateralDist + jitterX;
+			float height = getTerrainHeight(sValues[i] + jitterZ, finalLateralDist);
+
+			// 世界軸（XとZ）に対して真っ直ぐグリッドを配置（中心のみレールの座標に追従）
+			TYEngine::Utility::Vector3 pos = {
+				currentPos.x + finalLateralDist,
+				currentPos.y - 2.0f + height,
+				currentPos.z + jitterZ
+			};
+			crossSections[i].push_back(pos);
+		}
+	}
+
+	// =======================================================
+	// オブジェクトの配置
+	// =======================================================
+	for (size_t i = 0; i < pointsDrawing_.size() - 1; i += SPAWN_INTERVAL)
+	{
+		TYEngine::Utility::Vector3 currentPos = pointsDrawing_[i];
+
+		TYEngine::Utility::Vector3 right = { 1.0f, 0.0f, 0.0f };
+
+		for (int side : {-1, 1})
+		{
+			bool isTree = (rand() % 100) < 70;
+			float baseDist = isTree ? 18.0f : 12.0f;
+			float randomOffset = static_cast<float>(rand() % 250) / 10.0f;
+			float lateralDist = (baseDist + randomOffset) * side;
+
+			if (std::abs(lateralDist) > MAX_LATERAL_DIST - 5.0f) lateralDist = (MAX_LATERAL_DIST - 5.0f) * side;
+
+			float height = getTerrainHeight(sValues[i], lateralDist);
+
+			TYEngine::Utility::Vector3 spawnPos = {
+				currentPos.x + right.x * lateralDist,
+				currentPos.y - 2.5f + height,
+				currentPos.z + right.z * lateralDist
+			};
+
+			auto envObj = std::make_unique<EnvironmentObject>();
+			envObj->type = isTree ? 0 : 1;
+			envObj->world.Initialize();
+			envObj->world.SetTranslation(spawnPos);
+
+			float randomRotY = randomFloat(0.0f, 360.0f) * 3.14159f / 180.0f;
+			envObj->world.SetRotate({ 0.0f, randomRotY, 0.0f });
+
+			float randomScale = 0.8f + randomFloat(0.0f, 0.7f);
+			if (isTree) envObj->world.SetScale({ randomScale, randomScale * 1.2f, randomScale });
+			else        envObj->world.SetScale({ randomScale * 1.7f, randomScale * 1.2f, randomScale * 1.7f });
+
+			if (isTree)
+			{
+				envObj->object.Initialize();
+				envObj->object.SetModel("conifer.obj");
+			}
+			else
+			{
+				envObj->object.Initialize();
+				envObj->object.SetModel("rock.obj");
+				envObj->object.SetColor({ 0.4f, 0.4f, 0.4f, 1.0f });
+				spawnPos.y = currentPos.y - 2.0f + height;
+				envObj->world.SetTranslation(spawnPos);
+			}
+
+
+			envObj->world.Update();
+			environmentObjects_.push_back(std::move(envObj));
+		}
+	}
+
+
+
+	// =======================================================
+	// ポリゴンメッシュの構築
+	// =======================================================
+	std::vector<TYEngine::Graphics::Model::VertexData> vertices;
+	float currentV = 0.0f;
+
+	auto calcNormal = [](const TYEngine::Utility::Vector3& pA, const TYEngine::Utility::Vector3& pB, const TYEngine::Utility::Vector3& pC)
+		{
+			TYEngine::Utility::Vector3 v1 = { pB.x - pA.x, pB.y - pA.y, pB.z - pA.z };
+			TYEngine::Utility::Vector3 v2 = { pC.x - pA.x, pC.y - pA.y, pC.z - pA.z };
+			TYEngine::Utility::Vector3 cross = { v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x };
+			float len = std::sqrt(cross.x * cross.x + cross.y * cross.y + cross.z * cross.z);
+			if (len > 0.0001f) { cross.x /= len; cross.y /= len; cross.z /= len; }
+			return cross;
+		};
+
+	auto addQuad = [&](const TYEngine::Utility::Vector3& pA, const TYEngine::Utility::Vector3& pB, const TYEngine::Utility::Vector3& pC, const TYEngine::Utility::Vector3& pD, float uStart, float uEnd, float vStart, float vEnd)
+		{
+			TYEngine::Utility::Vector3 normal1 = calcNormal(pA, pB, pC);
+			TYEngine::Utility::Vector3 normal2 = calcNormal(pA, pC, pD);
+			vertices.push_back({ {pA.x, pA.y, pA.z, 1.0f}, {uStart, vStart}, normal1 });
+			vertices.push_back({ {pB.x, pB.y, pB.z, 1.0f}, {uStart, vEnd},   normal1 });
+			vertices.push_back({ {pC.x, pC.y, pC.z, 1.0f}, {uEnd,   vEnd},   normal1 });
+			vertices.push_back({ {pA.x, pA.y, pA.z, 1.0f}, {uStart, vStart}, normal2 });
+			vertices.push_back({ {pC.x, pC.y, pC.z, 1.0f}, {uEnd,   vEnd},   normal2 });
+			vertices.push_back({ {pD.x, pD.y, pD.z, 1.0f}, {uEnd,   vStart}, normal2 });
+		};
+
+	for (size_t i = 0; i < crossSections.size() - 1; ++i)
+	{
+		float dist = sValues[i + 1] - sValues[i];
+		float nextV = currentV + (dist * 0.1f);
+
+		int numPoints = LATERAL_DIVISIONS * 2 + 1;
+		for (int j = 0; j < numPoints - 1; ++j)
+		{
+			float uStart = static_cast<float>(j) / static_cast<float>(numPoints - 1);
+			float uEnd = static_cast<float>(j + 1) / static_cast<float>(numPoints - 1);
+
+			addQuad(
+				crossSections[i][j], crossSections[i + 1][j],
+				crossSections[i + 1][j + 1], crossSections[i][j + 1],
+				uStart, uEnd, currentV, nextV
+			);
+		}
+		currentV = nextV;
+	}
+
+	if (!vertices.empty())
+	{
+		terrainModel_.reset();
+		terrainModel_ = std::make_unique<TYEngine::Graphics::Model>();
+		terrainModel_->InitializeDynamic(TYEngine::Graphics::ModelManager::GetInstance()->GetModelLoader(), vertices, "Resources/Models/grassfloor1.dds");
+		terrainObject_ = std::make_unique<TYEngine::Graphics::Object3d>();
+		terrainObject_->Initialize();
+		terrainObject_->SetModel(terrainModel_.get());
+		terrainTransform_.Initialize();
+	}
+}
+
+float RailManager::GetTerrainHeight(const TYEngine::Utility::Vector3& pos)
+{
+	// レールが生成されていない場合は基準値(0)を返す
+	if (pointsDrawing_.empty() || arcMap_.S.empty()) return 0.0f;
+
+	// 1. posに最も近いレール上の点（とインデックス）を探す
+	float minDistSq = 9999999.0f;
+	size_t minIdx = 0;
+	for (size_t i = 0; i < pointsDrawing_.size(); ++i)
+	{
+		float dx = pos.x - pointsDrawing_[i].x;
+		float dz = pos.z - pointsDrawing_[i].z;
+		float distSq = dx * dx + dz * dz;
+		if (distSq < minDistSq)
+		{
+			minDistSq = distSq;
+			minIdx = i;
+		}
+	}
+
+	// 2. その地点の進行度(s)と、レールからの横方向距離(lateral)を取得
+	// arcMap_.S は GenerateForest 内の sValues と全く同じ累積距離データです
+	float s = arcMap_.S[minIdx];
+	float lateral = std::sqrt(minDistSq);
+
+	// 3. GenerateForest 内の計算式と同じロジックで高さを計算
+	float roadWidth = 8.0f;
+	float height = 0.0f;
+
+	if (lateral >= roadWidth)
+	{
+		float noiseLarge = std::sin(s * 0.03f + lateral * 0.05f) * 6.0f
+			+ std::cos(s * 0.05f - lateral * 0.03f) * 4.0f;
+
+		float noiseSmall = std::sin(s * 0.2f + lateral * 0.15f) * 1.5f
+			+ std::cos(s * 0.3f - lateral * 0.25f) * 0.8f;
+
+		float baseHeight = std::pow(lateral - roadWidth, 1.2f) * 0.25f;
+		float blend = std::min((lateral - roadWidth) / 5.0f, 1.0f);
+
+		height = baseHeight + ((noiseLarge + noiseSmall) * blend);
+	}
+
+	// 実際のワールドY座標を返す (道の基本高さは currentPos.y - 2.0f)
+	return pointsDrawing_[minIdx].y - 2.0f + height;
 }

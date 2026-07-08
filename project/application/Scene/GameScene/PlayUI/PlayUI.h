@@ -1,7 +1,7 @@
 #pragma once
 #include "Sprite.h"
 
-#include "Utils/Json/JsonManager.h"
+#include "BaseUI.h"
 
 #include <memory>
 #include <random>
@@ -18,17 +18,17 @@ class ScoreUI;
 /// ゲームプレイ中のUI（HUD）を管理するクラス。
 /// スコア、コンボ、HP、操作ガイドなどの表示を行う。
 /// </summary>
-class PlayUI
+class PlayUI : public BaseUI
 {
 public:
 	/// <summary>初期化処理。スプライトの生成など。</summary>
-	void Init();
+	void Init() override;
 	/// <summary>更新処理。</summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// 描画処理（通常描画）。
 	/// </summary>
-	void Draw();
+	void Draw() override;
 
 	/// <summary>
 	/// レンダーターゲットへの描画が必要な場合に使用。
@@ -44,21 +44,23 @@ public:
 	/// <summary>コンボの最大時間を設定（ゲージ表示用）。</summary>
 	void SetComboTime(float time) { kComboTime_ = time; }
 	/// <summary>コンボ数の表示値を設定。</summary>
-	void SetComboNum(int comboNum) { sprites_[COMBO_NUM_TEXT]->SetTextureLeftTop({ sprites_[COMBO_NUM_TEXT]->GetSize().x * float(comboNum),0 }); }
+	void SetComboNum(int comboNum) 
+	{ 
+		int num = comboNum % 10;
+		sprites_[COMBO_NUM_TEXT]->SetTextureLeftTop({ sprites_[COMBO_NUM_TEXT]->GetSize().x * float(num),0 });
+		
+		num = comboNum / 10;
+		sprites_[COMBO_NUM2_TEXT]->SetTextureLeftTop({ sprites_[COMBO_NUM2_TEXT]->GetSize().x * float(num),0 });
+	}
+
 	/// <summary>スコア描画クラスへの参照を設定。</summary>
 	void SetScoreDraw(ScoreUI* scoreDraw) { scoreDraw_ = scoreDraw; }
-
-	/// <summary>HPの数値表示を設定。</summary>
-	void SetHPNum(int hp = 0) { /*sprites_[HP_NUM_TEXT]->SetTextureLeftTop({ sprites_[HP_NUM_TEXT]->GetSize().x * float(hp),0 })*/(void)hp; }
 
 	/// <summary>シフトガイドの位置を設定。</summary>
 	void SetShiftPos(const TYEngine::Utility::Vector2& pos);
 
 	/// <summary>ジャスト回避演出の有無を設定。</summary>
 	void SetJust(bool just) { isJust_ = just; }
-
-	/// <summary>JSONマネージャを設定（デバッグ調整用）。</summary>
-	void SetJsonManager(TYEngine::Utility::JsonManager* jm) { jm_ = jm; }
 
 private:
 	/// <summary>JSONからパラメータを適用する。</summary>
@@ -75,8 +77,7 @@ private:
 	{
 		COMBO_TEXT,
 		COMBO_NUM_TEXT,
-		/*HP_TEXT,
-		HP_NUM_TEXT,*/
+		COMBO_NUM2_TEXT,
 		OPERATION,
 		OUTLINE,
 		PAUSE,
@@ -89,6 +90,8 @@ private:
 
 	/// <summary>レティクルスプライト。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> reticle_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> reticle2_;
+	std::unique_ptr<TYEngine::Graphics::Sprite> reticle3_;
 
 	/// <summary>コンボ表示中のタイマー。</summary>
 	float comboTimer_ = 0;
@@ -102,8 +105,5 @@ private:
 	std::random_device seedGene_;
 	/// <summary>シェイク時間。</summary>
 	float shakeTime_ = 0.0f;
-
-	/// <summary>JSONマネージャ。</summary>
-	TYEngine::Utility::JsonManager* jm_;
 };
 

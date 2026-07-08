@@ -1,5 +1,5 @@
 #include "GameCore.h"
-#include "Audio/Audio.h"
+#include "Audio.h"
 #include "Scene/SceneFactory/SceneFactory.h"
 #include "ColliderManager.h"
 #include "CubemapBasis.h"
@@ -96,11 +96,11 @@ void GameCore::Initialize()
 	debris->SetBehaviour(std::make_unique<DebrisBehaviour>());
 
 	// パーティクルの登録
-	int index = particleManager_->Add(std::move(plane));		// 0
+	int index = particleManager_->Add(std::move(plane));	// 0
 	int indexRing = particleManager_->Add(std::move(ring));	// 1
 	particleManager_->Add(std::move(cylinder));				// 2
 	particleManager_->Add(std::move(contrail));				// 3
-	particleManager_->Add(std::move(explosion));				// 4
+	particleManager_->Add(std::move(explosion));			// 4
 	particleManager_->Add(std::move(debris));				// 5
 
 	// 全パーティクルの一括初期化
@@ -143,6 +143,8 @@ void GameCore::Initialize()
 	postEffectManager_->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
 	postEffectManager_->AddEffect("Random", std::make_unique<RandomEffect>());
 	postEffectManager_->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
+
+	postEffectManager_->AddEffect("HealthVignette", std::make_unique<VignetteEffect>());
 	
 	// 初期状態では全エフェクトを無効化
 	postEffectManager_->EffectAllDisable();
@@ -174,6 +176,7 @@ void GameCore::Update()
 		
 		// 各種マネージャ・システムの更新
 		Timer::GetInstance()->Update();
+		GameAudio::GetInstance()->Update();
 		Audio::GetInstance()->Update();
 		TYFrameWork::Update(); // 入力系などの更新
 		particleManager_->UpdateAll();
@@ -204,7 +207,7 @@ void GameCore::Draw()
 	directXBasis_->DrawBegin();
 
 	// ポストエフェクトを適用してSwapChainに転送
-	// 第二引数にnullptrを指定しているため、最終結果はバックバッファに書き込まれる
+	// 第二引数に nullptr を指定しているため、最終結果はバックバッファに書き込まれる
 	postEffectManager_->Apply(renderTexture_.get(), nullptr); 
 
 	// ポストエフェクトの影響を受けないUIを描画

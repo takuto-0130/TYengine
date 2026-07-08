@@ -3,6 +3,7 @@
 #include "mathFunc.h"
 #include "TextureManager.h"
 #include "../../../ScoreUI/ScoreUI.h"
+#include <AppSystem/Audio/GameAudio.h>
 
 
 using namespace TYEngine::Framework;
@@ -13,13 +14,24 @@ using namespace TYEngine::Core;
 void PlayUI::Init()
 {
 	input_ = Input::GetInstance();
-
 	shakeTime_ = jm_->Get<float>("PlayUI.UIShake");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	reticle_ = std::make_unique<Sprite>();
-	reticle_->Initialize("Resources/Texture/reticle.png");
+	reticle_->Initialize("Resources/Texture/RhythmBar1.png");
 	reticle_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
+	reticle_->SetPosition({ 640.0f,620.0f});
+
+	reticle2_ = std::make_unique<Sprite>();
+	reticle2_->Initialize("Resources/Texture/RhythmBar2.png");
+	reticle2_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
+	reticle2_->SetPosition({ 640.0f,620.0f });
+	reticle2_->SetColor({ 1,0,0,1 });
+
+	reticle3_ = std::make_unique<Sprite>();
+	reticle3_->Initialize("Resources/Texture/RhythmBar2.png");
+	reticle3_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
+	reticle3_->SetPosition({ 640.0f,620.0f });
+	reticle3_->SetColor({ 1,0,0,1 });
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ComboText.png");
 	sprites_[COMBO_TEXT] = std::make_unique<Sprite>();
@@ -34,18 +46,12 @@ void PlayUI::Init()
 	sprites_[COMBO_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
 	sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo"));
 
-	/*TextureManager::GetInstance()->LoadTexture("Resources/Texture/HpText.png");
-	sprites_[HP_TEXT] = std::make_unique<Sprite>();
-	sprites_[HP_TEXT]->Initialize("Resources/Texture/HpText.png");
-	sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
-	sprites_[HP_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.HpText.Position"));
-
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/number.png");
-	sprites_[HP_NUM_TEXT] = std::make_unique<Sprite>();
-	sprites_[HP_NUM_TEXT]->Initialize("Resources/Texture/number.png");
-	sprites_[HP_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
-	sprites_[HP_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
-	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));*/
+	sprites_[COMBO_NUM2_TEXT] = std::make_unique<Sprite>();
+	sprites_[COMBO_NUM2_TEXT]->Initialize("Resources/Texture/number.png");
+	sprites_[COMBO_NUM2_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
+	sprites_[COMBO_NUM2_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
+	sprites_[COMBO_NUM2_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo2"));
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	sprites_[OPERATION] = std::make_unique<Sprite>();
@@ -80,12 +86,8 @@ void PlayUI::DebugJMApply()
 	sprites_[COMBO_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
 	sprites_[COMBO_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
 
-	/*sprites_[HP_TEXT]->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.HpText.AnchorPoint"));
-	sprites_[HP_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.HpText.Position"));
-
-	sprites_[HP_NUM_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
-	sprites_[HP_NUM_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
-	sprites_[HP_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionHp"));*/
+	sprites_[COMBO_NUM2_TEXT]->SetTextureSize(jm_->Get<Vector2>("PlayUI.Texture.number.TextureSize"));
+	sprites_[COMBO_NUM2_TEXT]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.number.Size"));
 
 	sprites_[OPERATION]->SetSize(jm_->Get<Vector2>("PlayUI.Texture.Operation.Size"));
 	sprites_[OPERATION]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.Operation.Position"));
@@ -115,6 +117,9 @@ void PlayUI::Update()
 #ifdef _DEBUG
 	DebugJMApply();
 #endif // _DEBUG
+	reticle2_->SetPosition(Lerp(Vector2{ 360.0f,620.0f }, Vector2{ 640.0f,620.0f }, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
+	reticle3_->SetPosition(Lerp(Vector2{ 920.0f,620.0f }, Vector2{ 640.0f,620.0f }, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
+	//reticle2_->SetScale(1.0f + (1.0f - GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
 
 	for (auto& sprite : sprites_)
 	{
@@ -127,6 +132,8 @@ void PlayUI::Update()
 void PlayUI::Draw()
 {
 	reticle_->Draw();
+	reticle2_->Draw();
+	reticle3_->Draw();
 
 	for (int i = 0; i < SpriteNum; ++i)
 	{
@@ -149,18 +156,18 @@ void PlayUI::Draw()
 void PlayUI::DrawRT()
 {
 	reticle_->Update();
+	reticle2_->Update();
+	reticle3_->Update();
 }
 
 void PlayUI::ComboTexUpdate()
 {
-	Vector2 mouse = input_->GetMousePosition();
-	reticle_->SetPosition(mouse);
-
 	// コンボ表示の透明度制御
 	float t = comboTimer_ / kComboTime_;
 	t = 1.0f - powf(1.0f - t, jm_->Get<float>("PlayUI.AlphaEasePow"));
 	sprites_[COMBO_TEXT]->SetAlpha(t);
 	sprites_[COMBO_NUM_TEXT]->SetAlpha(t);
+	sprites_[COMBO_NUM2_TEXT]->SetAlpha(t);
 
 	// コンボ終了間際のシェイク演出
 	t = (comboTimer_ - (kComboTime_ - shakeTime_)) / (kComboTime_ - (kComboTime_ - shakeTime_));
@@ -171,10 +178,12 @@ void PlayUI::ComboTexUpdate()
 		Vector2 pos = { dist(random),dist(random) };
 		sprites_[COMBO_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.ComboText.Position") + pos * t);
 		sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo") + pos * t);
+		sprites_[COMBO_NUM2_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo2") + pos * t);
 	}
 	else
 	{
 		sprites_[COMBO_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.ComboText.Position"));
 		sprites_[COMBO_NUM_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo"));
+		sprites_[COMBO_NUM2_TEXT]->SetPosition(jm_->Get<Vector2>("PlayUI.Texture.number.PositionCombo2"));
 	}
 }

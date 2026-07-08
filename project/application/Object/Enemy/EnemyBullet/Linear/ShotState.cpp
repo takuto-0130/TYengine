@@ -2,27 +2,25 @@
 
 namespace EnemyBullet
 {
-	void Linear::InitShot()
-	{}
+	void LinearStateShot::Init(Linear&) {}
 
-	void Linear::UpdateShot()
+	void LinearStateShot::Update(Linear& owner, float)
 	{
 		// 寿命を超えたら死亡フラグを true に
-		if (stateMachine_.GetStateElapsedTime() > lifeTime_)
+		if (GetElapsed() > owner.lifeTime_)
 		{
-			isDead_ = true;
+			owner.isDead_ = true;
 		}
 
 		// 移動処理
-		Move();
+		owner.Move();
 		// 回転処理
-		RotationDirection();
+		owner.RotationDirection();
 
-		worldTransform_.Update();
+		owner.worldTransform_.Update();
 	}
 
-	void Linear::ExitShot()
-	{}
+	void LinearStateShot::Exit(Linear&) {}
 
 	void Linear::Move()
 	{

@@ -1,34 +1,38 @@
 #include "../GameScene.h"
-#include "../../Transition/Fade/FadeTransition.h"
-#include "../../Transition/TransitionManager.h"
+#include "../../Transition/FadeTransition.h"
+#include "../../../../engine/Framework/SceneBase/Transition/TransitionManager.h"
 #include "../../../Object/Rail/RailManager.h"
 
-void GameScene::InitFadeIn()
+void GameSceneStateFadeIn::Init(GameScene& owner)
 {
+	(void)owner;
 }
-void GameScene::UpdateFadeIn()
+
+void GameSceneStateFadeIn::Update(GameScene& owner, float deltaTime)
 {
-	if (readyCount_ < 2)
+	(void)deltaTime;
+	if (owner.readyCount_ < 2)
 	{
-		++readyCount_;
+		++owner.readyCount_;
 		// UIやプレイヤーの初期更新を数フレーム回して安定させる
-		ComboUIUpdate();
-		PlayUIUpdate();
-		stageManager_->GetPlayer()->Update();
+		owner.ComboUIUpdate();
+		owner.PlayUIUpdate();
+		owner.stageManager_->GetPlayer()->Update();
 	}
-	if(readyCount_ == 2)
+	if(owner.readyCount_ == 2)
 	{
-		++readyCount_;
+		++owner.readyCount_;
 		// オープニングカメラ演出の開始
-		StartCamera();
+		owner.StartCamera();
 	}
 
 	if (!TransitionManager::GetInstance()->IsBusy())
 	{
-		stateMachine_.ChangeState(GameSceneState::READY);
+		owner.stateMachine_.ChangeState(GameSceneState::PLAY);
 	}
-
 }
-void GameScene::ExitFadeIn()
+
+void GameSceneStateFadeIn::Exit(GameScene& owner)
 {
+	(void)owner;
 }

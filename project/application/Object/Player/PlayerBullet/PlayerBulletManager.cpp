@@ -73,3 +73,9 @@ void PlayerBulletManager::Fire(PlayerBulletType type, const Vector3& pos, const 
 		break;
 	}
 }
+
+void PlayerBulletManager::Clear()
+{
+	// リスト内の全ての弾を削除し、メモリを解放する
+	bullets_.clear();
+}

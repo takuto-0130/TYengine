@@ -65,7 +65,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\Audio;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Utility\Collider\2DCollider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)application\AppSystem\UI;$(ProjectDir)engine;$(ProjectDir)engine\Audio;$(ProjectDir)engine\Audio\Core;$(ProjectDir)engine\Audio\DSP;$(ProjectDir)engine\Audio\Analysis;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Utility\Collider\2DCollider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\nlohmann;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\$(FileName)</ObjectFileName>
       <PrecompiledHeaderOutputFile>$(IntDir)%(RelativeDir)$(FileName).pch</PrecompiledHeaderOutputFile>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -107,7 +107,7 @@ if exist "externals\dxil.dll" (
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)engine;$(ProjectDir)engine\Audio;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Utility\Collider\2DCollider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)application\AppSystem\UI;$(ProjectDir)engine;$(ProjectDir)engine\Audio;$(ProjectDir)engine\Audio\Core;$(ProjectDir)engine\Audio\DSP;$(ProjectDir)engine\Audio\Analysis;$(ProjectDir)engine\EngineCore;$(ProjectDir)engine\Framework;$(ProjectDir)engine\Framework\SceneBase;$(ProjectDir)engine\Framework\Input;$(ProjectDir)engine\Graphics;$(ProjectDir)engine\Graphics\Sprite;$(ProjectDir)engine\Graphics\Model;$(ProjectDir)engine\Graphics\SRV;$(ProjectDir)engine\Graphics\Cubemap;$(ProjectDir)engine\OffScreen;$(ProjectDir)engine\OffScreen\PostEffect;$(ProjectDir)engine\Camera;$(ProjectDir)engine\Effect;$(ProjectDir)engine\Utility;$(ProjectDir)engine\Utility\Loader;$(ProjectDir)engine\Utility\Math;$(ProjectDir)engine\Utility\SceneObjects;$(ProjectDir)engine\Utility\Utils;$(ProjectDir)engine\Utility\Utils\Time;$(ProjectDir)engine\Utility\Collider;$(ProjectDir)engine\Utility\Collider\2DCollider;$(ProjectDir)engine\Debugger;$(ProjectDir)externals\assimp\include;$(ProjectDir)application;$(ProjectDir)externals\imgui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals;%(AdditionalIncludeDirectories);$(ProjectDir)externals\assimp\include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\$(FileName)</ObjectFileName>
       <PrecompiledHeaderOutputFile>$(IntDir)%(RelativeDir)$(FileName).pch</PrecompiledHeaderOutputFile>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -143,6 +143,7 @@ if exist "externals\dxil.dll" (
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp" />
+    <ClCompile Include="application\AppSystem\RailGenerator\AppRailGenerator.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\ShotState.cpp" />
     <ClCompile Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.cpp" />
@@ -179,11 +180,13 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp" />
-    <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp" />
-    <ClCompile Include="engine\Audio\BeatAnalyzer.cpp" />
-    <ClCompile Include="engine\Audio\BPMDetector.cpp" />
-    <ClCompile Include="engine\Audio\AudioAnalyzer.cpp" />
-    <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp" />
+    <ClCompile Include="application\Scene\Transition\BlockFadeTransition.cpp" />
+    <ClCompile Include="engine\Audio\Analysis\BeatAnalyzer.cpp" />
+    <ClCompile Include="engine\Audio\DSP\BiquadFilter.cpp" />
+    <ClCompile Include="engine\Audio\Analysis\BPMDetector.cpp" />
+    <ClCompile Include="engine\Audio\Analysis\AudioAnalyzer.cpp" />
+    <ClCompile Include="engine\Audio\DSP\MyAnalyzerXAPO.cpp" />
+    <ClCompile Include="engine\Audio\Analysis\OfflineAudioAnalyzer.cpp" />
     <ClCompile Include="externals\xapobase.cpp" />
     <ClCompile Include="engine\Effect\ContrailBehaviour.cpp" />
     <ClCompile Include="engine\Effect\DebrisBehaviour.cpp" />
@@ -201,7 +204,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\Utility\Loader\BlenderLevelLoader.cpp" />
     <ClCompile Include="engine\Effect\CylinderParticle.cpp" />
     <ClCompile Include="engine\OffScreen\CopyPass.cpp" />
-    <ClCompile Include="engine\Audio\Audio.cpp" />
+    <ClCompile Include="engine\Audio\Core\Audio.cpp" />
     <ClCompile Include="engine\Camera\Camera.cpp" />
     <ClCompile Include="engine\Debugger\ImGuiManager.cpp" />
     <ClCompile Include="engine\Effect\IParticleRenderer.cpp" />
@@ -235,19 +238,19 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="application\main.cpp" />
     <ClCompile Include="application\Scene\TitleScene\TitleScene.cpp" />
-    <ClCompile Include="engine\Audio\StreamingAudio.cpp" />
+    <ClCompile Include="engine\Audio\Core\StreamingAudio.cpp" />
     <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp" />
     <ClCompile Include="engine\Effect\ParticleManager.cpp" />
     <ClCompile Include="engine\Effect\PlaneParticle.cpp" />
     <ClCompile Include="engine\Effect\RingParticle.cpp" />
-    <ClCompile Include="application\Object\Rail\RailEditor.cpp" />
     <ClCompile Include="engine\OffScreen\RenderTexture.cpp" />
     <ClCompile Include="engine\Utility\SceneObjects\LevelObject.cpp" />
     <ClCompile Include="application\Stage\Stage.cpp" />
-    <ClCompile Include="application\Scene\Transition\Fade\FadeTransition.cpp" />
-    <ClCompile Include="application\Scene\Transition\TransitionManager.cpp" />
-    <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp" />
-    <ClCompile Include="application\Scene\GameScene\Result\Result.cpp" />
+    <ClCompile Include="application\Scene\Transition\FadeTransition.cpp" />
+    <ClCompile Include="engine\Framework\SceneBase\Transition\TransitionManager.cpp" />
+    <ClCompile Include="application\Scene\GameScene\Pause\PauseUI.cpp" />
+    <ClCompile Include="application\Scene\GameScene\Result\ResultUI.cpp" />
+    <ClCompile Include="application\AppSystem\UI\UIManager.cpp" />
     <ClCompile Include="application\Object\Rail\RailManager.cpp" />
     <ClCompile Include="application\Scene\GameScene\PlayUI\PlayUI.cpp" />
     <ClCompile Include="application\Object\Player\Player.cpp" />
@@ -275,33 +278,41 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\StartUI\StartUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\RetryUI\RetryUI.cpp" />
     <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp" />
+    <ClCompile Include="application\AppSystem\Audio\CriticalHealthAudioEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h" />
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\ComboAndScoreHandler.h" />
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener.h" />
+    <ClInclude Include="application\AppSystem\ParticleType.h" />
+    <ClInclude Include="application\AppSystem\RailGenerator\AppRailGenerator.h" />
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h" />
     <ClInclude Include="application\Object\ColliderTypeID\ColliderTypeID.h" />
     <ClInclude Include="application\Object\Enemy\AttackStrategy\AttackStrategies.h" />
     <ClInclude Include="application\Object\Enemy\AttackStrategy\IAttackStrategy.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h" />
+    <ClInclude Include="application\Object\Player\PAttackStrategy\IPAttackStrategy.h" />
+    <ClInclude Include="application\Object\Player\PAttackStrategy\PAttackStrategies.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h" />
     <ClInclude Include="application\Object\Player\PlayerBullet\PlayerBulletType.h" />
     <ClInclude Include="application\Object\Player\PlayerStruct.h" />
     <ClInclude Include="application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiParticle.h" />
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiSystem.h" />
-    <ClInclude Include="application\Scene\Transition\ITransition.h" />
-    <ClInclude Include="application\Scene\Transition\StateMachineTransition.h" />
+    <ClInclude Include="engine\Framework\SceneBase\Transition\ITransition.h" />
+    <ClInclude Include="engine\Framework\SceneBase\Transition\StateMachineTransition.h" />
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h" />
     <ClInclude Include="application\Object\Enemy\EnemyCollider.h" />
     <ClInclude Include="application\ScoreUI\ScoreUI.h" />
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h" />
-    <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h" />
-    <ClInclude Include="engine\Audio\BeatAnalyzer.h" />
-    <ClInclude Include="engine\Audio\BPMDetector.h" />
-    <ClInclude Include="engine\Audio\MyAnalyzerXAPO.h" />
-    <ClInclude Include="engine\Audio\AudioAnalyzer.h" />
+    <ClInclude Include="application\Scene\Transition\BlockFadeTransition.h" />
+    <ClInclude Include="engine\Audio\Analysis\AudioAnalysisResult.h" />
+    <ClInclude Include="engine\Audio\Analysis\BeatAnalyzer.h" />
+    <ClInclude Include="engine\Audio\DSP\BiquadFilter.h" />
+    <ClInclude Include="engine\Audio\Analysis\BPMDetector.h" />
+    <ClInclude Include="engine\Audio\DSP\MyAnalyzerXAPO.h" />
+    <ClInclude Include="engine\Audio\Analysis\AudioAnalyzer.h" />
+    <ClInclude Include="engine\Audio\Analysis\OfflineAudioAnalyzer.h" />
     <ClInclude Include="engine\Effect\ContrailBehaviour.h" />
     <ClInclude Include="engine\Camera\CameraShake.h" />
     <ClInclude Include="engine\Effect\DebrisBehaviour.h" />
@@ -323,6 +334,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Utility\Utils\JSON\JsonManager.h" />
     <ClInclude Include="engine\Utility\Utils\Random.h" />
     <ClInclude Include="engine\Utility\Utils\SingletonObject.h" />
+    <ClInclude Include="engine\Utility\Utils\State.h" />
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h" />
     <ClInclude Include="engine\Utility\Collider\ColliderManager.h" />
     <ClInclude Include="engine\Utility\Collider\Collider.h" />
@@ -335,7 +347,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Utility\Loader\BlenderLevelLoader.h" />
     <ClInclude Include="engine\Effect\CylinderParticle.h" />
     <ClInclude Include="engine\OffScreen\CopyPass.h" />
-    <ClInclude Include="engine\Audio\Audio.h" />
+    <ClInclude Include="engine\Audio\Core\Audio.h" />
     <ClInclude Include="engine\Camera\Camera.h" />
     <ClInclude Include="engine\Debugger\ImGuiManager.h" />
     <ClInclude Include="engine\Effect\IParticleRenderer.h" />
@@ -374,19 +386,20 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="engine\Framework\SceneBase\IScene.h" />
     <ClInclude Include="application\Scene\TitleScene\TitleScene.h" />
-    <ClInclude Include="engine\Audio\StreamingAudio.h" />
+    <ClInclude Include="engine\Audio\Core\StreamingAudio.h" />
     <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h" />
     <ClInclude Include="engine\Effect\ParticleManager.h" />
     <ClInclude Include="engine\Effect\PlaneParticle.h" />
     <ClInclude Include="engine\Effect\RingParticle.h" />
-    <ClInclude Include="application\Object\Rail\RailEditor.h" />
     <ClInclude Include="engine\OffScreen\RenderTexture.h" />
     <ClInclude Include="engine\Utility\SceneObjects\LevelObject.h" />
     <ClInclude Include="application\Stage\Stage.h" />
-    <ClInclude Include="application\Scene\Transition\Fade\FadeTransition.h" />
-    <ClInclude Include="application\Scene\Transition\TransitionManager.h" />
-    <ClInclude Include="application\Scene\GameScene\Pause\Pause.h" />
-    <ClInclude Include="application\Scene\GameScene\Result\Result.h" />
+    <ClInclude Include="application\Scene\Transition\FadeTransition.h" />
+    <ClInclude Include="engine\Framework\SceneBase\Transition\TransitionManager.h" />
+    <ClInclude Include="application\Scene\GameScene\Pause\PauseUI.h" />
+    <ClInclude Include="application\Scene\GameScene\Result\ResultUI.h" />
+    <ClInclude Include="application\AppSystem\UI\BaseUI.h" />
+    <ClInclude Include="application\AppSystem\UI\UIManager.h" />
     <ClInclude Include="application\Object\Rail\RailManager.h" />
     <ClInclude Include="application\Scene\GameScene\PlayUI\PlayUI.h" />
     <ClInclude Include="engine\Utility\Collider\Sphere\SphereCollider.h" />
@@ -416,8 +429,9 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="application\Object\Enemy\EnemyManager\EnemyManager.h" />
     <ClInclude Include="application\Scene\GameScene\StartUI\StartUI.h" />
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h" />
-    <ClInclude Include="engine\Audio\AudioSystemBase.h" />
+    <ClInclude Include="engine\Audio\Core\AudioSystemBase.h" />
     <ClInclude Include="application\AppSystem\Audio\GameAudio.h" />
+    <ClInclude Include="application\AppSystem\Audio\CriticalHealthAudioEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

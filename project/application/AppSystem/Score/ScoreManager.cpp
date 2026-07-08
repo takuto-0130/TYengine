@@ -4,9 +4,9 @@
 void ScoreManager::Init()
 {
 	// 基礎スコアをセット
-	basicScore_ = 20;
+	basicScore_ = 5;
 	// 最大スコアをセット
-	maxScore_ = 9999;
+	maxScore_ = 99999;
 	// スコアを0にリセット
 	score_ = 0;
 }

@@ -2,81 +2,88 @@
 #include "../../../Object/Rail/RailManager.h"
 #include "../PlayUI/PlayUI.h"
 #include "../../../ScoreUI/ScoreUI.h"
+#include "UIManager.h"
 
 using namespace TYEngine::CameraSystem;
 
-void GameScene::InitPlay()
+void GameSceneStatePlay::Init(GameScene& owner)
 {
+	owner.gameAudio_->Resume(owner.BGMHandle_);
 }
-void GameScene::UpdatePlay()
+
+void GameSceneStatePlay::Update(GameScene& owner, float deltaTime)
 {
+	(void)deltaTime;
 	// コンボUIの更新
-	ComboUIUpdate();
+	owner.ComboUIUpdate();
 
 	// ステージ（レール進行・敵の発生など）更新
-	stageManager_->Update();
+	owner.stageManager_->Update();
 
 	// レール終端到達でリザルトへ
-	if (stageManager_->EndRail()) stateMachine_.ChangeState(GameSceneState::RESULT);
+	if (owner.stageManager_->EndRail()) owner.stateMachine_.ChangeState(GameSceneState::RESULT);
 
-	PlayUIUpdate();
+	owner.PlayUIUpdate();
 
 	// ポーズ画面へ
-	if (input_->TriggerKey(DIK_ESCAPE)) 
+	if (owner.input_->TriggerKey(DIK_ESCAPE)) 
 	{
-		gameAudio_->Play("open", false, SoundCategory::UI);
-		stateMachine_.ChangeState(GameSceneState::PAUSE);
+		owner.gameAudio_->Play("open", false, SoundCategory::UI);
+		owner.stateMachine_.ChangeState(GameSceneState::PAUSE);
 	}
 
-	// プレイヤー死亡時はリトライ誘導画面へ
-	if (stageManager_->GetPlayer()->IsDead())
+	// プレイヤー死亡時は死亡演出へ
+	if (owner.stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() == PlayerState::DEAD)
 	{
-		CameraShake::ShakeParams params;
-		params.duration = 0.6f;
-		params.amplitude = 0.15f;
-		params.frequency = 20.0f;
-
-		camera_->StartShake(params);
-		stateMachine_.ChangeState(GameSceneState::RETRY);
+		owner.stateMachine_.ChangeState(GameSceneState::DEAD);
 	}
 }
-void GameScene::ExitPlay()
+
+void GameSceneStatePlay::Exit(GameScene& owner)
 {
+	(void)owner;
 }
 
+// GameSceneのメンバ関数
 void GameScene::PlayUIUpdate()
 {
-	scoreDraw_->Update();
+	auto* uiMgr = UIManager::GetInstance();
+	uiMgr->UpdateUI("Score");
 
-	// バレルロール中以外はジャスト回避判定などをUIに反映
-	if(stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() != PlayerState::BARREL_ROLL)
+	auto* play = uiMgr->GetUI<PlayUI>("Play");
+	if (play)
 	{
-		playUI_->SetJust(stageManager_->GetPlayer()->IsJust());
-		stageManager_->GetPlayer()->OffJust();
-		playUI_->SetShiftPos(stageManager_->GetPlayer()->GetScreenOffset());
+		// バレルロール中以外はジャスト回避判定などをUIに反映
+		if(stageManager_->GetPlayer()->GetStateMachine().GetCurrentState() != PlayerState::BARREL_ROLL)
+		{
+			play->SetJust(stageManager_->GetPlayer()->IsJust());
+			stageManager_->GetPlayer()->OffJust();
+			play->SetShiftPos(stageManager_->GetPlayer()->GetScreenOffset());
+		}
+		else
+		{
+			play->SetJust(false);
+		}
+		play->Update();
 	}
-	else
-	{
-		playUI_->SetJust(false);
-	}
-
-	playUI_->Update();
 }
 
 void GameScene::ComboUIUpdate()
 {
-	ComboManager* combo = stageManager_->GetComboManager();
-	playUI_->SetComboTime(combo->GetStartComboTime());
-	playUI_->SetComboTimer(combo->GetCurrentComboTimer());
-	playUI_->SetComboNum(combo->GetComboCount());
-	playUI_->ComboTexUpdate();
-	scoreDraw_->SetScore(stageManager_->GetScoreManager()->GetScore());
-	if (stageManager_->GetPlayer())
+	auto* uiMgr = UIManager::GetInstance();
+	auto* play = uiMgr->GetUI<PlayUI>("Play");
+	auto* score = uiMgr->GetUI<ScoreUI>("Score");
+
+	HitStreakManager* combo = stageManager_->GetComboManager();
+	if (play)
 	{
-		playUI_->SetHPNum(stageManager_->GetPlayer()->GetHP());
+		play->SetComboTime(combo->GetStartComboTime());
+		play->SetComboTimer(combo->GetCurrentComboTimer());
+		play->SetComboNum(combo->GetComboCount());
+		play->ComboTexUpdate();
 	}
-	else
+	if (score)
 	{
-		playUI_->SetHPNum(0);
+		score->SetScore(stageManager_->GetScoreManager()->GetScore());
 	}
 }

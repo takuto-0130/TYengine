@@ -1,20 +1,21 @@
 #include "../Player.h"
 
-void Player::InitRoute()
+void PlayerStateRoute::Init(Player& owner)
 {
-
+	(void)owner;
 }
 
-void Player::UpdateRoute()
+void PlayerStateRoute::Update(Player& owner, float deltaTime)
 {
+	(void)deltaTime;
 	// 通常移動処理
-	Move();
+	owner.Move();
 
 	// バレルロール遷移判定
-	StartBarrelRoll();
+	owner.StartBarrelRoll();
 }
 
-void Player::ExitRoute()
+void PlayerStateRoute::Exit(Player& owner)
 {
-
+	(void)owner;
 }

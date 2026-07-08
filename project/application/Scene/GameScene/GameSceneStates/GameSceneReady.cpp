@@ -1,34 +1,35 @@
 #include "../GameScene.h"
 #include "../StartUI/StartUI.h"
 #include "Timer.h"
+#include "UIManager.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
 
 using namespace TYEngine::Utility;
 
-void GameScene::InitReady()
+void GameSceneStateReady::Init(GameScene& owner)
 {
-	startCameraTimer_ = 0;
-	prevStateElapsed_ = 0;
+	owner.startCameraTimer_ = 0;
+	owner.prevStateElapsed_ = 0;
 }
-void GameScene::UpdateReady()
+void GameSceneStateReady::Update(GameScene& owner, float deltaTime)
 {
-	startDraw_->Update();
-	startCameraTimer_ += Timer::GetInstance()->GetDeltaTime();
-	StartCamera();
+	(void)deltaTime;
+	UIManager::GetInstance()->UpdateUI("Start");
+	owner.startCameraTimer_ += Timer::GetInstance()->GetDeltaTime();
+	owner.StartCamera();
 }
-void GameScene::ExitReady()
+void GameSceneStateReady::Exit(GameScene& owner)
 {
-	gameAudio_->Resume(BGMHandle_);
-	startDraw_->Reset();
-	startCameraTimer_ = 0;
-	prevStateElapsed_ = 0;
+	owner.gameAudio_->Resume(owner.BGMHandle_);
+	if (auto* start = UIManager::GetInstance()->GetUI<StartUI>("Start"))
+	{
+		start->Reset();
+	}
+	owner.startCameraTimer_ = 0;
+	owner.prevStateElapsed_ = 0;
 }
-
-
-
-
 
 void GameScene::StartCamera()
 {
@@ -75,47 +76,50 @@ void GameScene::StartCamera()
 		};
 
 
+	resetTimer(1.0f);
+	resetTimer(2.0f);
 	resetTimer(3.0f);
-	resetTimer(6.0f);
-	resetTimer(10.0f);
-	resetTimer(13.0f);
+	resetTimer(8.5f);
 
 	// カメラ旋回演出
-	if (stateMachine_.GetStateElapsedTime() <= 3.0f)
+	if (stateMachine_.GetStateElapsedTime() <= 1.0f)
 	{
 		Matrix4x4 rotY = MakeRotateYMatrix((startCameraTimer_ - 7.0f) / 3.0f);
 		pos = TransformM(pos, rotY);
 
 		applyCameraWork(pos);
 	}
-	else if (stateMachine_.GetStateElapsedTime() <= 6.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 2.0f)
 	{
 		Matrix4x4 rotY = MakeRotateYMatrix((-startCameraTimer_ + 7.0f) / 3.0f);
 		pos = TransformM(pos, rotY);
 
 		applyCameraWork(pos);
 	}
-	else if (stateMachine_.GetStateElapsedTime() <= 10.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 3.0f)
 	{
-		Matrix4x4 rotX = MakeRotateXMatrix((startCameraTimer_) / 5.0f);
+		Matrix4x4 rotX = MakeRotateXMatrix((startCameraTimer_) / 3.0f);
 		pos = TransformM(pos, rotX);
 		Matrix4x4 rotA = MakeRotateYMatrix(std::numbers::pi_v<float>);
 		pos = TransformM(pos, rotA);
 
 		applyCameraWork(pos);
 	}
-	else if (stateMachine_.GetStateElapsedTime() <= 13.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 5.0f)
 	{
-		if (stateMachine_.GetStateElapsedTime() <= 12.0f)
+		if (stateMachine_.GetStateElapsedTime() <= 6.5f)
 		{
-			startDraw_->Start();
+			if (auto* start = UIManager::GetInstance()->GetUI<StartUI>("Start"))
+			{
+				start->Start();
+			}
 		}
-		Matrix4x4 rotX = MakeRotateXMatrix((-startCameraTimer_) / 5.0f);
+		Matrix4x4 rotX = MakeRotateXMatrix((-startCameraTimer_) / 3.0f);
 		pos = TransformM(pos, rotX);
 
 		applyCameraWork(pos);
 	}
-	else if (stateMachine_.GetStateElapsedTime() <= 16.0f)
+	else if (stateMachine_.GetStateElapsedTime() <= 8.5f)
 	{
 	}
 	else

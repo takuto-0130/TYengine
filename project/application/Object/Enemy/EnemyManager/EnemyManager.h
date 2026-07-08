@@ -7,6 +7,8 @@
 
 class Camera;
 
+class RailManager;
+
 /// <summary>
 /// 敵管理クラス。
 /// 敵キャラクターの生成と管理を行う。
@@ -20,7 +22,7 @@ public:
 	/// <summary>
 	/// スコア・コンボ管理ハンドラを生成・登録する。
 	/// </summary>
-	void MakeComboAndScoreHandler(ComboManager* combo, ScoreManager* score);
+	void MakeComboAndScoreHandler(HitStreakManager* combo, ScoreManager* score);
 
 	/// <summary>状態をリセットする。</summary>
 	void Reset();
@@ -61,6 +63,8 @@ public:
 
 	void DisablePopFlag() { isPopFlag_ = false; }
 
+	void SetRailManager(RailManager* railManager) { railManager_ = railManager; }
+
 private:
 	/// <summary>
 	/// スクリーン座標オフセットをワールド座標に変換する。
@@ -76,8 +80,12 @@ private:
 	/// <summary>管理中の敵リスト。</summary>
 	std::list<std::unique_ptr<Enemy>> enemies_;
 
+	HitStreakManager* hitStreakManager_ = nullptr;
+
 	/// <summary>敵弾マネージャ。</summary>
 	EnemyBulletManager bulletManager_;
+
+	RailManager* railManager_ = nullptr;
 
 	/// <summary>敵の出現深度（最小）。</summary>
 	float enemyPopDepthMin_ = 0.0f;

@@ -1,16 +1,21 @@
 #include "../TitleScene.h"
-#include "../../Transition/TransitionManager.h"
+#include "../../../../engine/Framework/SceneBase/Transition/TransitionManager.h"
 
-void TitleScene::InitFadeIn()
-{}
-void TitleScene::UpdateFadeIn()
+void TitleSceneStateFadeIn::Init(TitleScene& owner)
 {
+	(void)owner;
+}
 
+void TitleSceneStateFadeIn::Update(TitleScene& owner, float deltaTime)
+{
+	(void)deltaTime;
 	if (!TransitionManager::GetInstance()->IsBusy())
 	{
-		stateMachine_.ChangeState(TitleSceneState::READY);
+		owner.stateMachine_.ChangeState(TitleSceneState::READY);
 	}
-
 }
-void TitleScene::ExitFadeIn()
-{}
+
+void TitleSceneStateFadeIn::Exit(TitleScene& owner)
+{
+	(void)owner;
+}

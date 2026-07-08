@@ -84,6 +84,9 @@ void ScoreUI::UpdateResult(float currentTime)
 
 	// 現在のスコアを各桁へ分解
 	int32_t view = currentScore_;
+	scoreDisplay_.num[TEN_THOUSANDS] = view / 10000;
+	view = view % 10000;
+
 	scoreDisplay_.num[THOUSANDS] = view / 1000;
 	view = view % 1000;
 
@@ -109,6 +112,10 @@ void ScoreUI::UpdateResult(float currentTime)
 	}
 
 	// タイマーに到達するまで0~9のランダムな数字を描画（ドラムロール演出）
+	if (currentTime < jm_->Get<float>("ScoreUI.ResultTimer.ConfirmedTimer0"))
+	{
+		scoreDisplay_.num[TEN_THOUSANDS] = Random::GetInstance()->Int09();
+	}
 	if (currentTime < jm_->Get<float>("ScoreUI.ResultTimer.ConfirmedTimer0"))
 	{
 		scoreDisplay_.num[THOUSANDS] = Random::GetInstance()->Int09();
@@ -151,6 +158,9 @@ void ScoreUI::ScoreViewSetting()
 	viewScore_ = int(Lerp(float(prevScore_), float(currentScore_), t));
 
 	int32_t view = viewScore_;
+	scoreDisplay_.num[TEN_THOUSANDS] = view / 10000;
+	view = view % 10000;
+
 	scoreDisplay_.num[THOUSANDS] = view / 1000;
 	view = view % 1000;
 

@@ -1,10 +1,10 @@
 #include "GameScene.h"
 #include "WindowsApp.h"
 #include "Object3dBasis.h"
-#include "Audio/Audio.h"
+#include "Audio.h"
 #include "CubemapBasis.h"
-#include "Result/Result.h"
-#include "Pause/Pause.h"
+#include "Result/ResultUI.h"
+#include "Pause/PauseUI.h"
 #include "PlayUI/PlayUI.h"
 #include "ScoreUI/ScoreUI.h"
 #include "StartUI/StartUI.h"
@@ -12,6 +12,7 @@
 #include "BulletTimeController.h"
 #include "Timer.h"
 #include "Ease.h"
+#include "UIManager.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -23,36 +24,24 @@ using namespace TYEngine::AudioSystem;
 using namespace TYEngine::Graphics;
 using namespace TYEngine;
 
-#define GAME_SCENE_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(GameScene, stateEnum, funcName)
-
-const std::vector<GameScene::StateFunctionSet>& GameScene::GetStateTable()
-{
-	using enum GameSceneState;
-	static const std::vector<StateFunctionSet> stateTable =
-	{
-		GAME_SCENE_ENTRY(LOAD, Load),
-		GAME_SCENE_ENTRY(FADE_IN, FadeIn),
-		GAME_SCENE_ENTRY(READY, Ready),
-		GAME_SCENE_ENTRY(PLAY, Play),
-		GAME_SCENE_ENTRY(PAUSE, Pause),
-		GAME_SCENE_ENTRY(DEAD, Dead),
-		GAME_SCENE_ENTRY(CLEAR, Clear),
-		GAME_SCENE_ENTRY(RESULT, Result),
-		GAME_SCENE_ENTRY(RETRY, Retry),
-		GAME_SCENE_ENTRY(FADE_OUT, FadeOut),
-		GAME_SCENE_ENTRY(DEBUG_EDIT, DebugEdit),
-	};
-	return stateTable;
-}
-
 GameScene::GameScene()
 {
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<GameSceneStateLoad>(GameSceneState::LOAD, "Load");
+	stateMachine_.RegisterState<GameSceneStateFadeIn>(GameSceneState::FADE_IN, "FadeIn");
+	stateMachine_.RegisterState<GameSceneStateReady>(GameSceneState::READY, "Ready");
+	stateMachine_.RegisterState<GameSceneStatePlay>(GameSceneState::PLAY, "Play");
+	stateMachine_.RegisterState<GameSceneStatePause>(GameSceneState::PAUSE, "Pause");
+	stateMachine_.RegisterState<GameSceneStateDead>(GameSceneState::DEAD, "Dead");
+	stateMachine_.RegisterState<GameSceneStateClear>(GameSceneState::CLEAR, "Clear");
+	stateMachine_.RegisterState<GameSceneStateResult>(GameSceneState::RESULT, "Result");
+	stateMachine_.RegisterState<GameSceneStateRetry>(GameSceneState::RETRY, "Retry");
+	stateMachine_.RegisterState<GameSceneStateFadeOut>(GameSceneState::FADE_OUT, "FadeOut");
+	stateMachine_.RegisterState<GameSceneStateDebugEdit>(GameSceneState::DEBUG_EDIT, "DebugEdit");
 }
 
 GameScene::~GameScene()
 {
+	UIManager::GetInstance()->Clear();
 }
 
 void GameScene::Init()
@@ -89,7 +78,7 @@ void GameScene::Init()
 	// ステージデータ（レール・敵配置など）の管理クラス生成と初期化
 	stageManager_ = std::make_unique<StageManager>(camera_);
 	stageManager_->Init();
-	stageManager_->GetPlayer()->SetBGMHandle(BGMHandle_);
+	stageManager_->SetBGMHandle(BGMHandle_);
 
 	// 開始時のカメラ位置などを保持
 	startCameraPos_ = camera_->GetPosition();
@@ -109,36 +98,15 @@ void GameScene::Init()
 
 void GameScene::Update()
 {
-#ifdef _DEBUG
-	ImGui::Begin("GameScene State Debug");
-	stateMachine_.DebugImGui("GameScene");
-	ImGui::End();
-
-	// ImGui で編集
-	// UI
-	ImGui::Begin("JSON Editor");
-	static Utility::JsonImGuiEditor inspectorUI(*gameUIJM_);
-	inspectorUI.Draw(gameUIJM_->Root(), "GameUI.json");
-	if (ImGui::Button("SaveUI")) gameUIJM_->Save();
-	// パラメータ
-	static Utility::JsonImGuiEditor inspectorParam(*paramJM_);
-	inspectorParam.Draw(paramJM_->Root(), "Param.json");
-	if (ImGui::Button("SaveParam")) paramJM_->Save();
-	// コンフィグ
-	static Utility::JsonImGuiEditor inspectorConfig(*configJM_);
-	inspectorConfig.Draw(configJM_->Root(), "Config.json");
-	if (ImGui::Button("SaveConfig")) configJM_->Save();
-	ImGui::End();
-#endif // _DEBUG
-
 	// バレットタイム（スローモーション等）の更新
 	bulletTime_->Update();
 
 	// 現在のシーンステートの更新処理を実行
-	stateMachine_.UpdateState(Timer::GetInstance()->GetDeltaTime());
+	stateMachine_.UpdateState(*this, Timer::GetInstance()->GetDeltaTime());
 	
 	// デバッグ用エディタ切り替え処理（デバッグビルドのみ）
 	SwitchEdit();
+	DebugDraw();
 
 	skybox_->Update();
 }

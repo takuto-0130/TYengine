@@ -1,46 +1,52 @@
 #include "Stage.h"
 #include "Timer.h"
 #include "BlenderLevelLoader.h"
-#include "../Object/Rail/RailEditor.h"
 #include "../AppSystem//Audio//GameAudio.h"
+#include "../AppSystem/RailGenerator/AppRailGenerator.h"
 
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
 
+Stage::~Stage()
+{
+}
+
 void Stage::Init()
 {
-    beatAnalyzer_.Init("418", GameAudio::GetInstance()->CategoryToString(SoundCategory::BGM));
+    gameAudio_ = GameAudio::GetInstance();
+
+    gameAudio_->InitBeatAnalyzer("418", SoundCategory::BGM);
 
 	// プレイヤー生成と初期化
     player_ = std::make_unique<Player>();
     player_->SetCamera(camera_);
     player_->Init();
     player_->SetIsInGame(true);
+    player_->SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
 
     // マネージャ群（コンボ、スコア）初期化
-    comboManager_ = std::make_unique<ComboManager>();
+    comboManager_ = std::make_unique<HitStreakManager>();
     comboManager_->Init();
     scoreManager_ = std::make_unique<ScoreManager>();
     scoreManager_->Init();
 
     // 敵マネージャ設定（スコア/コンボ関連付け）
     enemyMgr_.MakeComboAndScoreHandler(comboManager_.get(), scoreManager_.get());
-    enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
+    enemyMgr_.SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
     enemyMgr_.Init(camera_);
     enemyMgr_.SetIsInGame(true);
 
     player_->SetEnemyManager(&enemyMgr_);
 
-    // レール管理初期化
+    // レール管理/背景（地面）オブジェクト初期化
     railManager_ = std::make_unique<RailManager>();
     railManager_->SetCamera(camera_);
     railManager_->Init();
 
-    railManager_->Reset();
+    // EnemyManagerに地形の高さを計算させるために渡す
+    enemyMgr_.SetRailManager(railManager_.get());
 
-    // 背景（地面）オブジェクト初期化
-    BlenderLevelLoader loader;
-    loader.DataToObject(loader.Load("stage_object.json"), stageObject_);
+    GenerateStageFromAudio("418", railManager_.get());
 }
 
 void Stage::Reset()
@@ -55,8 +61,7 @@ void Stage::Update()
 {
     isEdit_ = false;
 
-    beatAnalyzer_.Update();
-    beatAnalyzer_.Draw();
+    DebugUI();
 
     // レール更新（カメラ移動・トリガー判定）
     railManager_->Update();
@@ -66,6 +71,9 @@ void Stage::Update()
         // トリガーに到達したとき（敵出現停止）
         enemyMgr_.DisablePopFlag();
     }
+    Vector3 pos = player_->GetWorldPosition();
+    enemyMgr_.SetTargetPos(&pos);
+    enemyMgr_.Update();
 
     StageObjectBeatScale();
     for (auto&& o : stageObject_)
@@ -75,13 +83,6 @@ void Stage::Update()
 
     // プレイヤー更新
     player_->Update();
-
-    // プレイヤー位置を敵側に通知（エイム等のため）
-    Vector3 pos = player_->GetWorldPosition();
-    enemyMgr_.SetTargetPos(&pos);
-
-    // 敵群の更新
-    enemyMgr_.Update();
 
     // コンボシステム更新
     comboManager_->Update();
@@ -122,14 +123,14 @@ void Stage::EditUpdate()
 
 nlohmann::json Stage::ToJson() const {
     nlohmann::json j;
-    j["rail"] = RailEditor::Instance()->ToJson();
+    //j["rail"] = RailEditor::Instance()->ToJson();
     return j;
 }
 
 void Stage::FromJson(const nlohmann::json& j) {
     // レールデータをJSONからデシリアライズ
-    RailEditor::Instance()->FromJson(j["rail"]);
-    
+    //RailEditor::Instance()->FromJson(j["rail"]);
+    (void)j;
     // ロード後にレールマネージャを再初期化
     railManager_->Reset();
 }
@@ -141,7 +142,7 @@ void Stage::StageObjectBeatScale()
     {
         if (o->GetModelName() == "conifer.obj")
         {
-            if (beatAnalyzer_.GetBeat())
+            if (gameAudio_->GetBeatAnalyzer().GetBeat())
             {
                 timer = 0.0f;
                 o->SetScale(1.05f);
@@ -156,4 +157,33 @@ void Stage::StageObjectBeatScale()
             }
         }
     }
+}
+
+void Stage::DebugUI()
+{
+#ifdef _DEBUG
+
+    //ImGui::Begin("Sound Selector");
+
+    //// ImGui::Combo に渡すための C言語風文字列配列 (const char*) を作成
+    //std::vector<const char*> comboItems;
+    //for (const auto& song : songList_)
+    //{
+    //    comboItems.push_back(song.c_str());
+    //}
+
+    //// プルダウンメニューの表示
+    //// ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
+    //if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
+    //{
+    //    gameAudio_->Pause(BGMHandle_);
+    //    BGMHandle_ = gameAudio_->Play(songList_[currentSongIndex_], true, SoundCategory::BGM);
+    //    railManager_->Reset();
+    //    // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む
+    //    GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
+    //}
+
+    //ImGui::End();
+
+#endif // _DEBUG
 }

@@ -87,6 +87,10 @@ namespace TYEngine
 		/// </summary>
 		Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
 
+		static float GetCentripetalT(float t, const TYEngine::Utility::Vector3& p0, const TYEngine::Utility::Vector3& p1);
+
+		static TYEngine::Utility::Vector3 RemapLerp(float t_a, float t_b, float t_curr, const TYEngine::Utility::Vector3& p_a, const TYEngine::Utility::Vector3& p_b);
+
 		/// <summary>
 		/// Catmull-Rom補間を使用してベクトルを求める
 		/// </summary>

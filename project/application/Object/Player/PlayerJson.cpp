@@ -42,7 +42,7 @@ void Player::DebugJMApply()
 	movement_.Load(jm_);
 
 	// HP設定
-	status_.Load(jm_);
+	//status_.Load(jm_);
 
 	// バレルロール
 	barrelRoll_.Load(jm_);

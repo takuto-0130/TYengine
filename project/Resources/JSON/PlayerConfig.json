@@ -25,7 +25,7 @@
         "y": 0.0,
         "z": 0.4000000059604645
       },
-      "HomingTime": 3.0,
+      "HomingTime": 1.0,
       "colliderScale": 0.10000000149011612,
       "defaultSpeed": 25.0,
       "lifeTime": 4.0,
@@ -50,7 +50,9 @@
       "lifeTime": 4.0,
       "scale": 0.05000000074505806
     },
-    "bulletCoolTime": 0.20000000298023224
+    "bulletCoolTime": 0.20000000298023224,
+    "goodShotThreshold": 0.4000000059604645,
+    "perfectShotThreshold": 0.699999988079071
   },
   "colliderScale": 0.20000000298023224,
   "destroyEffect": {
@@ -75,7 +77,7 @@
   },
   "lockOn": {
     "lockOnRadius": 10.0,
-    "maxLockCount": 8,
+    "maxLockCount": 10,
     "maxLockOnCool": 0.30000001192092896,
     "spreadX": 1.0,
     "spreadY": 0.5,

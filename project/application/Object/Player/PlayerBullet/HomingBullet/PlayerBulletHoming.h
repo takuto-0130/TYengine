@@ -1,9 +1,14 @@
 #pragma once
 #include "../../../BaseBullet/BaseBullet.h"
 #include "StateMachine.h"
+#include "State.h"
 
 #include "../PBulletCollider.h"
 #include "Utils/Json/JsonManager.h"
+
+// 前方宣言
+class HomingBulletStateShot;
+class HomingBulletStateAfterCollision;
 
 /// <summary>
 /// 通常弾の状態定数。
@@ -23,11 +28,10 @@ class EnemyManager;
 class PlayerBulletHoming :
 	public BaseBullet
 {
+	friend class HomingBulletStateShot;
+	friend class HomingBulletStateAfterCollision;
 public:
-	using StateMachineType = TYEngine::Utility::StateMachine<PlayerBulletHoming, HomingBulletState>;
-	using StateFunctionSet = StateMachineType::StateFunctionSet;
-	// 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
+	using StateMachineType = TYEngine::Utility::StateMachine<HomingBulletState, PlayerBulletHoming>;
 
 public:
 	PlayerBulletHoming();
@@ -65,19 +69,24 @@ private:
 	/// <summary>ステートマシーン。</summary>
 	StateMachineType stateMachine_;
 
-private: // シーン内のState関連関数
-#pragma region // State関連関数
-	// 直線移動
-	// ShotState.cpp
-	void InitShot();
-	void UpdateShot();
-	void ExitShot();
+};
 
-	// 衝突後処理
-	// AfterCollisionState.cpp
-	void InitAfterCollision();
-	void UpdateAfterCollision();
-	void ExitAfterCollision();
-#pragma endregion
+// --- 状態クラスの定義 ---
+class HomingBulletStateShot : public TYEngine::Utility::State<HomingBulletState, PlayerBulletHoming>
+{
+public:
+	using State::State;
+	void Init(PlayerBulletHoming& owner) override;
+	void Update(PlayerBulletHoming& owner, float deltaTime) override;
+	void Exit(PlayerBulletHoming& owner) override;
+};
+
+class HomingBulletStateAfterCollision : public TYEngine::Utility::State<HomingBulletState, PlayerBulletHoming>
+{
+public:
+	using State::State;
+	void Init(PlayerBulletHoming& owner) override;
+	void Update(PlayerBulletHoming& owner, float deltaTime) override;
+	void Exit(PlayerBulletHoming& owner) override;
 };
 

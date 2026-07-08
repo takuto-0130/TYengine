@@ -31,6 +31,9 @@ void TitleScene::Load()
 	gameAudio_->LoadSound("roll");
 	gameAudio_->LoadSound("attack");
 	gameAudio_->LoadSound("418");
+	gameAudio_->LoadSound("irodori", ".mp3");
+	
+	gameAudio_->InitBeatAnalyzer("gameBGM", SoundCategory::BGM);
 
 	//========== テクスチャロード ==========//
 
@@ -39,4 +42,6 @@ void TitleScene::Load()
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/Operation.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/reticle.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/white2x2.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/RhythmBar1.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Texture/RhythmBar2.png");
 }

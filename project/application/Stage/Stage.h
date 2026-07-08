@@ -8,12 +8,15 @@
 #include "Object/Rail/RailManager.h"
 #include "../AppSystem/Combo/ComboManager.h"
 #include "../AppSystem/Score/ScoreManager.h"
+#include "../AppSystem/Audio/GameAudio.h"
 #include <memory>
 #include <json.hpp>
 
 class Stage
 {
 public:
+	~Stage();
+
 	/// <summary>
 	/// ステージ初期化処理。
 	/// プレイヤー、敵、レール、コンボ・スコアマネージャの生成と初期設定を行う。
@@ -92,13 +95,19 @@ public:
 	}
 
 public:
-	ComboManager* GetComboManager() { return comboManager_.get(); }
+	HitStreakManager* GetComboManager() { return comboManager_.get(); }
 	ScoreManager* GetScoreManager() { return scoreManager_.get(); }
 
 	Player* GetPlayer() { return player_.get(); }
 
+	RailManager* GetRailManager() { return railManager_.get(); }
+
+	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
+
 private:
 	void StageObjectBeatScale();
+
+	void DebugUI();
 
 private:
 	/// <summary>カメラへのポインタ（借用）。</summary>
@@ -114,7 +123,7 @@ private:
 	std::unique_ptr<RailManager> railManager_;
 
 	/// <summary>コンボ計測・管理用マネージャ。</summary>
-	std::unique_ptr<ComboManager> comboManager_;
+	std::unique_ptr<HitStreakManager> comboManager_;
 	
 	/// <summary>スコア計測・管理用マネージャ。</summary>
 	std::unique_ptr<ScoreManager> scoreManager_;
@@ -126,6 +135,15 @@ private:
 	bool isEdit_ = false;
 
 	/// <summary>ビートアナライザー（演出用）。</summary>
-	TYEngine::AudioSystem::BeatAnalyzer beatAnalyzer_;
+	GameAudio* gameAudio_ = nullptr;
+
+	// 曲名のリスト
+	std::vector<std::string> songList_ = { "418", "gameBGM", "irodori" };
+
+	// 現在選択されている曲のインデックス
+	int currentSongIndex_ = 0;
+
+	/// <summary>BGM再生ハンドル。</summary>
+	int BGMHandle_ = -1;
 };
 

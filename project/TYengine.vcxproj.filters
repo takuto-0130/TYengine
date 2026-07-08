@@ -2,216 +2,234 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="application">
-      <UniqueIdentifier>{8233adb7-b039-443e-8750-c4faf6b74389}</UniqueIdentifier>
+      <UniqueIdentifier>{1b29340a-04d9-4459-8020-46953104d6da}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem">
-      <UniqueIdentifier>{4813aa3b-5cea-4103-aa9d-ce7555a9c58a}</UniqueIdentifier>
+      <UniqueIdentifier>{6a11d208-00cf-4490-99f3-1b1dfbb76aed}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Audio">
-      <UniqueIdentifier>{e3509be5-7086-49ad-b43b-9dc32b86dfc7}</UniqueIdentifier>
+      <UniqueIdentifier>{ba8bd67f-87fd-4c24-a5bd-4c8814cf1bc3}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Combo">
-      <UniqueIdentifier>{0d845595-760f-446b-a8c3-618564f32620}</UniqueIdentifier>
+      <UniqueIdentifier>{8a28f2a2-129d-4d76-ab7d-031074c194ef}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener">
-      <UniqueIdentifier>{bac5fee7-afbc-48c6-9da8-8db332bc7d77}</UniqueIdentifier>
+      <UniqueIdentifier>{8fa7513a-999e-4c08-be39-bc86c21da8d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener\EnemyEvent">
-      <UniqueIdentifier>{abae68c7-7681-4bcf-94dd-cfd9afb9ccc9}</UniqueIdentifier>
+      <UniqueIdentifier>{db059264-cf45-4162-a9db-8ec2a549653c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\AppSystem\RailGenerator">
+      <UniqueIdentifier>{6e8e24f6-cee0-4fb7-ad42-de90af7ad806}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Score">
-      <UniqueIdentifier>{8c35d535-8821-4168-a681-df9765315a0d}</UniqueIdentifier>
+      <UniqueIdentifier>{edabb84e-6548-4f30-ac0e-f52d4bf13c5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\AppSystem\UI">
+      <UniqueIdentifier>{5eeecd8f-2832-479f-affb-9bb6697b7651}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object">
-      <UniqueIdentifier>{316ca931-db0d-4a66-b5b4-81a202529e8d}</UniqueIdentifier>
+      <UniqueIdentifier>{dcaaf621-13e7-414d-9c4e-dcb36ea8dbdd}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseBullet">
-      <UniqueIdentifier>{348ef0cc-8404-477c-b816-42920c5d9b6c}</UniqueIdentifier>
+      <UniqueIdentifier>{d5852f80-8bc3-400f-8353-78ecff32c4c1}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseCharacter">
-      <UniqueIdentifier>{36233fc2-8507-444b-81e2-5baf6f259bf3}</UniqueIdentifier>
+      <UniqueIdentifier>{7350c5dd-5860-4339-9848-9a3a22af3590}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\ColliderTypeID">
-      <UniqueIdentifier>{c6527be5-d240-4663-be1f-04c2b0f03b7b}</UniqueIdentifier>
+      <UniqueIdentifier>{fd7a19a6-b0ca-49e0-af94-946fda24e66f}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy">
-      <UniqueIdentifier>{d787455b-6dbd-4892-a942-ddd1ef10aaa9}</UniqueIdentifier>
+      <UniqueIdentifier>{de98db8a-ccc3-4363-9b64-01439a4219ff}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\AttackStrategy">
-      <UniqueIdentifier>{7413056f-be78-4fbf-80c5-fceb93217c4a}</UniqueIdentifier>
+      <UniqueIdentifier>{422cae80-498b-49df-bfe8-0c19e26491cf}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet">
-      <UniqueIdentifier>{019970e4-8fde-4bb0-8c7b-0a7aaaccb9d2}</UniqueIdentifier>
+      <UniqueIdentifier>{64e5a576-c8a0-44da-a7ee-dacce666eba1}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet\Linear">
-      <UniqueIdentifier>{741e3433-26a3-4ce6-8b28-2235b8391718}</UniqueIdentifier>
+      <UniqueIdentifier>{46949882-49c6-435c-9259-13effa0a92f8}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyManager">
-      <UniqueIdentifier>{46da3140-6775-435e-bf82-3e683f00ad99}</UniqueIdentifier>
+      <UniqueIdentifier>{eddc54b0-927f-46f1-9201-b7674975a8d1}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player">
-      <UniqueIdentifier>{520fc973-6072-4676-951e-66fd35d13a83}</UniqueIdentifier>
+      <UniqueIdentifier>{efe9640a-2f32-4122-85f7-6d5d8b102af6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="application\Object\Player\PAttackStrategy">
+      <UniqueIdentifier>{e0553585-5d97-4970-afdd-a3270c6c23dd}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet">
-      <UniqueIdentifier>{a7499edd-4dc8-4dff-94a2-e68d15b35f3a}</UniqueIdentifier>
+      <UniqueIdentifier>{cd5d5f05-f1af-4546-8d8a-d1144ae0db16}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet\HomingBullet">
-      <UniqueIdentifier>{d80f01cc-742c-4178-a09a-9ff7775f3af9}</UniqueIdentifier>
+      <UniqueIdentifier>{29cf2356-a06c-4b2d-8e63-b61702640e92}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet\NormalBullet">
-      <UniqueIdentifier>{50e505f0-cee0-421e-9329-41f4567b7916}</UniqueIdentifier>
+      <UniqueIdentifier>{67880b51-ca31-40fe-b70c-205772703ab2}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerState">
-      <UniqueIdentifier>{3cf7e418-a088-4f80-8909-8d087469dbad}</UniqueIdentifier>
+      <UniqueIdentifier>{9b1b3b67-bc69-4d1c-b03c-dd4f605c0e29}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\Reticle">
-      <UniqueIdentifier>{110dc9e4-b5e7-42ed-b301-c3fa82f2e8ab}</UniqueIdentifier>
+      <UniqueIdentifier>{536ec532-2f9a-469b-9f08-179456ab7486}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Rail">
-      <UniqueIdentifier>{a75fe3ec-466d-44b6-95c4-65c17f7254a9}</UniqueIdentifier>
+      <UniqueIdentifier>{1599637e-e420-4a2f-8630-9d423611449d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene">
-      <UniqueIdentifier>{7d4ae943-e1b4-4639-b7cb-949daa441af0}</UniqueIdentifier>
+      <UniqueIdentifier>{a6174a6e-8366-4685-a2b4-04d370b0b3c7}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene">
-      <UniqueIdentifier>{6282e713-3a40-4f2c-99c0-08edfea251be}</UniqueIdentifier>
+      <UniqueIdentifier>{2037672e-fd05-40e0-810d-88438c9d35e1}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\GameSceneStates">
-      <UniqueIdentifier>{c5318562-58ce-47ac-9946-366ce2f82d21}</UniqueIdentifier>
+      <UniqueIdentifier>{610cdd65-a63c-4457-b5d6-65699280f2ec}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Pause">
-      <UniqueIdentifier>{240c14ca-5050-441a-ade1-840976964a6e}</UniqueIdentifier>
+      <UniqueIdentifier>{4f452f29-8e29-43a5-b4ef-a81757196090}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\PlayUI">
-      <UniqueIdentifier>{e1cc1c7f-f5aa-4fc9-bc7f-fe175066e91a}</UniqueIdentifier>
+      <UniqueIdentifier>{f6d2fa2b-ccd1-4829-9c2c-28fb5bb487fe}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Result">
-      <UniqueIdentifier>{56f3b385-7a03-4c40-bd50-c46d8b8c08c9}</UniqueIdentifier>
+      <UniqueIdentifier>{7bada5a2-668c-4397-8e11-6f7830d89203}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\RetryUI">
-      <UniqueIdentifier>{ae197ff7-c937-4517-b471-ecb8bd9474b3}</UniqueIdentifier>
+      <UniqueIdentifier>{40fd3328-08bf-42b5-8a20-2f09f3608278}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\StartUI">
-      <UniqueIdentifier>{4c2db315-0154-485d-8611-a6137ac76587}</UniqueIdentifier>
+      <UniqueIdentifier>{9e014daa-feb2-45a9-a785-3c64187dabfb}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\SceneFactory">
-      <UniqueIdentifier>{d7b9810c-8f4f-40b1-bcca-0720cd75e3d4}</UniqueIdentifier>
+      <UniqueIdentifier>{5c10ae73-e4f9-4f97-b7ab-e76a462997b9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\TitleScene">
-      <UniqueIdentifier>{3c080818-516a-4e18-9e2b-f8a6864e7dc9}</UniqueIdentifier>
+      <UniqueIdentifier>{68c3da24-21c8-4515-aeb1-1bbd4e3fb2e9}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\TitleScene\TItleSceneStates">
-      <UniqueIdentifier>{8e93bf13-9dab-41d4-b941-5eeadf18f2fd}</UniqueIdentifier>
+      <UniqueIdentifier>{3f479e60-97bf-4db9-908f-099b643abb67}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition">
-      <UniqueIdentifier>{716d3a77-ada0-4a4d-947f-d03ed1740058}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="application\Scene\Transition\Fade">
-      <UniqueIdentifier>{a5c06754-fb31-46ca-ab36-398fb3be1864}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="application\Scene\Transition\Fade2">
-      <UniqueIdentifier>{e7311c69-b897-44ec-8542-14b92d4babe5}</UniqueIdentifier>
+      <UniqueIdentifier>{d14634a1-b3f7-4b0b-82ea-6f6e9708810d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\ScoreUI">
-      <UniqueIdentifier>{203106d6-15a3-4f1c-bf1c-6d04626d5e3c}</UniqueIdentifier>
+      <UniqueIdentifier>{1640310b-276b-41fe-912b-530a4eef0c02}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Stage">
-      <UniqueIdentifier>{ab95073f-a074-4b07-8823-906588d085e3}</UniqueIdentifier>
+      <UniqueIdentifier>{1420bb3f-3d92-49a1-a12a-6338504ea0c1}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine">
-      <UniqueIdentifier>{83c36c0c-9983-4f8e-b293-86f16bb5182b}</UniqueIdentifier>
+      <UniqueIdentifier>{f46072df-62e6-4f5c-8479-869a40000b17}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio">
-      <UniqueIdentifier>{ba73da66-7f0f-41b0-a399-e1a2b341583b}</UniqueIdentifier>
+      <UniqueIdentifier>{3af2ab70-a361-427b-a574-50a1b3ee1630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Audio\Analysis">
+      <UniqueIdentifier>{c276db2b-47bd-4bc9-962c-f2e64b5122a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Audio\Core">
+      <UniqueIdentifier>{c66457bd-a19b-4c8c-9cd9-30b9aa681176}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Audio\DSP">
+      <UniqueIdentifier>{863170e9-2c67-470f-81be-ffd34c51ddf7}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Camera">
-      <UniqueIdentifier>{28361078-6624-4c40-bc2f-0b14f24ed164}</UniqueIdentifier>
+      <UniqueIdentifier>{569bea1a-a6d2-4fcd-a8bd-36447bc84864}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Debugger">
-      <UniqueIdentifier>{26b6eaf9-f1f3-4940-a03d-6b195bf61317}</UniqueIdentifier>
+      <UniqueIdentifier>{0a871fde-ca9b-49bd-806a-ac2001e0b180}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Effect">
-      <UniqueIdentifier>{e9b11206-f1a3-468b-b5fa-ae7c420a9ca7}</UniqueIdentifier>
+      <UniqueIdentifier>{578774ad-410b-4dd8-b99e-069a8bf6b4a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\EngineCore">
-      <UniqueIdentifier>{c63a7461-1b78-4fc5-8daf-32e666c390fb}</UniqueIdentifier>
+      <UniqueIdentifier>{5ab5a5ee-9fe4-444f-bb29-3c9785f31356}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework">
-      <UniqueIdentifier>{11b11d25-1aff-48b4-93ec-3b0646b6472a}</UniqueIdentifier>
+      <UniqueIdentifier>{b1e795b4-61e0-47fa-abce-3ff86ffc77a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\Input">
-      <UniqueIdentifier>{98aa537c-33be-4ed2-81f9-78541173ec4b}</UniqueIdentifier>
+      <UniqueIdentifier>{8d42a761-a90d-42c2-b2c1-eb65ca95ea5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\SceneBase">
-      <UniqueIdentifier>{e69ca644-e377-46bd-98ab-a36195ef775a}</UniqueIdentifier>
+      <UniqueIdentifier>{87db6c7a-078b-4ea0-8c7c-b4ea4dbd00d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Framework\SceneBase\Transition">
+      <UniqueIdentifier>{3c8cb5ea-06ca-4145-9cca-4726c85e4728}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics">
-      <UniqueIdentifier>{eef19ec2-e236-4ddf-a7f7-644b7e171a05}</UniqueIdentifier>
+      <UniqueIdentifier>{011f00ad-2b27-418c-a60b-faca59abf17f}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Cubemap">
-      <UniqueIdentifier>{83e833e5-fc5e-447e-a256-49294390c49d}</UniqueIdentifier>
+      <UniqueIdentifier>{675bcf55-fb1e-44d0-93f1-25eb052e9c3a}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Model">
-      <UniqueIdentifier>{54aacd7e-cfaf-47bb-be1b-57e2d11acdea}</UniqueIdentifier>
+      <UniqueIdentifier>{a0497f75-1638-431f-96d6-240ec2d204f0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Sprite">
-      <UniqueIdentifier>{0b0a11ff-19f0-4a0c-972e-65c44498dbf6}</UniqueIdentifier>
+      <UniqueIdentifier>{32baa76c-7581-4bcc-a7c0-f395e5f01115}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\SRV">
-      <UniqueIdentifier>{92383680-8351-49f2-bb2b-51a5458f6eda}</UniqueIdentifier>
+      <UniqueIdentifier>{8a1fafbd-c6d2-4adf-997b-3ce97c30a924}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen">
-      <UniqueIdentifier>{5d3d8a75-ac8b-440d-90f5-f630ab3ea16d}</UniqueIdentifier>
+      <UniqueIdentifier>{a9cc9325-ca5d-47be-83d4-ed58036d12b0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen\PostEffect">
-      <UniqueIdentifier>{ba771927-c560-4bcc-a521-3902cdc9237e}</UniqueIdentifier>
+      <UniqueIdentifier>{2f806d2b-87f2-4b0d-b93c-dedef1b6edac}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility">
-      <UniqueIdentifier>{74ca4feb-ba2e-4cfa-987c-f1eb02fd5c02}</UniqueIdentifier>
+      <UniqueIdentifier>{75381342-3c3c-409c-90ca-ff0b043320d4}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider">
-      <UniqueIdentifier>{67d564a7-8c4b-4a6e-831e-cc137946daa2}</UniqueIdentifier>
+      <UniqueIdentifier>{218885b9-4c71-464b-b89c-a42fab007c07}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\2DCollider">
-      <UniqueIdentifier>{8d3d2a5c-69a1-46fb-805c-94e6c1fefef5}</UniqueIdentifier>
+      <UniqueIdentifier>{4a4f8444-48a3-4cc7-b3ff-5c017cce7b61}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Ray">
-      <UniqueIdentifier>{db0a2b64-a3d8-4d38-83fb-81c3a84371b9}</UniqueIdentifier>
+      <UniqueIdentifier>{1819cb92-6117-44d7-ad57-1aa51bbd3861}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Sphere">
-      <UniqueIdentifier>{d17b9a79-d24f-4c90-8464-68168b9fb47b}</UniqueIdentifier>
+      <UniqueIdentifier>{c60df5c5-0c68-4712-9f6d-ef101caa2113}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Loader">
-      <UniqueIdentifier>{f6cc43ae-6371-4716-bf9d-eae643954b82}</UniqueIdentifier>
+      <UniqueIdentifier>{bafbcee8-a403-4722-941a-1ada88d511a7}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Math">
-      <UniqueIdentifier>{bea7d143-6184-45d2-9ef8-475f21eb38ff}</UniqueIdentifier>
+      <UniqueIdentifier>{fc773959-93c8-4d47-b069-dd984adc35a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\ObjectBasis">
-      <UniqueIdentifier>{429542ba-d5e8-4fd2-999e-ae3559410437}</UniqueIdentifier>
+      <UniqueIdentifier>{fb4756c3-77bd-45a8-8729-f17b6fb090e3}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\SceneObjects">
-      <UniqueIdentifier>{0b8ab93e-1316-46b2-b66d-480c8077440d}</UniqueIdentifier>
+      <UniqueIdentifier>{de4e8bc0-6745-4ce0-9094-63700f7a22db}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils">
-      <UniqueIdentifier>{f8c37225-942e-4e2e-890d-5ec6c04f63fd}</UniqueIdentifier>
+      <UniqueIdentifier>{8f8a121e-8ca7-4788-8912-c56420ff5680}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\JSON">
-      <UniqueIdentifier>{3f4f05eb-c2f4-49db-b0e7-9b4434e32e37}</UniqueIdentifier>
+      <UniqueIdentifier>{004a6747-e660-41bb-80c0-0661166ee75e}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\Time">
-      <UniqueIdentifier>{f76b8847-e666-46ed-a0fa-6dc054a58967}</UniqueIdentifier>
+      <UniqueIdentifier>{5ed83ca9-1af4-425d-a702-305549cc914b}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals">
-      <UniqueIdentifier>{86b352c9-6c94-442e-9be7-3ddcd9b6cb7b}</UniqueIdentifier>
+      <UniqueIdentifier>{ed17320a-689f-42a4-b53e-9e193ba03008}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals\imgui">
-      <UniqueIdentifier>{66828fda-42c3-43bb-9b1f-57b12232baea}</UniqueIdentifier>
+      <UniqueIdentifier>{c7abb37f-ee56-41da-a7cd-efad4830cf17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\AppSystem\Combo\ComboManager.cpp">
       <Filter>application\AppSystem\Combo</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AppSystem\RailGenerator\AppRailGenerator.cpp">
+      <Filter>application\AppSystem\RailGenerator</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Enemy\EnemyBullet\Linear\AfterCollisionState.cpp">
       <Filter>application\Object\Enemy\EnemyBullet\Linear</Filter>
@@ -321,20 +339,26 @@
     <ClCompile Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.cpp">
       <Filter>application\Object\Enemy\EnemyBullet</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\Transition\Fade2\BlockFadeTransition.cpp">
-      <Filter>application\Scene\Transition\Fade2</Filter>
+    <ClCompile Include="application\Scene\Transition\BlockFadeTransition.cpp">
+      <Filter>application\Scene\Transition</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\BeatAnalyzer.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Analysis\BeatAnalyzer.cpp">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\BPMDetector.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\DSP\BiquadFilter.cpp">
+      <Filter>engine\Audio\DSP</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\AudioAnalyzer.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Analysis\BPMDetector.cpp">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\MyAnalyzerXAPO.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Analysis\AudioAnalyzer.cpp">
+      <Filter>engine\Audio\Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Audio\DSP\MyAnalyzerXAPO.cpp">
+      <Filter>engine\Audio\DSP</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Audio\Analysis\OfflineAudioAnalyzer.cpp">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClCompile>
     <ClCompile Include="externals\xapobase.cpp">
       <Filter>externals</Filter>
@@ -387,8 +411,8 @@
     <ClCompile Include="engine\OffScreen\CopyPass.cpp">
       <Filter>engine\OffScreen</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\Audio.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Core\Audio.cpp">
+      <Filter>engine\Audio\Core</Filter>
     </ClCompile>
     <ClCompile Include="engine\Camera\Camera.cpp">
       <Filter>engine\Camera</Filter>
@@ -489,8 +513,8 @@
     <ClCompile Include="application\Scene\TitleScene\TitleScene.cpp">
       <Filter>application\Scene\TitleScene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Audio\StreamingAudio.cpp">
-      <Filter>engine\Audio</Filter>
+    <ClCompile Include="engine\Audio\Core\StreamingAudio.cpp">
+      <Filter>engine\Audio\Core</Filter>
     </ClCompile>
     <ClCompile Include="application\Scene\SceneFactory\SceneFactory.cpp">
       <Filter>application\Scene\SceneFactory</Filter>
@@ -504,9 +528,6 @@
     <ClCompile Include="engine\Effect\RingParticle.cpp">
       <Filter>engine\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="application\Object\Rail\RailEditor.cpp">
-      <Filter>application\Object\Rail</Filter>
-    </ClCompile>
     <ClCompile Include="engine\OffScreen\RenderTexture.cpp">
       <Filter>engine\OffScreen</Filter>
     </ClCompile>
@@ -516,17 +537,20 @@
     <ClCompile Include="application\Stage\Stage.cpp">
       <Filter>application\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\Transition\Fade\FadeTransition.cpp">
-      <Filter>application\Scene\Transition\Fade</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Scene\Transition\TransitionManager.cpp">
+    <ClCompile Include="application\Scene\Transition\FadeTransition.cpp">
       <Filter>application\Scene\Transition</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\Pause\Pause.cpp">
+    <ClCompile Include="engine\Framework\SceneBase\Transition\TransitionManager.cpp">
+      <Filter>engine\Framework\SceneBase\Transition</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Scene\GameScene\Pause\PauseUI.cpp">
       <Filter>application\Scene\GameScene\Pause</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\GameScene\Result\Result.cpp">
+    <ClCompile Include="application\Scene\GameScene\Result\ResultUI.cpp">
       <Filter>application\Scene\GameScene\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="application\AppSystem\UI\UIManager.cpp">
+      <Filter>application\AppSystem\UI</Filter>
     </ClCompile>
     <ClCompile Include="application\Object\Rail\RailManager.cpp">
       <Filter>application\Object\Rail</Filter>
@@ -609,6 +633,9 @@
     <ClCompile Include="application\AppSystem\Audio\GameAudio.cpp">
       <Filter>application\AppSystem\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="application\AppSystem\Audio\CriticalHealthAudioEffect.cpp">
+      <Filter>application\AppSystem\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\AppSystem\Combo\ComboManager.h">
@@ -619,6 +646,12 @@
     </ClInclude>
     <ClInclude Include="application\AppSystem\EventListener\EnemyEvent\IEnemyEventListener.h">
       <Filter>application\AppSystem\EventListener\EnemyEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\ParticleType.h">
+      <Filter>application\AppSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\RailGenerator\AppRailGenerator.h">
+      <Filter>application\AppSystem\RailGenerator</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\BaseCharacter\BaseCharacter.h">
       <Filter>application\Object\BaseCharacter</Filter>
@@ -634,6 +667,12 @@
     </ClInclude>
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EBulletCollider.h">
       <Filter>application\Object\Enemy\EnemyBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PAttackStrategy\IPAttackStrategy.h">
+      <Filter>application\Object\Player\PAttackStrategy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Object\Player\PAttackStrategy\PAttackStrategies.h">
+      <Filter>application\Object\Player\PAttackStrategy</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Player\PlayerBullet\HomingBullet\PlayerBulletHoming.h">
       <Filter>application\Object\Player\PlayerBullet\HomingBullet</Filter>
@@ -653,11 +692,11 @@
     <ClInclude Include="application\Scene\GameScene\Result\ConfettiSystem.h">
       <Filter>application\Scene\GameScene\Result</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\Transition\ITransition.h">
-      <Filter>application\Scene\Transition</Filter>
+    <ClInclude Include="engine\Framework\SceneBase\Transition\ITransition.h">
+      <Filter>engine\Framework\SceneBase\Transition</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\Transition\StateMachineTransition.h">
-      <Filter>application\Scene\Transition</Filter>
+    <ClInclude Include="engine\Framework\SceneBase\Transition\StateMachineTransition.h">
+      <Filter>engine\Framework\SceneBase\Transition</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\BaseBullet\BaseBullet.h">
       <Filter>application\Object\BaseBullet</Filter>
@@ -671,20 +710,29 @@
     <ClInclude Include="application\Object\Enemy\EnemyBullet\EnemyBulletManager.h">
       <Filter>application\Object\Enemy\EnemyBullet</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\Transition\Fade2\BlockFadeTransition.h">
-      <Filter>application\Scene\Transition\Fade2</Filter>
+    <ClInclude Include="application\Scene\Transition\BlockFadeTransition.h">
+      <Filter>application\Scene\Transition</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\BeatAnalyzer.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Analysis\AudioAnalysisResult.h">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\BPMDetector.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Analysis\BeatAnalyzer.h">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\MyAnalyzerXAPO.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\DSP\BiquadFilter.h">
+      <Filter>engine\Audio\DSP</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\AudioAnalyzer.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Analysis\BPMDetector.h">
+      <Filter>engine\Audio\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Audio\DSP\MyAnalyzerXAPO.h">
+      <Filter>engine\Audio\DSP</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Audio\Analysis\AudioAnalyzer.h">
+      <Filter>engine\Audio\Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Audio\Analysis\OfflineAudioAnalyzer.h">
+      <Filter>engine\Audio\Analysis</Filter>
     </ClInclude>
     <ClInclude Include="engine\Effect\ContrailBehaviour.h">
       <Filter>engine\Effect</Filter>
@@ -749,6 +797,9 @@
     <ClInclude Include="engine\Utility\Utils\SingletonObject.h">
       <Filter>engine\Utility\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\State.h">
+      <Filter>engine\Utility\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="engine\Utility\Utils\Time\BulletTimeController.h">
       <Filter>engine\Utility\Utils\Time</Filter>
     </ClInclude>
@@ -785,8 +836,8 @@
     <ClInclude Include="engine\OffScreen\CopyPass.h">
       <Filter>engine\OffScreen</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\Audio.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Core\Audio.h">
+      <Filter>engine\Audio\Core</Filter>
     </ClInclude>
     <ClInclude Include="engine\Camera\Camera.h">
       <Filter>engine\Camera</Filter>
@@ -869,6 +920,9 @@
     <ClInclude Include="engine\Utility\Math\WorldTransform.h">
       <Filter>engine\Utility\Math</Filter>
     </ClInclude>
+    <ClInclude Include="engine\Utility\Utils\Time\Oscillator.h">
+      <Filter>engine\Utility\Utils\Time</Filter>
+    </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
       <Filter>externals\imgui</Filter>
     </ClInclude>
@@ -899,8 +953,8 @@
     <ClInclude Include="application\Scene\TitleScene\TitleScene.h">
       <Filter>application\Scene\TitleScene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\StreamingAudio.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Core\StreamingAudio.h">
+      <Filter>engine\Audio\Core</Filter>
     </ClInclude>
     <ClInclude Include="application\Scene\SceneFactory\SceneFactory.h">
       <Filter>application\Scene\SceneFactory</Filter>
@@ -914,9 +968,6 @@
     <ClInclude Include="engine\Effect\RingParticle.h">
       <Filter>engine\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="application\Object\Rail\RailEditor.h">
-      <Filter>application\Object\Rail</Filter>
-    </ClInclude>
     <ClInclude Include="engine\OffScreen\RenderTexture.h">
       <Filter>engine\OffScreen</Filter>
     </ClInclude>
@@ -926,17 +977,23 @@
     <ClInclude Include="application\Stage\Stage.h">
       <Filter>application\Stage</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\Transition\Fade\FadeTransition.h">
-      <Filter>application\Scene\Transition\Fade</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Scene\Transition\TransitionManager.h">
+    <ClInclude Include="application\Scene\Transition\FadeTransition.h">
       <Filter>application\Scene\Transition</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\GameScene\Pause\Pause.h">
+    <ClInclude Include="engine\Framework\SceneBase\Transition\TransitionManager.h">
+      <Filter>engine\Framework\SceneBase\Transition</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Scene\GameScene\Pause\PauseUI.h">
       <Filter>application\Scene\GameScene\Pause</Filter>
     </ClInclude>
-    <ClInclude Include="application\Scene\GameScene\Result\Result.h">
+    <ClInclude Include="application\Scene\GameScene\Result\ResultUI.h">
       <Filter>application\Scene\GameScene\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\UI\BaseUI.h">
+      <Filter>application\AppSystem\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="application\AppSystem\UI\UIManager.h">
+      <Filter>application\AppSystem\UI</Filter>
     </ClInclude>
     <ClInclude Include="application\Object\Rail\RailManager.h">
       <Filter>application\Object\Rail</Filter>
@@ -1025,13 +1082,15 @@
     <ClInclude Include="application\Scene\GameScene\RetryUI\RetryUI.h">
       <Filter>application\Scene\GameScene\RetryUI</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Audio\AudioSystemBase.h">
-      <Filter>engine\Audio</Filter>
+    <ClInclude Include="engine\Audio\Core\AudioSystemBase.h">
+      <Filter>engine\Audio\Core</Filter>
     </ClInclude>
     <ClInclude Include="application\AppSystem\Audio\GameAudio.h">
       <Filter>application\AppSystem\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\Utils\Time\Oscillator.h" />
+    <ClInclude Include="application\AppSystem\Audio\CriticalHealthAudioEffect.h">
+      <Filter>application\AppSystem\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

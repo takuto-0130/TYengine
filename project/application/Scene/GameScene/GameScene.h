@@ -1,6 +1,7 @@
 #pragma once
 #include "IScene.h"
 #include "StateMachine.h"
+#include "State.h"
 
 #include "ParticleManager.h"
 #include "../../Stage/StageManager.h"
@@ -15,12 +16,6 @@
 #include <memory>
 #include <vector>
 
-class PauseClass;
-class ResultClass;
-class PlayUI;
-class ScoreUI;
-class StartUI;
-class RetryUI;
 class Audio;
 class RailManager;
 class Player;
@@ -44,17 +39,39 @@ enum class GameSceneState {
 	DEBUG_EDIT,	// エディタ専用
 };
 
+// 前方宣言
+class GameSceneStateLoad;
+class GameSceneStateFadeIn;
+class GameSceneStateReady;
+class GameSceneStatePlay;
+class GameSceneStatePause;
+class GameSceneStateDead;
+class GameSceneStateClear;
+class GameSceneStateResult;
+class GameSceneStateRetry;
+class GameSceneStateFadeOut;
+class GameSceneStateDebugEdit;
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
 class GameScene : 
 	public TYEngine::Framework::IScene
 {
+	friend class GameSceneStateLoad;
+	friend class GameSceneStateFadeIn;
+	friend class GameSceneStateReady;
+	friend class GameSceneStatePlay;
+	friend class GameSceneStatePause;
+	friend class GameSceneStateDead;
+	friend class GameSceneStateClear;
+	friend class GameSceneStateResult;
+	friend class GameSceneStateRetry;
+	friend class GameSceneStateFadeOut;
+	friend class GameSceneStateDebugEdit;
+
 public:
-	using StateMachineType = TYEngine::Utility::StateMachine<GameScene, GameSceneState>;
-	using StateFunctionSet = StateMachineType::StateFunctionSet;
-	// 関数テーブル
-	static const std::vector<StateFunctionSet>& GetStateTable();
+	using StateMachineType = TYEngine::Utility::StateMachine<GameSceneState, GameScene>;
 
 public:
 	GameScene();
@@ -111,10 +128,9 @@ private:
 	/// </summary>
 	void SwitchEdit();
 
-private: // メンバ変数
+	void DebugDraw();
 
-	/// <summary>カメラのピッチ角。</summary>
-	float pitch_ = 1.0f;
+private: // メンバ変数
 	/// <summary>カメラのオフセット位置。</summary>
 	TYEngine::Utility::Vector3 cameraOffset_ = {};
 
@@ -123,10 +139,8 @@ private: // メンバ変数
 	/// <summary>オーディオマネージャ。</summary>
 	GameAudio* gameAudio_ = nullptr;
 
-
 	/// <summary>ステージ管理マネージャ。</summary>
 	std::unique_ptr<StageManager> stageManager_;
-
 
 	/// <summary>汎用パーティクルエミッター。</summary>
 	TYEngine::Effect::IParticleRenderer::Emitter emitter;
@@ -141,20 +155,7 @@ private: // メンバ変数
 	/// <summary>バレットタイムコントローラー。</summary>
 	TYEngine::Utility::BulletTimeController* bulletTime_ = nullptr;
 
-	
-	// UIクラス群
-	/// <summary>プレイ中UI。</summary>
-	std::unique_ptr<PlayUI> playUI_;
-	/// <summary>スタート画面UI。</summary>
-	std::unique_ptr<StartUI> startDraw_;
-	/// <summary>スコア表示UI。</summary>
-	std::unique_ptr<ScoreUI> scoreDraw_;
-	/// <summary>リトライ画面UI。</summary>
-	std::unique_ptr<RetryUI> retryDraw_;
-	/// <summary>ポーズメニュー。</summary>
-	std::unique_ptr<PauseClass> pauseMenu_;
-	/// <summary>リザルト画面。</summary>
-	std::unique_ptr<ResultClass> resultMenu_;
+
 
 	/// <summary>スカイボックス。</summary>
 	std::unique_ptr<TYEngine::Graphics::ObjectCubemap> skybox_;
@@ -175,7 +176,7 @@ private: // メンバ変数
 	/// <summary>前回のステート経過時間。</summary>
 	float prevStateElapsed_ = 0.0f;
 
-
+	// JSONマネージャ
 	/// <summary>ゲームUI用JSONマネージャ。</summary>
 	std::unique_ptr<TYEngine::Utility::JsonManager> gameUIJM_;
 	/// <summary>UI設定エラーメッセージ。</summary>
@@ -193,61 +194,104 @@ private: // メンバ変数
 	/// <summary>ステートマシーン。</summary>
 	StateMachineType stateMachine_;
 
-private: // シーン内のState関連関数
-#pragma region // State関連関数
-	// ロード
-	void InitLoad();
-	void UpdateLoad();
-	void ExitLoad();
+};
 
-	// フェードイン
-	void InitFadeIn();
-	void UpdateFadeIn();
-	void ExitFadeIn();
+// --- 状態クラスの定義 ---
+class GameSceneStateLoad : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
 
-	// ゲーム開始直前の演出
-	void InitReady();
-	void UpdateReady();
-	void ExitReady();
+class GameSceneStateFadeIn : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
 
-	// 通常のゲーム進行
-	void InitPlay();
-	void UpdatePlay();
-	void ExitPlay();
+class GameSceneStateReady : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
 
-	// 一時停止状態（メニューなど）
-	void InitPause();
-	void UpdatePause();
-	void ExitPause();
+class GameSceneStatePlay : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
 
-	// プレイヤーが死んだ時
-	void InitDead();
-	void UpdateDead();
-	void ExitDead();
+class GameSceneStatePause : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
 
-	// クリア演出時
-	void InitClear();
-	void UpdateClear();
-	void ExitClear();
+class GameSceneStateDead : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
 
-	// リザルト
-	void InitResult();
-	void UpdateResult();
-	void ExitResult();
+class GameSceneStateClear : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
 
-	// リトライ待機中
-	void InitRetry();
-	void UpdateRetry();
-	void ExitRetry();
+class GameSceneStateResult : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
 
-	// フェードアウト
-	void InitFadeOut();
-	void UpdateFadeOut();
-	void ExitFadeOut();
+class GameSceneStateRetry : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
 
-	// エディタ専用
-	void InitDebugEdit();
-	void UpdateDebugEdit();
-	void ExitDebugEdit();
-#pragma endregion
+class GameSceneStateFadeOut : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
+};
+
+class GameSceneStateDebugEdit : public TYEngine::Utility::State<GameSceneState, GameScene>
+{
+public:
+	using State::State;
+	void Init(GameScene& owner) override;
+	void Update(GameScene& owner, float deltaTime) override;
+	void Exit(GameScene& owner) override;
 };

@@ -1,31 +1,35 @@
 #include "../Player.h"
+#include "../../../AppSystem/Audio/GameAudio.h"
 
-using namespace TYEngine::CameraSystem;
+using namespace TYEngine;
+using namespace CameraSystem;
 
-void Player::InitTakeDamage()
+void PlayerStateTakeDamage::Init(Player& owner)
 {
+	GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
 	// 被弾時に色を加算（白く光らせる）
-	obj_->SetAddColor({ 1,1,1,1 });
+	owner.obj_->SetAddColor({ 1,1,1,1 });
 
 	// カメラシェイクを開始
 	CameraShake::ShakeParams params;
 	params.duration = 0.1f;
 	params.amplitude = 0.1f;
 	params.frequency = 20.0f;
-	camera_->StartShake(params);
+	owner.camera_->StartShake(params);
 }
 
-void Player::UpdateTakeDamage()
+void PlayerStateTakeDamage::Update(Player& owner, float deltaTime)
 {
+	(void)deltaTime;
 	// 一定時間経過後にROOTステートへ復帰
-	if (stateMachine_.GetStateElapsedTime() > 0.1f) stateMachine_.ChangeState(PlayerState::ROUTE);
+	if (owner.stateMachine_.GetStateElapsedTime() > 0.1f) owner.stateMachine_.ChangeState(PlayerState::ROUTE);
 
 	// 被弾中でもバレルロールは可能にする
-	StartBarrelRoll();
+	owner.StartBarrelRoll();
 }
 
-void Player::ExitTakeDamage()
+void PlayerStateTakeDamage::Exit(Player& owner)
 {
 	// 色加算をリセット
-	obj_->SetAddColor({ 0,0,0,0 });
+	owner.obj_->SetAddColor({ 0,0,0,0 });
 }

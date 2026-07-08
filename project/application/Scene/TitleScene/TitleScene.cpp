@@ -1,10 +1,6 @@
 #include "TitleScene.h"
-#include "SceneManager.h"
 #include "Object3dBasis.h"
 #include "SpriteBasis.h"
-#include "../Transition/Fade/FadeTransition.h"
-#include "../Transition/Fade2/BlockFadeTransition.h"
-#include "../Transition/TransitionManager.h"
 #include "CubemapBasis.h"
 #include "Timer.h"
 #include "../../AppSystem/Audio/GameAudio.h"
@@ -18,26 +14,13 @@ using namespace Debugger;
 using namespace AudioSystem;
 using namespace Graphics;
 
-#define TITLE_SCENE_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(TitleScene, stateEnum, funcName)
-
-const std::vector<TitleScene::StateFunctionSet>& TitleScene::GetStateTable()
-{
-	using enum TitleSceneState;
-	static const std::vector<StateFunctionSet> stateTable =
-	{
-		TITLE_SCENE_ENTRY(FADE_IN, FadeIn),
-		TITLE_SCENE_ENTRY(READY, Ready),
-		TITLE_SCENE_ENTRY(PLAY, Play),
-		TITLE_SCENE_ENTRY(PAUSE, Pause),
-		TITLE_SCENE_ENTRY(FADE_OUT, FadeOut)
-	};
-	return stateTable;
-}
-
 TitleScene::TitleScene()
 {
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<TitleSceneStateFadeIn>(TitleSceneState::FADE_IN, "FadeIn");
+	stateMachine_.RegisterState<TitleSceneStateReady>(TitleSceneState::READY, "Ready");
+	stateMachine_.RegisterState<TitleSceneStatePlay>(TitleSceneState::PLAY, "Play");
+	stateMachine_.RegisterState<TitleSceneStatePause>(TitleSceneState::PAUSE, "Pause");
+	stateMachine_.RegisterState<TitleSceneStateFadeOut>(TitleSceneState::FADE_OUT, "FadeOut");
 }
 
 TitleScene::~TitleScene()
@@ -47,8 +30,6 @@ TitleScene::~TitleScene()
 void TitleScene::Init()
 {
 	Load();
-
-	beatAnalyzer_.Init("gameBGM", gameAudio_->CategoryToString(SoundCategory::BGM));
 
 	bgmHandle_ = gameAudio_->Play("gameBGM", true, SoundCategory::BGM);
 	gameAudio_->SetSoundVolume(bgmHandle_, 1.0f);
@@ -109,10 +90,11 @@ void TitleScene::Init()
 	player_->Init();
 	player_->SetScreenOffset(titleJM.Get<Vector2>("config.Player.ScreenOffset"));
 	player_->SetBGMHandle(bgmHandle_);
+	player_->SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
 
 	// タイトル画面の敵マネージャ
 	enemyMgr_.Init(camera_);
-	enemyMgr_.SetBeatAnalyzer(&beatAnalyzer_);
+	enemyMgr_.SetBeatAnalyzer(&gameAudio_->GetBeatAnalyzer());
 	enemyMgr_.SetIsInGame(false);
 
 	player_->SetEnemyManager(&enemyMgr_);
@@ -128,7 +110,7 @@ void TitleScene::Update() {
 
 	oscillator_.Update();
 
-	stateMachine_.UpdateState(Timer::GetInstance()->GetDeltaTime());
+	stateMachine_.UpdateState(*this, Timer::GetInstance()->GetDeltaTime());
 
 	// UI更新
 	enterSpr_->Update();

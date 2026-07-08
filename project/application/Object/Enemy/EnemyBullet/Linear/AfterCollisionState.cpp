@@ -2,13 +2,13 @@
 
 namespace EnemyBullet
 {
-	void Linear::InitAfterCollision()
+	void LinearStateAfterCollision::Init(Linear& owner)
 	{
 		// 着弾後は即座に死亡
-		isDead_ = true;
+		owner.isDead_ = true;
 	}
 
-	void Linear::UpdateAfterCollision(){}
+	void LinearStateAfterCollision::Update(Linear&, float) {}
 
-	void Linear::ExitAfterCollision(){}
+	void LinearStateAfterCollision::Exit(Linear&) {}
 }

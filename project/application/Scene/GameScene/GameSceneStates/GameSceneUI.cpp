@@ -1,6 +1,7 @@
 #include "../GameScene.h"
-#include "../Pause/Pause.h"
-#include "../Result/Result.h"
+#include "UIManager.h"
+#include "../Pause/PauseUI.h"
+#include "../Result/ResultUI.h"
 #include "../PlayUI/PlayUI.h"
 #include "../StartUI/StartUI.h"
 #include "../RetryUI/RetryUI.h"
@@ -12,31 +13,24 @@ using namespace TYEngine::Graphics;
 
 void GameScene::UIInit()
 {
-	scoreDraw_ = std::make_unique<ScoreUI>();
-	scoreDraw_->SetJsonManager(gameUIJM_.get());
-	scoreDraw_->Init();
+	auto* uiMgr = UIManager::GetInstance();
+	uiMgr->Clear();
+	uiMgr->SetJsonManager(gameUIJM_.get());
 
-	startDraw_ = std::make_unique<StartUI>();
-	startDraw_->SetJsonManager(gameUIJM_.get());
-	startDraw_->Init();
+	// UIの登録
+	auto* score = uiMgr->RegisterUI<ScoreUI>("Score");
+	uiMgr->RegisterUI<StartUI>("Start");
+	auto* play  = uiMgr->RegisterUI<PlayUI>("Play");
+	auto* pause = uiMgr->RegisterUI<PauseUI>("Pause");
+	uiMgr->RegisterUI<ResultUI>("Result");
+	uiMgr->RegisterUI<RetryUI>("Retry");
 
-	playUI_ = std::make_unique<PlayUI>();
-	playUI_->SetJsonManager(gameUIJM_.get());
-	playUI_->SetScoreDraw(scoreDraw_.get());
-	playUI_->Init();
+	// 相互依存関係の設定
+	play->SetScoreDraw(score);
+	pause->SetConfigJsonManager(configJM_.get());
 
-	pauseMenu_ = std::make_unique<PauseClass>();
-	pauseMenu_->SetJsonManager(gameUIJM_.get());
-	pauseMenu_->SetConfigJsonManager(configJM_.get());
-	pauseMenu_->Init();
-
-	resultMenu_ = std::make_unique<ResultClass>();
-	resultMenu_->SetJsonManager(gameUIJM_.get());
-	resultMenu_->Init();
-
-	retryDraw_ = std::make_unique<RetryUI>();
-	retryDraw_->SetJsonManager(gameUIJM_.get());
-	retryDraw_->Init();
+	// 一括初期化
+	uiMgr->InitAll();
 }
 
 void GameScene::UIDraw()
@@ -44,43 +38,52 @@ void GameScene::UIDraw()
 	SpriteBasis::GetInstance()->BasisDrawSetting();
 
 	// フェード中は描画しない
-	if (stateMachine_.GetCurrentState() != GameSceneState::FADE_OUT)
+	if (stateMachine_.GetCurrentState())
 	{
-		if (stateMachine_.GetCurrentState() != GameSceneState::RESULT &&
-			stateMachine_.GetCurrentState() != GameSceneState::RETRY)
+		if (stateMachine_.GetCurrentState() != GameSceneState::FADE_OUT)
 		{
-			playUI_->Draw();
-		}
-		if (stateMachine_.GetCurrentState() != GameSceneState::RESULT &&
-			stateMachine_.GetCurrentState() != GameSceneState::READY &&
-			stateMachine_.GetCurrentState() != GameSceneState::RETRY &&
-			stateMachine_.GetCurrentState() != GameSceneState::FADE_IN)
-		{
-			playUI_->DrawRT();
-		}
-		stageManager_->DrawUI();
+			auto* uiMgr = UIManager::GetInstance();
+			GameSceneState state = stateMachine_.GetCurrentState().value();
 
-		if (stateMachine_.GetCurrentState() == GameSceneState::READY)
-		{
-			startDraw_->Draw();
-		}
+			stageManager_->DrawUI();
+			if (state != GameSceneState::RESULT &&
+				state != GameSceneState::RETRY)
+			{
+				uiMgr->DrawUI("Play");
+			}
+			if (state != GameSceneState::RESULT &&
+				state != GameSceneState::READY &&
+				state != GameSceneState::RETRY &&
+				state != GameSceneState::FADE_IN)
+			{
+				if (auto* play = uiMgr->GetUI<PlayUI>("Play"))
+				{
+					play->DrawRT();
+				}
+			}
 
-		if (stateMachine_.GetCurrentState() == GameSceneState::RESULT)
-		{
-			resultMenu_->Draw();
-			scoreDraw_->Draw();
-			confetti_.Draw();
-		}
+			if (state == GameSceneState::READY)
+			{
+				uiMgr->DrawUI("Start");
+			}
 
-		if (stateMachine_.GetCurrentState() == GameSceneState::RETRY)
-		{
-			retryDraw_->Draw();
-			scoreDraw_->Draw();
-		}
+			if (state == GameSceneState::RESULT)
+			{
+				uiMgr->DrawUI("Result");
+				uiMgr->DrawUI("Score");
+				confetti_.Draw();
+			}
 
-		if (stateMachine_.GetCurrentState() == GameSceneState::PAUSE)
-		{
-			pauseMenu_->Draw();
+			if (state == GameSceneState::RETRY)
+			{
+				uiMgr->DrawUI("Retry");
+				uiMgr->DrawUI("Score");
+			}
+
+			if (state == GameSceneState::PAUSE)
+			{
+				uiMgr->DrawUI("Pause");
+			}
 		}
 	}
 }

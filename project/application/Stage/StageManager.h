@@ -45,7 +45,7 @@ public:
     /// <returns>終端なら true。</returns>
     bool EndRail() { return GetCurrentStage()->EndRail(); }
 
-    ComboManager* GetComboManager() 
+    HitStreakManager* GetComboManager() 
     {
         return GetCurrentStage() ? GetCurrentStage()->GetComboManager() : nullptr;
     }
@@ -56,6 +56,15 @@ public:
     }
 
     Player* GetPlayer() { return GetCurrentStage()->GetPlayer(); }
+
+    RailManager* GetRailManager() { return GetCurrentStage()->GetRailManager(); }
+
+    void SetBGMHandle(int handle) 
+    { 
+        GetPlayer()->SetBGMHandle(handle);
+        GetRailManager()->SetBGMHandle(handle);
+        GetCurrentStage()->SetBGMHandle(handle);
+    }
 
 private:
     /// <summary>新しいステージを追加する。</summary>

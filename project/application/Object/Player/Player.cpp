@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "PAttackStrategy/PAttackStrategies.h"
 #include "ColliderManager.h"
 #include "Input.h"
 #include "Timer.h"
@@ -7,6 +8,7 @@
 #include "Effect/PlaneParticle.h"
 #include "Effect/ContrailBehaviour.h"
 #include "Effect/ParticleManager.h"
+#include "PostEffectManager.h"
 #include "../../AppSystem/Audio/GameAudio.h"
 #include "../Enemy/EnemyManager/EnemyManager.h"
 
@@ -14,35 +16,26 @@ using namespace TYEngine;
 using namespace Utility;
 using namespace Graphics;
 using namespace Effect;
-
-#define PLAYER_STATE_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(Player, stateEnum, funcName)
-
-const std::vector<Player::StateFunctionSet>& Player::GetStateTable()
-{
-	using enum PlayerState;
-	static const std::vector<StateFunctionSet> stateTable =
-	{
-		PLAYER_STATE_ENTRY(IDLE, Idle),
-		PLAYER_STATE_ENTRY(ROUTE, Route),
-		PLAYER_STATE_ENTRY(BOOST, Boost),
-		PLAYER_STATE_ENTRY(BARREL_ROLL, BarrelRoll),
-		PLAYER_STATE_ENTRY(TAKE_DAMAGE, TakeDamage),
-		PLAYER_STATE_ENTRY(DEAD, Dead),
-	};
-	return stateTable;
-}
+using namespace PlayerAttack;
 
 Player::~Player()
 {
 	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 	ColliderManager::GetInstance()->RemoveCollider(justCollider_.get());
+	auto* pem = OffScreen::PostEffectManager::GetInstance();
+	pem->SetEffectEnabled("RadialBlur", false);
+	pem->SetEffectEnabled("Vignette", false);
 }
 
 void Player::Init()
 {
 	// ステートマシンの初期化
-	stateMachine_.RegisterFromDefaultTable(this);
+	stateMachine_.RegisterState<PlayerStateIdle>(PlayerState::IDLE, "Idle");
+	stateMachine_.RegisterState<PlayerStateRoute>(PlayerState::ROUTE, "Route");
+	stateMachine_.RegisterState<PlayerStateBoost>(PlayerState::BOOST, "Boost");
+	stateMachine_.RegisterState<PlayerStateBarrelRoll>(PlayerState::BARREL_ROLL, "BarrelRoll");
+	stateMachine_.RegisterState<PlayerStateTakeDamage>(PlayerState::TAKE_DAMAGE, "TakeDamage");
+	stateMachine_.RegisterState<PlayerStateDead>(PlayerState::DEAD, "Dead");
 	
 	// 入力マネージャ取得
 	input_ = Framework::Input::GetInstance();
@@ -93,11 +86,23 @@ void Player::Init()
 
 	// 初期ステートをROOTに設定
 	stateMachine_.ChangeState(PlayerState::ROUTE);
+
+	SetAttackStrategy(std::make_unique<PNormalRhythmAttackStrategy>());
 }
 
 void Player::Update()
 {
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
+
+#ifdef _DEBUG
+	ImGui::Begin("Player State Debug");
+	if (ImGui::Button("Reset"))
+	{
+		Reset();
+	}
+	stateMachine_.DebugImGui("Player");
+	ImGui::End();
+#endif // _DEBUG
 
 	DebugUpdate();
 
@@ -105,16 +110,25 @@ void Player::Update()
 	if(obj_->GetColor() != Vector4{ 1.0f, 1.0f, 1.0f, 1.0f }) obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// ステートマシンの更新
-	stateMachine_.UpdateState(deltaTime_);
+	stateMachine_.UpdateState(*this, deltaTime_);
 
 	ParticleUpdate();
 
 	status_.hpSprBG->Update();
 	if (status_.hitPoint >= 0)
 	{
-		status_.hpSpr->SetScale({ static_cast<float>(status_.hitPoint) / static_cast<float>(status_.maxHitPoint),1.0f });
+		status_.hpSpr->SetScale({ status_.HPPerf(), 1.0f });
 	}
 	status_.hpSpr->Update();
+
+	if (status_.hitPoint > 0)
+	{
+		GameAudio::GetInstance()->SetHPPerf(status_.HPPerf());
+	}
+	else
+	{
+		GameAudio::GetInstance()->SetHPPerf(1.0f);
+	}
 
 	// ステート更新後の追加処理（移動反映や攻撃など）
 	PostStateUpdate();
@@ -124,7 +138,9 @@ void Player::ParticleUpdate()
 {
 	// エンジン噴射パーティクルの生成
 	// プレイヤー後方にパーティクルを発生させる
-	Vector3 back = -Normalize(Vector3(worldTransform_.GetMatWorld().m[2][0], worldTransform_.GetMatWorld().m[2][1], worldTransform_.GetMatWorld().m[2][2]));
+	Vector3 back = -Normalize(Vector3(/* 1,0,0*/
+		worldTransform_.GetMatWorld().m[2][0], worldTransform_.GetMatWorld().m[2][1], worldTransform_.GetMatWorld().m[2][2]
+	));
 	IParticleRenderer::Emitter e;
 	e.transform.translate = GetWorldPosition() + back * jetEffect_.offSet;
 	e.transform.scale = jetEffect_.scale;
@@ -196,11 +212,14 @@ void Player::DrawUI()
 }
 
 
-////////////////////// ちょっとおかしいので後に修正 //////////////////////
 void Player::TakeDamage()
 {
 #ifdef _DEBUG
-	// デバッグ時ダメージ処理（現在はなし）
+	// デバッグ時ダメージ処理
+	if (input_->PushKey(DIK_DOWN))
+	{
+		status_.hitPoint = status_.hitPoint / 2;
+	}
 #else
 	// 通常ダメージ処理：HP減少
 	if(isInGame_)
@@ -209,35 +228,25 @@ void Player::TakeDamage()
 	}
 #endif // _DEBUG
 
-	if (status_.hitPoint > 0)
-	{
-		// 生存していれば被弾音声再生・被弾ステートへ遷移
-		GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
-		stateMachine_.ChangeState(PlayerState::TAKE_DAMAGE);
-	}
-	else
-	{
-		// HP0なら死亡処理
-		OnCollision();
-	}
+	OnCollision();
 }
 
 void Player::OnCollision()
 {
-	isDead_ = true;
-
-	GameAudio::GetInstance()->Play("gekiha", false, SoundCategory::SE);
-
-	IParticleRenderer::Emitter e;
-	e.transform.translate = GetWorldPosition();
-	e.count = destroyEffect_.count;
-	e.frequency = destroyEffect_.frequency;
-	e.transform.scale = destroyEffect_.scale;
-	ParticleManager::GetInstance()->SetEmitter(4, e);
-
-	ParticleManager::GetInstance()->TriggerEmit(4, true);
+	if (status_.hitPoint > 0)
+	{
+		// 生存していれば被弾ステートへ遷移
+		stateMachine_.ChangeState(PlayerState::TAKE_DAMAGE);
+	}
+	else
+	{
+		// HP0以下なら死亡処理
+		if (stateMachine_.GetCurrentState() != PlayerState::DEAD)
+		{
+			stateMachine_.ChangeState(PlayerState::DEAD);
+		}
+	}
 }
-////////////////////// ちょっとおかしいので後に修正 //////////////////////
 
 
 void Player::PostStateUpdate()
@@ -269,114 +278,36 @@ void Player::PostStateUpdate()
 
 void Player::Attack()
 {
-	// クールタイムの減算
-	if (lockOn_.lockOnTimer > 0)
+	// 死亡時は攻撃処理を行わない
+	if (stateMachine_.GetCurrentState() == PlayerState::DEAD) return;
+
+	attackStrategy_->Update(this);
+}
+
+void Player::RhythmJudgment()
+{
+	// パーフェクト判定
+	if (beatAnalyzer_->IsJustTiming(bullets_.perfectShotThreshold))
 	{
-		lockOn_.lockOnTimer -= Timer::GetInstance()->GetRawDeltaTime();
+		status_.currentJudgment = HitJudgment::Perfect;
 	}
-
-	// 現在の射撃ボタン入力状態
-	bool isPressing = input_->PushKey(DIK_LCONTROL) || input_->IsPressMouse(1);
-
-	// ▼ ボタンを押し続けている間（ロックオン・サーチフェーズ）
-	if (isPressing && lockOn_.lockOnTimer <= 0)
+	// グッド判定
+	else if (beatAnalyzer_->IsJustTiming(bullets_.goodShotThreshold))
 	{
-		// まだ最大ロック数に達していない場合のみサーチ
-		if (lockOn_.lockedEnemies.size() < lockOn_.maxLockCount && lockOn_.enemyManager)
-		{
-			// reticle_ の画面座標は screenOffset_ とほぼ同義なのでそれを利用
-			Enemy* target = lockOn_.enemyManager->GetBestLockOnTarget(camera_, screenOffset_, lockOn_.lockOnRadius, lockOn_.lockedEnemies);
-
-			if (target)
-			{
-				lockOn_.lockedEnemies.push_back(target);
-				// TODO: ここで「カシュッ」というロックオン音を鳴らす
-				GameAudio::GetInstance()->Play("enter", false, SoundCategory::SE);
-				lockOn_.lockOnTimer = lockOn_.maxLockOnCool;
-			}
-		}
-	} // ▼ ボタンを離した瞬間（一斉発射フェーズ）
-	else if (lockOn_.wasPressingShot && !isPressing)
-	{
-		if (!lockOn_.lockedEnemies.empty())
-		{
-			bullets_.currentBulletType = PlayerBulletType::HOMING; // ホーミング弾タイプ
-
-			// 散らすための角度計算用
-			int bulletCount = 0;
-			int totalBullets = static_cast<int>(lockOn_.lockedEnemies.size());
-
-			for (Enemy* target : lockOn_.lockedEnemies)
-			{
-				// ロックオン中に敵が倒されてポインタが無効になっていないか安全確認
-				if (lockOn_.enemyManager->IsValidEnemy(target))
-				{
-					// 初期方向を散らす
-					// カメラの上方向と右方向を取得
-					Vector3 up = camera_->GetUp();
-					Vector3 right = camera_->GetRight();
-					Vector3 forward = camera_->GetForward();
-
-					// 弾のインデックスに応じて、左右・上に散らす角度を計算
-					// 例：-1.0 ~ 1.0 の間で左右に散らす
-					float spreadX = (totalBullets > 1) ? -lockOn_.spreadX + ((lockOn_.spreadX * 2.0f) * bulletCount / (totalBullets - 1)) : 0.0f;
-
-					// 上方向にも少し山なりに飛ばす
-					float spreadY = lockOn_.spreadY;
-
-					// 初期方向ベクトルを合成（前方に進みつつ、上と左右に広がる）
-					Vector3 initialDir = forward + (right * spreadX) + (up * spreadY);
-					initialDir = Normalize(initialDir);
-
-					// 発射
-					bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), initialDir, target, lockOn_.enemyManager);
-
-					bulletCount++;
-					// 発射音
-					GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
-				}
-			}
-
-
-			// ロックオンリストをクリア
-			lockOn_.lockedEnemies.clear();
-		}
+		status_.currentJudgment = HitJudgment::Good;
 	}
-
-	// 次のフレームのために状態を保持
-	lockOn_.wasPressingShot = isPressing;
-
-
-	// クールタイムの減算
-	if (bullets_.bulletTimer > 0)
+	// ミス or 通常判定
+	else
 	{
-		bullets_.bulletTimer -= Timer::GetInstance()->GetRawDeltaTime();
+		status_.currentJudgment = HitJudgment::Miss;
 	}
-	if (!isPressing)
-	{
-		// 攻撃入力があり、クールタイムが解消されていれば発射
-		if ((input_->PushKey(DIK_SPACE) || input_->IsPressMouse(0)) && bullets_.bulletTimer <= 0)
-		{
-			bullets_.currentBulletType = PlayerBulletType::NORMAL;
-
-			// レティクル方向への発射ベクトル計算
-			Vector3 direction = Normalize(reticle_->GetTarget() - GetWorldPosition());
-
-			// 弾発射
-			bullets_.bulletManager->Fire(bullets_.currentBulletType, GetWorldPosition(), direction);
-
-			// 射撃音再生
-			GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
-
-			// クールタイム設定
-			bullets_.bulletTimer = bullets_.bulletCoolTime;
-		}
-	}
-
 }
 
 void Player::Move()
 {
+	// 死亡時は操作処理を行わない
+	if (stateMachine_.GetCurrentState() == PlayerState::DEAD) return;
+
 	movement_.inputDir = {};
 	movement_.roll = 0.0f;
 	movement_.movePitch = 0.0f;
@@ -427,7 +358,7 @@ void Player::RotationOffsetLocal()
 	Quaternion qPitch = MakeRotateAxisAngleQuaternion({ 1,0,0 }, movement_.movePitch);
 
 	// 好みで順序調整（ここでは Roll→Pitch）
-	worldTransform_.SetRotateQuaternion(Multiply(qRoll, qPitch));
+	worldTransform_.SetRotateQuaternion(Multiply(qPitch, qRoll));
 	worldTransform_.Update();
 }
 
@@ -481,4 +412,46 @@ void Player::DebugGUI()
 	ImGui::DragFloat3("target", &target.x);
 	ImGui::End();
 #endif // _DEBUG
+}
+
+void Player::Reset()
+{
+	// ステータス・生存フラグのリセット
+	status_.HPReset();
+	isDead_ = false;
+
+	//座標・姿勢のオフセットを初期位置(中央)へ戻す
+	screenOffset_ = { 0.0f, 0.0f };
+	movement_.inputDir = { 0.0f, 0.0f };
+	movement_.roll = 0.0f;
+	movement_.movePitch = 0.0f;
+
+	// バレルロール（回避）関連のリセット
+	barrelRoll_.isJust = false;
+	barrelRoll_.justRoll = false;
+	barrelRoll_.rollEffectTimer = 0.0f;
+
+	// 攻撃・ロックオン関連のリセット
+	lockOn_.lockedEnemies.clear();
+	lockOn_.lockOnTimer = 0.0f;
+	lockOn_.wasPressingShot = false;
+	bullets_.bulletTimer = 0.0f;
+	
+	if (bullets_.bulletManager) bullets_.bulletManager->Clear();
+
+	// 3Dモデルの状態リセット
+	if (obj_)
+	{
+		obj_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+
+	// コライダーの状態更新
+	collider_->Update(GetWorldPosition());
+	justCollider_->Update(GetWorldPosition());
+
+	// ステートマシンを初期ステート（ROUTE）に戻す
+	stateMachine_.ChangeState(PlayerState::ROUTE);
+
+	// 一度ポストアップデートを呼んで、ワールドトランスフォームなどを即座に初期値へ反映させる
+	PostStateUpdate();
 }

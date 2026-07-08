@@ -5,28 +5,26 @@
 #include "imgui.h"
 #endif // _DEBUG
 
-using namespace TYEngine::Utility;
+using namespace TYEngine;
+using namespace Utility;
+using namespace AudioSystem;
 
 void TitleScene::DebugUpdate()
 {
 #ifdef _DEBUG
 	audioAnalyzer_.Draw();
-	beatAnalyzer_.Draw();
-	/*static int bgmH = -1;
+	gameAudio_->GetBeatAnalyzer().Draw();
+	
+	ImGui::Begin("EQ");
+	static float health = 1.0f;
+	if (ImGui::DragFloat("health per", &health, 0.01f))
+	{
+		gameAudio_->SetHPPerf(health);
+	}
+	gameAudio_->GetAnalyzer().DrawEQControl();
+	ImGui::End();
 
-	if (input_->TriggerKey(DIK_M))
-	{
-		bgmH = gameAudio_->Play("418", false, SoundCategory::BGM);
-		gameAudio_->SetSoundVolume(bgmH, 1.0f);
-	}
-	if (input_->TriggerKey(DIK_P))
-	{
-		gameAudio_->Pause(bgmH);
-	}
-	if (input_->TriggerKey(DIK_O))
-	{
-		gameAudio_->Resume(bgmH);
-	}*/
+	stateMachine_.DebugImGui();
 
 	// ImGui で編集
 	ImGui::Begin("JSON Editor");

@@ -55,6 +55,14 @@ struct PlayerMovement
 	}
 };
 
+enum HitJudgment
+{
+	Perfect,	// 最高判定
+	Good,		// 普通
+	Miss,		// 失敗
+	None		// 判定なし
+};
+
 /// <summary>プレイヤーのステータス。</summary>
 struct PlayerStatus
 {
@@ -68,6 +76,12 @@ struct PlayerStatus
 	std::unique_ptr<TYEngine::Graphics::Sprite> hpSprBG;
 	/// <summary>ヒットポイントバー画像。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> hpSpr;
+
+	/// <summary>タイミング良く押せているか。</summary>
+	HitJudgment currentJudgment = None;
+
+	/// <summary>ヒットポイントの残量を取得。（ 0 ~1 ）</summary>
+	float HPPerf() { return static_cast<float>(hitPoint) / static_cast<float>(maxHitPoint); }
 
 	void Load(const TYEngine::Utility::JsonManager& jm)
 	{
@@ -214,9 +228,17 @@ struct PlayerBullets
 	/// <summary>発射タイマー。</summary>
 	float bulletTimer = 0.0f;
 
+	/// <summary>発射タイマー。</summary>
+	float perfectShotThreshold = 0.0f;
+	/// <summary>発射タイマー。</summary>
+	float goodShotThreshold = 0.0f;
+
+
 	void Load(const TYEngine::Utility::JsonManager& jm)
 	{
 		bulletCoolTime = jm.Get<float>("bullets.bulletCoolTime");
+		perfectShotThreshold = jm.Get<float>("bullets.perfectShotThreshold");
+		goodShotThreshold = jm.Get<float>("bullets.goodShotThreshold");
 	}
 };
 
@@ -250,4 +272,14 @@ struct PlayerDestroyEffect
 		frequency = jm.Get<float>("destroyEffect.frequency");
 		scale = jm.Get<TYEngine::Utility::Vector3>("destroyEffect.scale");
 	}
+};
+
+// キリモミ落下時のパラメータ
+struct PlayerDeadMotion
+{
+	float fallSpeedY = -0.5f;   // 落下速度（最初は少し上に跳ねさせるためマイナス値）
+	float gravity = 3.0f;       // 重力加速度
+	float spinSpeed = 7.0f;    // キリモミの回転速度
+	float targetPitch = 1.0f;   // 機体を下に傾ける目標角度（ラジアン）
+	float depthSpeed = 0.0f;    // 画面奥へ遠ざかる速度
 };

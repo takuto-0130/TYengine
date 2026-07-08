@@ -1,24 +1,24 @@
 #pragma once
 /// <summary>
-/// コンボ管理クラス。
-/// コンボ数のカウント、コンボ継続時間の計測、コンボ終了判定を行う。
+/// ヒット数管理クラス。
+/// 連続ヒット数のカウント、継続時間の計測、終了判定を行う。
 /// </summary>
-class ComboManager
+class HitStreakManager
 {
 public:
-	~ComboManager() = default;
+	~HitStreakManager() = default;
 
 	/// <summary>初期化処理。</summary>
 	void Init();
 	/// <summary>
 	/// 毎フレームの更新処理。
-	/// コンボタイマーの減算処理などを行う。
+	/// 連続ヒットタイマーの減算処理などを行う。
 	/// </summary>
 	void Update();
 
 	/// <summary>
 	/// 敵撃破時に呼ばれる。
-	/// コンボ数を加算し、タイマーをリセットする。
+	/// 連続ヒット数を加算し、タイマーをリセットする。
 	/// </summary>
 	void OnEnemyDefeated();
 

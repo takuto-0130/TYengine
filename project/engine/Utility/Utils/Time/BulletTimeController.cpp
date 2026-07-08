@@ -3,37 +3,25 @@
 
 #include <algorithm>
 
-#define BULLET_TIME_ENTRY(stateEnum, funcName) \
-    STATE_ENTRY_FOR(BulletTimeController, stateEnum, funcName)
-
 namespace TYEngine
 {
 	namespace Utility
 	{
 
-
-		const std::vector<BulletTimeController::StateFunctionSet>& BulletTimeController::GetStateTable()
-		{
-			using enum BulletTimeState;
-			static const std::vector<StateFunctionSet> stateTable = {
-				BULLET_TIME_ENTRY(NONE, None),
-				BULLET_TIME_ENTRY(ENTER, Enter),
-				BULLET_TIME_ENTRY(HOLD, Hold),
-				BULLET_TIME_ENTRY(EXIT, Exit),
-			};
-			return stateTable;
-		}
-
 		BulletTimeController::BulletTimeController()
 		{
-			stateMachine_.RegisterFromDefaultTable(this);
+			stateMachine_.RegisterState<BulletTimeStateNone>(BulletTimeState::NONE, "None");
+			stateMachine_.RegisterState<BulletTimeStateEnter>(BulletTimeState::ENTER, "Enter");
+			stateMachine_.RegisterState<BulletTimeStateHold>(BulletTimeState::HOLD, "Hold");
+			stateMachine_.RegisterState<BulletTimeStateExit>(BulletTimeState::EXIT, "Exit");
+
 			timer_ = Timer::GetInstance();
 			stateMachine_.ChangeState(BulletTimeState::NONE);
 		}
 
 		void BulletTimeController::Update()
 		{
-			stateMachine_.UpdateState(timer_->GetRawDeltaTime());
+			stateMachine_.UpdateState(*this, timer_->GetRawDeltaTime());
 		}
 
 		void BulletTimeController::Trigger(
@@ -70,75 +58,75 @@ namespace TYEngine
 
 
 		//-----通常-----//
-		void BulletTimeController::InitNone()
+		void BulletTimeStateNone::Init(BulletTimeController& owner)
 		{
 			// スロー終了後に再びトリガーを呼ばないとスローが発生しないように
-			stateMachine_.LockState();
+			owner.stateMachine_.LockState();
 		}
-		void BulletTimeController::UpdateNone() {}
-		void BulletTimeController::ExitNone() {}
+		void BulletTimeStateNone::Update(BulletTimeController&, float) {}
+		void BulletTimeStateNone::Exit(BulletTimeController&) {}
 
 
 		//-----開始-----//
-		void BulletTimeController::InitEnter() {}
-		void BulletTimeController::UpdateEnter()
+		void BulletTimeStateEnter::Init(BulletTimeController&) {}
+		void BulletTimeStateEnter::Update(BulletTimeController& owner, float)
 		{
-			float t = elapsed_ / params_.enterDuration;
+			float t = owner.elapsed_ / owner.params_.enterDuration;
 			t = std::clamp(t, 0.0f, 1.0f);
 
 			// 徐々にスローへ
-			float easedT = params_.enterEase ? params_.enterEase(t) : t;
-			float currentScale = std::lerp(1.0f, params_.slowScale, easedT);
-			timer_->SetTimeScale(currentScale);
+			float easedT = owner.params_.enterEase ? owner.params_.enterEase(t) : t;
+			float currentScale = std::lerp(1.0f, owner.params_.slowScale, easedT);
+			owner.timer_->SetTimeScale(currentScale);
 
-			elapsed_ += timer_->GetRawDeltaTime();
-			if (elapsed_ >= params_.enterDuration)
+			owner.elapsed_ += owner.timer_->GetRawDeltaTime();
+			if (owner.elapsed_ >= owner.params_.enterDuration)
 			{
-				timer_->SetTimeScale(params_.slowScale);
-				elapsed_ = 0.0f;
-				stateMachine_.ChangeState(BulletTimeState::HOLD);
+				owner.timer_->SetTimeScale(owner.params_.slowScale);
+				owner.elapsed_ = 0.0f;
+				owner.stateMachine_.ChangeState(BulletTimeState::HOLD);
 			}
 		}
-		void BulletTimeController::ExitEnter() {}
+		void BulletTimeStateEnter::Exit(BulletTimeController&) {}
 
 
 		//-----維持-----//
-		void BulletTimeController::InitHold() {}
-		void BulletTimeController::UpdateHold()
+		void BulletTimeStateHold::Init(BulletTimeController&) {}
+		void BulletTimeStateHold::Update(BulletTimeController& owner, float)
 		{
-			timer_->SetTimeScale(params_.slowScale);
+			owner.timer_->SetTimeScale(owner.params_.slowScale);
 
-			elapsed_ += timer_->GetRawDeltaTime();
-			if (elapsed_ >= params_.holdDuration)
+			owner.elapsed_ += owner.timer_->GetRawDeltaTime();
+			if (owner.elapsed_ >= owner.params_.holdDuration)
 			{
-				elapsed_ = 0.0f;
+				owner.elapsed_ = 0.0f;
 				// 維持時間終了、Exitへ
-				stateMachine_.ChangeState(BulletTimeState::EXIT);
+				owner.stateMachine_.ChangeState(BulletTimeState::EXIT);
 			}
 		}
-		void BulletTimeController::ExitHold() {}
+		void BulletTimeStateHold::Exit(BulletTimeController&) {}
 
 
 		//-----終了-----//
-		void BulletTimeController::InitExit() {}
-		void BulletTimeController::UpdateExit()
+		void BulletTimeStateExit::Init(BulletTimeController&) {}
+		void BulletTimeStateExit::Update(BulletTimeController& owner, float)
 		{
-			float t = elapsed_ / params_.exitDuration;
+			float t = owner.elapsed_ / owner.params_.exitDuration;
 			t = std::clamp(t, 0.0f, 1.0f);
 
 			// 徐々に通常速度へ
-			float easedT = params_.exitEase ? params_.exitEase(t) : t;
-			float currentScale = std::lerp(params_.slowScale, 1.0f, easedT);
-			timer_->SetTimeScale(currentScale);
+			float easedT = owner.params_.exitEase ? owner.params_.exitEase(t) : t;
+			float currentScale = std::lerp(owner.params_.slowScale, 1.0f, easedT);
+			owner.timer_->SetTimeScale(currentScale);
 
-			elapsed_ += timer_->GetRawDeltaTime();
-			if (elapsed_ >= params_.exitDuration)
+			owner.elapsed_ += owner.timer_->GetRawDeltaTime();
+			if (owner.elapsed_ >= owner.params_.exitDuration)
 			{
-				timer_->SetTimeScale(1.0f);
-				stateMachine_.ChangeState(BulletTimeState::NONE);
+				owner.timer_->SetTimeScale(1.0f);
+				owner.stateMachine_.ChangeState(BulletTimeState::NONE);
 			}
 		}
-		void BulletTimeController::ExitExit() {}
+		void BulletTimeStateExit::Exit(BulletTimeController&) {}
 
 	} // namespace Utility
 } // namespace TYEngine

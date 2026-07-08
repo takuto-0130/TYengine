@@ -67,6 +67,13 @@ public:
 	/// </summary>
 	void Reset();
 
+	/// <summary>
+	/// 外部（オーディオ解析など）から直接レールデータをセットして再構築する。
+	/// </summary>
+	/// <param name="points">レールの制御点リスト</param>
+	/// <param name="triggers">各制御点のトリガーフラグ</param>
+	void SetDynamicData(const std::vector<TYEngine::Utility::Vector3>& points, const std::vector<bool>& triggers);
+
 public:
 	void SetCamera(TYEngine::CameraSystem::Camera* camera) { camera_ = camera; }
 
@@ -75,6 +82,15 @@ public:
 	bool RailTrigger();
 
 	bool IsEndRail() { return railFinished_; }
+
+
+	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
+
+	/// <summary>森と地形メッシュを生成する関数</summary>
+	void GenerateForest();
+
+	/// <summary>指定したワールド座標(X, Z)における地形のY座標を取得する</summary>
+	float GetTerrainHeight(const TYEngine::Utility::Vector3& pos);
 
 private:
 	/// <summary>レールポイントを追加する。</summary>
@@ -92,59 +108,9 @@ private:
 	/// <summary>レールカメラ位置をリセットする。</summary>
 	void ResetRailCamera();
 
-	static PolylineArc BuildPolylineArc(const std::vector<TYEngine::Utility::Vector3>& poly)
-	{
-		PolylineArc map;
+	static PolylineArc BuildPolylineArc(const std::vector<TYEngine::Utility::Vector3>& poly);
 
-		const size_t N = poly.size();
-		if (N == 0) {
-			map.S = {};
-			map.T = {};
-			map.total = 0.0f;
-			return map;
-		}
-		if (N == 1) {
-			map.S = { 0.0f };
-			map.T = { 0.0f };
-			map.total = 0.0f;
-			return map;
-		}
-
-		map.S.resize(N);
-		map.T.resize(N);
-
-		map.S[0] = 0.0f;
-		map.T[0] = 0.0f;
-
-		for (size_t i = 1; i < N; ++i) {
-			map.S[i] = map.S[i - 1] + Length(poly[i - 1] - poly[i]);
-			map.T[i] = static_cast<float>(i) / static_cast<float>(N - 1); // 等間隔 t
-		}
-
-		map.total = map.S.back();
-		return map;
-	}
-
-	static float DistanceToT_Hybrid(const PolylineArc& map, float s)
-	{
-		if (map.S.empty())  return 0.0f;
-		if (s <= 0.0f)      return 0.0f;
-		if (s >= map.total) return 1.0f;
-
-		size_t lo = 0, hi = map.S.size() - 1;
-		while (hi - lo > 1) {
-			const size_t mid = (lo + hi) / 2;
-			if (map.S[mid] <= s) lo = mid; else hi = mid;
-		}
-
-		const float s0 = map.S[lo];
-		const float s1 = map.S[lo + 1];
-		const float t0 = map.T[lo];
-		const float t1 = map.T[lo + 1];
-
-		const float a = (s - s0) / std::max<float>(1e-6f, (s1 - s0));
-		return TYEngine::Utility::Lerp(t0, t1, a); // 線形補間
-	}
+	static float DistanceToT_Hybrid(const PolylineArc& map, float s);
 
 private:
 	/// <summary>カメラへのポインタ。</summary>
@@ -232,8 +198,35 @@ private:
 	/// <summary>現在のカメラ注視点位置(s)。</summary>
 	float forwardS_ = 0.0f;
 	/// <summary>注視点への先読み距離。</summary>
-	float lookAhead_ = 1.0f;
+	float lookAhead_ = 12.0f;
 	/// <summary>移動速度（m/s）。</summary>
 	float speedMps_ = 0.0f;
+
+	/// <summary>オーディオ解析などによる動的生成データを使用しているか</summary>
+	bool isDynamicMode_ = false;
+
+
+
+	/// <summary>BGM再生ハンドル。</summary>
+	int BGMHandle_ = -1;
+
+	/// テスト
+	/// <summary>背景（森）のオブジェクト</summary>
+	struct EnvironmentObject
+	{
+		TYEngine::Utility::WorldTransform world;
+		TYEngine::Graphics::Object3d object;
+
+		// type: 0=木, 1=岩 などで使い分けるための変数
+		int type = 0;
+	};
+
+	/// <summary>生成された背景オブジェクトのリスト</summary>
+	std::vector<std::unique_ptr<EnvironmentObject>> environmentObjects_;
+
+	// 地形描画用のオブジェクトとモデル
+	std::unique_ptr<TYEngine::Graphics::Object3d> terrainObject_;
+	std::unique_ptr<TYEngine::Graphics::Model> terrainModel_; 
+	TYEngine::Utility::WorldTransform terrainTransform_; // 位置・回転・スケール管理用
 };
 

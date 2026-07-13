@@ -1,0 +1,12 @@
+{
+  "playerScale": 2.0,
+  "playerStartPos": {
+    "x": 128.0,
+    "y": 360.0
+  },
+  "playerEndPos": {
+    "x": 1800.0,
+    "y": 360.0
+  },
+  "tileSpeedFactor": 4.0
+}

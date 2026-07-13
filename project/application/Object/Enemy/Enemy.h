@@ -9,6 +9,8 @@
 #include "AttackStrategy/IAttackStrategy.h"
 #include <iostream>
 #include <random>
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 class EnemyBulletManager;
 
@@ -59,6 +61,10 @@ class Enemy :
 	friend class EnemyStateDespawned;
 public:
 	using StateMachineType = TYEngine::Utility::StateMachine<EnemyState, Enemy>;
+
+	static TYEngine::Utility::JsonManager jm_;
+	static bool isJmLoaded_;
+	static void LoadJM();
 
 public:
 	~Enemy() override;
@@ -237,7 +243,32 @@ private:
 	/// <summary>ステートマシーン。</summary>
 	StateMachineType stateMachine_;
 
+	// 攻撃開始初期ディレイ範囲
+	float initialDelayMin_ = 0.2f;
+	float initialDelayMax_ = 1.0f;
 
+	// 被弾演出用パラメータ
+	float damagedDuration_ = 0.05f;
+	float damagedRoll_ = 0.1f;
+	TYEngine::Utility::Vector4 damagedAddColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	// 死亡演出用パラメータ
+	float despawnCameraShakeDuration_ = 0.1f;
+	float despawnCameraShakeAmplitude_ = 0.1f;
+	float despawnCameraShakeFrequency_ = 20.0f;
+	int despawnExplosionCount_ = 20;
+	float despawnExplosionFreq_ = 5.0f;
+	TYEngine::Utility::Vector3 despawnExplosionScale_ = { 0.3f, 0.3f, 0.3f };
+	int despawnRingCount_ = 1;
+	float despawnRingFreq_ = 5.0f;
+	TYEngine::Utility::Vector3 despawnRingScale_ = { 0.5f, 0.5f, 0.5f };
+	int despawnDebrisCount_ = 30;
+	float despawnDebrisFreq_ = 5.0f;
+	TYEngine::Utility::Vector3 despawnDebrisScale_ = { 0.1f, 0.1f, 0.1f };
+	float despawnDebrisVelocityY_ = 2.0f;
+	float despawnTimeLimit_ = 2.0f;
+	float despawnFallSpeedY_ = 0.02f;
+	float despawnSpinSpeed_ = 0.02f;
 };
 
 // --- 状態クラスの定義 ---

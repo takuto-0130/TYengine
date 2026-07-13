@@ -13,6 +13,15 @@ Stage::~Stage()
 
 void Stage::Init()
 {
+    jsonManager_ = std::make_unique<JsonManager>();
+    std::string err;
+    jsonManager_->Load("StageConfig.json", true, &err);
+
+    if (!jsonManager_->Root().contains("beatScale")) {
+        jsonManager_->Set("beatScale", 1.05f);
+    }
+    jsonManager_->Save();
+
     gameAudio_ = GameAudio::GetInstance();
 
     gameAudio_->InitBeatAnalyzer("418", SoundCategory::BGM);
@@ -137,6 +146,8 @@ void Stage::FromJson(const nlohmann::json& j) {
 
 void Stage::StageObjectBeatScale()
 {
+    float beatScale = jsonManager_->Get<float>("beatScale", 1.05f);
+
     static float timer = 0.0f;
     for (auto& o : stageObject_)
     {
@@ -145,7 +156,7 @@ void Stage::StageObjectBeatScale()
             if (gameAudio_->GetBeatAnalyzer().GetBeat())
             {
                 timer = 0.0f;
-                o->SetScale(1.05f);
+                o->SetScale(beatScale);
             }
             else
             {
@@ -153,7 +164,7 @@ void Stage::StageObjectBeatScale()
                 {
                     timer += Timer::GetInstance()->GetDeltaTime();
                 }
-                o->SetScale(Lerp(1.05f, 1.0f, timer));
+                o->SetScale(Lerp(beatScale, 1.0f, timer));
             }
         }
     }

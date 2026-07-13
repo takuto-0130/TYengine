@@ -25,12 +25,6 @@ public:
     void Draw();
     /// <summary>UI描画処理。</summary>
     void DrawUI();
-    
-    /// <summary>
-    /// エディタ用更新処理。
-    /// ImGuiによるステージ編集機能を提供する。
-    /// </summary>
-    void EditUpdate();
 
     /// <summary>現在のステージをリセットする。</summary>
     void Reset(){ GetCurrentStage()->Reset(); }
@@ -69,22 +63,8 @@ public:
 private:
     /// <summary>新しいステージを追加する。</summary>
     void AddStage();
-    /// <summary>指定したインデックスのステージを削除する。</summary>
-    void RemoveStage(size_t index);
-    /// <summary>指定したインデックスのステージを複製する。</summary>
-    void DuplicateStage(size_t index);
-    /// <summary>編集対象ステージを選択する。</summary>
-    void SelectStage(size_t index);
     /// <summary>現在選択中のステージを取得する。</summary>
     Stage* GetCurrentStage();
-
-    /// <summary>ステージを指定パスに保存する。</summary>
-    void SaveStageToFile(size_t index, const std::string& path);
-    /// <summary>指定パスからステージを読み込む。</summary>
-    void LoadStageFromFile(const std::string& path);
-
-    /// <summary>ImGuiによるステージ編集UI描画。</summary>
-    void DrawEditorUI(); // ImGui編集UI
 
 private:
     /// <summary>カメラ。</summary>

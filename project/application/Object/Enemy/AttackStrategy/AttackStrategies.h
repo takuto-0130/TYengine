@@ -3,6 +3,7 @@
 #include "../EnemyBullet/Linear/Linear.h"
 #include "../EnemyBullet/EnemyBulletManager.h"
 #include <cmath>
+#include "../Enemy.h"
 
 
 // 敵の攻撃
@@ -45,8 +46,9 @@ namespace EnemyAttack
 			TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
 			TYEngine::Utility::Vector3 up = TYEngine::Utility::Normalize(Cross(forward, right));
 			// 上下に少しずらして発射
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * 0.02f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * -0.02f));
+			float offset = Enemy::jm_.Get<float>("enemy.attack.verticalOffset", 0.02f);
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * offset));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * -offset));
 		}
 	};
 	// -------------------------------------------------------------
@@ -63,10 +65,12 @@ namespace EnemyAttack
 			if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f };
 			TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
 			// 左右にずらして4発発射
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * 0.06f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * 0.02f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -0.02f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -0.06f));
+			float offsetInner = Enemy::jm_.Get<float>("enemy.attack.horizontalOffsetInner", 0.02f);
+			float offsetOuter = Enemy::jm_.Get<float>("enemy.attack.horizontalOffsetOuter", 0.06f);
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * offsetOuter));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * offsetInner));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -offsetInner));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -offsetOuter));
 		}
 	};
 	// -------------------------------------------------------------
@@ -84,9 +88,12 @@ namespace EnemyAttack
 			TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
 			TYEngine::Utility::Vector3 up = TYEngine::Utility::Normalize(Cross(forward, right));
 			// 左右にずらして4発発射
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * 0.04f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * 0.04f + up * -0.02f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -0.04f + up * -0.02f));
+			float offsetUp = Enemy::jm_.Get<float>("enemy.attack.triangleOffsetUp", 0.04f);
+			float offsetRight = Enemy::jm_.Get<float>("enemy.attack.triangleOffsetRight", 0.04f);
+			float offsetDown = Enemy::jm_.Get<float>("enemy.attack.triangleOffsetDown", -0.02f);
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * offsetUp));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * offsetRight + up * offsetDown));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -offsetRight + up * offsetDown));
 		}
 	};
 }

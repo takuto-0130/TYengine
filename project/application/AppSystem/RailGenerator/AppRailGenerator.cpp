@@ -2,11 +2,33 @@
 #include "OfflineAudioAnalyzer.h"
 #include "../../Object/Rail/RailManager.h"
 #include "AppRailGenerator.h"
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 using namespace TYEngine::AudioSystem;
 
 void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railManager)
 {
+    TYEngine::Utility::JsonManager jm;
+    std::string err;
+    jm.Load("RailGenerator.json", true, &err);
+
+    // デフォルト値
+    if (!jm.Root().contains("advanceZ")) jm.Set("advanceZ", 20.0f);
+    if (!jm.Root().contains("smoothFactor")) jm.Set("smoothFactor", 1.0f);
+    if (!jm.Root().contains("scaleX")) jm.Set("scaleX", 400.0f);
+    if (!jm.Root().contains("scaleY")) jm.Set("scaleY", 150.0f);
+    if (!jm.Root().contains("clampX")) jm.Set("clampX", 50.0f);
+    if (!jm.Root().contains("span")) jm.Set("span", 4);
+    jm.Save();
+
+    float advanceZ = jm.Get<float>("advanceZ", 20.0f);
+    float smoothFactor = jm.Get<float>("smoothFactor", 1.0f);
+    float scaleX = jm.Get<float>("scaleX", 400.0f);
+    float scaleY = jm.Get<float>("scaleY", 150.0f);
+    float clampX = jm.Get<float>("clampX", 50.0f);
+    int span = jm.Get<int>("span", 4);
+
     // エンジンからWAVEの生データを取得する
     auto soundData = Audio::GetInstance()->GetSoundData(soundFilename);
 
@@ -20,12 +42,11 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
     std::vector<bool> newTriggerFlags;
 
     float currentZ = 0.0f;
-    const float ADVANCE_Z = 20.0f; // 1ビートで進む距離
+    float ADVANCE_Z = advanceZ; // 1ビートで進む距離
 
     newControlPoints.push_back({ 0.0f, 0.0f, 0.0f });
     newTriggerFlags.push_back(false);
 
-    int span = 4;
     int index = 0;
 
     // 前回の平滑化された座標を保持する変数
@@ -35,7 +56,7 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
 
     // 平滑化の度合いを決める係数 (0.0f ～ 1.0f)
     // 1.0f だと平滑化なし（元のまま）。
-    const float SMOOTH_FACTOR = 1.0f;
+    float SMOOTH_FACTOR = smoothFactor;
 
     for (const auto& beat : analysisData.beats)
     {
@@ -44,12 +65,12 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
             currentZ += ADVANCE_Z;
 
             // ゲーム独自のスケール調整
-            float targetY = beat.rmsAll * 150.0f;
-            float targetX = (beat.rmsMid - 0.05f) * 400.0f;
+            float targetY = beat.rmsAll * scaleY;
+            float targetX = (beat.rmsMid - 0.05f) * scaleX;
 
             // 制限(クランプ)
-            if (targetX > 50.0f) targetX = 50.0f;
-            if (targetX < -50.0f) targetX = -50.0f;
+            if (targetX > clampX) targetX = clampX;
+            if (targetX < -clampX) targetX = -clampX;
 
             // 線形補間をかける
             // 前回の値 × (1 - 係数) ＋ 目標値 × (係数)

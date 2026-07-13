@@ -282,4 +282,38 @@ struct PlayerDeadMotion
 	float spinSpeed = 7.0f;    // キリモミの回転速度
 	float targetPitch = 1.0f;   // 機体を下に傾ける目標角度（ラジアン）
 	float depthSpeed = 0.0f;    // 画面奥へ遠ざかる速度
+	float pitchLerpRate = 3.0f; // 機体ピッチの傾斜補間速度
+	float screenOffsetYThreshold = -2.5f; // 画面外と判定するY座標閾値
+	float initFallSpeedY = -1.0f; // 死亡時の初期落下速度（上への跳ね上がり）
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		fallSpeedY = jm.Get<float>("deadMotion.fallSpeedY", -0.5f);
+		gravity = jm.Get<float>("deadMotion.gravity", 3.0f);
+		spinSpeed = jm.Get<float>("deadMotion.spinSpeed", 7.0f);
+		targetPitch = jm.Get<float>("deadMotion.targetPitch", 1.0f);
+		depthSpeed = jm.Get<float>("deadMotion.depthSpeed", 0.0f);
+		pitchLerpRate = jm.Get<float>("deadMotion.pitchLerpRate", 3.0f);
+		screenOffsetYThreshold = jm.Get<float>("deadMotion.screenOffsetYThreshold", -2.5f);
+		initFallSpeedY = jm.Get<float>("deadMotion.initFallSpeedY", -1.0f);
+	}
+};
+
+/// <summary>プレイヤーの被弾時パラメータ。</summary>
+struct PlayerTakeDamageParams
+{
+	float shakeDuration = 0.1f;
+	float shakeAmplitude = 0.1f;
+	float shakeFrequency = 20.0f;
+	float recoveryTime = 0.1f;
+	TYEngine::Utility::Vector4 addColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		shakeDuration = jm.Get<float>("takeDamage.shakeDuration", 0.1f);
+		shakeAmplitude = jm.Get<float>("takeDamage.shakeAmplitude", 0.1f);
+		shakeFrequency = jm.Get<float>("takeDamage.shakeFrequency", 20.0f);
+		recoveryTime = jm.Get<float>("takeDamage.recoveryTime", 0.1f);
+		addColor = jm.Get<TYEngine::Utility::Vector4>("takeDamage.addColor", { 1.0f, 1.0f, 1.0f, 1.0f });
+	}
 };

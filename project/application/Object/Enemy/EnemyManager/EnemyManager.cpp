@@ -8,14 +8,30 @@ using namespace TYEngine;
 
 void EnemyManager::Init(CameraSystem::Camera* camera)
 {
+	jsonManager_ = std::make_unique<JsonManager>();
+	std::string err;
+	jsonManager_->Load("EnemyConfig.json", true, &err);
+
 	camera_ = camera;
 	bulletManager_.Init();
-	enemyPopDepthMin_ = 30.0f;
-	enemyPopDepthMax_ = 40.0f;
-	xRange = 16.0f * 0.09f * 2.0f;
-	yRange = 9.0f * 0.085f * 2.0f;
-	spawnReadyTimer_ = 0.8f;
-	spawnNum_ = 10;
+
+	enemyPopDepthMin_ = jsonManager_->Get<float>("enemyManager.popDepthMin", 30.0f);
+	enemyPopDepthMax_ = jsonManager_->Get<float>("enemyManager.popDepthMax", 40.0f);
+
+	float xCoeff = jsonManager_->Get<float>("enemyManager.xRangeCoeff", 16.0f);
+	float yCoeff = jsonManager_->Get<float>("enemyManager.yRangeCoeff", 9.0f);
+	xRange = xCoeff * 0.09f * 2.0f;
+	yRange = yCoeff * 0.085f * 2.0f;
+
+	spawnReadyTimer_ = jsonManager_->Get<float>("enemyManager.spawnReadyTimer", 0.8f);
+	spawnNum_ = jsonManager_->Get<int>("enemyManager.spawnNum", 15);
+
+	minX_ = jsonManager_->Get<float>("enemyManager.minX", 0.5f);
+	maxX_ = jsonManager_->Get<float>("enemyManager.maxX", 1.5f);
+	minHeightOffset_ = jsonManager_->Get<float>("enemyManager.minHeightOffset", 2.0f);
+	maxHeightOffset_ = jsonManager_->Get<float>("enemyManager.maxHeightOffset", 7.0f);
+	comboStep_ = jsonManager_->Get<int>("enemyManager.comboStep", 20);
+	scaleInterpolationTime_ = jsonManager_->Get<float>("enemyManager.scaleInterpolationTime", 1.0f);
 }
 
 void EnemyManager::Reset()
@@ -31,6 +47,23 @@ void EnemyManager::MakeComboAndScoreHandler(HitStreakManager* combo, ScoreManage
 
 void EnemyManager::Update()
 {
+#ifdef _DEBUG
+	enemyPopDepthMin_ = jsonManager_->Get<float>("enemyManager.popDepthMin", 30.0f);
+	enemyPopDepthMax_ = jsonManager_->Get<float>("enemyManager.popDepthMax", 40.0f);
+	float xCoeff = jsonManager_->Get<float>("enemyManager.xRangeCoeff", 16.0f);
+	float yCoeff = jsonManager_->Get<float>("enemyManager.yRangeCoeff", 9.0f);
+	xRange = xCoeff * 0.09f * 2.0f;
+	yRange = yCoeff * 0.085f * 2.0f;
+	spawnReadyTimer_ = jsonManager_->Get<float>("enemyManager.spawnReadyTimer", 0.8f);
+	spawnNum_ = jsonManager_->Get<int>("enemyManager.spawnNum", 15);
+	minX_ = jsonManager_->Get<float>("enemyManager.minX", 0.5f);
+	maxX_ = jsonManager_->Get<float>("enemyManager.maxX", 1.5f);
+	minHeightOffset_ = jsonManager_->Get<float>("enemyManager.minHeightOffset", 2.0f);
+	maxHeightOffset_ = jsonManager_->Get<float>("enemyManager.maxHeightOffset", 7.0f);
+	comboStep_ = jsonManager_->Get<int>("enemyManager.comboStep", 20);
+	scaleInterpolationTime_ = jsonManager_->Get<float>("enemyManager.scaleInterpolationTime", 1.0f);
+#endif
+
 	// 死亡した敵をリストから削除
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& e) { return e->IsDead(); });
 
@@ -48,11 +81,12 @@ void EnemyManager::Update()
 				}
 				else
 				{
-					if (timer < 1.0f)
+					if (timer < scaleInterpolationTime_)
 					{
 						timer += Timer::GetInstance()->GetDeltaTime();
 					}
-					enemy->SetScale(Lerp(enemy->GetUpScale(), enemy->GetDefaultScale(), timer));
+					float t = scaleInterpolationTime_ > 0.0f ? (timer / scaleInterpolationTime_) : 1.0f;
+					enemy->SetScale(Lerp(enemy->GetUpScale(), enemy->GetDefaultScale(), t));
 				}
 			}
 		}
@@ -169,7 +203,7 @@ void EnemyManager::Pop()
 {
 	if(hitStreakManager_)
 	{
-		for (int i = 0; i < 1 + (hitStreakManager_->GetComboCount() / 20); i++)
+		for (int i = 0; i < 1 + (hitStreakManager_->GetComboCount() / comboStep_); i++)
 		{
 			if (isPopFlag_)
 			{
@@ -186,8 +220,8 @@ void EnemyManager::Pop()
 
 				// 中心部を避けて左右に広げる処理
 				float finalX = 0.0f;
-				float minX = 0.5f;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
-				float maxX = 1.5f;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
+				float minX = minX_;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
+				float maxX = maxX_;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
 
 				if (rawX >= 0.0f)
 				{
@@ -213,8 +247,8 @@ void EnemyManager::Pop()
 					float terrainY = railManager_->GetTerrainHeight(spawnPos);
 
 					// 地面からどれくらい浮かせるかのランダムな範囲
-					float minHeightOffset = 2.0f; // 最小の浮遊高度
-					float maxHeightOffset = 7.0f; // 最大の浮遊高度
+					float minHeightOffset = minHeightOffset_; // 最小の浮遊高度
+					float maxHeightOffset = maxHeightOffset_; // 最大の浮遊高度
 
 					// 新しく高さ用の乱数を生成
 					std::uniform_real_distribution<float> heightDist(minHeightOffset, maxHeightOffset);
@@ -261,8 +295,8 @@ void EnemyManager::Pop()
 
 			// 中心部を避けて左右に広げる処理
 			float finalX = 0.0f;
-			float minX = 0.5f;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
-			float maxX = 1.5f;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
+			float minX = minX_;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
+			float maxX = maxX_;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
 
 			if (rawX >= 0.0f)
 			{
@@ -288,8 +322,8 @@ void EnemyManager::Pop()
 				float terrainY = railManager_->GetTerrainHeight(spawnPos);
 
 				// 地面からどれくらい浮かせるかのランダムな範囲
-				float minHeightOffset = 2.0f; // 最小の浮遊高度
-				float maxHeightOffset = 7.0f; // 最大の浮遊高度
+				float minHeightOffset = minHeightOffset_; // 最小の浮遊高度
+				float maxHeightOffset = maxHeightOffset_; // 最大の浮遊高度
 
 				// 新しく高さ用の乱数を生成
 				std::uniform_real_distribution<float> heightDist(minHeightOffset, maxHeightOffset);

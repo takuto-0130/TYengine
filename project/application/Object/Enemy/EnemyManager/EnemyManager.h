@@ -4,6 +4,9 @@
 #include "../../../AppSystem/EventListener/EnemyEvent/ComboAndScoreHandler.h"
 #include "BeatAnalyzer.h"
 #include <random>
+#include <memory>
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 class Camera;
 
@@ -117,5 +120,16 @@ private:
 	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;
 
 	TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer_;
+
+	/// <summary>JSONマネージャ。</summary>
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
+
+	// 配置パラメータ
+	float minX_ = 0.5f;
+	float maxX_ = 1.5f;
+	float minHeightOffset_ = 2.0f;
+	float maxHeightOffset_ = 7.0f;
+	int comboStep_ = 20;
+	float scaleInterpolationTime_ = 1.0f;
 };
 

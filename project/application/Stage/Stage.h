@@ -11,6 +11,8 @@
 #include "../AppSystem/Audio/GameAudio.h"
 #include <memory>
 #include <json.hpp>
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 class Stage
 {
@@ -145,5 +147,8 @@ private:
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
+
+	/// <summary>JSONマネージャ。</summary>
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
 };
 

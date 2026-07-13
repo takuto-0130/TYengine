@@ -3,6 +3,8 @@
 #include "StateMachine.h"
 #include "State.h"
 #include "../EBulletCollider.h"
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 namespace EnemyBullet
 {
@@ -35,6 +37,10 @@ namespace EnemyBullet
 		Linear();
 		~Linear();
 		void Init()override;
+
+		static TYEngine::Utility::JsonManager jm_;
+		static bool isJmLoaded_;
+		static void LoadJM();
 		void Update()override;
 		void Draw()override;
 

@@ -243,6 +243,8 @@ private:
 	PlayerDestroyEffect destroyEffect_;
 	// キリモミ落下時のパラメータ
 	PlayerDeadMotion deadMotion_;
+	// 被弾時のパラメータ
+	PlayerTakeDamageParams takeDamage_;
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;

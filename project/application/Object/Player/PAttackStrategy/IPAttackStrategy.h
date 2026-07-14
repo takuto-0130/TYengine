@@ -28,7 +28,6 @@ namespace PlayerAttack
         /// <param name="origin">発射位置（敵の座標）。</param>
         /// <param name="target">目標位置（プレイヤー座標など）。</param>
         /// <param name="manager">弾管理マネージャ。</param>
-        //virtual void Attack(const TYEngine::Utility::Vector3& origin, const TYEngine::Utility::Vector3& target, PlayerBulletManager* manager) = 0;
     };
 }
 

@@ -4,10 +4,6 @@
 
 using namespace TYEngine::Utility;
 
-void JustCollider::OnCollisionEnter([[maybe_unused]] Collider& other, [[maybe_unused]] const CollisionInfo& info)
-{
-}
-
 void JustCollider::OnCollisionStay([[maybe_unused]] Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
 	// 敵弾がジャスト回避エリア内にある場合

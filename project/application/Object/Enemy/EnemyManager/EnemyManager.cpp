@@ -262,9 +262,6 @@ void EnemyManager::Pop()
 				// 補正した座標を設定
 				enemy->SetAndApplyPos(spawnPos);
 
-				// 補正した座標を設定
-				enemy->SetAndApplyPos(spawnPos);
-
 				// 依存関係の注入
 				enemy->SetEnemyBulletManager(&bulletManager_);
 				enemy->SetEventListener(comboAndScoreHandler_.get());
@@ -333,9 +330,6 @@ void EnemyManager::Pop()
 				spawnPos.y = terrainY + randomHeight;
 			}
 			// --- 【ここまで変更】 ---
-
-			// 補正した座標を設定
-			enemy->SetAndApplyPos(spawnPos);
 
 			// 補正した座標を設定
 			enemy->SetAndApplyPos(spawnPos);

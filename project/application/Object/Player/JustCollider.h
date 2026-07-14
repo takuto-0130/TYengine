@@ -15,8 +15,6 @@ public:
         : SphereCollider(typeID, center, radius), player_(player) {
     }
 
-    /// <summary>衝突開始時の処理（ジャスト回避発生通知など）。</summary>
-    void OnCollisionEnter([[maybe_unused]] TYEngine::Utility::Collider& other, [[maybe_unused]] const TYEngine::Utility::CollisionInfo& info) override;
     /// <summary>衝突中の処理。</summary>
     void OnCollisionStay([[maybe_unused]] TYEngine::Utility::Collider& other, [[maybe_unused]] const TYEngine::Utility::CollisionInfo& info) override;
     /// <summary>衝突終了時の処理。</summary>

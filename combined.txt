@@ -2191,23 +2191,48 @@ File Path: project/application/AppSystem/Combo/ComboManager.cpp
 ============================================================
 #include "ComboManager.h"
 #include "Timer.h"
+#ifdef _DEBUG
+#include "imgui.h"
+#endif
 
 using namespace TYEngine::Utility;
 
 void HitStreakManager::Init()
 {
+	jsonManager_ = std::make_unique<JsonManager>();
+	std::string err;
+	jsonManager_->Load("HitStreak.json", true, &err);
+
+	// 初期値が設定されていない場合のために、デフォルト値を設定
+	if (!jsonManager_->Root().contains("comboCap")) {
+		jsonManager_->Set("comboCap", 99);
+	}
+	if (!jsonManager_->Root().contains("kComboTime")) {
+		jsonManager_->Set("kComboTime", 10.0f);
+	}
+	if (!jsonManager_->Root().contains("shakeTime")) {
+		jsonManager_->Set("shakeTime", 0.4f);
+	}
+	jsonManager_->Save();
+
 	// 各変数を初期値にリセット
 	comboCount_ = 0;
 	comboTimer_ = 0;
-	comboCap_ = 99;
-	// コンボ受付時間のデフォルト設定
-	kComboTime_ = 3.0f;
-	// シェイク演出時間の設定
-	shakeTime_ = 0.4f;
+
+	comboCap_ = jsonManager_->Get<int>("comboCap", 99);
+	kComboTime_ = jsonManager_->Get<float>("kComboTime", 10.0f);
+	shakeTime_ = jsonManager_->Get<float>("shakeTime", 0.4f);
 }
 
 void HitStreakManager::Update()
 {
+#ifdef _DEBUG
+	// デバッグ中はJSONの設定値をリアルタイム反映
+	comboCap_ = jsonManager_->Get<int>("comboCap", 99);
+	kComboTime_ = jsonManager_->Get<float>("kComboTime", 10.0f);
+	shakeTime_ = jsonManager_->Get<float>("shakeTime", 0.4f);
+#endif
+
 	// コンボタイマーが有効な場合のみカウントダウン
 	if (comboTimer_ > 0)
 	{
@@ -2220,6 +2245,7 @@ void HitStreakManager::Update()
 			comboCount_ = 0;
 		}
 	}
+	DebugDraw();
 }
 
 void HitStreakManager::OnEnemyDefeated()
@@ -2233,11 +2259,27 @@ void HitStreakManager::OnEnemyDefeated()
 	comboTimer_ = kComboTime_;
 }
 
+void HitStreakManager::DebugDraw() const
+{
+#ifdef _DEBUG
+	// ImGui で編集
+	ImGui::Begin("JSON Editor");
+	static JsonImGuiEditor inspector(*jsonManager_);
+	inspector.Draw(jsonManager_->Root(), "HitStreak.json");
+	if (ImGui::Button("SaveUI")) jsonManager_->Save();
+	ImGui::End();
+#endif // _DEBUG
+}
+
 
 ============================================================
 File Path: project/application/AppSystem/Combo/ComboManager.h
 ============================================================
 #pragma once
+
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
+
 /// <summary>
 /// ヒット数管理クラス。
 /// 連続ヒット数のカウント、継続時間の計測、終了判定を行う。
@@ -2271,6 +2313,8 @@ public:
 	/// <summary>カメラシェイクの時間を取得する。</summary>
 	float GetCameraShakeTime() const { return shakeTime_; }
 
+	void DebugDraw() const;
+
 private:
 	/// <summary>現在のコンボ数。</summary>
 	int comboCount_ = 0;
@@ -2282,6 +2326,8 @@ private:
 	float kComboTime_ = 0.0f;
 	/// <summary>コンボ時のシェイク演出時間。</summary>
 	float shakeTime_ = 0.0f;
+
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_ = nullptr;
 };
 
 
@@ -2368,11 +2414,134 @@ File Path: project/application/AppSystem/RailGenerator/AppRailGenerator.cpp
 #include "OfflineAudioAnalyzer.h"
 #include "../../Object/Rail/RailManager.h"
 #include "AppRailGenerator.h"
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
+#include <imgui.h>
+
+static std::string g_detectedStyle = "None";
+static float g_avgLow = 0.0f;
+static float g_avgMid = 0.0f;
+static float g_avgHigh = 0.0f;
+static float g_avgAll = 0.0f;
+static float g_bpm = 0.0f;
 
 using namespace TYEngine::AudioSystem;
 
 void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railManager)
 {
+    TYEngine::Utility::JsonManager jm;
+    std::string err;
+    jm.Load("RailGenerator.json", true, &err);
+
+    // デフォルト値
+    if (!jm.Root().contains("advanceZ")) jm.Set("advanceZ", 20.0f);
+    if (!jm.Root().contains("smoothFactor")) jm.Set("smoothFactor", 1.0f);
+    if (!jm.Root().contains("scaleX")) jm.Set("scaleX", 400.0f);
+    if (!jm.Root().contains("scaleY")) jm.Set("scaleY", 150.0f);
+    if (!jm.Root().contains("scaleLow")) jm.Set("scaleLow", 200.0f);
+    if (!jm.Root().contains("scaleHigh")) jm.Set("scaleHigh", 100.0f);
+    if (!jm.Root().contains("wavePeriod")) jm.Set("wavePeriod", 8.0f);
+    if (!jm.Root().contains("lowThreshold")) jm.Set("lowThreshold", 0.08f);
+    if (!jm.Root().contains("clampX")) jm.Set("clampX", 50.0f);
+    if (!jm.Root().contains("span")) jm.Set("span", 4);
+
+    // ジャンル別デフォルト値
+    if (!jm.Root().contains("genres")) jm.Set("genres", nlohmann::json::object());
+    if (!jm.Root()["genres"].contains("Ambient")) {
+        jm.Set("genres.Ambient.thresholdAvgAll", 0.04f);
+        jm.Set("genres.Ambient.modScaleX", 0.2f);
+        jm.Set("genres.Ambient.modScaleY", 0.2f);
+        jm.Set("genres.Ambient.modScaleLow", 0.1f);
+        jm.Set("genres.Ambient.modScaleHigh", 0.1f);
+        jm.Set("genres.Ambient.modSmoothFactor", 0.1f);
+        jm.Set("genres.Ambient.modSpan", 8);
+    }
+    if (!jm.Root()["genres"].contains("EDM")) {
+        jm.Set("genres.EDM.thresholdLowRatio", 0.42f);
+        jm.Set("genres.EDM.thresholdBPM", 120.0f);
+        jm.Set("genres.EDM.modScaleX", 1.3f);
+        jm.Set("genres.EDM.modScaleY", 1.0f);
+        jm.Set("genres.EDM.modScaleLow", 2.5f);
+        jm.Set("genres.EDM.modScaleHigh", 1.0f);
+        jm.Set("genres.EDM.modWavePeriod", 4.0f);
+        jm.Set("genres.EDM.modSmoothFactor", 1.0f);
+        jm.Set("genres.EDM.modSpan", 2);
+    }
+    if (!jm.Root()["genres"].contains("Melodic")) {
+        jm.Set("genres.Melodic.thresholdMidRatio", 0.45f);
+        jm.Set("genres.Melodic.thresholdHighRatio", 0.35f);
+        jm.Set("genres.Melodic.modScaleX", 2.0f);
+        jm.Set("genres.Melodic.modScaleY", 1.0f);
+        jm.Set("genres.Melodic.modScaleLow", 0.5f);
+        jm.Set("genres.Melodic.modScaleHigh", 1.0f);
+        jm.Set("genres.Melodic.modWavePeriod", 12.0f);
+        jm.Set("genres.Melodic.modSmoothFactor", 1.0f);
+        jm.Set("genres.Melodic.modSpan", 4);
+    }
+    if (!jm.Root()["genres"].contains("Metal")) {
+        jm.Set("genres.Metal.thresholdBPM", 140.0f);
+        jm.Set("genres.Metal.thresholdAvgAll", 0.08f);
+        jm.Set("genres.Metal.modScaleX", 1.5f);
+        jm.Set("genres.Metal.modScaleY", 1.0f);
+        jm.Set("genres.Metal.modScaleLow", 1.6f);
+        jm.Set("genres.Metal.modScaleHigh", 1.0f);
+        jm.Set("genres.Metal.modWavePeriod", 6.0f);
+        jm.Set("genres.Metal.modSmoothFactor", 0.8f);
+        jm.Set("genres.Metal.modSpan", 2);
+    }
+
+    jm.Save();
+
+    float advanceZ = jm.Get<float>("advanceZ", 20.0f);
+    float smoothFactor = jm.Get<float>("smoothFactor", 1.0f);
+    float scaleX = jm.Get<float>("scaleX", 400.0f);
+    float scaleY = jm.Get<float>("scaleY", 150.0f);
+    float scaleLow = jm.Get<float>("scaleLow", 200.0f);
+    float scaleHigh = jm.Get<float>("scaleHigh", 100.0f);
+    float wavePeriod = jm.Get<float>("wavePeriod", 8.0f);
+    float lowThreshold = jm.Get<float>("lowThreshold", 0.08f);
+    float clampX = jm.Get<float>("clampX", 50.0f);
+    int span = jm.Get<int>("span", 4);
+
+    // ジャンル別パラメータのロード
+    float ambient_thresholdAvgAll = jm.Get<float>("genres.Ambient.thresholdAvgAll", 0.04f);
+    float ambient_modScaleX = jm.Get<float>("genres.Ambient.modScaleX", 0.2f);
+    float ambient_modScaleY = jm.Get<float>("genres.Ambient.modScaleY", 0.2f);
+    float ambient_modScaleLow = jm.Get<float>("genres.Ambient.modScaleLow", 0.1f);
+    float ambient_modScaleHigh = jm.Get<float>("genres.Ambient.modScaleHigh", 0.1f);
+    float ambient_modSmoothFactor = jm.Get<float>("genres.Ambient.modSmoothFactor", 0.1f);
+    int ambient_modSpan = jm.Get<int>("genres.Ambient.modSpan", span * 2);
+
+    float edm_thresholdLowRatio = jm.Get<float>("genres.EDM.thresholdLowRatio", 0.42f);
+    float edm_thresholdBPM = jm.Get<float>("genres.EDM.thresholdBPM", 120.0f);
+    float edm_modScaleX = jm.Get<float>("genres.EDM.modScaleX", 1.3f);
+    float edm_modScaleY = jm.Get<float>("genres.EDM.modScaleY", 1.0f);
+    float edm_modScaleLow = jm.Get<float>("genres.EDM.modScaleLow", 2.5f);
+    float edm_modScaleHigh = jm.Get<float>("genres.EDM.modScaleHigh", 1.0f);
+    float edm_modWavePeriod = jm.Get<float>("genres.EDM.modWavePeriod", 4.0f);
+    float edm_modSmoothFactor = jm.Get<float>("genres.EDM.modSmoothFactor", 1.0f);
+    int edm_modSpan = jm.Get<int>("genres.EDM.modSpan", 2);
+
+    float melodic_thresholdMidRatio = jm.Get<float>("genres.Melodic.thresholdMidRatio", 0.45f);
+    float melodic_thresholdHighRatio = jm.Get<float>("genres.Melodic.thresholdHighRatio", 0.35f);
+    float melodic_modScaleX = jm.Get<float>("genres.Melodic.modScaleX", 2.0f);
+    float melodic_modScaleY = jm.Get<float>("genres.Melodic.modScaleY", 1.0f);
+    float melodic_modScaleLow = jm.Get<float>("genres.Melodic.modScaleLow", 0.5f);
+    float melodic_modScaleHigh = jm.Get<float>("genres.Melodic.modScaleHigh", 1.0f);
+    float melodic_modWavePeriod = jm.Get<float>("genres.Melodic.modWavePeriod", 12.0f);
+    float melodic_modSmoothFactor = jm.Get<float>("genres.Melodic.modSmoothFactor", 1.0f);
+    int melodic_modSpan = jm.Get<int>("genres.Melodic.modSpan", 4);
+
+    float metal_thresholdBPM = jm.Get<float>("genres.Metal.thresholdBPM", 140.0f);
+    float metal_thresholdAvgAll = jm.Get<float>("genres.Metal.thresholdAvgAll", 0.08f);
+    float metal_modScaleX = jm.Get<float>("genres.Metal.modScaleX", 1.5f);
+    float metal_modScaleY = jm.Get<float>("genres.Metal.modScaleY", 1.0f);
+    float metal_modScaleLow = jm.Get<float>("genres.Metal.modScaleLow", 1.6f);
+    float metal_modScaleHigh = jm.Get<float>("genres.Metal.modScaleHigh", 1.0f);
+    float metal_modWavePeriod = jm.Get<float>("genres.Metal.modWavePeriod", 6.0f);
+    float metal_modSmoothFactor = jm.Get<float>("genres.Metal.modSmoothFactor", 0.8f);
+    int metal_modSpan = jm.Get<int>("genres.Metal.modSpan", 2);
+
     // エンジンからWAVEの生データを取得する
     auto soundData = Audio::GetInstance()->GetSoundData(soundFilename);
 
@@ -2381,17 +2550,103 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
         soundData.buffer.data(), static_cast<UINT32>(soundData.buffer.size()), soundData.wfex
     );
 
+    // --- 音楽のジャンル/スタイル自動判定とパラメータ調整 ---
+    float avgLow = analysisData.avgLow;
+    float avgMid = analysisData.avgMid;
+    float avgHigh = analysisData.avgHigh;
+    float avgAll = analysisData.avgAll;
+    float totalRatio = avgLow + avgMid + avgHigh;
+
+    float lowRatio = totalRatio > 0.0f ? (avgLow / totalRatio) : 0.0f;
+    float midRatio = totalRatio > 0.0f ? (avgMid / totalRatio) : 0.0f;
+    float highRatio = totalRatio > 0.0f ? (avgHigh / totalRatio) : 0.0f;
+
+    // 分類に応じたパラメータ補正係数
+    float modScaleX = 1.0f;
+    float modScaleY = 1.0f;
+    float modScaleLow = 1.0f;
+    float modScaleHigh = 1.0f;
+    int modSpan = span;
+    float modWavePeriod = wavePeriod;
+    float modSmoothFactor = smoothFactor;
+
+    std::string detectedStyle = "Standard Pop/Rock";
+
+    // 1. Ambient / Chillout (極めて静かな曲、または起伏の少ない曲)
+    if (avgAll < ambient_thresholdAvgAll)
+    {
+        detectedStyle = "Ambient / Chillout";
+        modScaleX = ambient_modScaleX;
+        modScaleY = ambient_modScaleY;
+        modScaleLow = ambient_modScaleLow;
+        modScaleHigh = ambient_modScaleHigh;
+        modSmoothFactor = ambient_modSmoothFactor;
+        modSpan = ambient_modSpan;
+    }
+    // 2. EDM / Dance (低音重視 & ビートが速い)
+    else if (lowRatio > edm_thresholdLowRatio && analysisData.bpm >= edm_thresholdBPM)
+    {
+        detectedStyle = "EDM / Dance";
+        modScaleLow = edm_modScaleLow;
+        modScaleX = edm_modScaleX;
+        modScaleY = edm_modScaleY;
+        modScaleHigh = edm_modScaleHigh;
+        modWavePeriod = edm_modWavePeriod;
+        modSmoothFactor = edm_modSmoothFactor;
+        modSpan = edm_modSpan;
+    }
+    // 3. Melodic / Classical / Ballad (中高音重視)
+    else if (midRatio > melodic_thresholdMidRatio || highRatio > melodic_thresholdHighRatio)
+    {
+        detectedStyle = "Melodic / Classical";
+        modScaleX = melodic_modScaleX;
+        modScaleY = melodic_modScaleY;
+        modScaleLow = melodic_modScaleLow;
+        modScaleHigh = melodic_modScaleHigh;
+        modWavePeriod = melodic_modWavePeriod;
+        modSmoothFactor = melodic_modSmoothFactor;
+        modSpan = melodic_modSpan;
+    }
+    // 4. Hard Rock / Metal / Hardcore (高速 & 音圧が高い)
+    else if (analysisData.bpm >= metal_thresholdBPM && avgAll > metal_thresholdAvgAll)
+    {
+        detectedStyle = "Hard Rock / Metal";
+        modScaleX = metal_modScaleX;
+        modScaleY = metal_modScaleY;
+        modScaleLow = metal_modScaleLow;
+        modScaleHigh = metal_modScaleHigh;
+        modWavePeriod = metal_modWavePeriod;
+        modSmoothFactor = metal_modSmoothFactor;
+        modSpan = metal_modSpan;
+    }
+
+    // パラメータ適用
+    scaleX *= modScaleX;
+    scaleY *= modScaleY;
+    scaleLow *= modScaleLow;
+    scaleHigh *= modScaleHigh;
+    span = modSpan;
+    wavePeriod = modWavePeriod;
+    smoothFactor = modSmoothFactor;
+
+    // 判定された音楽スタイルや統計値をキャッシュ
+    g_detectedStyle = detectedStyle;
+    g_bpm = analysisData.bpm;
+    g_avgLow = avgLow;
+    g_avgMid = avgMid;
+    g_avgHigh = avgHigh;
+    g_avgAll = avgAll;
+
     // ゲーム固有のロジックでレール座標（制御点）に変換する
     std::vector<TYEngine::Utility::Vector3> newControlPoints;
     std::vector<bool> newTriggerFlags;
 
     float currentZ = 0.0f;
-    const float ADVANCE_Z = 20.0f; // 1ビートで進む距離
+    float ADVANCE_Z = advanceZ; // 1ビートで進む距離
 
     newControlPoints.push_back({ 0.0f, 0.0f, 0.0f });
     newTriggerFlags.push_back(false);
 
-    int span = 4;
     int index = 0;
 
     // 前回の平滑化された座標を保持する変数
@@ -2401,7 +2656,7 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
 
     // 平滑化の度合いを決める係数 (0.0f ～ 1.0f)
     // 1.0f だと平滑化なし（元のまま）。
-    const float SMOOTH_FACTOR = 1.0f;
+    float SMOOTH_FACTOR = smoothFactor;
 
     for (const auto& beat : analysisData.beats)
     {
@@ -2409,13 +2664,32 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
         {
             currentZ += ADVANCE_Z;
 
-            // ゲーム独自のスケール調整
-            float targetY = beat.rmsAll * 150.0f;
-            float targetX = (beat.rmsMid - 0.05f) * 400.0f;
+            int stepIndex = index / span;
+
+            // --- 左右の蛇行 (X座標) ---
+            // S字状に交互にうねらせるためのサイン波
+            float wavePhase = (static_cast<float>(stepIndex) * 2.0f * 3.14159265f) / wavePeriod;
+            
+            // 中音域（メロディ等）の強さに応じたサイン波蛇行
+            float targetX = std::sin(wavePhase) * beat.rmsMid * scaleX;
+
+            // 高音域（ハイハット等）の強さに応じた細かなうねりをブレンド
+            float fastWave = std::cos(wavePhase * 3.0f) * beat.rmsHigh * scaleHigh;
+            targetX += fastWave;
+
+            // --- 高低差 (Y座標) ---
+            // 全体音量に比例した基本の高さ
+            float targetY = beat.rmsAll * scaleY;
+
+            // 低音域（キック、ベース等）がしきい値を超えた場合、道が隆起する
+            if (beat.rmsLow > lowThreshold)
+            {
+                targetY += (beat.rmsLow - lowThreshold) * scaleLow;
+            }
 
             // 制限(クランプ)
-            if (targetX > 50.0f) targetX = 50.0f;
-            if (targetX < -50.0f) targetX = -50.0f;
+            if (targetX > clampX) targetX = clampX;
+            if (targetX < -clampX) targetX = -clampX;
 
             // 線形補間をかける
             // 前回の値 × (1 - 係数) ＋ 目標値 × (係数)
@@ -2434,12 +2708,192 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
     railManager->GenerateForest();
 }
 
+void DrawRailGeneratorDebugUI(const std::string& currentSoundFilename, RailManager* railManager)
+{
+#ifdef _DEBUG
+    ImGui::Begin("Rail Generator Debug");
+
+    ImGui::Text("Current Song: %s", currentSoundFilename.c_str());
+    ImGui::Text("Detected Style: %s", g_detectedStyle.c_str());
+    ImGui::Text("BPM: %.1f", g_bpm);
+    ImGui::Separator();
+
+    ImGui::Text("Average Amplitude Stats:");
+    ImGui::Text("  All:  %.4f", g_avgAll);
+    ImGui::Text("  Low:  %.4f", g_avgLow);
+    ImGui::Text("  Mid:  %.4f", g_avgMid);
+    ImGui::Text("  High: %.4f", g_avgHigh);
+    ImGui::Separator();
+
+    TYEngine::Utility::JsonManager jm;
+    std::string err;
+    if (jm.Load("RailGenerator.json", false, &err))
+    {
+        bool changed = false;
+
+        // --- 基準値ロード ---
+        float advanceZ = jm.Get<float>("advanceZ", 20.0f);
+        float smoothFactor = jm.Get<float>("smoothFactor", 1.0f);
+        float scaleX = jm.Get<float>("scaleX", 400.0f);
+        float scaleY = jm.Get<float>("scaleY", 150.0f);
+        float scaleLow = jm.Get<float>("scaleLow", 200.0f);
+        float scaleHigh = jm.Get<float>("scaleHigh", 100.0f);
+        float wavePeriod = jm.Get<float>("wavePeriod", 8.0f);
+        float lowThreshold = jm.Get<float>("lowThreshold", 0.08f);
+        float clampX = jm.Get<float>("clampX", 50.0f);
+        int span = jm.Get<int>("span", 4);
+
+        // --- ジャンル別値ロード ---
+        // Ambient
+        float ambient_thresholdAvgAll = jm.Get<float>("genres.Ambient.thresholdAvgAll", 0.04f);
+        float ambient_modScaleX = jm.Get<float>("genres.Ambient.modScaleX", 0.2f);
+        float ambient_modScaleY = jm.Get<float>("genres.Ambient.modScaleY", 0.2f);
+        float ambient_modScaleLow = jm.Get<float>("genres.Ambient.modScaleLow", 0.1f);
+        float ambient_modScaleHigh = jm.Get<float>("genres.Ambient.modScaleHigh", 0.1f);
+        float ambient_modSmoothFactor = jm.Get<float>("genres.Ambient.modSmoothFactor", 0.1f);
+        int ambient_modSpan = jm.Get<int>("genres.Ambient.modSpan", span * 2);
+
+        // EDM
+        float edm_thresholdLowRatio = jm.Get<float>("genres.EDM.thresholdLowRatio", 0.42f);
+        float edm_thresholdBPM = jm.Get<float>("genres.EDM.thresholdBPM", 120.0f);
+        float edm_modScaleX = jm.Get<float>("genres.EDM.modScaleX", 1.3f);
+        float edm_modScaleY = jm.Get<float>("genres.EDM.modScaleY", 1.0f);
+        float edm_modScaleLow = jm.Get<float>("genres.EDM.modScaleLow", 2.5f);
+        float edm_modScaleHigh = jm.Get<float>("genres.EDM.modScaleHigh", 1.0f);
+        float edm_modWavePeriod = jm.Get<float>("genres.EDM.modWavePeriod", 4.0f);
+        float edm_modSmoothFactor = jm.Get<float>("genres.EDM.modSmoothFactor", 1.0f);
+        int edm_modSpan = jm.Get<int>("genres.EDM.modSpan", 2);
+
+        // Melodic
+        float melodic_thresholdMidRatio = jm.Get<float>("genres.Melodic.thresholdMidRatio", 0.45f);
+        float melodic_thresholdHighRatio = jm.Get<float>("genres.Melodic.thresholdHighRatio", 0.35f);
+        float melodic_modScaleX = jm.Get<float>("genres.Melodic.modScaleX", 2.0f);
+        float melodic_modScaleY = jm.Get<float>("genres.Melodic.modScaleY", 1.0f);
+        float melodic_modScaleLow = jm.Get<float>("genres.Melodic.modScaleLow", 0.5f);
+        float melodic_modScaleHigh = jm.Get<float>("genres.Melodic.modScaleHigh", 1.0f);
+        float melodic_modWavePeriod = jm.Get<float>("genres.Melodic.modWavePeriod", 12.0f);
+        float melodic_modSmoothFactor = jm.Get<float>("genres.Melodic.modSmoothFactor", 1.0f);
+        int melodic_modSpan = jm.Get<int>("genres.Melodic.modSpan", 4);
+
+        // Metal
+        float metal_thresholdBPM = jm.Get<float>("genres.Metal.thresholdBPM", 140.0f);
+        float metal_thresholdAvgAll = jm.Get<float>("genres.Metal.thresholdAvgAll", 0.08f);
+        float metal_modScaleX = jm.Get<float>("genres.Metal.modScaleX", 1.5f);
+        float metal_modScaleY = jm.Get<float>("genres.Metal.modScaleY", 1.0f);
+        float metal_modScaleLow = jm.Get<float>("genres.Metal.modScaleLow", 1.6f);
+        float metal_modScaleHigh = jm.Get<float>("genres.Metal.modScaleHigh", 1.0f);
+        float metal_modWavePeriod = jm.Get<float>("genres.Metal.modWavePeriod", 6.0f);
+        float metal_modSmoothFactor = jm.Get<float>("genres.Metal.modSmoothFactor", 0.8f);
+        int metal_modSpan = jm.Get<int>("genres.Metal.modSpan", 2);
+
+        // 基準値スライダー
+        if (ImGui::CollapsingHeader("Base Generation Parameters", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            if (ImGui::SliderFloat("Advance Z", &advanceZ, 5.0f, 50.0f)) { jm.Set("advanceZ", advanceZ); changed = true; }
+            if (ImGui::SliderFloat("Smooth Factor", &smoothFactor, 0.01f, 1.0f)) { jm.Set("smoothFactor", smoothFactor); changed = true; }
+            if (ImGui::SliderFloat("Scale X (Mid)", &scaleX, 50.0f, 1000.0f)) { jm.Set("scaleX", scaleX); changed = true; }
+            if (ImGui::SliderFloat("Scale Y (All)", &scaleY, 10.0f, 500.0f)) { jm.Set("scaleY", scaleY); changed = true; }
+            if (ImGui::SliderFloat("Scale Low (Bump)", &scaleLow, 10.0f, 1000.0f)) { jm.Set("scaleLow", scaleLow); changed = true; }
+            if (ImGui::SliderFloat("Scale High (Chirp)", &scaleHigh, 10.0f, 500.0f)) { jm.Set("scaleHigh", scaleHigh); changed = true; }
+            if (ImGui::SliderFloat("Wave Period", &wavePeriod, 2.0f, 32.0f)) { jm.Set("wavePeriod", wavePeriod); changed = true; }
+            if (ImGui::SliderFloat("Low Threshold", &lowThreshold, 0.01f, 0.5f)) { jm.Set("lowThreshold", lowThreshold); changed = true; }
+            if (ImGui::SliderFloat("Clamp X", &clampX, 10.0f, 200.0f)) { jm.Set("clampX", clampX); changed = true; }
+            if (ImGui::SliderInt("Span", &span, 1, 16)) { jm.Set("span", span); changed = true; }
+        }
+
+        // ジャンル別パラメータの CollapsingHeader
+        if (ImGui::CollapsingHeader("Genre Modifier Settings"))
+        {
+            if (ImGui::TreeNode("Ambient / Chillout"))
+            {
+                if (ImGui::SliderFloat("Threshold AvgAll", &ambient_thresholdAvgAll, 0.005f, 0.2f)) { jm.Set("genres.Ambient.thresholdAvgAll", ambient_thresholdAvgAll); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleX", &ambient_modScaleX, 0.0f, 3.0f)) { jm.Set("genres.Ambient.modScaleX", ambient_modScaleX); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleY", &ambient_modScaleY, 0.0f, 3.0f)) { jm.Set("genres.Ambient.modScaleY", ambient_modScaleY); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleLow", &ambient_modScaleLow, 0.0f, 3.0f)) { jm.Set("genres.Ambient.modScaleLow", ambient_modScaleLow); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleHigh", &ambient_modScaleHigh, 0.0f, 3.0f)) { jm.Set("genres.Ambient.modScaleHigh", ambient_modScaleHigh); changed = true; }
+                if (ImGui::SliderFloat("Mod SmoothFactor", &ambient_modSmoothFactor, 0.01f, 2.0f)) { jm.Set("genres.Ambient.modSmoothFactor", ambient_modSmoothFactor); changed = true; }
+                if (ImGui::SliderInt("Mod Span", &ambient_modSpan, 1, 32)) { jm.Set("genres.Ambient.modSpan", ambient_modSpan); changed = true; }
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode("EDM / Dance"))
+            {
+                if (ImGui::SliderFloat("Threshold LowRatio", &edm_thresholdLowRatio, 0.1f, 0.9f)) { jm.Set("genres.EDM.thresholdLowRatio", edm_thresholdLowRatio); changed = true; }
+                if (ImGui::SliderFloat("Threshold BPM", &edm_thresholdBPM, 50.0f, 240.0f)) { jm.Set("genres.EDM.thresholdBPM", edm_thresholdBPM); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleX", &edm_modScaleX, 0.0f, 3.0f)) { jm.Set("genres.EDM.modScaleX", edm_modScaleX); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleY", &edm_modScaleY, 0.0f, 3.0f)) { jm.Set("genres.EDM.modScaleY", edm_modScaleY); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleLow", &edm_modScaleLow, 0.0f, 5.0f)) { jm.Set("genres.EDM.modScaleLow", edm_modScaleLow); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleHigh", &edm_modScaleHigh, 0.0f, 3.0f)) { jm.Set("genres.EDM.modScaleHigh", edm_modScaleHigh); changed = true; }
+                if (ImGui::SliderFloat("Mod WavePeriod", &edm_modWavePeriod, 1.0f, 32.0f)) { jm.Set("genres.EDM.modWavePeriod", edm_modWavePeriod); changed = true; }
+                if (ImGui::SliderFloat("Mod SmoothFactor", &edm_modSmoothFactor, 0.01f, 2.0f)) { jm.Set("genres.EDM.modSmoothFactor", edm_modSmoothFactor); changed = true; }
+                if (ImGui::SliderInt("Mod Span", &edm_modSpan, 1, 16)) { jm.Set("genres.EDM.modSpan", edm_modSpan); changed = true; }
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode("Melodic / Classical"))
+            {
+                if (ImGui::SliderFloat("Threshold MidRatio", &melodic_thresholdMidRatio, 0.1f, 0.9f)) { jm.Set("genres.Melodic.thresholdMidRatio", melodic_thresholdMidRatio); changed = true; }
+                if (ImGui::SliderFloat("Threshold HighRatio", &melodic_thresholdHighRatio, 0.1f, 0.9f)) { jm.Set("genres.Melodic.thresholdHighRatio", melodic_thresholdHighRatio); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleX", &melodic_modScaleX, 0.0f, 3.0f)) { jm.Set("genres.Melodic.modScaleX", melodic_modScaleX); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleY", &melodic_modScaleY, 0.0f, 3.0f)) { jm.Set("genres.Melodic.modScaleY", melodic_modScaleY); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleLow", &melodic_modScaleLow, 0.0f, 3.0f)) { jm.Set("genres.Melodic.modScaleLow", melodic_modScaleLow); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleHigh", &melodic_modScaleHigh, 0.0f, 3.0f)) { jm.Set("genres.Melodic.modScaleHigh", melodic_modScaleHigh); changed = true; }
+                if (ImGui::SliderFloat("Mod WavePeriod", &melodic_modWavePeriod, 1.0f, 32.0f)) { jm.Set("genres.Melodic.modWavePeriod", melodic_modWavePeriod); changed = true; }
+                if (ImGui::SliderFloat("Mod SmoothFactor", &melodic_modSmoothFactor, 0.01f, 2.0f)) { jm.Set("genres.Melodic.modSmoothFactor", melodic_modSmoothFactor); changed = true; }
+                if (ImGui::SliderInt("Mod Span", &melodic_modSpan, 1, 16)) { jm.Set("genres.Melodic.modSpan", melodic_modSpan); changed = true; }
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode("Hard Rock / Metal"))
+            {
+                if (ImGui::SliderFloat("Threshold BPM", &metal_thresholdBPM, 50.0f, 240.0f)) { jm.Set("genres.Metal.thresholdBPM", metal_thresholdBPM); changed = true; }
+                if (ImGui::SliderFloat("Threshold AvgAll", &metal_thresholdAvgAll, 0.005f, 0.5f)) { jm.Set("genres.Metal.thresholdAvgAll", metal_thresholdAvgAll); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleX", &metal_modScaleX, 0.0f, 3.0f)) { jm.Set("genres.Metal.modScaleX", metal_modScaleX); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleY", &metal_modScaleY, 0.0f, 3.0f)) { jm.Set("genres.Metal.modScaleY", metal_modScaleY); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleLow", &metal_modScaleLow, 0.0f, 3.0f)) { jm.Set("genres.Metal.modScaleLow", metal_modScaleLow); changed = true; }
+                if (ImGui::SliderFloat("Mod ScaleHigh", &metal_modScaleHigh, 0.0f, 3.0f)) { jm.Set("genres.Metal.modScaleHigh", metal_modScaleHigh); changed = true; }
+                if (ImGui::SliderFloat("Mod WavePeriod", &metal_modWavePeriod, 1.0f, 32.0f)) { jm.Set("genres.Metal.modWavePeriod", metal_modWavePeriod); changed = true; }
+                if (ImGui::SliderFloat("Mod SmoothFactor", &metal_modSmoothFactor, 0.01f, 2.0f)) { jm.Set("genres.Metal.modSmoothFactor", metal_modSmoothFactor); changed = true; }
+                if (ImGui::SliderInt("Mod Span", &metal_modSpan, 1, 16)) { jm.Set("genres.Metal.modSpan", metal_modSpan); changed = true; }
+                ImGui::TreePop();
+            }
+        }
+
+        if (changed)
+        {
+            jm.Save();
+        }
+
+        // 手動の「Regenerate Rail」ボタンのみで再生成（スライダー操作だけでは走らない）
+        ImGui::Separator();
+        if (ImGui::Button("Regenerate Rail"))
+        {
+            if (railManager)
+            {
+                railManager->Reset();
+                GenerateStageFromAudio(currentSoundFilename, railManager);
+            }
+        }
+    }
+    else
+    {
+        ImGui::Text("Failed to load RailGenerator.json");
+    }
+
+    ImGui::End();
+#endif
+}
+
 ============================================================
 File Path: project/application/AppSystem/RailGenerator/AppRailGenerator.h
 ============================================================
 #pragma once
+#include <string>
+
+class RailManager;
 
 void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railManager);
+void DrawRailGeneratorDebugUI(const std::string& currentSoundFilename, RailManager* railManager);
 
 
 ============================================================
@@ -2450,17 +2904,32 @@ File Path: project/application/AppSystem/Score/ScoreManager.cpp
 
 void ScoreManager::Init()
 {
+	jsonManager_ = std::make_unique<TYEngine::Utility::JsonManager>();
+	std::string err;
+	jsonManager_->Load("ScoreConfig.json", true, &err);
+
+	if (!jsonManager_->Root().contains("basicScore")) {
+		jsonManager_->Set("basicScore", 5);
+	}
+	if (!jsonManager_->Root().contains("maxScore")) {
+		jsonManager_->Set("maxScore", 99999);
+	}
+	jsonManager_->Save();
+
 	// 基礎スコアをセット
-	basicScore_ = 5;
+	basicScore_ = jsonManager_->Get<int>("basicScore", 5);
 	// 最大スコアをセット
-	maxScore_ = 99999;
+	maxScore_ = jsonManager_->Get<int>("maxScore", 99999);
 	// スコアを0にリセット
 	score_ = 0;
 }
 
 void ScoreManager::Update()
 {
-	// 基準のスコアの変化などを記述する
+#ifdef _DEBUG
+	basicScore_ = jsonManager_->Get<int>("basicScore", 5);
+	maxScore_ = jsonManager_->Get<int>("maxScore", 99999);
+#endif
 }
 
 void ScoreManager::AddScore(float multiplier)
@@ -2477,6 +2946,9 @@ File Path: project/application/AppSystem/Score/ScoreManager.h
 ============================================================
 #pragma once
 #include <cstdint>
+#include <memory>
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 /// <summary>
 /// スコア管理クラス。
 /// ゲームスコアの計算・保持を行う。
@@ -2513,6 +2985,8 @@ private:
 	int32_t basicScore_ = 0;
 	/// <summary>基本スコア（定数）。</summary>
 	int32_t maxScore_ = 0;
+	/// <summary>JSONマネージャ。</summary>
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
 };
 
 
@@ -3071,6 +3545,7 @@ File Path: project/application/Object/Enemy/AttackStrategy/AttackStrategies.h
 #include "../EnemyBullet/Linear/Linear.h"
 #include "../EnemyBullet/EnemyBulletManager.h"
 #include <cmath>
+#include "../Enemy.h"
 
 
 // 敵の攻撃
@@ -3113,8 +3588,9 @@ namespace EnemyAttack
 			TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
 			TYEngine::Utility::Vector3 up = TYEngine::Utility::Normalize(Cross(forward, right));
 			// 上下に少しずらして発射
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * 0.02f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * -0.02f));
+			float offset = Enemy::jm_.Get<float>("enemy.attack.verticalOffset", 0.02f);
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * offset));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * -offset));
 		}
 	};
 	// -------------------------------------------------------------
@@ -3131,10 +3607,12 @@ namespace EnemyAttack
 			if (std::abs(forward.y) > 0.999f) worldUp = { 0.0f, 0.0f, 1.0f };
 			TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
 			// 左右にずらして4発発射
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * 0.06f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * 0.02f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -0.02f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -0.06f));
+			float offsetInner = Enemy::jm_.Get<float>("enemy.attack.horizontalOffsetInner", 0.02f);
+			float offsetOuter = Enemy::jm_.Get<float>("enemy.attack.horizontalOffsetOuter", 0.06f);
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * offsetOuter));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * offsetInner));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -offsetInner));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -offsetOuter));
 		}
 	};
 	// -------------------------------------------------------------
@@ -3152,9 +3630,12 @@ namespace EnemyAttack
 			TYEngine::Utility::Vector3 right = TYEngine::Utility::Normalize(Cross(worldUp, forward));
 			TYEngine::Utility::Vector3 up = TYEngine::Utility::Normalize(Cross(forward, right));
 			// 左右にずらして4発発射
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * 0.04f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * 0.04f + up * -0.02f));
-			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -0.04f + up * -0.02f));
+			float offsetUp = Enemy::jm_.Get<float>("enemy.attack.triangleOffsetUp", 0.04f);
+			float offsetRight = Enemy::jm_.Get<float>("enemy.attack.triangleOffsetRight", 0.04f);
+			float offsetDown = Enemy::jm_.Get<float>("enemy.attack.triangleOffsetDown", -0.02f);
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + up * offsetUp));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * offsetRight + up * offsetDown));
+			SpawnBullet(manager, origin, TYEngine::Utility::Normalize(forward + right * -offsetRight + up * offsetDown));
 		}
 	};
 }
@@ -3208,6 +3689,19 @@ using namespace TYEngine::Graphics;
 using namespace TYEngine::Effect;
 using namespace TYEngine::CameraSystem;
 
+JsonManager Enemy::jm_;
+bool Enemy::isJmLoaded_ = false;
+
+void Enemy::LoadJM()
+{
+	if (!isJmLoaded_)
+	{
+		std::string err;
+		jm_.Load("EnemyConfig.json", true, &err);
+		isJmLoaded_ = true;
+	}
+}
+
 Enemy::~Enemy()
 {
 	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
@@ -3222,13 +3716,45 @@ void Enemy::Init()
 	stateMachine_.RegisterState<EnemyStateDamaged>(EnemyState::DAMAGED, "Damaged");
 	stateMachine_.RegisterState<EnemyStateDespawned>(EnemyState::DESPAWNED, "Despawned");
 
+	LoadJM();
+
 	// 数値を適用
-	popTime_ = 1.0f;
-	bulletCoolTime_ = 2.0f;
+	popTime_ = jm_.Get<float>("enemy.popTime", 1.0f);
+	bulletCoolTime_ = jm_.Get<float>("enemy.bulletCoolTime", 2.0f);
 	bulletTimer_ = 0.0f;
-	defaultScale_ = { 0.3f, 0.3f, 0.3f };
-	upScale_ = { 0.45f, 0.45f, 0.45f };
-	lifeTime_ = 15.0f;
+	defaultScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.defaultScale", { 0.3f, 0.3f, 0.3f });
+	upScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.upScale", { 0.45f, 0.45f, 0.45f });
+	lifeTime_ = jm_.Get<float>("enemy.lifeTime", 15.0f);
+
+	initialDelayMin_ = jm_.Get<float>("enemy.initialDelayMin", 0.2f);
+	initialDelayMax_ = jm_.Get<float>("enemy.initialDelayMax", 1.0f);
+
+	// 被弾演出
+	damagedDuration_ = jm_.Get<float>("enemy.damaged.duration", 0.05f);
+	damagedRoll_ = jm_.Get<float>("enemy.damaged.roll", 0.1f);
+	damagedAddColor_ = jm_.Get<TYEngine::Utility::Vector4>("enemy.damaged.addColor", { 1.0f, 1.0f, 1.0f, 1.0f });
+
+	// 死亡演出
+	despawnCameraShakeDuration_ = jm_.Get<float>("enemy.despawned.cameraShake.duration", 0.1f);
+	despawnCameraShakeAmplitude_ = jm_.Get<float>("enemy.despawned.cameraShake.amplitude", 0.1f);
+	despawnCameraShakeFrequency_ = jm_.Get<float>("enemy.despawned.cameraShake.frequency", 20.0f);
+
+	despawnExplosionCount_ = jm_.Get<int>("enemy.despawned.effectExplosion.count", 20);
+	despawnExplosionFreq_ = jm_.Get<float>("enemy.despawned.effectExplosion.frequency", 5.0f);
+	despawnExplosionScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.despawned.effectExplosion.scale", { 0.3f, 0.3f, 0.3f });
+
+	despawnRingCount_ = jm_.Get<int>("enemy.despawned.effectRing.count", 1);
+	despawnRingFreq_ = jm_.Get<float>("enemy.despawned.effectRing.frequency", 5.0f);
+	despawnRingScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.despawned.effectRing.scale", { 0.5f, 0.5f, 0.5f });
+
+	despawnDebrisCount_ = jm_.Get<int>("enemy.despawned.effectDebris.count", 30);
+	despawnDebrisFreq_ = jm_.Get<float>("enemy.despawned.effectDebris.frequency", 5.0f);
+	despawnDebrisScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.despawned.effectDebris.scale", { 0.1f, 0.1f, 0.1f });
+	despawnDebrisVelocityY_ = jm_.Get<float>("enemy.despawned.effectDebris.velocityY", 2.0f);
+
+	despawnTimeLimit_ = jm_.Get<float>("enemy.despawned.despawnTime", 2.0f);
+	despawnFallSpeedY_ = jm_.Get<float>("enemy.despawned.fallSpeedY", 0.02f);
+	despawnSpinSpeed_ = jm_.Get<float>("enemy.despawned.spinSpeed", 0.02f);
 
 
 
@@ -3285,7 +3811,7 @@ void Enemy::Init()
 
 	// 攻撃開始までのタイマーをランダムに設定
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> dist(0.2f, 1.0f);
+	std::uniform_real_distribution<float> dist(initialDelayMin_, initialDelayMax_);
 	bulletTimer_ = dist(gen);
 
 
@@ -3491,12 +4017,12 @@ void EnemyStateExiting::Exit(Enemy&) {}
 
 void EnemyStateDamaged::Init(Enemy& owner)
 {
-	owner.obj_->SetAddColor({ 1,1,1,1 });
-	owner.roll_ = 0.1f;
+	owner.obj_->SetAddColor(owner.damagedAddColor_);
+	owner.roll_ = owner.damagedRoll_;
 }
-void EnemyStateDamaged::Update(Enemy&, float)
+void EnemyStateDamaged::Update(Enemy& owner, float)
 {
-	if (GetElapsed() > 0.05f)
+	if (GetElapsed() > owner.damagedDuration_)
 		RequestStateChange(EnemyState::ACTIVE);
 }
 void EnemyStateDamaged::Exit(Enemy& owner)
@@ -3515,49 +4041,49 @@ void EnemyStateDespawned::Init(Enemy& owner)
 		owner.listener_->OnEnemyDied(&owner);
 	}
 	CameraShake::ShakeParams params;
-	params.duration = 0.1f;
-	params.amplitude = 0.1f;
-	params.frequency = 20.0f;
+	params.duration = owner.despawnCameraShakeDuration_;
+	params.amplitude = owner.despawnCameraShakeAmplitude_;
+	params.frequency = owner.despawnCameraShakeFrequency_;
 	owner.camera_->StartShake(params);
 
 	// 爆発エフェクト
 	IParticleRenderer::Emitter e;
 	e.transform.translate = owner.GetWorldPosition();
-	e.count = 20;
-	e.frequency = 5.0f;
-	e.transform.scale = { 0.3f, 0.3f, 0.3f };
+	e.count = owner.despawnExplosionCount_;
+	e.frequency = owner.despawnExplosionFreq_;
+	e.transform.scale = owner.despawnExplosionScale_;
 	ParticleManager::GetInstance()->SetEmitter(4, e);
 	ParticleManager::GetInstance()->TriggerEmit(4, true);
 
 	// リング
 	IParticleRenderer::Emitter eR;
 	eR.transform.translate = owner.GetWorldPosition();
-	eR.count = 1;
-	eR.frequency = 5.0f;
-	eR.transform.scale = { 0.5f, 0.5f, 0.5f };
+	eR.count = owner.despawnRingCount_;
+	eR.frequency = owner.despawnRingFreq_;
+	eR.transform.scale = owner.despawnRingScale_;
 	ParticleManager::GetInstance()->SetEmitter(1, eR);
 	ParticleManager::GetInstance()->TriggerEmit(1, true);
 
 	// 破片
 	IParticleRenderer::Emitter eD;
-	eD.velocity = { 0.0f, 2.0f, 0.0f };
+	eD.velocity = { 0.0f, owner.despawnDebrisVelocityY_, 0.0f };
 	eD.transform.translate = owner.GetWorldPosition();
-	eD.count = 30;
-	eD.frequency = 5.0f;
-	eD.transform.scale = { 0.1f, 0.1f, 0.1f };
+	eD.count = owner.despawnDebrisCount_;
+	eD.frequency = owner.despawnDebrisFreq_;
+	eD.transform.scale = owner.despawnDebrisScale_;
 	eD.randomVel = true;
 	ParticleManager::GetInstance()->SetEmitter(5, eD);
 	ParticleManager::GetInstance()->TriggerEmit(5, true);
 }
 void EnemyStateDespawned::Update(Enemy& owner, float)
 {
-	if (GetElapsed() < 2.0f)
+	if (GetElapsed() < owner.despawnTimeLimit_)
 	{
-		owner.roll_ += 0.02f;
+		owner.roll_ += owner.despawnSpinSpeed_;
 		Vector3 pos = owner.worldTransform_.GetTranslation();
-		pos.y -= 0.02f;
+		pos.y -= owner.despawnFallSpeedY_;
 		owner.worldTransform_.SetTranslation(pos);
-		float t = 1.0f - (GetElapsed() / 2.0f);
+		float t = 1.0f - (GetElapsed() / owner.despawnTimeLimit_);
 		owner.obj_->SetAlpha(t / 2.0f);
 		owner.worldTransform_.SetScale(owner.defaultScale_ * t);
 	}
@@ -3586,6 +4112,8 @@ File Path: project/application/Object/Enemy/Enemy.h
 #include "AttackStrategy/IAttackStrategy.h"
 #include <iostream>
 #include <random>
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 class EnemyBulletManager;
 
@@ -3636,6 +4164,10 @@ class Enemy :
 	friend class EnemyStateDespawned;
 public:
 	using StateMachineType = TYEngine::Utility::StateMachine<EnemyState, Enemy>;
+
+	static TYEngine::Utility::JsonManager jm_;
+	static bool isJmLoaded_;
+	static void LoadJM();
 
 public:
 	~Enemy() override;
@@ -3814,7 +4346,32 @@ private:
 	/// <summary>ステートマシーン。</summary>
 	StateMachineType stateMachine_;
 
+	// 攻撃開始初期ディレイ範囲
+	float initialDelayMin_ = 0.2f;
+	float initialDelayMax_ = 1.0f;
 
+	// 被弾演出用パラメータ
+	float damagedDuration_ = 0.05f;
+	float damagedRoll_ = 0.1f;
+	TYEngine::Utility::Vector4 damagedAddColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	// 死亡演出用パラメータ
+	float despawnCameraShakeDuration_ = 0.1f;
+	float despawnCameraShakeAmplitude_ = 0.1f;
+	float despawnCameraShakeFrequency_ = 20.0f;
+	int despawnExplosionCount_ = 20;
+	float despawnExplosionFreq_ = 5.0f;
+	TYEngine::Utility::Vector3 despawnExplosionScale_ = { 0.3f, 0.3f, 0.3f };
+	int despawnRingCount_ = 1;
+	float despawnRingFreq_ = 5.0f;
+	TYEngine::Utility::Vector3 despawnRingScale_ = { 0.5f, 0.5f, 0.5f };
+	int despawnDebrisCount_ = 30;
+	float despawnDebrisFreq_ = 5.0f;
+	TYEngine::Utility::Vector3 despawnDebrisScale_ = { 0.1f, 0.1f, 0.1f };
+	float despawnDebrisVelocityY_ = 2.0f;
+	float despawnTimeLimit_ = 2.0f;
+	float despawnFallSpeedY_ = 0.02f;
+	float despawnSpinSpeed_ = 0.02f;
 };
 
 // --- 状態クラスの定義 ---
@@ -4033,6 +4590,18 @@ using namespace TYEngine::Utility;
 
 namespace EnemyBullet
 {
+	JsonManager Linear::jm_;
+	bool Linear::isJmLoaded_ = false;
+
+	void Linear::LoadJM()
+	{
+		if (!isJmLoaded_)
+		{
+			std::string err;
+			jm_.Load("EnemyConfig.json", true, &err);
+			isJmLoaded_ = true;
+		}
+	}
 
 	Linear::Linear()
 	{
@@ -4047,6 +4616,12 @@ namespace EnemyBullet
 
 	void Linear::Init()
 	{
+		LoadJM();
+
+		defaultSpeed_ = jm_.Get<float>("bullets.Linear.defaultSpeed", 20.0f);
+		lifeTime_ = jm_.Get<float>("bullets.Linear.lifeTime", 5.0f);
+		colliderScale_ = jm_.Get<float>("bullets.Linear.colliderScale", 0.1f);
+
 		// 3Dモデル生成
 		obj_ = std::make_unique<TYEngine::Graphics::Object3d>();
 		obj_->Initialize();
@@ -4070,8 +4645,6 @@ namespace EnemyBullet
 
 		// 初期ステートをSHOT（発射中）に
 		stateMachine_.ChangeState(LinearState::SHOT);
-
-		defaultSpeed_ = 20.0f;
 	}
 
 	void Linear::Update()
@@ -4096,6 +4669,8 @@ File Path: project/application/Object/Enemy/EnemyBullet/Linear/Linear.h
 #include "StateMachine.h"
 #include "State.h"
 #include "../EBulletCollider.h"
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 namespace EnemyBullet
 {
@@ -4128,6 +4703,10 @@ namespace EnemyBullet
 		Linear();
 		~Linear();
 		void Init()override;
+
+		static TYEngine::Utility::JsonManager jm_;
+		static bool isJmLoaded_;
+		static void LoadJM();
 		void Update()override;
 		void Draw()override;
 
@@ -4309,14 +4888,30 @@ using namespace TYEngine;
 
 void EnemyManager::Init(CameraSystem::Camera* camera)
 {
+	jsonManager_ = std::make_unique<JsonManager>();
+	std::string err;
+	jsonManager_->Load("EnemyConfig.json", true, &err);
+
 	camera_ = camera;
 	bulletManager_.Init();
-	enemyPopDepthMin_ = 30.0f;
-	enemyPopDepthMax_ = 40.0f;
-	xRange = 16.0f * 0.09f * 2.0f;
-	yRange = 9.0f * 0.085f * 2.0f;
-	spawnReadyTimer_ = 0.8f;
-	spawnNum_ = 10;
+
+	enemyPopDepthMin_ = jsonManager_->Get<float>("enemyManager.popDepthMin", 30.0f);
+	enemyPopDepthMax_ = jsonManager_->Get<float>("enemyManager.popDepthMax", 40.0f);
+
+	float xCoeff = jsonManager_->Get<float>("enemyManager.xRangeCoeff", 16.0f);
+	float yCoeff = jsonManager_->Get<float>("enemyManager.yRangeCoeff", 9.0f);
+	xRange = xCoeff * 0.09f * 2.0f;
+	yRange = yCoeff * 0.085f * 2.0f;
+
+	spawnReadyTimer_ = jsonManager_->Get<float>("enemyManager.spawnReadyTimer", 0.8f);
+	spawnNum_ = jsonManager_->Get<int>("enemyManager.spawnNum", 15);
+
+	minX_ = jsonManager_->Get<float>("enemyManager.minX", 0.5f);
+	maxX_ = jsonManager_->Get<float>("enemyManager.maxX", 1.5f);
+	minHeightOffset_ = jsonManager_->Get<float>("enemyManager.minHeightOffset", 2.0f);
+	maxHeightOffset_ = jsonManager_->Get<float>("enemyManager.maxHeightOffset", 7.0f);
+	comboStep_ = jsonManager_->Get<int>("enemyManager.comboStep", 20);
+	scaleInterpolationTime_ = jsonManager_->Get<float>("enemyManager.scaleInterpolationTime", 1.0f);
 }
 
 void EnemyManager::Reset()
@@ -4332,6 +4927,23 @@ void EnemyManager::MakeComboAndScoreHandler(HitStreakManager* combo, ScoreManage
 
 void EnemyManager::Update()
 {
+#ifdef _DEBUG
+	enemyPopDepthMin_ = jsonManager_->Get<float>("enemyManager.popDepthMin", 30.0f);
+	enemyPopDepthMax_ = jsonManager_->Get<float>("enemyManager.popDepthMax", 40.0f);
+	float xCoeff = jsonManager_->Get<float>("enemyManager.xRangeCoeff", 16.0f);
+	float yCoeff = jsonManager_->Get<float>("enemyManager.yRangeCoeff", 9.0f);
+	xRange = xCoeff * 0.09f * 2.0f;
+	yRange = yCoeff * 0.085f * 2.0f;
+	spawnReadyTimer_ = jsonManager_->Get<float>("enemyManager.spawnReadyTimer", 0.8f);
+	spawnNum_ = jsonManager_->Get<int>("enemyManager.spawnNum", 15);
+	minX_ = jsonManager_->Get<float>("enemyManager.minX", 0.5f);
+	maxX_ = jsonManager_->Get<float>("enemyManager.maxX", 1.5f);
+	minHeightOffset_ = jsonManager_->Get<float>("enemyManager.minHeightOffset", 2.0f);
+	maxHeightOffset_ = jsonManager_->Get<float>("enemyManager.maxHeightOffset", 7.0f);
+	comboStep_ = jsonManager_->Get<int>("enemyManager.comboStep", 20);
+	scaleInterpolationTime_ = jsonManager_->Get<float>("enemyManager.scaleInterpolationTime", 1.0f);
+#endif
+
 	// 死亡した敵をリストから削除
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& e) { return e->IsDead(); });
 
@@ -4349,11 +4961,12 @@ void EnemyManager::Update()
 				}
 				else
 				{
-					if (timer < 1.0f)
+					if (timer < scaleInterpolationTime_)
 					{
 						timer += Timer::GetInstance()->GetDeltaTime();
 					}
-					enemy->SetScale(Lerp(enemy->GetUpScale(), enemy->GetDefaultScale(), timer));
+					float t = scaleInterpolationTime_ > 0.0f ? (timer / scaleInterpolationTime_) : 1.0f;
+					enemy->SetScale(Lerp(enemy->GetUpScale(), enemy->GetDefaultScale(), t));
 				}
 			}
 		}
@@ -4470,7 +5083,7 @@ void EnemyManager::Pop()
 {
 	if(hitStreakManager_)
 	{
-		for (int i = 0; i < 1 + (hitStreakManager_->GetComboCount() / 20); i++)
+		for (int i = 0; i < 1 + (hitStreakManager_->GetComboCount() / comboStep_); i++)
 		{
 			if (isPopFlag_)
 			{
@@ -4487,8 +5100,8 @@ void EnemyManager::Pop()
 
 				// 中心部を避けて左右に広げる処理
 				float finalX = 0.0f;
-				float minX = 0.5f;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
-				float maxX = 1.5f;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
+				float minX = minX_;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
+				float maxX = maxX_;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
 
 				if (rawX >= 0.0f)
 				{
@@ -4514,8 +5127,8 @@ void EnemyManager::Pop()
 					float terrainY = railManager_->GetTerrainHeight(spawnPos);
 
 					// 地面からどれくらい浮かせるかのランダムな範囲
-					float minHeightOffset = 2.0f; // 最小の浮遊高度
-					float maxHeightOffset = 7.0f; // 最大の浮遊高度
+					float minHeightOffset = minHeightOffset_; // 最小の浮遊高度
+					float maxHeightOffset = maxHeightOffset_; // 最大の浮遊高度
 
 					// 新しく高さ用の乱数を生成
 					std::uniform_real_distribution<float> heightDist(minHeightOffset, maxHeightOffset);
@@ -4525,9 +5138,6 @@ void EnemyManager::Pop()
 					spawnPos.y = terrainY + randomHeight;
 				}
 				// --- 【ここまで変更】 ---
-
-				// 補正した座標を設定
-				enemy->SetAndApplyPos(spawnPos);
 
 				// 補正した座標を設定
 				enemy->SetAndApplyPos(spawnPos);
@@ -4562,8 +5172,8 @@ void EnemyManager::Pop()
 
 			// 中心部を避けて左右に広げる処理
 			float finalX = 0.0f;
-			float minX = 0.5f;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
-			float maxX = 1.5f;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
+			float minX = minX_;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
+			float maxX = maxX_;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
 
 			if (rawX >= 0.0f)
 			{
@@ -4589,8 +5199,8 @@ void EnemyManager::Pop()
 				float terrainY = railManager_->GetTerrainHeight(spawnPos);
 
 				// 地面からどれくらい浮かせるかのランダムな範囲
-				float minHeightOffset = 2.0f; // 最小の浮遊高度
-				float maxHeightOffset = 7.0f; // 最大の浮遊高度
+				float minHeightOffset = minHeightOffset_; // 最小の浮遊高度
+				float maxHeightOffset = maxHeightOffset_; // 最大の浮遊高度
 
 				// 新しく高さ用の乱数を生成
 				std::uniform_real_distribution<float> heightDist(minHeightOffset, maxHeightOffset);
@@ -4600,9 +5210,6 @@ void EnemyManager::Pop()
 				spawnPos.y = terrainY + randomHeight;
 			}
 			// --- 【ここまで変更】 ---
-
-			// 補正した座標を設定
-			enemy->SetAndApplyPos(spawnPos);
 
 			// 補正した座標を設定
 			enemy->SetAndApplyPos(spawnPos);
@@ -4631,6 +5238,9 @@ File Path: project/application/Object/Enemy/EnemyManager/EnemyManager.h
 #include "../../../AppSystem/EventListener/EnemyEvent/ComboAndScoreHandler.h"
 #include "BeatAnalyzer.h"
 #include <random>
+#include <memory>
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 class Camera;
 
@@ -4744,6 +5354,17 @@ private:
 	std::unique_ptr<ComboAndScoreHandler> comboAndScoreHandler_;
 
 	TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer_;
+
+	/// <summary>JSONマネージャ。</summary>
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
+
+	// 配置パラメータ
+	float minX_ = 0.5f;
+	float maxX_ = 1.5f;
+	float minHeightOffset_ = 2.0f;
+	float maxHeightOffset_ = 7.0f;
+	int comboStep_ = 20;
+	float scaleInterpolationTime_ = 1.0f;
 };
 
 
@@ -4756,10 +5377,6 @@ File Path: project/application/Object/Player/JustCollider.cpp
 #include "../ColliderTypeID/ColliderTypeID.h"
 
 using namespace TYEngine::Utility;
-
-void JustCollider::OnCollisionEnter([[maybe_unused]] Collider& other, [[maybe_unused]] const CollisionInfo& info)
-{
-}
 
 void JustCollider::OnCollisionStay([[maybe_unused]] Collider& other, [[maybe_unused]] const CollisionInfo& info)
 {
@@ -4800,8 +5417,6 @@ public:
         : SphereCollider(typeID, center, radius), player_(player) {
     }
 
-    /// <summary>衝突開始時の処理（ジャスト回避発生通知など）。</summary>
-    void OnCollisionEnter([[maybe_unused]] TYEngine::Utility::Collider& other, [[maybe_unused]] const TYEngine::Utility::CollisionInfo& info) override;
     /// <summary>衝突中の処理。</summary>
     void OnCollisionStay([[maybe_unused]] TYEngine::Utility::Collider& other, [[maybe_unused]] const TYEngine::Utility::CollisionInfo& info) override;
     /// <summary>衝突終了時の処理。</summary>
@@ -4847,7 +5462,6 @@ namespace PlayerAttack
         /// <param name="origin">発射位置（敵の座標）。</param>
         /// <param name="target">目標位置（プレイヤー座標など）。</param>
         /// <param name="manager">弾管理マネージャ。</param>
-        //virtual void Attack(const TYEngine::Utility::Vector3& origin, const TYEngine::Utility::Vector3& target, PlayerBulletManager* manager) = 0;
     };
 }
 
@@ -5044,28 +5658,16 @@ namespace PlayerAttack
                     if (comboStep_ == 0)
                     {
                         // 1段目: 通常の1発（中央）
-                        //bullets.bulletManager->Fire(bullets.currentBulletType, origin, forward);
                         homing(1);
                     }
                     else if (comboStep_ == 1)
                     {
                         // 2段目: 左右2連装（水平に少しずらす）
-                        /*TYEngine::Utility::Vector3 dirRight = TYEngine::Utility::Normalize(forward + right * 0.05f);
-                        TYEngine::Utility::Vector3 dirLeft = TYEngine::Utility::Normalize(forward - right * 0.05f);
-
-                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirRight);
-                        bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirLeft);*/
                         homing(2);
                     }
                     else if (comboStep_ == 2)
                     {
                         // 3段目: 扇状3連装（中央＋左右広め）
-                        //TYEngine::Utility::Vector3 dirRight = TYEngine::Utility::Normalize(forward + right * 0.1f);
-                        //TYEngine::Utility::Vector3 dirLeft = TYEngine::Utility::Normalize(forward - right * 0.1f);
-
-                        //bullets.bulletManager->Fire(bullets.currentBulletType, origin, forward);  // 中央
-                        //bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirRight); // 右
-                        //bullets.bulletManager->Fire(bullets.currentBulletType, origin, dirLeft);  // 左
                         homing(3);
                     }
                     else if (comboStep_ >= 3)
@@ -5814,6 +6416,8 @@ private:
 	PlayerDestroyEffect destroyEffect_;
 	// キリモミ落下時のパラメータ
 	PlayerDeadMotion deadMotion_;
+	// 被弾時のパラメータ
+	PlayerTakeDamageParams takeDamage_;
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
@@ -6701,6 +7305,12 @@ void Player::JMInit()
 	// エフェクト
 	jetEffect_.Load(jm_);
 	destroyEffect_.Load(jm_);
+
+	// 死亡時モーション
+	deadMotion_.Load(jm_);
+
+	// 被弾設定
+	takeDamage_.Load(jm_);
 }
 
 void Player::DebugJMApply()
@@ -6710,7 +7320,7 @@ void Player::DebugJMApply()
 	movement_.Load(jm_);
 
 	// HP設定
-	//status_.Load(jm_);
+
 
 	// バレルロール
 	barrelRoll_.Load(jm_);
@@ -6724,6 +7334,10 @@ void Player::DebugJMApply()
 	jetEffect_.Load(jm_);
 
 	destroyEffect_.Load(jm_);
+
+	deadMotion_.Load(jm_);
+
+	takeDamage_.Load(jm_);
 #endif // _DEBUG
 }
 
@@ -6963,7 +7577,7 @@ void PlayerStateDead::Init(Player& owner)
 	owner.collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
 
 	// 落下パラメータの初期化
-	owner.deadMotion_.fallSpeedY = -1.0f; // 少し上にフワッと浮いてから落ちる演出
+	owner.deadMotion_.fallSpeedY = owner.deadMotion_.initFallSpeedY; // 少し上にフワッと浮いてから落ちる演出
 }
 
 void PlayerStateDead::Update(Player& owner, float deltaTime)
@@ -6973,7 +7587,7 @@ void PlayerStateDead::Update(Player& owner, float deltaTime)
 	owner.movement_.roll += owner.deadMotion_.spinSpeed * owner.deltaTime_;
 
 	// 機体を少し下に傾ける
-	owner.movement_.movePitch = Lerp(owner.movement_.movePitch, owner.deadMotion_.targetPitch, 3.0f * owner.deltaTime_);
+	owner.movement_.movePitch = Lerp(owner.movement_.movePitch, owner.deadMotion_.targetPitch, owner.deadMotion_.pitchLerpRate * owner.deltaTime_);
 
 	// 落下処理
 	owner.deadMotion_.fallSpeedY += owner.deadMotion_.gravity * owner.deltaTime_;
@@ -6990,7 +7604,7 @@ void PlayerStateDead::Update(Player& owner, float deltaTime)
 		});
 
 	// 6. 完全に画面下（または奥）へ消えたら処理を止める
-	if (owner.screenOffset_.y < -2.5f) // 画面外に十分出たかを判定
+	if (owner.screenOffset_.y < owner.deadMotion_.screenOffsetYThreshold) // 画面外に十分出たかを判定
 	{
 		owner.isDead_ = true;
 	}
@@ -7060,13 +7674,13 @@ void PlayerStateTakeDamage::Init(Player& owner)
 {
 	GameAudio::GetInstance()->Play("damageP", false, SoundCategory::SE);
 	// 被弾時に色を加算（白く光らせる）
-	owner.obj_->SetAddColor({ 1,1,1,1 });
+	owner.obj_->SetAddColor(owner.takeDamage_.addColor);
 
 	// カメラシェイクを開始
 	CameraShake::ShakeParams params;
-	params.duration = 0.1f;
-	params.amplitude = 0.1f;
-	params.frequency = 20.0f;
+	params.duration = owner.takeDamage_.shakeDuration;
+	params.amplitude = owner.takeDamage_.shakeAmplitude;
+	params.frequency = owner.takeDamage_.shakeFrequency;
 	owner.camera_->StartShake(params);
 }
 
@@ -7074,7 +7688,7 @@ void PlayerStateTakeDamage::Update(Player& owner, float deltaTime)
 {
 	(void)deltaTime;
 	// 一定時間経過後にROOTステートへ復帰
-	if (owner.stateMachine_.GetStateElapsedTime() > 0.1f) owner.stateMachine_.ChangeState(PlayerState::ROUTE);
+	if (owner.stateMachine_.GetStateElapsedTime() > owner.takeDamage_.recoveryTime) owner.stateMachine_.ChangeState(PlayerState::ROUTE);
 
 	// 被弾中でもバレルロールは可能にする
 	owner.StartBarrelRoll();
@@ -7373,6 +7987,40 @@ struct PlayerDeadMotion
 	float spinSpeed = 7.0f;    // キリモミの回転速度
 	float targetPitch = 1.0f;   // 機体を下に傾ける目標角度（ラジアン）
 	float depthSpeed = 0.0f;    // 画面奥へ遠ざかる速度
+	float pitchLerpRate = 3.0f; // 機体ピッチの傾斜補間速度
+	float screenOffsetYThreshold = -2.5f; // 画面外と判定するY座標閾値
+	float initFallSpeedY = -1.0f; // 死亡時の初期落下速度（上への跳ね上がり）
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		fallSpeedY = jm.Get<float>("deadMotion.fallSpeedY", -0.5f);
+		gravity = jm.Get<float>("deadMotion.gravity", 3.0f);
+		spinSpeed = jm.Get<float>("deadMotion.spinSpeed", 7.0f);
+		targetPitch = jm.Get<float>("deadMotion.targetPitch", 1.0f);
+		depthSpeed = jm.Get<float>("deadMotion.depthSpeed", 0.0f);
+		pitchLerpRate = jm.Get<float>("deadMotion.pitchLerpRate", 3.0f);
+		screenOffsetYThreshold = jm.Get<float>("deadMotion.screenOffsetYThreshold", -2.5f);
+		initFallSpeedY = jm.Get<float>("deadMotion.initFallSpeedY", -1.0f);
+	}
+};
+
+/// <summary>プレイヤーの被弾時パラメータ。</summary>
+struct PlayerTakeDamageParams
+{
+	float shakeDuration = 0.1f;
+	float shakeAmplitude = 0.1f;
+	float shakeFrequency = 20.0f;
+	float recoveryTime = 0.1f;
+	TYEngine::Utility::Vector4 addColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	void Load(const TYEngine::Utility::JsonManager& jm)
+	{
+		shakeDuration = jm.Get<float>("takeDamage.shakeDuration", 0.1f);
+		shakeAmplitude = jm.Get<float>("takeDamage.shakeAmplitude", 0.1f);
+		shakeFrequency = jm.Get<float>("takeDamage.shakeFrequency", 20.0f);
+		recoveryTime = jm.Get<float>("takeDamage.recoveryTime", 0.1f);
+		addColor = jm.Get<TYEngine::Utility::Vector4>("takeDamage.addColor", { 1.0f, 1.0f, 1.0f, 1.0f });
+	}
 };
 
 
@@ -8172,7 +8820,7 @@ void RailManager::GenerateForest()
 	auto getTerrainHeight = [](float s, float lateral)
 		{
 			float absLat = std::abs(lateral);
-			float roadWidth = 8.0f; // 平らな道の半分の幅
+			float roadWidth = 16.0f; // 平らな道の半分の幅
 
 			if (absLat < roadWidth) return 0.0f;
 
@@ -8407,7 +9055,7 @@ float RailManager::GetTerrainHeight(const TYEngine::Utility::Vector3& pos)
 	float lateral = std::sqrt(minDistSq);
 
 	// 3. GenerateForest 内の計算式と同じロジックで高さを計算
-	float roadWidth = 8.0f;
+	float roadWidth = 16.0f;
 	float height = 0.0f;
 
 	if (lateral >= roadWidth)
@@ -8551,7 +9199,7 @@ private:
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 
 	/// <summary>カメラのオフセット位置。</summary>
-	TYEngine::Utility::Vector3 offsetCameraPos_ = { 0.0f,0.8f,0.0f };
+	TYEngine::Utility::Vector3 offsetCameraPos_ = { 0.0f,1.4f,0.0f };
 
 	/// <summary>レールセグメントのリスト。</summary>
 	std::list<std::unique_ptr<Rail>> rails_;
@@ -9168,8 +9816,8 @@ void GameSceneStateDebugEdit::Init(GameScene& owner)
 
 void GameSceneStateDebugEdit::Update(GameScene& owner, float deltaTime)
 {
+	(void)owner;
 	(void)deltaTime;
-	owner.stageManager_->EditUpdate();
 }
 
 void GameSceneStateDebugEdit::Exit(GameScene& owner)
@@ -9181,18 +9829,6 @@ void GameSceneStateDebugEdit::Exit(GameScene& owner)
 void GameScene::SwitchEdit()
 {
 #ifdef _DEBUG
-	ImGui::Begin("Play : Editor Switch");
-	if (otherEditorSwitch_)
-	{
-		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
-		if (!otherEditorSwitch_) stateMachine_.ChangeState(GameSceneState::PLAY);
-	}
-	else
-	{
-		ImGui::Checkbox("Other Editor Switch", &otherEditorSwitch_);
-		if (otherEditorSwitch_) stateMachine_.ChangeState(GameSceneState::DEBUG_EDIT);
-	}
-	ImGui::End();
 #endif // _DEBUG
 }
 
@@ -11929,7 +12565,8 @@ void TitleSceneStatePlay::Init(TitleScene& owner)
 void TitleSceneStatePlay::Update(TitleScene& owner, float deltaTime)
 {
 	(void)deltaTime;
-	(owner.enterSpr_->IsMouseHover()) ? owner.enterSpr_->SetScale(1.2f) : owner.enterSpr_->SetScale(1.0f);
+	float hoverScale = owner.titleJM.Get<float>("config.animation.hoverScale", 1.2f);
+	(owner.enterSpr_->IsMouseHover()) ? owner.enterSpr_->SetScale(hoverScale) : owner.enterSpr_->SetScale(1.0f);
 
 	owner.player_->Update();
 	owner.skybox_->Update();
@@ -11939,8 +12576,13 @@ void TitleSceneStatePlay::Update(TitleScene& owner, float deltaTime)
 	Vector2 mouse = owner.input_->GetMousePosition();
 	owner.reticle_->SetPosition(mouse);
 
-	owner.enterSpr_->SetAlpha(0.5f + (0.5f * owner.oscillator_.GetValue()));
-	owner.text_->SetScale(1.0f + (0.07f * owner.oscillator_.GetValue()));
+	float pulseAlphaBase = owner.titleJM.Get<float>("config.animation.pulseAlphaBase", 0.5f);
+	float pulseAlphaAmp = owner.titleJM.Get<float>("config.animation.pulseAlphaAmp", 0.5f);
+	float logoScaleBase = owner.titleJM.Get<float>("config.animation.logoScaleBase", 1.0f);
+	float logoScaleAmp = owner.titleJM.Get<float>("config.animation.logoScaleAmp", 0.07f);
+
+	owner.enterSpr_->SetAlpha(pulseAlphaBase + (pulseAlphaAmp * owner.oscillator_.GetValue()));
+	owner.text_->SetScale(logoScaleBase + (logoScaleAmp * owner.oscillator_.GetValue()));
 
 #ifdef _DEBUG
 	if (owner.enterSpr_->IsMouseClicked(0))
@@ -12369,6 +13011,15 @@ BlockFadeTransition::BlockFadeTransition(BlockFadeTransition::Type type, const B
 
 void BlockFadeTransition::Init()
 {
+	jsonManager_ = std::make_unique<TYEngine::Utility::JsonManager>();
+	std::string err;
+	jsonManager_->Load("TransitionConfig.json", true, &err);
+
+	playerScale_ = jsonManager_->Get<float>("playerScale", 2.0f);
+	playerStartPos_ = jsonManager_->Get<TYEngine::Utility::Vector2>("playerStartPos", { 128.0f, 360.0f });
+	playerEndPos_ = jsonManager_->Get<TYEngine::Utility::Vector2>("playerEndPos", { 1800.0f, 360.0f });
+	tileSpeedFactor_ = jsonManager_->Get<float>("tileSpeedFactor", 4.0f);
+
 	lastElapsed_ = 0.0f;
 	baseW_ = WindowsApp::kClientWidth; baseH_ = WindowsApp::kClientHeight;
 
@@ -12385,7 +13036,7 @@ void BlockFadeTransition::Init()
     pSpr_ = std::make_unique<Sprite>();
     pSpr_->Initialize("Resources/Texture/Player.png");
     pSpr_->SetAnchorPoint({ 0.5f,0.5f });
-    pSpr_->SetScale(2.0f);
+    pSpr_->SetScale(playerScale_);
 
 	const float colW = baseW_ / cfg_.cols;
 	const float rowH = baseH_ / cfg_.rows;
@@ -12413,6 +13064,13 @@ void BlockFadeTransition::Init()
 
 void BlockFadeTransition::Draw()
 {
+#ifdef _DEBUG
+	playerScale_ = jsonManager_->Get<float>("playerScale", 2.0f);
+	playerStartPos_ = jsonManager_->Get<TYEngine::Utility::Vector2>("playerStartPos", { 128.0f, 360.0f });
+	playerEndPos_ = jsonManager_->Get<TYEngine::Utility::Vector2>("playerEndPos", { 1800.0f, 360.0f });
+	tileSpeedFactor_ = jsonManager_->Get<float>("tileSpeedFactor", 4.0f);
+#endif
+
     if (stateMachine_.GetCurrentState() == TransitionStage::IDLE) return;
 
     float currentElapsed = stateMachine_.GetStateElapsedTime();
@@ -12467,7 +13125,7 @@ void BlockFadeTransition::Draw()
                 int px = physX(x);
                 int idx = y * cols + px;
 
-                viewSprites_[idx] += dt / (cfg_.holdSec / 4.0f);
+                viewSprites_[idx] += dt / (cfg_.holdSec / tileSpeedFactor_);
                 viewSprites_[idx] = std::min<float>(viewSprites_[idx], 1.0f);
                 const float colW = baseW_ / cfg_.cols;
                 const float rowH = baseH_ / cfg_.rows;
@@ -12488,7 +13146,7 @@ void BlockFadeTransition::Draw()
 
                     if (viewSprites_[idx] >= 1.0f)
                     {
-                        viewSprites_[idx] -= dt / (cfg_.holdSec / 4.0f);
+                        viewSprites_[idx] -= dt / (cfg_.holdSec / tileSpeedFactor_);
                         viewSprites_[idx] = std::max<float>(viewSprites_[idx], 0.0f);
                     }
                 }
@@ -12502,7 +13160,7 @@ void BlockFadeTransition::Draw()
                 {
                     if (viewSprites_[idx] < 1.0f)
                     {
-                        viewSprites_[idx] -= dt / (cfg_.holdSec / 4.0f);
+                        viewSprites_[idx] -= dt / (cfg_.holdSec / tileSpeedFactor_);
                         viewSprites_[idx] = std::max<float>(viewSprites_[idx], 0.0f);
                     }
                     const float colW = baseW_ / cfg_.cols;
@@ -12516,7 +13174,7 @@ void BlockFadeTransition::Draw()
 
         if (stateMachine_.GetCurrentState() == TransitionStage::ENTERING)
         {
-            pSpr_->SetPosition(Lerp(Vector2{ 128, 360 }, Vector2{ 1800, 360 }, t));
+            pSpr_->SetPosition(Lerp(playerStartPos_, playerEndPos_, t));
             pSpr_->Update();
             pSpr_->Draw();
         }
@@ -12592,6 +13250,9 @@ File Path: project/application/Scene/Transition/BlockFadeTransition.h
 #include "State.h"
 #include "Object3d.h"
 #include <memory>
+#include "struct.h"
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 namespace TYEngine::Graphics
 {
@@ -12665,6 +13326,12 @@ private:
 	float duration_ = 0.0f;
 	bool finished_ = false;
 	float lastElapsed_ = 0.0f;
+
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
+	float playerScale_ = 2.0f;
+	TYEngine::Utility::Vector2 playerStartPos_ = { 128.0f, 360.0f };
+	TYEngine::Utility::Vector2 playerEndPos_ = { 1800.0f, 360.0f };
+	float tileSpeedFactor_ = 4.0f;
 };
 
 // --- 状態クラスの定義 ---
@@ -13203,6 +13870,15 @@ Stage::~Stage()
 
 void Stage::Init()
 {
+    jsonManager_ = std::make_unique<JsonManager>();
+    std::string err;
+    jsonManager_->Load("StageConfig.json", true, &err);
+
+    if (!jsonManager_->Root().contains("beatScale")) {
+        jsonManager_->Set("beatScale", 1.05f);
+    }
+    jsonManager_->Save();
+
     gameAudio_ = GameAudio::GetInstance();
 
     gameAudio_->InitBeatAnalyzer("418", SoundCategory::BGM);
@@ -13236,7 +13912,7 @@ void Stage::Init()
     // EnemyManagerに地形の高さを計算させるために渡す
     enemyMgr_.SetRailManager(railManager_.get());
 
-    GenerateStageFromAudio("418", railManager_.get());
+    GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
 }
 
 void Stage::Reset()
@@ -13327,6 +14003,8 @@ void Stage::FromJson(const nlohmann::json& j) {
 
 void Stage::StageObjectBeatScale()
 {
+    float beatScale = jsonManager_->Get<float>("beatScale", 1.05f);
+
     static float timer = 0.0f;
     for (auto& o : stageObject_)
     {
@@ -13335,7 +14013,7 @@ void Stage::StageObjectBeatScale()
             if (gameAudio_->GetBeatAnalyzer().GetBeat())
             {
                 timer = 0.0f;
-                o->SetScale(1.05f);
+                o->SetScale(beatScale);
             }
             else
             {
@@ -13343,7 +14021,7 @@ void Stage::StageObjectBeatScale()
                 {
                     timer += Timer::GetInstance()->GetDeltaTime();
                 }
-                o->SetScale(Lerp(1.05f, 1.0f, timer));
+                o->SetScale(Lerp(beatScale, 1.0f, timer));
             }
         }
     }
@@ -13353,27 +14031,30 @@ void Stage::DebugUI()
 {
 #ifdef _DEBUG
 
-    //ImGui::Begin("Sound Selector");
+    ImGui::Begin("Sound Selector");
 
-    //// ImGui::Combo に渡すための C言語風文字列配列 (const char*) を作成
-    //std::vector<const char*> comboItems;
-    //for (const auto& song : songList_)
-    //{
-    //    comboItems.push_back(song.c_str());
-    //}
+    // ImGui::Combo に渡すための C言語風文字列配列 (const char*) を作成
+    std::vector<const char*> comboItems;
+    for (const auto& song : songList_)
+    {
+        comboItems.push_back(song.c_str());
+    }
 
-    //// プルダウンメニューの表示
-    //// ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
-    //if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
-    //{
-    //    gameAudio_->Pause(BGMHandle_);
-    //    BGMHandle_ = gameAudio_->Play(songList_[currentSongIndex_], true, SoundCategory::BGM);
-    //    railManager_->Reset();
-    //    // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む
-    //    GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
-    //}
+    // プルダウンメニューの表示
+    // ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
+    if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
+    {
+        gameAudio_->Pause(BGMHandle_);
+        BGMHandle_ = gameAudio_->Play(songList_[currentSongIndex_], true, SoundCategory::BGM);
+        railManager_->Reset();
+        // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む
+        GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
+    }
 
-    //ImGui::End();
+    ImGui::End();
+
+    // レール生成用のデバッグ表示＆調整UIを呼び出し
+    DrawRailGeneratorDebugUI(songList_[currentSongIndex_], railManager_.get());
 
 #endif // _DEBUG
 }
@@ -13395,6 +14076,8 @@ File Path: project/application/Stage/Stage.h
 #include "../AppSystem/Audio/GameAudio.h"
 #include <memory>
 #include <json.hpp>
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 class Stage
 {
@@ -13529,6 +14212,9 @@ private:
 
 	/// <summary>BGM再生ハンドル。</summary>
 	int BGMHandle_ = -1;
+
+	/// <summary>JSONマネージャ。</summary>
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
 };
 
 
@@ -13548,8 +14234,6 @@ void StageManager::Init()
     AddStage(); // 初期ステージを1つ追加
     GetCurrentStage()->Init();
     
-    // ステージデータを外部ファイルからロード
-    LoadStageFromFile("Resources/JSON/stage_data.json");
     // ロード後に状態をリセット
     GetCurrentStage()->Reset();
     
@@ -13581,17 +14265,6 @@ void StageManager::DrawUI()
     }
 }
 
-void StageManager::EditUpdate() 
-{
-    // エディタUIの描画と入力処理
-    DrawEditorUI();
-    if (!stages_.empty()) 
-    {
-        // 編集中のステージの更新
-        GetCurrentStage()->EditUpdate();
-    }
-}
-
 void StageManager::AddStage()
 {
     // 新規ステージの生成と初期化
@@ -13603,139 +14276,10 @@ void StageManager::AddStage()
     currentStageIndex_ = stages_.size() - 1;
 }
 
-void StageManager::RemoveStage(size_t index) 
-{
-    if (index < stages_.size()) 
-    {
-        stages_.erase(stages_.begin() + index);
-        if (stages_.empty()) 
-        {
-            AddStage();
-        }
-        currentStageIndex_ = std::min(index, stages_.size() - 1);
-    }
-}
-
-void StageManager::DuplicateStage(size_t index) 
-{
-    if (index < stages_.size())
-    {
-        auto clone = GetCurrentStage()->Clone();
-        stages_.insert(stages_.begin() + index + 1, std::move(clone));
-        currentStageIndex_ = index + 1;
-    }
-}
-
-void StageManager::SelectStage(size_t index) 
-{
-    if (index < stages_.size()) 
-    {
-        currentStageIndex_ = index;
-    }
-}
-
 Stage* StageManager::GetCurrentStage() 
 {
     if (stages_.empty()) return nullptr;
     return stages_[currentStageIndex_].get();
-}
-
-void StageManager::SaveStageToFile(size_t index, const std::string& path) 
-{
-    if (index < stages_.size())
-    {
-        // 指定ステージをJSONへシリアライズしてファイル書き出し
-        json j = stages_[index]->ToJson();
-        std::ofstream ofs(path);
-        ofs << j.dump(4);
-    }
-}
-
-void StageManager::LoadStageFromFile(const std::string& path)
-{
-    std::ifstream ifs(path);
-    if (!ifs.is_open()) return;
-
-    nlohmann::json j;
-    ifs >> j;
-
-    // 上書き対象ステージを取得（なければ作成）
-    if (stages_.empty()) 
-    {
-        AddStage(); // 空の場合は追加
-    }
-
-    // カレントステージへデータを流し込む
-    Stage* stage = GetCurrentStage();
-    stage->FromJson(j);
-}
-
-void StageManager::DrawEditorUI() 
-{
-#ifdef _DEBUG
-    ImGui::Begin("Stage Manager");
-
-    for (int i = 0; i < static_cast<int>(stages_.size()); ++i) 
-    {
-        ImGui::PushID(i);
-
-        std::string label = "Stage " + std::to_string(i);
-        bool selected = (i == static_cast<int>(currentStageIndex_));
-        if (ImGui::Selectable(label.c_str(), selected))
-        {
-            currentStageIndex_ = i;
-        }
-
-        if (ImGui::BeginDragDropSource())
-        {
-            ImGui::SetDragDropPayload("STAGE_IDX", &i, sizeof(int));
-            ImGui::Text("Move %s", label.c_str());
-            ImGui::EndDragDropSource();
-        }
-
-        if (ImGui::BeginDragDropTarget())
-        {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("STAGE_IDX")) 
-            {
-                int srcIdx = *(const int*)payload->Data;
-                if (srcIdx != i) 
-                {
-                    std::swap(stages_[srcIdx], stages_[i]);
-                    if (currentStageIndex_ == srcIdx)
-                        currentStageIndex_ = i;
-                    else if (currentStageIndex_ == i)
-                        currentStageIndex_ = srcIdx;
-                }
-            }
-            ImGui::EndDragDropTarget();
-        }
-
-        ImGui::PopID();
-    }
-
-    ImGui::Separator();
-
-    if (ImGui::Button("Add Stage")) AddStage();
-    ImGui::SameLine();
-    if (!stages_.empty() && ImGui::Button("Duplicate")) DuplicateStage(currentStageIndex_);
-    ImGui::SameLine();
-    if (!stages_.empty() && ImGui::Button("Delete")) RemoveStage(currentStageIndex_);
-
-    static char path[128] = "Resources/JSON/stage_data.json";
-    ImGui::InputText("Path", path, IM_ARRAYSIZE(path));
-
-    if (ImGui::Button("Save Current Stage")) 
-    {
-        SaveStageToFile(currentStageIndex_, path);
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Load Stage"))
-    {
-        LoadStageFromFile(path);
-    }
-
-    ImGui::End();
-#endif
 }
 
 ============================================================
@@ -13768,12 +14312,6 @@ public:
     void Draw();
     /// <summary>UI描画処理。</summary>
     void DrawUI();
-    
-    /// <summary>
-    /// エディタ用更新処理。
-    /// ImGuiによるステージ編集機能を提供する。
-    /// </summary>
-    void EditUpdate();
 
     /// <summary>現在のステージをリセットする。</summary>
     void Reset(){ GetCurrentStage()->Reset(); }
@@ -13812,22 +14350,8 @@ public:
 private:
     /// <summary>新しいステージを追加する。</summary>
     void AddStage();
-    /// <summary>指定したインデックスのステージを削除する。</summary>
-    void RemoveStage(size_t index);
-    /// <summary>指定したインデックスのステージを複製する。</summary>
-    void DuplicateStage(size_t index);
-    /// <summary>編集対象ステージを選択する。</summary>
-    void SelectStage(size_t index);
     /// <summary>現在選択中のステージを取得する。</summary>
     Stage* GetCurrentStage();
-
-    /// <summary>ステージを指定パスに保存する。</summary>
-    void SaveStageToFile(size_t index, const std::string& path);
-    /// <summary>指定パスからステージを読み込む。</summary>
-    void LoadStageFromFile(const std::string& path);
-
-    /// <summary>ImGuiによるステージ編集UI描画。</summary>
-    void DrawEditorUI(); // ImGui編集UI
 
 private:
     /// <summary>カメラ。</summary>
@@ -13871,7 +14395,9 @@ namespace TYEngine
         {
             float timeSec;  // 曲の開始からの時間（秒）
             float rmsAll;   // 全帯域の音量（音圧）
+            float rmsLow;   // 低音域の強さ（ベース、キック等）
             float rmsMid;   // 中音域の強さ（メロディ等）
+            float rmsHigh;  // 高音域の強さ（ハイハット、シンバル等）
         };
 
         /// <summary>オフライン解析の全体結果</summary>
@@ -13879,6 +14405,12 @@ namespace TYEngine
         {
             float bpm;      // 検出されたBPM
             std::vector<BeatFeature> beats; // 曲全体のビートデータ配列
+
+            // 曲全体の平均特徴量
+            float avgLow = 0.0f;
+            float avgMid = 0.0f;
+            float avgHigh = 0.0f;
+            float avgAll = 0.0f;
         };
     }
 }
@@ -15011,10 +15543,20 @@ namespace TYEngine
                 audioData[i] = sum / channels;
             }
 
+            BiquadFilter lowFilter;
+            lowFilter.SetCoefficients(FilterType::LowPassFilter, (float)wfx.nSamplesPerSec, 150.0f, 0.707f);
+            std::vector<float> lowData(numSamples, 0.0f);
+            for (int i = 0; i < numSamples; ++i) lowData[i] = lowFilter.Process(audioData[i]);
+
             BiquadFilter midFilter;
             midFilter.SetCoefficients(FilterType::BandPassFilter, (float)wfx.nSamplesPerSec, 1000.0f, 1.0f);
             std::vector<float> midData(numSamples, 0.0f);
             for (int i = 0; i < numSamples; ++i) midData[i] = midFilter.Process(audioData[i]);
+
+            BiquadFilter highFilter;
+            highFilter.SetCoefficients(FilterType::HighPassFilter, (float)wfx.nSamplesPerSec, 4000.0f, 0.707f);
+            std::vector<float> highData(numSamples, 0.0f);
+            for (int i = 0; i < numSamples; ++i) highData[i] = highFilter.Process(audioData[i]);
 
             // 3. ビートごとに分割して特徴量（RMS）を計算し、配列に詰める
             float samplesPerBeat = (float)wfx.nSamplesPerSec * (60.0f / result.bpm);
@@ -15026,24 +15568,48 @@ namespace TYEngine
                 int endIndex = static_cast<int>((b + 1) * samplesPerBeat);
                 if (endIndex > numSamples) endIndex = numSamples;
 
-                float sumAllSq = 0.0f, sumMidSq = 0.0f;
+                float sumAllSq = 0.0f, sumLowSq = 0.0f, sumMidSq = 0.0f, sumHighSq = 0.0f;
                 int count = endIndex - startIndex;
 
                 const float* pAudio = audioData.data();
+                const float* pLow = lowData.data();
                 const float* pMid = midData.data();
+                const float* pHigh = highData.data();
 
                 for (int i = startIndex; i < endIndex; ++i)
                 {
                     sumAllSq += pAudio[i] * pAudio[i];
+                    sumLowSq += pLow[i] * pLow[i];
                     sumMidSq += pMid[i] * pMid[i];
+                    sumHighSq += pHigh[i] * pHigh[i];
                 }
 
                 BeatFeature feature;
                 feature.timeSec = (float)startIndex / (float)wfx.nSamplesPerSec;
                 feature.rmsAll = std::sqrt(sumAllSq / count);
+                feature.rmsLow = std::sqrt(sumLowSq / count);
                 feature.rmsMid = std::sqrt(sumMidSq / count);
+                feature.rmsHigh = std::sqrt(sumHighSq / count);
 
                 result.beats.push_back(feature);
+            }
+
+            // 曲全体の平均特徴量の算出
+            if (!result.beats.empty())
+            {
+                float sumLow = 0.0f, sumMid = 0.0f, sumHigh = 0.0f, sumAll = 0.0f;
+                for (const auto& beat : result.beats)
+                {
+                    sumLow += beat.rmsLow;
+                    sumMid += beat.rmsMid;
+                    sumHigh += beat.rmsHigh;
+                    sumAll += beat.rmsAll;
+                }
+                float numBeats = static_cast<float>(result.beats.size());
+                result.avgLow = sumLow / numBeats;
+                result.avgMid = sumMid / numBeats;
+                result.avgHigh = sumHigh / numBeats;
+                result.avgAll = sumAll / numBeats;
             }
 
             return result;

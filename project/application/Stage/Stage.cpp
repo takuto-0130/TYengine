@@ -55,7 +55,7 @@ void Stage::Init()
     // EnemyManagerに地形の高さを計算させるために渡す
     enemyMgr_.SetRailManager(railManager_.get());
 
-    GenerateStageFromAudio("418", railManager_.get());
+    GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
 }
 
 void Stage::Reset()
@@ -174,27 +174,30 @@ void Stage::DebugUI()
 {
 #ifdef _DEBUG
 
-    //ImGui::Begin("Sound Selector");
+    ImGui::Begin("Sound Selector");
 
-    //// ImGui::Combo に渡すための C言語風文字列配列 (const char*) を作成
-    //std::vector<const char*> comboItems;
-    //for (const auto& song : songList_)
-    //{
-    //    comboItems.push_back(song.c_str());
-    //}
+    // ImGui::Combo に渡すための C言語風文字列配列 (const char*) を作成
+    std::vector<const char*> comboItems;
+    for (const auto& song : songList_)
+    {
+        comboItems.push_back(song.c_str());
+    }
 
-    //// プルダウンメニューの表示
-    //// ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
-    //if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
-    //{
-    //    gameAudio_->Pause(BGMHandle_);
-    //    BGMHandle_ = gameAudio_->Play(songList_[currentSongIndex_], true, SoundCategory::BGM);
-    //    railManager_->Reset();
-    //    // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む
-    //    GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
-    //}
+    // プルダウンメニューの表示
+    // ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
+    if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
+    {
+        gameAudio_->Pause(BGMHandle_);
+        BGMHandle_ = gameAudio_->Play(songList_[currentSongIndex_], true, SoundCategory::BGM);
+        railManager_->Reset();
+        // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む
+        GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
+    }
 
-    //ImGui::End();
+    ImGui::End();
+
+    // レール生成用のデバッグ表示＆調整UIを呼び出し
+    DrawRailGeneratorDebugUI(songList_[currentSongIndex_], railManager_.get());
 
 #endif // _DEBUG
 }

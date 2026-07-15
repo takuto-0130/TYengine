@@ -117,7 +117,7 @@ private:
 	TYEngine::CameraSystem::Camera* camera_ = nullptr;
 
 	/// <summary>カメラのオフセット位置。</summary>
-	TYEngine::Utility::Vector3 offsetCameraPos_ = { 0.0f,0.8f,0.0f };
+	TYEngine::Utility::Vector3 offsetCameraPos_ = { 0.0f,1.4f,0.0f };
 
 	/// <summary>レールセグメントのリスト。</summary>
 	std::list<std::unique_ptr<Rail>> rails_;

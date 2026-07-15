@@ -1,8 +1,56 @@
 {
   "advanceZ": 20.0,
   "clampX": 50.0,
-  "scaleX": 400.0,
-  "scaleY": 150.0,
+  "genres": {
+    "Ambient": {
+      "modScaleHigh": 0.10000000149011612,
+      "modScaleLow": 0.10000000149011612,
+      "modScaleX": 0.20000000298023224,
+      "modScaleY": 0.20000000298023224,
+      "modSmoothFactor": 0.10000000149011612,
+      "modSpan": 8,
+      "thresholdAvgAll": 0.03999999910593033
+    },
+    "EDM": {
+      "modScaleHigh": 1.0,
+      "modScaleLow": 2.5,
+      "modScaleX": 1.2999999523162842,
+      "modScaleY": 0.7609999775886536,
+      "modSmoothFactor": 1.0,
+      "modSpan": 2,
+      "modWavePeriod": 4.0,
+      "thresholdBPM": 120.0,
+      "thresholdLowRatio": 0.41999998688697815
+    },
+    "Melodic": {
+      "modScaleHigh": 1.0,
+      "modScaleLow": 0.5,
+      "modScaleX": 2.0,
+      "modScaleY": 1.0,
+      "modSmoothFactor": 1.0,
+      "modSpan": 4,
+      "modWavePeriod": 12.0,
+      "thresholdHighRatio": 0.3499999940395355,
+      "thresholdMidRatio": 0.44999998807907104
+    },
+    "Metal": {
+      "modScaleHigh": 1.0,
+      "modScaleLow": 1.600000023841858,
+      "modScaleX": 1.5,
+      "modScaleY": 1.0,
+      "modSmoothFactor": 0.800000011920929,
+      "modSpan": 2,
+      "modWavePeriod": 6.0,
+      "thresholdAvgAll": 0.07999999821186066,
+      "thresholdBPM": 140.0
+    }
+  },
+  "lowThreshold": 0.08,
+  "scaleHigh": 100.0,
+  "scaleLow": 200.0,
+  "scaleX": 305.4930114746094,
+  "scaleY": 99.88600158691406,
   "smoothFactor": 1.0,
-  "span": 4
+  "span": 4,
+  "wavePeriod": 8.0
 }

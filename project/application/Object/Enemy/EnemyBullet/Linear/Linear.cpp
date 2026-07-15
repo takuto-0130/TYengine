@@ -11,6 +11,18 @@ using namespace TYEngine::Utility;
 
 namespace EnemyBullet
 {
+	JsonManager Linear::jm_;
+	bool Linear::isJmLoaded_ = false;
+
+	void Linear::LoadJM()
+	{
+		if (!isJmLoaded_)
+		{
+			std::string err;
+			jm_.Load("EnemyConfig.json", true, &err);
+			isJmLoaded_ = true;
+		}
+	}
 
 	Linear::Linear()
 	{
@@ -25,6 +37,12 @@ namespace EnemyBullet
 
 	void Linear::Init()
 	{
+		LoadJM();
+
+		defaultSpeed_ = jm_.Get<float>("bullets.Linear.defaultSpeed", 20.0f);
+		lifeTime_ = jm_.Get<float>("bullets.Linear.lifeTime", 5.0f);
+		colliderScale_ = jm_.Get<float>("bullets.Linear.colliderScale", 0.1f);
+
 		// 3Dモデル生成
 		obj_ = std::make_unique<TYEngine::Graphics::Object3d>();
 		obj_->Initialize();
@@ -48,8 +66,6 @@ namespace EnemyBullet
 
 		// 初期ステートをSHOT（発射中）に
 		stateMachine_.ChangeState(LinearState::SHOT);
-
-		defaultSpeed_ = 20.0f;
 	}
 
 	void Linear::Update()

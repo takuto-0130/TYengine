@@ -40,6 +40,15 @@ BlockFadeTransition::BlockFadeTransition(BlockFadeTransition::Type type, const B
 
 void BlockFadeTransition::Init()
 {
+	jsonManager_ = std::make_unique<TYEngine::Utility::JsonManager>();
+	std::string err;
+	jsonManager_->Load("TransitionConfig.json", true, &err);
+
+	playerScale_ = jsonManager_->Get<float>("playerScale", 2.0f);
+	playerStartPos_ = jsonManager_->Get<TYEngine::Utility::Vector2>("playerStartPos", { 128.0f, 360.0f });
+	playerEndPos_ = jsonManager_->Get<TYEngine::Utility::Vector2>("playerEndPos", { 1800.0f, 360.0f });
+	tileSpeedFactor_ = jsonManager_->Get<float>("tileSpeedFactor", 4.0f);
+
 	lastElapsed_ = 0.0f;
 	baseW_ = WindowsApp::kClientWidth; baseH_ = WindowsApp::kClientHeight;
 
@@ -56,7 +65,7 @@ void BlockFadeTransition::Init()
     pSpr_ = std::make_unique<Sprite>();
     pSpr_->Initialize("Resources/Texture/Player.png");
     pSpr_->SetAnchorPoint({ 0.5f,0.5f });
-    pSpr_->SetScale(2.0f);
+    pSpr_->SetScale(playerScale_);
 
 	const float colW = baseW_ / cfg_.cols;
 	const float rowH = baseH_ / cfg_.rows;
@@ -84,6 +93,13 @@ void BlockFadeTransition::Init()
 
 void BlockFadeTransition::Draw()
 {
+#ifdef _DEBUG
+	playerScale_ = jsonManager_->Get<float>("playerScale", 2.0f);
+	playerStartPos_ = jsonManager_->Get<TYEngine::Utility::Vector2>("playerStartPos", { 128.0f, 360.0f });
+	playerEndPos_ = jsonManager_->Get<TYEngine::Utility::Vector2>("playerEndPos", { 1800.0f, 360.0f });
+	tileSpeedFactor_ = jsonManager_->Get<float>("tileSpeedFactor", 4.0f);
+#endif
+
     if (stateMachine_.GetCurrentState() == TransitionStage::IDLE) return;
 
     float currentElapsed = stateMachine_.GetStateElapsedTime();
@@ -138,7 +154,7 @@ void BlockFadeTransition::Draw()
                 int px = physX(x);
                 int idx = y * cols + px;
 
-                viewSprites_[idx] += dt / (cfg_.holdSec / 4.0f);
+                viewSprites_[idx] += dt / (cfg_.holdSec / tileSpeedFactor_);
                 viewSprites_[idx] = std::min<float>(viewSprites_[idx], 1.0f);
                 const float colW = baseW_ / cfg_.cols;
                 const float rowH = baseH_ / cfg_.rows;
@@ -159,7 +175,7 @@ void BlockFadeTransition::Draw()
 
                     if (viewSprites_[idx] >= 1.0f)
                     {
-                        viewSprites_[idx] -= dt / (cfg_.holdSec / 4.0f);
+                        viewSprites_[idx] -= dt / (cfg_.holdSec / tileSpeedFactor_);
                         viewSprites_[idx] = std::max<float>(viewSprites_[idx], 0.0f);
                     }
                 }
@@ -173,7 +189,7 @@ void BlockFadeTransition::Draw()
                 {
                     if (viewSprites_[idx] < 1.0f)
                     {
-                        viewSprites_[idx] -= dt / (cfg_.holdSec / 4.0f);
+                        viewSprites_[idx] -= dt / (cfg_.holdSec / tileSpeedFactor_);
                         viewSprites_[idx] = std::max<float>(viewSprites_[idx], 0.0f);
                     }
                     const float colW = baseW_ / cfg_.cols;
@@ -187,7 +203,7 @@ void BlockFadeTransition::Draw()
 
         if (stateMachine_.GetCurrentState() == TransitionStage::ENTERING)
         {
-            pSpr_->SetPosition(Lerp(Vector2{ 128, 360 }, Vector2{ 1800, 360 }, t));
+            pSpr_->SetPosition(Lerp(playerStartPos_, playerEndPos_, t));
             pSpr_->Update();
             pSpr_->Draw();
         }

@@ -14,6 +14,19 @@ using namespace TYEngine::Graphics;
 using namespace TYEngine::Effect;
 using namespace TYEngine::CameraSystem;
 
+JsonManager Enemy::jm_;
+bool Enemy::isJmLoaded_ = false;
+
+void Enemy::LoadJM()
+{
+	if (!isJmLoaded_)
+	{
+		std::string err;
+		jm_.Load("EnemyConfig.json", true, &err);
+		isJmLoaded_ = true;
+	}
+}
+
 Enemy::~Enemy()
 {
 	ColliderManager::GetInstance()->RemoveCollider(collider_.get());
@@ -28,13 +41,45 @@ void Enemy::Init()
 	stateMachine_.RegisterState<EnemyStateDamaged>(EnemyState::DAMAGED, "Damaged");
 	stateMachine_.RegisterState<EnemyStateDespawned>(EnemyState::DESPAWNED, "Despawned");
 
+	LoadJM();
+
 	// 数値を適用
-	popTime_ = 1.0f;
-	bulletCoolTime_ = 2.0f;
+	popTime_ = jm_.Get<float>("enemy.popTime", 1.0f);
+	bulletCoolTime_ = jm_.Get<float>("enemy.bulletCoolTime", 2.0f);
 	bulletTimer_ = 0.0f;
-	defaultScale_ = { 0.3f, 0.3f, 0.3f };
-	upScale_ = { 0.45f, 0.45f, 0.45f };
-	lifeTime_ = 15.0f;
+	defaultScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.defaultScale", { 0.3f, 0.3f, 0.3f });
+	upScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.upScale", { 0.45f, 0.45f, 0.45f });
+	lifeTime_ = jm_.Get<float>("enemy.lifeTime", 15.0f);
+
+	initialDelayMin_ = jm_.Get<float>("enemy.initialDelayMin", 0.2f);
+	initialDelayMax_ = jm_.Get<float>("enemy.initialDelayMax", 1.0f);
+
+	// 被弾演出
+	damagedDuration_ = jm_.Get<float>("enemy.damaged.duration", 0.05f);
+	damagedRoll_ = jm_.Get<float>("enemy.damaged.roll", 0.1f);
+	damagedAddColor_ = jm_.Get<TYEngine::Utility::Vector4>("enemy.damaged.addColor", { 1.0f, 1.0f, 1.0f, 1.0f });
+
+	// 死亡演出
+	despawnCameraShakeDuration_ = jm_.Get<float>("enemy.despawned.cameraShake.duration", 0.1f);
+	despawnCameraShakeAmplitude_ = jm_.Get<float>("enemy.despawned.cameraShake.amplitude", 0.1f);
+	despawnCameraShakeFrequency_ = jm_.Get<float>("enemy.despawned.cameraShake.frequency", 20.0f);
+
+	despawnExplosionCount_ = jm_.Get<int>("enemy.despawned.effectExplosion.count", 20);
+	despawnExplosionFreq_ = jm_.Get<float>("enemy.despawned.effectExplosion.frequency", 5.0f);
+	despawnExplosionScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.despawned.effectExplosion.scale", { 0.3f, 0.3f, 0.3f });
+
+	despawnRingCount_ = jm_.Get<int>("enemy.despawned.effectRing.count", 1);
+	despawnRingFreq_ = jm_.Get<float>("enemy.despawned.effectRing.frequency", 5.0f);
+	despawnRingScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.despawned.effectRing.scale", { 0.5f, 0.5f, 0.5f });
+
+	despawnDebrisCount_ = jm_.Get<int>("enemy.despawned.effectDebris.count", 30);
+	despawnDebrisFreq_ = jm_.Get<float>("enemy.despawned.effectDebris.frequency", 5.0f);
+	despawnDebrisScale_ = jm_.Get<TYEngine::Utility::Vector3>("enemy.despawned.effectDebris.scale", { 0.1f, 0.1f, 0.1f });
+	despawnDebrisVelocityY_ = jm_.Get<float>("enemy.despawned.effectDebris.velocityY", 2.0f);
+
+	despawnTimeLimit_ = jm_.Get<float>("enemy.despawned.despawnTime", 2.0f);
+	despawnFallSpeedY_ = jm_.Get<float>("enemy.despawned.fallSpeedY", 0.02f);
+	despawnSpinSpeed_ = jm_.Get<float>("enemy.despawned.spinSpeed", 0.02f);
 
 
 
@@ -91,7 +136,7 @@ void Enemy::Init()
 
 	// 攻撃開始までのタイマーをランダムに設定
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> dist(0.2f, 1.0f);
+	std::uniform_real_distribution<float> dist(initialDelayMin_, initialDelayMax_);
 	bulletTimer_ = dist(gen);
 
 
@@ -297,12 +342,12 @@ void EnemyStateExiting::Exit(Enemy&) {}
 
 void EnemyStateDamaged::Init(Enemy& owner)
 {
-	owner.obj_->SetAddColor({ 1,1,1,1 });
-	owner.roll_ = 0.1f;
+	owner.obj_->SetAddColor(owner.damagedAddColor_);
+	owner.roll_ = owner.damagedRoll_;
 }
-void EnemyStateDamaged::Update(Enemy&, float)
+void EnemyStateDamaged::Update(Enemy& owner, float)
 {
-	if (GetElapsed() > 0.05f)
+	if (GetElapsed() > owner.damagedDuration_)
 		RequestStateChange(EnemyState::ACTIVE);
 }
 void EnemyStateDamaged::Exit(Enemy& owner)
@@ -321,49 +366,49 @@ void EnemyStateDespawned::Init(Enemy& owner)
 		owner.listener_->OnEnemyDied(&owner);
 	}
 	CameraShake::ShakeParams params;
-	params.duration = 0.1f;
-	params.amplitude = 0.1f;
-	params.frequency = 20.0f;
+	params.duration = owner.despawnCameraShakeDuration_;
+	params.amplitude = owner.despawnCameraShakeAmplitude_;
+	params.frequency = owner.despawnCameraShakeFrequency_;
 	owner.camera_->StartShake(params);
 
 	// 爆発エフェクト
 	IParticleRenderer::Emitter e;
 	e.transform.translate = owner.GetWorldPosition();
-	e.count = 20;
-	e.frequency = 5.0f;
-	e.transform.scale = { 0.3f, 0.3f, 0.3f };
+	e.count = owner.despawnExplosionCount_;
+	e.frequency = owner.despawnExplosionFreq_;
+	e.transform.scale = owner.despawnExplosionScale_;
 	ParticleManager::GetInstance()->SetEmitter(4, e);
 	ParticleManager::GetInstance()->TriggerEmit(4, true);
 
 	// リング
 	IParticleRenderer::Emitter eR;
 	eR.transform.translate = owner.GetWorldPosition();
-	eR.count = 1;
-	eR.frequency = 5.0f;
-	eR.transform.scale = { 0.5f, 0.5f, 0.5f };
+	eR.count = owner.despawnRingCount_;
+	eR.frequency = owner.despawnRingFreq_;
+	eR.transform.scale = owner.despawnRingScale_;
 	ParticleManager::GetInstance()->SetEmitter(1, eR);
 	ParticleManager::GetInstance()->TriggerEmit(1, true);
 
 	// 破片
 	IParticleRenderer::Emitter eD;
-	eD.velocity = { 0.0f, 2.0f, 0.0f };
+	eD.velocity = { 0.0f, owner.despawnDebrisVelocityY_, 0.0f };
 	eD.transform.translate = owner.GetWorldPosition();
-	eD.count = 30;
-	eD.frequency = 5.0f;
-	eD.transform.scale = { 0.1f, 0.1f, 0.1f };
+	eD.count = owner.despawnDebrisCount_;
+	eD.frequency = owner.despawnDebrisFreq_;
+	eD.transform.scale = owner.despawnDebrisScale_;
 	eD.randomVel = true;
 	ParticleManager::GetInstance()->SetEmitter(5, eD);
 	ParticleManager::GetInstance()->TriggerEmit(5, true);
 }
 void EnemyStateDespawned::Update(Enemy& owner, float)
 {
-	if (GetElapsed() < 2.0f)
+	if (GetElapsed() < owner.despawnTimeLimit_)
 	{
-		owner.roll_ += 0.02f;
+		owner.roll_ += owner.despawnSpinSpeed_;
 		Vector3 pos = owner.worldTransform_.GetTranslation();
-		pos.y -= 0.02f;
+		pos.y -= owner.despawnFallSpeedY_;
 		owner.worldTransform_.SetTranslation(pos);
-		float t = 1.0f - (GetElapsed() / 2.0f);
+		float t = 1.0f - (GetElapsed() / owner.despawnTimeLimit_);
 		owner.obj_->SetAlpha(t / 2.0f);
 		owner.worldTransform_.SetScale(owner.defaultScale_ * t);
 	}

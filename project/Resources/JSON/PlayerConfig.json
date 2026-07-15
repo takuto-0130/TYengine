@@ -126,5 +126,27 @@
         "z": 0.10000000149011612
       }
     }
+  },
+  "deadMotion": {
+    "fallSpeedY": -0.5,
+    "gravity": 3.0,
+    "spinSpeed": 7.0,
+    "targetPitch": 1.0,
+    "depthSpeed": 0.0,
+    "pitchLerpRate": 3.0,
+    "screenOffsetYThreshold": -2.5,
+    "initFallSpeedY": -1.0
+  },
+  "takeDamage": {
+    "shakeDuration": 0.1,
+    "shakeAmplitude": 0.1,
+    "shakeFrequency": 20.0,
+    "recoveryTime": 0.1,
+    "addColor": {
+      "x": 1.0,
+      "y": 1.0,
+      "z": 1.0,
+      "w": 1.0
+    }
   }
 }

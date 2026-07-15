@@ -33,6 +33,12 @@ void Player::JMInit()
 	// エフェクト
 	jetEffect_.Load(jm_);
 	destroyEffect_.Load(jm_);
+
+	// 死亡時モーション
+	deadMotion_.Load(jm_);
+
+	// 被弾設定
+	takeDamage_.Load(jm_);
 }
 
 void Player::DebugJMApply()
@@ -42,7 +48,7 @@ void Player::DebugJMApply()
 	movement_.Load(jm_);
 
 	// HP設定
-	//status_.Load(jm_);
+
 
 	// バレルロール
 	barrelRoll_.Load(jm_);
@@ -56,5 +62,9 @@ void Player::DebugJMApply()
 	jetEffect_.Load(jm_);
 
 	destroyEffect_.Load(jm_);
+
+	deadMotion_.Load(jm_);
+
+	takeDamage_.Load(jm_);
 #endif // _DEBUG
 }

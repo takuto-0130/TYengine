@@ -1,5 +1,8 @@
 #pragma once
 #include <cstdint>
+#include <memory>
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 /// <summary>
 /// スコア管理クラス。
 /// ゲームスコアの計算・保持を行う。
@@ -36,5 +39,7 @@ private:
 	int32_t basicScore_ = 0;
 	/// <summary>基本スコア（定数）。</summary>
 	int32_t maxScore_ = 0;
+	/// <summary>JSONマネージャ。</summary>
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
 };
 

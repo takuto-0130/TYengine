@@ -1,4 +1,8 @@
 #pragma once
+
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
+
 /// <summary>
 /// ヒット数管理クラス。
 /// 連続ヒット数のカウント、継続時間の計測、終了判定を行う。
@@ -32,6 +36,8 @@ public:
 	/// <summary>カメラシェイクの時間を取得する。</summary>
 	float GetCameraShakeTime() const { return shakeTime_; }
 
+	void DebugDraw() const;
+
 private:
 	/// <summary>現在のコンボ数。</summary>
 	int comboCount_ = 0;
@@ -43,5 +49,7 @@ private:
 	float kComboTime_ = 0.0f;
 	/// <summary>コンボ時のシェイク演出時間。</summary>
 	float shakeTime_ = 0.0f;
+
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_ = nullptr;
 };
 

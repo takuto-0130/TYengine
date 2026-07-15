@@ -3,6 +3,9 @@
 #include "State.h"
 #include "Object3d.h"
 #include <memory>
+#include "struct.h"
+#define JSONMGR_WITH_IMGUI
+#include "Utils/Json/JsonManager.h"
 
 namespace TYEngine::Graphics
 {
@@ -76,6 +79,12 @@ private:
 	float duration_ = 0.0f;
 	bool finished_ = false;
 	float lastElapsed_ = 0.0f;
+
+	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
+	float playerScale_ = 2.0f;
+	TYEngine::Utility::Vector2 playerStartPos_ = { 128.0f, 360.0f };
+	TYEngine::Utility::Vector2 playerEndPos_ = { 1800.0f, 360.0f };
+	float tileSpeedFactor_ = 4.0f;
 };
 
 // --- 状態クラスの定義 ---

@@ -28,7 +28,7 @@ void PlayerStateDead::Init(Player& owner)
 	owner.collider_->SetTypeID(static_cast<uint32_t>(ColliderTypeID::NONE));
 
 	// 落下パラメータの初期化
-	owner.deadMotion_.fallSpeedY = -1.0f; // 少し上にフワッと浮いてから落ちる演出
+	owner.deadMotion_.fallSpeedY = owner.deadMotion_.initFallSpeedY; // 少し上にフワッと浮いてから落ちる演出
 }
 
 void PlayerStateDead::Update(Player& owner, float deltaTime)
@@ -38,7 +38,7 @@ void PlayerStateDead::Update(Player& owner, float deltaTime)
 	owner.movement_.roll += owner.deadMotion_.spinSpeed * owner.deltaTime_;
 
 	// 機体を少し下に傾ける
-	owner.movement_.movePitch = Lerp(owner.movement_.movePitch, owner.deadMotion_.targetPitch, 3.0f * owner.deltaTime_);
+	owner.movement_.movePitch = Lerp(owner.movement_.movePitch, owner.deadMotion_.targetPitch, owner.deadMotion_.pitchLerpRate * owner.deltaTime_);
 
 	// 落下処理
 	owner.deadMotion_.fallSpeedY += owner.deadMotion_.gravity * owner.deltaTime_;
@@ -55,7 +55,7 @@ void PlayerStateDead::Update(Player& owner, float deltaTime)
 		});
 
 	// 6. 完全に画面下（または奥）へ消えたら処理を止める
-	if (owner.screenOffset_.y < -2.5f) // 画面外に十分出たかを判定
+	if (owner.screenOffset_.y < owner.deadMotion_.screenOffsetYThreshold) // 画面外に十分出たかを判定
 	{
 		owner.isDead_ = true;
 	}

@@ -61,6 +61,13 @@
           "y": 0.5
         }
       }
+    },
+    "animation": {
+      "hoverScale": 1.2,
+      "pulseAlphaBase": 0.5,
+      "pulseAlphaAmp": 0.5,
+      "logoScaleBase": 1.0,
+      "logoScaleAmp": 0.07
     }
   }
 }

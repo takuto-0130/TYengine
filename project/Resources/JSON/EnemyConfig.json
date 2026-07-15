@@ -1,0 +1,96 @@
+{
+  "enemy": {
+    "popTime": 1.0,
+    "bulletCoolTime": 2.0,
+    "lifeTime": 15.0,
+    "defaultScale": {
+      "x": 0.3,
+      "y": 0.3,
+      "z": 0.3
+    },
+    "upScale": {
+      "x": 0.45,
+      "y": 0.45,
+      "z": 0.45
+    },
+    "initialDelayMin": 0.2,
+    "initialDelayMax": 1.0,
+    "damaged": {
+      "duration": 0.05,
+      "roll": 0.1,
+      "addColor": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0,
+        "w": 1.0
+      }
+    },
+    "despawned": {
+      "cameraShake": {
+        "duration": 0.1,
+        "amplitude": 0.1,
+        "frequency": 20.0
+      },
+      "effectExplosion": {
+        "count": 20,
+        "frequency": 5.0,
+        "scale": {
+          "x": 0.3,
+          "y": 0.3,
+          "z": 0.3
+        }
+      },
+      "effectRing": {
+        "count": 1,
+        "frequency": 5.0,
+        "scale": {
+          "x": 0.5,
+          "y": 0.5,
+          "z": 0.5
+        }
+      },
+      "effectDebris": {
+        "count": 30,
+        "frequency": 5.0,
+        "scale": {
+          "x": 0.1,
+          "y": 0.1,
+          "z": 0.1
+        },
+        "velocityY": 2.0
+      },
+      "despawnTime": 2.0,
+      "fallSpeedY": 0.02,
+      "spinSpeed": 0.02
+    },
+    "attack": {
+      "verticalOffset": 0.02,
+      "horizontalOffsetInner": 0.02,
+      "horizontalOffsetOuter": 0.06,
+      "triangleOffsetUp": 0.04,
+      "triangleOffsetRight": 0.04,
+      "triangleOffsetDown": -0.02
+    }
+  },
+  "bullets": {
+    "Linear": {
+      "defaultSpeed": 20.0,
+      "lifeTime": 5.0,
+      "colliderScale": 0.1
+    }
+  },
+  "enemyManager": {
+    "popDepthMin": 30.0,
+    "popDepthMax": 40.0,
+    "xRangeCoeff": 16.0,
+    "yRangeCoeff": 9.0,
+    "spawnReadyTimer": 0.8,
+    "spawnNum": 15,
+    "minX": 0.5,
+    "maxX": 1.5,
+    "minHeightOffset": 2.0,
+    "maxHeightOffset": 7.0,
+    "comboStep": 20,
+    "scaleInterpolationTime": 1.0
+  }
+}

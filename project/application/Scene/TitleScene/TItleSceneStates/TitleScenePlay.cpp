@@ -11,7 +11,8 @@ void TitleSceneStatePlay::Init(TitleScene& owner)
 void TitleSceneStatePlay::Update(TitleScene& owner, float deltaTime)
 {
 	(void)deltaTime;
-	(owner.enterSpr_->IsMouseHover()) ? owner.enterSpr_->SetScale(1.2f) : owner.enterSpr_->SetScale(1.0f);
+	float hoverScale = owner.titleJM.Get<float>("config.animation.hoverScale", 1.2f);
+	(owner.enterSpr_->IsMouseHover()) ? owner.enterSpr_->SetScale(hoverScale) : owner.enterSpr_->SetScale(1.0f);
 
 	owner.player_->Update();
 	owner.skybox_->Update();
@@ -21,8 +22,13 @@ void TitleSceneStatePlay::Update(TitleScene& owner, float deltaTime)
 	Vector2 mouse = owner.input_->GetMousePosition();
 	owner.reticle_->SetPosition(mouse);
 
-	owner.enterSpr_->SetAlpha(0.5f + (0.5f * owner.oscillator_.GetValue()));
-	owner.text_->SetScale(1.0f + (0.07f * owner.oscillator_.GetValue()));
+	float pulseAlphaBase = owner.titleJM.Get<float>("config.animation.pulseAlphaBase", 0.5f);
+	float pulseAlphaAmp = owner.titleJM.Get<float>("config.animation.pulseAlphaAmp", 0.5f);
+	float logoScaleBase = owner.titleJM.Get<float>("config.animation.logoScaleBase", 1.0f);
+	float logoScaleAmp = owner.titleJM.Get<float>("config.animation.logoScaleAmp", 0.07f);
+
+	owner.enterSpr_->SetAlpha(pulseAlphaBase + (pulseAlphaAmp * owner.oscillator_.GetValue()));
+	owner.text_->SetScale(logoScaleBase + (logoScaleAmp * owner.oscillator_.GetValue()));
 
 #ifdef _DEBUG
 	if (owner.enterSpr_->IsMouseClicked(0))

@@ -28,10 +28,20 @@ namespace TYEngine
                 audioData[i] = sum / channels;
             }
 
+            BiquadFilter lowFilter;
+            lowFilter.SetCoefficients(FilterType::LowPassFilter, (float)wfx.nSamplesPerSec, 150.0f, 0.707f);
+            std::vector<float> lowData(numSamples, 0.0f);
+            for (int i = 0; i < numSamples; ++i) lowData[i] = lowFilter.Process(audioData[i]);
+
             BiquadFilter midFilter;
             midFilter.SetCoefficients(FilterType::BandPassFilter, (float)wfx.nSamplesPerSec, 1000.0f, 1.0f);
             std::vector<float> midData(numSamples, 0.0f);
             for (int i = 0; i < numSamples; ++i) midData[i] = midFilter.Process(audioData[i]);
+
+            BiquadFilter highFilter;
+            highFilter.SetCoefficients(FilterType::HighPassFilter, (float)wfx.nSamplesPerSec, 4000.0f, 0.707f);
+            std::vector<float> highData(numSamples, 0.0f);
+            for (int i = 0; i < numSamples; ++i) highData[i] = highFilter.Process(audioData[i]);
 
             // 3. ビートごとに分割して特徴量（RMS）を計算し、配列に詰める
             float samplesPerBeat = (float)wfx.nSamplesPerSec * (60.0f / result.bpm);
@@ -43,24 +53,48 @@ namespace TYEngine
                 int endIndex = static_cast<int>((b + 1) * samplesPerBeat);
                 if (endIndex > numSamples) endIndex = numSamples;
 
-                float sumAllSq = 0.0f, sumMidSq = 0.0f;
+                float sumAllSq = 0.0f, sumLowSq = 0.0f, sumMidSq = 0.0f, sumHighSq = 0.0f;
                 int count = endIndex - startIndex;
 
                 const float* pAudio = audioData.data();
+                const float* pLow = lowData.data();
                 const float* pMid = midData.data();
+                const float* pHigh = highData.data();
 
                 for (int i = startIndex; i < endIndex; ++i)
                 {
                     sumAllSq += pAudio[i] * pAudio[i];
+                    sumLowSq += pLow[i] * pLow[i];
                     sumMidSq += pMid[i] * pMid[i];
+                    sumHighSq += pHigh[i] * pHigh[i];
                 }
 
                 BeatFeature feature;
                 feature.timeSec = (float)startIndex / (float)wfx.nSamplesPerSec;
                 feature.rmsAll = std::sqrt(sumAllSq / count);
+                feature.rmsLow = std::sqrt(sumLowSq / count);
                 feature.rmsMid = std::sqrt(sumMidSq / count);
+                feature.rmsHigh = std::sqrt(sumHighSq / count);
 
                 result.beats.push_back(feature);
+            }
+
+            // 曲全体の平均特徴量の算出
+            if (!result.beats.empty())
+            {
+                float sumLow = 0.0f, sumMid = 0.0f, sumHigh = 0.0f, sumAll = 0.0f;
+                for (const auto& beat : result.beats)
+                {
+                    sumLow += beat.rmsLow;
+                    sumMid += beat.rmsMid;
+                    sumHigh += beat.rmsHigh;
+                    sumAll += beat.rmsAll;
+                }
+                float numBeats = static_cast<float>(result.beats.size());
+                result.avgLow = sumLow / numBeats;
+                result.avgMid = sumMid / numBeats;
+                result.avgHigh = sumHigh / numBeats;
+                result.avgAll = sumAll / numBeats;
             }
 
             return result;

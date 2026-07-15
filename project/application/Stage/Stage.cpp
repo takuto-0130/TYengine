@@ -13,6 +13,15 @@ Stage::~Stage()
 
 void Stage::Init()
 {
+    jsonManager_ = std::make_unique<JsonManager>();
+    std::string err;
+    jsonManager_->Load("StageConfig.json", true, &err);
+
+    if (!jsonManager_->Root().contains("beatScale")) {
+        jsonManager_->Set("beatScale", 1.05f);
+    }
+    jsonManager_->Save();
+
     gameAudio_ = GameAudio::GetInstance();
 
     gameAudio_->InitBeatAnalyzer("418", SoundCategory::BGM);
@@ -46,7 +55,7 @@ void Stage::Init()
     // EnemyManagerに地形の高さを計算させるために渡す
     enemyMgr_.SetRailManager(railManager_.get());
 
-    GenerateStageFromAudio("418", railManager_.get());
+    GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
 }
 
 void Stage::Reset()
@@ -137,6 +146,8 @@ void Stage::FromJson(const nlohmann::json& j) {
 
 void Stage::StageObjectBeatScale()
 {
+    float beatScale = jsonManager_->Get<float>("beatScale", 1.05f);
+
     static float timer = 0.0f;
     for (auto& o : stageObject_)
     {
@@ -145,7 +156,7 @@ void Stage::StageObjectBeatScale()
             if (gameAudio_->GetBeatAnalyzer().GetBeat())
             {
                 timer = 0.0f;
-                o->SetScale(1.05f);
+                o->SetScale(beatScale);
             }
             else
             {
@@ -153,7 +164,7 @@ void Stage::StageObjectBeatScale()
                 {
                     timer += Timer::GetInstance()->GetDeltaTime();
                 }
-                o->SetScale(Lerp(1.05f, 1.0f, timer));
+                o->SetScale(Lerp(beatScale, 1.0f, timer));
             }
         }
     }
@@ -163,27 +174,30 @@ void Stage::DebugUI()
 {
 #ifdef _DEBUG
 
-    //ImGui::Begin("Sound Selector");
+    ImGui::Begin("Sound Selector");
 
-    //// ImGui::Combo に渡すための C言語風文字列配列 (const char*) を作成
-    //std::vector<const char*> comboItems;
-    //for (const auto& song : songList_)
-    //{
-    //    comboItems.push_back(song.c_str());
-    //}
+    // ImGui::Combo に渡すための C言語風文字列配列 (const char*) を作成
+    std::vector<const char*> comboItems;
+    for (const auto& song : songList_)
+    {
+        comboItems.push_back(song.c_str());
+    }
 
-    //// プルダウンメニューの表示
-    //// ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
-    //if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
-    //{
-    //    gameAudio_->Pause(BGMHandle_);
-    //    BGMHandle_ = gameAudio_->Play(songList_[currentSongIndex_], true, SoundCategory::BGM);
-    //    railManager_->Reset();
-    //    // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む
-    //    GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
-    //}
+    // プルダウンメニューの表示
+    // ユーザーが別の曲を選択して値が変更された場合、ifの中に入る
+    if (ImGui::Combo("Select Song", &currentSongIndex_, comboItems.data(), static_cast<int>(comboItems.size())))
+    {
+        gameAudio_->Pause(BGMHandle_);
+        BGMHandle_ = gameAudio_->Play(songList_[currentSongIndex_], true, SoundCategory::BGM);
+        railManager_->Reset();
+        // 選択された新しい曲でレールを再生成し、レールマネージャーに流し込む
+        GenerateStageFromAudio(songList_[currentSongIndex_], railManager_.get());
+    }
 
-    //ImGui::End();
+    ImGui::End();
+
+    // レール生成用のデバッグ表示＆調整UIを呼び出し
+    DrawRailGeneratorDebugUI(songList_[currentSongIndex_], railManager_.get());
 
 #endif // _DEBUG
 }

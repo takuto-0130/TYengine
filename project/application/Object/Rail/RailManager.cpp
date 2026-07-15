@@ -467,7 +467,7 @@ void RailManager::GenerateForest()
 	auto getTerrainHeight = [](float s, float lateral)
 		{
 			float absLat = std::abs(lateral);
-			float roadWidth = 8.0f; // 平らな道の半分の幅
+			float roadWidth = 16.0f; // 平らな道の半分の幅
 
 			if (absLat < roadWidth) return 0.0f;
 
@@ -702,7 +702,7 @@ float RailManager::GetTerrainHeight(const TYEngine::Utility::Vector3& pos)
 	float lateral = std::sqrt(minDistSq);
 
 	// 3. GenerateForest 内の計算式と同じロジックで高さを計算
-	float roadWidth = 8.0f;
+	float roadWidth = 16.0f;
 	float height = 0.0f;
 
 	if (lateral >= roadWidth)

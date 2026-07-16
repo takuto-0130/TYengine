@@ -662,5 +662,27 @@ namespace TYEngine
 			return buffer;
 		}
 
+		bool Audio::IsPlaying(int resourceNum)
+		{
+			if (resourceNum < 0 || resourceNum >= kMaxPlayWave || sourceVoices_[resourceNum] == nullptr)
+			{
+				return false;
+			}
+			XAUDIO2_VOICE_STATE state;
+			sourceVoices_[resourceNum]->GetState(&state, XAUDIO2_VOICE_NOSAMPLESPLAYED);
+			return state.BuffersQueued > 0;
+		}
+
+		UINT64 Audio::GetPlaybackSamples(int resourceNum)
+		{
+			if (resourceNum < 0 || resourceNum >= kMaxPlayWave || sourceVoices_[resourceNum] == nullptr)
+			{
+				return 0;
+			}
+			XAUDIO2_VOICE_STATE state;
+			sourceVoices_[resourceNum]->GetState(&state, 0);
+			return state.SamplesPlayed;
+		}
+
 	} // namespace Audio
 } // namespace TYEngine

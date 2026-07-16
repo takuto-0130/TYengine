@@ -20,8 +20,8 @@ void GameSceneStatePlay::Update(GameScene& owner, float deltaTime)
 	// ステージ（レール進行・敵の発生など）更新
 	owner.stageManager_->Update();
 
-	// レール終端到達でリザルトへ
-	if (owner.stageManager_->EndRail()) owner.stateMachine_.ChangeState(GameSceneState::RESULT);
+	// ステージ終了判定でリザルトへ
+	if (owner.stageManager_->IsFinished()) owner.stateMachine_.ChangeState(GameSceneState::RESULT);
 
 	owner.PlayUIUpdate();
 

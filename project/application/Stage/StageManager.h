@@ -39,6 +39,12 @@ public:
     /// <returns>終端なら true。</returns>
     bool EndRail() { return GetCurrentStage()->EndRail(); }
 
+    /// <summary>
+    /// ステージ終了（クリア）条件を満たしているかを判定する。
+    /// </summary>
+    /// <returns>終了なら true。</returns>
+    bool IsFinished() { return GetCurrentStage()->IsFinished(); }
+
     HitStreakManager* GetComboManager() 
     {
         return GetCurrentStage() ? GetCurrentStage()->GetComboManager() : nullptr;

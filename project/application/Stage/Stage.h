@@ -79,6 +79,12 @@ public:
 	/// <returns>終端なら true。</returns>
 	bool EndRail() { return railManager_->IsEndRail(); }
 
+	/// <summary>
+	/// ステージの終了（クリア）条件を満たしているかを判定する。
+	/// </summary>
+	/// <returns>終了なら true。</returns>
+	bool IsFinished();
+
 
 	/// <summary>
 	/// ステージインスタンスのディープコピーを作成する（プロトタイプパターン用）。
@@ -140,7 +146,7 @@ private:
 	GameAudio* gameAudio_ = nullptr;
 
 	// 曲名のリスト
-	std::vector<std::string> songList_ = { "418", "gameBGM", "irodori" };
+	std::vector<std::string> songList_ = { "418", "gameBGM", "irodori", "294_BPM88" };
 
 	// 現在選択されている曲のインデックス
 	int currentSongIndex_ = 0;
@@ -150,5 +156,11 @@ private:
 
 	/// <summary>JSONマネージャ。</summary>
 	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
+
+	/// <summary>累積プレイ秒数。</summary>
+	float elapsedTime_ = 0.0f;
+
+	/// <summary>制限秒数。</summary>
+	float timeLimit_ = 60.0f;
 };
 

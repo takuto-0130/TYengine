@@ -204,7 +204,7 @@ namespace PlayerAttack
                     }
 
                     // 発射音
-                    GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+                    //GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
                     // クールタイム設定
                     bullets.bulletTimer = bullets.bulletCoolTime;

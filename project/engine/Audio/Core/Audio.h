@@ -194,6 +194,12 @@ namespace TYEngine
 				return submixDetails.InputSampleRate;
 			}
 
+			/// <summary>指定した再生ハンドルのボイスが再生中かどうかを取得する</summary>
+			bool IsPlaying(int resourceNum);
+
+			/// <summary>指定した再生ハンドルの現在の再生サンプル数を取得する</summary>
+			UINT64 GetPlaybackSamples(int resourceNum);
+
 			SoundData& GetSoundData(const std::string& filename)
 			{
 				auto it = soundDataMap_.find(filename);

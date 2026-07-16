@@ -32,6 +32,7 @@ void TitleScene::Load()
 	gameAudio_->LoadSound("attack");
 	gameAudio_->LoadSound("418");
 	gameAudio_->LoadSound("irodori", ".mp3");
+	gameAudio_->LoadSound("294_BPM88", ".mp3");
 	
 	gameAudio_->InitBeatAnalyzer("gameBGM", SoundCategory::BGM);
 

@@ -91,8 +91,12 @@ struct PlayerStatus
 
 		hpSpr = std::make_unique<TYEngine::Graphics::Sprite>();
 		hpSpr->Initialize("Resources/Texture/white2x2.png");
-		hpSpr->SetPosition(jm.Get<TYEngine::Utility::Vector2>("status.texture.Position"));
-		hpSpr->SetSize(jm.Get<TYEngine::Utility::Vector2>("status.texture.Size"));
+		TYEngine::Utility::Vector2 size = jm.Get<TYEngine::Utility::Vector2>("status.texture.Size");
+		size.x = size.x * 0.5f;
+		hpSpr->SetSize(size);
+		TYEngine::Utility::Vector2 pos = jm.Get<TYEngine::Utility::Vector2>("status.texture.Position");
+		pos.x = pos.x + (size.x / 2.0f);
+		hpSpr->SetPosition(pos);
 		hpSpr->SetColor(jm.Get<TYEngine::Utility::Vector4>("status.texture.hpSprColor"));
 
 		hpSprBG = std::make_unique<TYEngine::Graphics::Sprite>();

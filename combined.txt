@@ -2069,6 +2069,7 @@ File Path: project/application/AppSystem/Audio/GameAudio.cpp
 ============================================================
 #include "GameAudio.h"
 #include "Timer.h"
+#include "Utils/Json/JsonManager.h"
 
 // GameAudio クラスの実装
 void GameAudio::OnInit()
@@ -2077,6 +2078,21 @@ void GameAudio::OnInit()
     CreateCategory(SoundCategory::SE, "SE");
     CreateCategory(SoundCategory::UI, "UI");
     InitBeatAnalyzer("gameBGM");
+
+    // Config.json からレイテンシ補正値（AudioLatencyOffset）をロードして適用
+    TYEngine::Utility::JsonManager jm;
+    std::string err;
+    if (jm.Load("Config.json", true, &err))
+    {
+        // もしキーが存在しなければ初期値（0.08f）をセットして保存
+        if (!jm.Root().contains("AudioLatencyOffset"))
+        {
+            jm.Set("AudioLatencyOffset", 0.08f);
+            jm.Save();
+        }
+        float offset = jm.Get<float>("AudioLatencyOffset", 0.08f);
+        audioAnalyzer_.SetLatencyOffset(offset);
+    }
 }
 
 void GameAudio::Update()
@@ -2141,6 +2157,16 @@ private:
     void OnInit() override;
 
 public:
+    int Play(const std::string& filename, bool isLoop, SoundCategory category)
+    {
+        int handle = TYEngine::AudioSystem::AudioSystemBase<SoundCategory>::Play(filename, isLoop, category);
+        if (category == SoundCategory::BGM)
+        {
+            audioAnalyzer_.SetPlayHandle(handle);
+        }
+        return handle;
+    }
+
     void Update();
 
     void InitBeatAnalyzer(const std::string& filename, SoundCategory soundCategory = SoundCategory::BGM);
@@ -2710,6 +2736,8 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
 
 void DrawRailGeneratorDebugUI(const std::string& currentSoundFilename, RailManager* railManager)
 {
+    (void)(currentSoundFilename);
+    (void)(railManager);
 #ifdef _DEBUG
     ImGui::Begin("Rail Generator Debug");
 
@@ -3899,7 +3927,7 @@ void Enemy::IsShot()
 	if (!isInGame_) return;
 
 	// 攻撃音再生
-	GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+	//GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
 	// 設定された攻撃パターンを実行
 	/*if (attackStrategy_)
@@ -5676,7 +5704,7 @@ namespace PlayerAttack
                     }
 
                     // 発射音
-                    GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
+                    //GameAudio::GetInstance()->Play("attack", false, SoundCategory::SE);
 
                     // クールタイム設定
                     bullets.bulletTimer = bullets.bulletCoolTime;
@@ -7796,8 +7824,12 @@ struct PlayerStatus
 
 		hpSpr = std::make_unique<TYEngine::Graphics::Sprite>();
 		hpSpr->Initialize("Resources/Texture/white2x2.png");
-		hpSpr->SetPosition(jm.Get<TYEngine::Utility::Vector2>("status.texture.Position"));
-		hpSpr->SetSize(jm.Get<TYEngine::Utility::Vector2>("status.texture.Size"));
+		TYEngine::Utility::Vector2 size = jm.Get<TYEngine::Utility::Vector2>("status.texture.Size");
+		size.x = size.x * 0.5f;
+		hpSpr->SetSize(size);
+		TYEngine::Utility::Vector2 pos = jm.Get<TYEngine::Utility::Vector2>("status.texture.Position");
+		pos.x = pos.x + (size.x / 2.0f);
+		hpSpr->SetPosition(pos);
 		hpSpr->SetColor(jm.Get<TYEngine::Utility::Vector4>("status.texture.hpSprColor"));
 
 		hpSprBG = std::make_unique<TYEngine::Graphics::Sprite>();
@@ -10027,8 +10059,8 @@ void GameSceneStatePlay::Update(GameScene& owner, float deltaTime)
 	// ステージ（レール進行・敵の発生など）更新
 	owner.stageManager_->Update();
 
-	// レール終端到達でリザルトへ
-	if (owner.stageManager_->EndRail()) owner.stateMachine_.ChangeState(GameSceneState::RESULT);
+	// ステージ終了判定でリザルトへ
+	if (owner.stageManager_->IsFinished()) owner.stateMachine_.ChangeState(GameSceneState::RESULT);
 
 	owner.PlayUIUpdate();
 
@@ -12535,6 +12567,7 @@ void TitleScene::Load()
 	gameAudio_->LoadSound("attack");
 	gameAudio_->LoadSound("418");
 	gameAudio_->LoadSound("irodori", ".mp3");
+	gameAudio_->LoadSound("294_BPM88", ".mp3");
 	
 	gameAudio_->InitBeatAnalyzer("gameBGM", SoundCategory::BGM);
 
@@ -13877,7 +13910,12 @@ void Stage::Init()
     if (!jsonManager_->Root().contains("beatScale")) {
         jsonManager_->Set("beatScale", 1.05f);
     }
+    if (!jsonManager_->Root().contains("timeLimit")) {
+        jsonManager_->Set("timeLimit", 60.0f);
+    }
     jsonManager_->Save();
+
+    timeLimit_ = jsonManager_->Get<float>("timeLimit", 60.0f);
 
     gameAudio_ = GameAudio::GetInstance();
 
@@ -13921,6 +13959,7 @@ void Stage::Reset()
     railManager_->Reset();
     comboManager_->Init();
     scoreManager_->Init();
+    elapsedTime_ = 0.0f;
 }
 
 void Stage::Update()
@@ -13928,6 +13967,9 @@ void Stage::Update()
     isEdit_ = false;
 
     DebugUI();
+
+    // 経過時間の測定
+    elapsedTime_ += Timer::GetInstance()->GetDeltaTime();
 
     // レール更新（カメラ移動・トリガー判定）
     railManager_->Update();
@@ -14059,6 +14101,15 @@ void Stage::DebugUI()
 #endif // _DEBUG
 }
 
+bool Stage::IsFinished()
+{
+    if (timeLimit_ > 0.0f && elapsedTime_ >= timeLimit_)
+    {
+        return true;
+    }
+    return EndRail();
+}
+
 
 ============================================================
 File Path: project/application/Stage/Stage.h
@@ -14144,6 +14195,12 @@ public:
 	/// <returns>終端なら true。</returns>
 	bool EndRail() { return railManager_->IsEndRail(); }
 
+	/// <summary>
+	/// ステージの終了（クリア）条件を満たしているかを判定する。
+	/// </summary>
+	/// <returns>終了なら true。</returns>
+	bool IsFinished();
+
 
 	/// <summary>
 	/// ステージインスタンスのディープコピーを作成する（プロトタイプパターン用）。
@@ -14205,7 +14262,7 @@ private:
 	GameAudio* gameAudio_ = nullptr;
 
 	// 曲名のリスト
-	std::vector<std::string> songList_ = { "418", "gameBGM", "irodori" };
+	std::vector<std::string> songList_ = { "418", "gameBGM", "irodori", "294_BPM88" };
 
 	// 現在選択されている曲のインデックス
 	int currentSongIndex_ = 0;
@@ -14215,6 +14272,12 @@ private:
 
 	/// <summary>JSONマネージャ。</summary>
 	std::unique_ptr<TYEngine::Utility::JsonManager> jsonManager_;
+
+	/// <summary>累積プレイ秒数。</summary>
+	float elapsedTime_ = 0.0f;
+
+	/// <summary>制限秒数。</summary>
+	float timeLimit_ = 60.0f;
 };
 
 
@@ -14326,6 +14389,12 @@ public:
     /// <returns>終端なら true。</returns>
     bool EndRail() { return GetCurrentStage()->EndRail(); }
 
+    /// <summary>
+    /// ステージ終了（クリア）条件を満たしているかを判定する。
+    /// </summary>
+    /// <returns>終了なら true。</returns>
+    bool IsFinished() { return GetCurrentStage()->IsFinished(); }
+
     HitStreakManager* GetComboManager() 
     {
         return GetCurrentStage() ? GetCurrentStage()->GetComboManager() : nullptr;
@@ -14435,12 +14504,6 @@ namespace TYEngine
 		{
 			spectrumSmoothed_.resize(BANDS, 0.0f);
 
-			for (auto& f : fftDelay_)
-				f.fill(0.0f);
-
-			for (int i = 0; i < DELAY_FRAMES; i++)
-				rmsDelay_[i] = 0.0f;
-
 			waveform_.resize(441);   // 10ms
 			waveformScroll_.resize(2000, 0.0f); // 2000 サンプル分のスクロール領域
 			waveformWriteIndex_ = 0;
@@ -14459,11 +14522,29 @@ namespace TYEngine
 
 		void AudioAnalyzer::Update()
 		{
-			// XAPOから最新波形を安全に取得
-			auto xapo = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_);
+			auto audio = Audio::GetInstance();
+			auto xapo = audio->GetAnalyzerXAPO(soundCategory_);
 			if (xapo)
 			{
-				xapo->GetLatestWaveform(tempWaveform_, FFT_SIZE);
+				int sampleRate = xapo->GetSampleRate();
+				if (sampleRate == 0) sampleRate = 44100;
+
+				// 再生ハンドルが設定され、再生中の場合は再生位置に同期したサンプルを取得
+				if (playHandle_ != -1 && audio->IsPlaying(playHandle_))
+				{
+					uint64_t samplesPlayed = audio->GetPlaybackSamples(playHandle_);
+					int64_t latencySamples = static_cast<int64_t>(latencyOffsetSec_ * sampleRate);
+					uint64_t targetSample = (samplesPlayed >= static_cast<uint64_t>(latencySamples)) 
+						? (samplesPlayed - latencySamples) 
+						: 0;
+
+					xapo->GetWaveformAtSample(targetSample, tempWaveform_, FFT_SIZE);
+				}
+				else
+				{
+					// それ以外は最新のデータを取得
+					xapo->GetLatestWaveform(tempWaveform_, FFT_SIZE);
+				}
 				
 				// FFT計算
 				ComputeFFT();
@@ -14474,8 +14555,6 @@ namespace TYEngine
 
 			// RMS（音量）更新
 			UpdateRMS();
-			// FFT（周波数解析）更新
-			UpdateFFT();
 			// 波形データ更新
 			UpdateWaveform();
 			// スペクトラムのスムージング処理
@@ -14484,7 +14563,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateRMS()
 		{
-			// 最新サンプルのRMSを計算
+			// 同期された波形からRMSを計算
 			double sum = 0.0;
 			for (int i = 0; i < FFT_SIZE; ++i)
 			{
@@ -14496,20 +14575,8 @@ namespace TYEngine
 			rmsHistory_[rmsIndex_] = rms;
 			rmsIndex_ = (rmsIndex_ + 1) % RMS_HISTORY_SIZE;
 
-			// 遅延バッファ
-			rmsDelay_[rmsDelayIndex_] = rms;
-			rmsDelayIndex_ = (rmsDelayIndex_ + 1) % DELAY_FRAMES;
-
-			syncedRMS_ = rmsDelay_[rmsDelayIndex_]; // 遅延後のRMS
-		}
-
-		void AudioAnalyzer::UpdateFFT()
-		{
-			// 遅延バッファにコピー
-			for (int i = 0; i < FFT_SIZE; i++)
-				fftDelay_[fftDelayIndex_][i] = latestFFT_[i];
-
-			fftDelayIndex_ = (fftDelayIndex_ + 1) % DELAY_FRAMES;
+			// すでに同期された波形から直接計算しているため、このRMSがそのまま同期された値となる
+			syncedRMS_ = rms; 
 		}
 
 		void AudioAnalyzer::UpdateWaveform()
@@ -14640,11 +14707,8 @@ namespace TYEngine
 				return;
 			}
 
-			// 遅延FFTでスペクトラム作成
-			const auto& fft = fftDelay_[fftDelayIndex_];
-
+			// 同期済みの最新FFT結果からスペクトラム作成
 			MakeLogSpectrum(
-				fft,
 				Audio::GetInstance()->GetAnalyzerSampleRate(),
 				BANDS
 			);
@@ -14749,7 +14813,6 @@ namespace TYEngine
 		}
 
 		void AudioAnalyzer::MakeLogSpectrum(
-			const std::array<float, FFT_SIZE>& fft,
 			int sampleRate,
 			int bands)
 		{
@@ -14782,7 +14845,7 @@ namespace TYEngine
 				// 該当範囲のFFT値を平均化
 				for (int i = binStart; i <= binEnd; i++)
 				{
-					float v = fft[i];
+					float v = latestFFT_[i];
 					v = log10f(1.0f + v * 1.0f); // 値も対数化してデシベルっぽく
 					sum += v;
 					count++;
@@ -14963,6 +15026,11 @@ namespace TYEngine
 				xapo->SetEQGain(low, mid, high);
 				xapo->SetFiltersHz(lp, hp, bp);
 			}
+
+			// 同期遅延（レイテンシ）調整スライダーを追加
+			ImGui::Separator();
+			ImGui::Text("Synchronization Settings");
+			ImGui::SliderFloat("Latency Offset", &latencyOffsetSec_, 0.0f, 0.5f, "%.3f sec");
 		}
 
 		void AudioAnalyzer::Draw()
@@ -15025,7 +15093,6 @@ namespace TYEngine
 			static const int FFT_SIZE = 1024;        ///< FFTサンプル数
 			static const int BANDS = 24;              ///< 周波数帯域分割数
 			static const int RMS_HISTORY_SIZE = 120; ///< RMS履歴保持数（60fps換算で2秒分）
-			static const int DELAY_FRAMES = 5;       ///< 解析遅延フレーム数
 
 		public:
 			/// <summary>コンストラクタ。</summary>
@@ -15041,6 +15108,13 @@ namespace TYEngine
 			/// ImGuiによるデバッグ描画。
 			/// </summary>
 			void Draw();
+
+			/// <summary>解析対象のオーディオハンドルを設定する</summary>
+			void SetPlayHandle(int playHandle) { playHandle_ = playHandle; }
+
+			/// <summary>レイテンシ補正オフセット（秒）を設定する</summary>
+			void SetLatencyOffset(float offsetSec) { latencyOffsetSec_ = offsetSec; }
+			float GetLatencyOffset() const { return latencyOffsetSec_; }
 
 			/// <summary>
 			/// 同期されたRMS（音圧）値を取得する。
@@ -15071,7 +15145,6 @@ namespace TYEngine
 		private:
 			// 内部処理
 			void UpdateRMS();
-			void UpdateFFT();
 			void UpdateWaveform();
 			void UpdateSpectrumSmoothing();
 
@@ -15079,7 +15152,6 @@ namespace TYEngine
 			void UpdateBand();
 
 			void MakeLogSpectrum(
-				const std::array<float, FFT_SIZE>& fft,
 				int sampleRate,
 				int bands);
 
@@ -15115,14 +15187,7 @@ namespace TYEngine
 			float rmsHistory_[RMS_HISTORY_SIZE] = {};
 			int rmsIndex_ = 0;
 
-			float rmsDelay_[DELAY_FRAMES] = {};
-			int rmsDelayIndex_ = 0;
-
 			float syncedRMS_ = 0.0f;
-
-			// ---- FFT 関連 ----
-			std::array<std::array<float, FFT_SIZE>, DELAY_FRAMES> fftDelay_;
-			int fftDelayIndex_ = 0;
 
 			std::vector<float> waveform_;  // UI 用の波形
 			std::vector<float> waveformScroll_;  // スクロール用のリングバッファ
@@ -15137,6 +15202,11 @@ namespace TYEngine
 			float high_ = 0.0f;
 
 			std::string soundCategory_ = "";
+
+			// ---- 同期 関連 ----
+			int playHandle_ = -1;
+			float latencyOffsetSec_ = 0.08f; // デフォルトのレイテンシ補正（80ms）
+
 
 		};
 
@@ -16304,6 +16374,28 @@ namespace TYEngine
 			return buffer;
 		}
 
+		bool Audio::IsPlaying(int resourceNum)
+		{
+			if (resourceNum < 0 || resourceNum >= kMaxPlayWave || sourceVoices_[resourceNum] == nullptr)
+			{
+				return false;
+			}
+			XAUDIO2_VOICE_STATE state;
+			sourceVoices_[resourceNum]->GetState(&state, XAUDIO2_VOICE_NOSAMPLESPLAYED);
+			return state.BuffersQueued > 0;
+		}
+
+		UINT64 Audio::GetPlaybackSamples(int resourceNum)
+		{
+			if (resourceNum < 0 || resourceNum >= kMaxPlayWave || sourceVoices_[resourceNum] == nullptr)
+			{
+				return 0;
+			}
+			XAUDIO2_VOICE_STATE state;
+			sourceVoices_[resourceNum]->GetState(&state, 0);
+			return state.SamplesPlayed;
+		}
+
 	} // namespace Audio
 } // namespace TYEngine
 
@@ -16506,6 +16598,12 @@ namespace TYEngine
 				analyzerSubmix_->GetVoiceDetails(&submixDetails);
 				return submixDetails.InputSampleRate;
 			}
+
+			/// <summary>指定した再生ハンドルのボイスが再生中かどうかを取得する</summary>
+			bool IsPlaying(int resourceNum);
+
+			/// <summary>指定した再生ハンドルの現在の再生サンプル数を取得する</summary>
+			UINT64 GetPlaybackSamples(int resourceNum);
 
 			SoundData& GetSoundData(const std::string& filename)
 			{
@@ -17455,8 +17553,8 @@ namespace TYEngine
 		MyAnalyzerXAPO::MyAnalyzerXAPO()
 			: CXAPOParametersBase(&regProps, nullptr, 0, TRUE)
 		{
-			// リングバッファの初期サイズ確保。十分な大きさ（例: 4096）
-			ringBuffer_.resize(4096, 0.0f);
+			// リングバッファの初期サイズ確保。十分な大きさ（例: 32768 = 44.1kHz時で約0.74秒分）
+			ringBuffer_.resize(32768, 0.0f);
 		}
 
 		MyAnalyzerXAPO::~MyAnalyzerXAPO() {}
@@ -17572,9 +17670,9 @@ namespace TYEngine
 					}
 					monoSample /= channels_;
 
-					size_t idx = writeIndex_.load(std::memory_order_relaxed);
-					ringBuffer_[idx] = monoSample;
-					writeIndex_.store((idx + 1) % ringBuffer_.size(), std::memory_order_release);
+					uint64_t idx = writeIndex_.load(std::memory_order_relaxed);
+					ringBuffer_[idx % ringBuffer_.size()] = monoSample;
+					writeIndex_.store(idx + 1, std::memory_order_release);
 				}
 				return;
 			}
@@ -17619,9 +17717,9 @@ namespace TYEngine
 				}
 				monoSample /= channels_;
 
-				size_t idx = writeIndex_.load(std::memory_order_relaxed);
-				ringBuffer_[idx] = monoSample;
-				writeIndex_.store((idx + 1) % ringBuffer_.size(), std::memory_order_release);
+				uint64_t idx = writeIndex_.load(std::memory_order_relaxed);
+				ringBuffer_[idx % ringBuffer_.size()] = monoSample;
+				writeIndex_.store(idx + 1, std::memory_order_release);
 			}
 
 			// フィルタがNaN汚染された場合は、BiquadFilterの内部ステートをリセットして復帰させる
@@ -17641,7 +17739,7 @@ namespace TYEngine
 		{
 			if (ringBuffer_.empty()) return;
 
-			size_t currentWriteIdx = writeIndex_.load(std::memory_order_acquire);
+			uint64_t currentWriteIdx = writeIndex_.load(std::memory_order_acquire);
 			size_t bufferSize = ringBuffer_.size();
 
 			if (dest.size() < count)
@@ -17651,7 +17749,41 @@ namespace TYEngine
 
 			for (size_t i = 0; i < count; ++i)
 			{
-				size_t idx = (currentWriteIdx + bufferSize - count + i) % bufferSize;
+				// 累積インデックス currentWriteIdx から count 分遡って取得
+				size_t idx = static_cast<size_t>((currentWriteIdx + bufferSize - count + i) % bufferSize);
+				dest[i] = ringBuffer_[idx];
+			}
+		}
+
+		void MyAnalyzerXAPO::GetWaveformAtSample(uint64_t targetSample, std::vector<float>& dest, size_t count)
+		{
+			if (ringBuffer_.empty()) return;
+
+			size_t bufferSize = ringBuffer_.size();
+			if (dest.size() < count)
+			{
+				dest.resize(count);
+			}
+
+			uint64_t currentWriteIdx = writeIndex_.load(std::memory_order_acquire);
+
+			// targetSampleが未来にある場合は現在の書き込みインデックスにクリップ
+			if (targetSample > currentWriteIdx)
+			{
+				targetSample = currentWriteIdx;
+			}
+			// targetSampleが過去すぎてバッファの範囲外になった場合は、最も古い利用可能な位置にクリップ
+			if (currentWriteIdx > bufferSize && targetSample < currentWriteIdx - bufferSize)
+			{
+				targetSample = currentWriteIdx - bufferSize + count;
+			}
+
+			// targetSample を終端とする範囲の波形データをコピー
+			uint64_t startSample = (targetSample >= count) ? (targetSample - count) : 0;
+
+			for (size_t i = 0; i < count; ++i)
+			{
+				size_t idx = static_cast<size_t>((startSample + i) % bufferSize);
 				dest[i] = ringBuffer_[idx];
 			}
 		}
@@ -17752,6 +17884,9 @@ namespace TYEngine
 			// スレッドセーフに最新波形データを取得する
 			void GetLatestWaveform(std::vector<float>& dest, size_t count);
 
+			// 指定した累積サンプル位置を基準に波形を切り出す
+			void GetWaveformAtSample(uint64_t targetSample, std::vector<float>& dest, size_t count);
+
 			// サンプリングレートとチャンネル数のゲッター
 			UINT32 GetSampleRate() const { return sampleRate_; }
 			UINT32 GetChannels() const { return channels_; }
@@ -17794,7 +17929,7 @@ namespace TYEngine
 
 			// スレッドセーフリングバッファ
 			std::vector<float> ringBuffer_;
-			std::atomic<size_t> writeIndex_{0};
+			std::atomic<uint64_t> writeIndex_{0};
 
 			// イコライザー用フィルタ (外側: バンド数, 内側: チャンネル数)
 			// 例: index 0=Low, 1=Mid, 2=High

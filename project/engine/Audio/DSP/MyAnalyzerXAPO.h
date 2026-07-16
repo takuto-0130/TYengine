@@ -87,6 +87,9 @@ namespace TYEngine
 			// スレッドセーフに最新波形データを取得する
 			void GetLatestWaveform(std::vector<float>& dest, size_t count);
 
+			// 指定した累積サンプル位置を基準に波形を切り出す
+			void GetWaveformAtSample(uint64_t targetSample, std::vector<float>& dest, size_t count);
+
 			// サンプリングレートとチャンネル数のゲッター
 			UINT32 GetSampleRate() const { return sampleRate_; }
 			UINT32 GetChannels() const { return channels_; }
@@ -129,7 +132,7 @@ namespace TYEngine
 
 			// スレッドセーフリングバッファ
 			std::vector<float> ringBuffer_;
-			std::atomic<size_t> writeIndex_{0};
+			std::atomic<uint64_t> writeIndex_{0};
 
 			// イコライザー用フィルタ (外側: バンド数, 内側: チャンネル数)
 			// 例: index 0=Low, 1=Mid, 2=High

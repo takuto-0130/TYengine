@@ -19,7 +19,6 @@ namespace TYEngine
 			static const int FFT_SIZE = 1024;        ///< FFTサンプル数
 			static const int BANDS = 24;              ///< 周波数帯域分割数
 			static const int RMS_HISTORY_SIZE = 120; ///< RMS履歴保持数（60fps換算で2秒分）
-			static const int DELAY_FRAMES = 5;       ///< 解析遅延フレーム数
 
 		public:
 			/// <summary>コンストラクタ。</summary>
@@ -35,6 +34,13 @@ namespace TYEngine
 			/// ImGuiによるデバッグ描画。
 			/// </summary>
 			void Draw();
+
+			/// <summary>解析対象のオーディオハンドルを設定する</summary>
+			void SetPlayHandle(int playHandle) { playHandle_ = playHandle; }
+
+			/// <summary>レイテンシ補正オフセット（秒）を設定する</summary>
+			void SetLatencyOffset(float offsetSec) { latencyOffsetSec_ = offsetSec; }
+			float GetLatencyOffset() const { return latencyOffsetSec_; }
 
 			/// <summary>
 			/// 同期されたRMS（音圧）値を取得する。
@@ -65,7 +71,6 @@ namespace TYEngine
 		private:
 			// 内部処理
 			void UpdateRMS();
-			void UpdateFFT();
 			void UpdateWaveform();
 			void UpdateSpectrumSmoothing();
 
@@ -73,7 +78,6 @@ namespace TYEngine
 			void UpdateBand();
 
 			void MakeLogSpectrum(
-				const std::array<float, FFT_SIZE>& fft,
 				int sampleRate,
 				int bands);
 
@@ -109,14 +113,7 @@ namespace TYEngine
 			float rmsHistory_[RMS_HISTORY_SIZE] = {};
 			int rmsIndex_ = 0;
 
-			float rmsDelay_[DELAY_FRAMES] = {};
-			int rmsDelayIndex_ = 0;
-
 			float syncedRMS_ = 0.0f;
-
-			// ---- FFT 関連 ----
-			std::array<std::array<float, FFT_SIZE>, DELAY_FRAMES> fftDelay_;
-			int fftDelayIndex_ = 0;
 
 			std::vector<float> waveform_;  // UI 用の波形
 			std::vector<float> waveformScroll_;  // スクロール用のリングバッファ
@@ -131,6 +128,11 @@ namespace TYEngine
 			float high_ = 0.0f;
 
 			std::string soundCategory_ = "";
+
+			// ---- 同期 関連 ----
+			int playHandle_ = -1;
+			float latencyOffsetSec_ = 0.08f; // デフォルトのレイテンシ補正（80ms）
+
 
 		};
 

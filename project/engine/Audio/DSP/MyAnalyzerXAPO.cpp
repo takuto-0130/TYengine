@@ -28,8 +28,8 @@ namespace TYEngine
 		MyAnalyzerXAPO::MyAnalyzerXAPO()
 			: CXAPOParametersBase(&regProps, nullptr, 0, TRUE)
 		{
-			// リングバッファの初期サイズ確保。十分な大きさ（例: 4096）
-			ringBuffer_.resize(4096, 0.0f);
+			// リングバッファの初期サイズ確保。十分な大きさ（例: 32768 = 44.1kHz時で約0.74秒分）
+			ringBuffer_.resize(32768, 0.0f);
 		}
 
 		MyAnalyzerXAPO::~MyAnalyzerXAPO() {}
@@ -145,9 +145,9 @@ namespace TYEngine
 					}
 					monoSample /= channels_;
 
-					size_t idx = writeIndex_.load(std::memory_order_relaxed);
-					ringBuffer_[idx] = monoSample;
-					writeIndex_.store((idx + 1) % ringBuffer_.size(), std::memory_order_release);
+					uint64_t idx = writeIndex_.load(std::memory_order_relaxed);
+					ringBuffer_[idx % ringBuffer_.size()] = monoSample;
+					writeIndex_.store(idx + 1, std::memory_order_release);
 				}
 				return;
 			}
@@ -192,9 +192,9 @@ namespace TYEngine
 				}
 				monoSample /= channels_;
 
-				size_t idx = writeIndex_.load(std::memory_order_relaxed);
-				ringBuffer_[idx] = monoSample;
-				writeIndex_.store((idx + 1) % ringBuffer_.size(), std::memory_order_release);
+				uint64_t idx = writeIndex_.load(std::memory_order_relaxed);
+				ringBuffer_[idx % ringBuffer_.size()] = monoSample;
+				writeIndex_.store(idx + 1, std::memory_order_release);
 			}
 
 			// フィルタがNaN汚染された場合は、BiquadFilterの内部ステートをリセットして復帰させる
@@ -214,7 +214,7 @@ namespace TYEngine
 		{
 			if (ringBuffer_.empty()) return;
 
-			size_t currentWriteIdx = writeIndex_.load(std::memory_order_acquire);
+			uint64_t currentWriteIdx = writeIndex_.load(std::memory_order_acquire);
 			size_t bufferSize = ringBuffer_.size();
 
 			if (dest.size() < count)
@@ -224,7 +224,41 @@ namespace TYEngine
 
 			for (size_t i = 0; i < count; ++i)
 			{
-				size_t idx = (currentWriteIdx + bufferSize - count + i) % bufferSize;
+				// 累積インデックス currentWriteIdx から count 分遡って取得
+				size_t idx = static_cast<size_t>((currentWriteIdx + bufferSize - count + i) % bufferSize);
+				dest[i] = ringBuffer_[idx];
+			}
+		}
+
+		void MyAnalyzerXAPO::GetWaveformAtSample(uint64_t targetSample, std::vector<float>& dest, size_t count)
+		{
+			if (ringBuffer_.empty()) return;
+
+			size_t bufferSize = ringBuffer_.size();
+			if (dest.size() < count)
+			{
+				dest.resize(count);
+			}
+
+			uint64_t currentWriteIdx = writeIndex_.load(std::memory_order_acquire);
+
+			// targetSampleが未来にある場合は現在の書き込みインデックスにクリップ
+			if (targetSample > currentWriteIdx)
+			{
+				targetSample = currentWriteIdx;
+			}
+			// targetSampleが過去すぎてバッファの範囲外になった場合は、最も古い利用可能な位置にクリップ
+			if (currentWriteIdx > bufferSize && targetSample < currentWriteIdx - bufferSize)
+			{
+				targetSample = currentWriteIdx - bufferSize + count;
+			}
+
+			// targetSample を終端とする範囲の波形データをコピー
+			uint64_t startSample = (targetSample >= count) ? (targetSample - count) : 0;
+
+			for (size_t i = 0; i < count; ++i)
+			{
+				size_t idx = static_cast<size_t>((startSample + i) % bufferSize);
 				dest[i] = ringBuffer_[idx];
 			}
 		}

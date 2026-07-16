@@ -20,7 +20,12 @@ void Stage::Init()
     if (!jsonManager_->Root().contains("beatScale")) {
         jsonManager_->Set("beatScale", 1.05f);
     }
+    if (!jsonManager_->Root().contains("timeLimit")) {
+        jsonManager_->Set("timeLimit", 60.0f);
+    }
     jsonManager_->Save();
+
+    timeLimit_ = jsonManager_->Get<float>("timeLimit", 60.0f);
 
     gameAudio_ = GameAudio::GetInstance();
 
@@ -64,6 +69,7 @@ void Stage::Reset()
     railManager_->Reset();
     comboManager_->Init();
     scoreManager_->Init();
+    elapsedTime_ = 0.0f;
 }
 
 void Stage::Update()
@@ -71,6 +77,9 @@ void Stage::Update()
     isEdit_ = false;
 
     DebugUI();
+
+    // 経過時間の測定
+    elapsedTime_ += Timer::GetInstance()->GetDeltaTime();
 
     // レール更新（カメラ移動・トリガー判定）
     railManager_->Update();
@@ -200,4 +209,13 @@ void Stage::DebugUI()
     DrawRailGeneratorDebugUI(songList_[currentSongIndex_], railManager_.get());
 
 #endif // _DEBUG
+}
+
+bool Stage::IsFinished()
+{
+    if (timeLimit_ > 0.0f && elapsedTime_ >= timeLimit_)
+    {
+        return true;
+    }
+    return EndRail();
 }

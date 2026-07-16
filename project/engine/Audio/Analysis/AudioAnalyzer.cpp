@@ -15,12 +15,6 @@ namespace TYEngine
 		{
 			spectrumSmoothed_.resize(BANDS, 0.0f);
 
-			for (auto& f : fftDelay_)
-				f.fill(0.0f);
-
-			for (int i = 0; i < DELAY_FRAMES; i++)
-				rmsDelay_[i] = 0.0f;
-
 			waveform_.resize(441);   // 10ms
 			waveformScroll_.resize(2000, 0.0f); // 2000 サンプル分のスクロール領域
 			waveformWriteIndex_ = 0;
@@ -39,11 +33,29 @@ namespace TYEngine
 
 		void AudioAnalyzer::Update()
 		{
-			// XAPOから最新波形を安全に取得
-			auto xapo = Audio::GetInstance()->GetAnalyzerXAPO(soundCategory_);
+			auto audio = Audio::GetInstance();
+			auto xapo = audio->GetAnalyzerXAPO(soundCategory_);
 			if (xapo)
 			{
-				xapo->GetLatestWaveform(tempWaveform_, FFT_SIZE);
+				int sampleRate = xapo->GetSampleRate();
+				if (sampleRate == 0) sampleRate = 44100;
+
+				// 再生ハンドルが設定され、再生中の場合は再生位置に同期したサンプルを取得
+				if (playHandle_ != -1 && audio->IsPlaying(playHandle_))
+				{
+					uint64_t samplesPlayed = audio->GetPlaybackSamples(playHandle_);
+					int64_t latencySamples = static_cast<int64_t>(latencyOffsetSec_ * sampleRate);
+					uint64_t targetSample = (samplesPlayed >= static_cast<uint64_t>(latencySamples)) 
+						? (samplesPlayed - latencySamples) 
+						: 0;
+
+					xapo->GetWaveformAtSample(targetSample, tempWaveform_, FFT_SIZE);
+				}
+				else
+				{
+					// それ以外は最新のデータを取得
+					xapo->GetLatestWaveform(tempWaveform_, FFT_SIZE);
+				}
 				
 				// FFT計算
 				ComputeFFT();
@@ -54,8 +66,6 @@ namespace TYEngine
 
 			// RMS（音量）更新
 			UpdateRMS();
-			// FFT（周波数解析）更新
-			UpdateFFT();
 			// 波形データ更新
 			UpdateWaveform();
 			// スペクトラムのスムージング処理
@@ -64,7 +74,7 @@ namespace TYEngine
 
 		void AudioAnalyzer::UpdateRMS()
 		{
-			// 最新サンプルのRMSを計算
+			// 同期された波形からRMSを計算
 			double sum = 0.0;
 			for (int i = 0; i < FFT_SIZE; ++i)
 			{
@@ -76,20 +86,8 @@ namespace TYEngine
 			rmsHistory_[rmsIndex_] = rms;
 			rmsIndex_ = (rmsIndex_ + 1) % RMS_HISTORY_SIZE;
 
-			// 遅延バッファ
-			rmsDelay_[rmsDelayIndex_] = rms;
-			rmsDelayIndex_ = (rmsDelayIndex_ + 1) % DELAY_FRAMES;
-
-			syncedRMS_ = rmsDelay_[rmsDelayIndex_]; // 遅延後のRMS
-		}
-
-		void AudioAnalyzer::UpdateFFT()
-		{
-			// 遅延バッファにコピー
-			for (int i = 0; i < FFT_SIZE; i++)
-				fftDelay_[fftDelayIndex_][i] = latestFFT_[i];
-
-			fftDelayIndex_ = (fftDelayIndex_ + 1) % DELAY_FRAMES;
+			// すでに同期された波形から直接計算しているため、このRMSがそのまま同期された値となる
+			syncedRMS_ = rms; 
 		}
 
 		void AudioAnalyzer::UpdateWaveform()
@@ -220,11 +218,8 @@ namespace TYEngine
 				return;
 			}
 
-			// 遅延FFTでスペクトラム作成
-			const auto& fft = fftDelay_[fftDelayIndex_];
-
+			// 同期済みの最新FFT結果からスペクトラム作成
 			MakeLogSpectrum(
-				fft,
 				Audio::GetInstance()->GetAnalyzerSampleRate(),
 				BANDS
 			);
@@ -329,7 +324,6 @@ namespace TYEngine
 		}
 
 		void AudioAnalyzer::MakeLogSpectrum(
-			const std::array<float, FFT_SIZE>& fft,
 			int sampleRate,
 			int bands)
 		{
@@ -362,7 +356,7 @@ namespace TYEngine
 				// 該当範囲のFFT値を平均化
 				for (int i = binStart; i <= binEnd; i++)
 				{
-					float v = fft[i];
+					float v = latestFFT_[i];
 					v = log10f(1.0f + v * 1.0f); // 値も対数化してデシベルっぽく
 					sum += v;
 					count++;
@@ -543,6 +537,11 @@ namespace TYEngine
 				xapo->SetEQGain(low, mid, high);
 				xapo->SetFiltersHz(lp, hp, bp);
 			}
+
+			// 同期遅延（レイテンシ）調整スライダーを追加
+			ImGui::Separator();
+			ImGui::Text("Synchronization Settings");
+			ImGui::SliderFloat("Latency Offset", &latencyOffsetSec_, 0.0f, 0.5f, "%.3f sec");
 		}
 
 		void AudioAnalyzer::Draw()

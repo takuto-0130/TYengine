@@ -1,3 +1,4 @@
 {
-  "beatScale": 1.05
+  "beatScale": 1.05,
+  "timeLimit": 60.0
 }

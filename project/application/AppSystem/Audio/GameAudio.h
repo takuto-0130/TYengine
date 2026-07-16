@@ -40,6 +40,16 @@ private:
     void OnInit() override;
 
 public:
+    int Play(const std::string& filename, bool isLoop, SoundCategory category)
+    {
+        int handle = TYEngine::AudioSystem::AudioSystemBase<SoundCategory>::Play(filename, isLoop, category);
+        if (category == SoundCategory::BGM)
+        {
+            audioAnalyzer_.SetPlayHandle(handle);
+        }
+        return handle;
+    }
+
     void Update();
 
     void InitBeatAnalyzer(const std::string& filename, SoundCategory soundCategory = SoundCategory::BGM);

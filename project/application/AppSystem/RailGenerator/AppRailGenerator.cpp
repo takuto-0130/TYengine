@@ -298,6 +298,8 @@ void GenerateStageFromAudio(const std::string& soundFilename, RailManager* railM
 
 void DrawRailGeneratorDebugUI(const std::string& currentSoundFilename, RailManager* railManager)
 {
+    (void)(currentSoundFilename);
+    (void)(railManager);
 #ifdef _DEBUG
     ImGui::Begin("Rail Generator Debug");
 

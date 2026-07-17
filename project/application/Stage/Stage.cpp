@@ -213,9 +213,12 @@ void Stage::DebugUI()
 
 bool Stage::IsFinished()
 {
+#ifdef _DEBUG
+    return EndRail();
+#else
     if (timeLimit_ > 0.0f && elapsedTime_ >= timeLimit_)
     {
         return true;
     }
-    return EndRail();
+#endif // _DEBUG
 }

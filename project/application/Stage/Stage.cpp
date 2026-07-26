@@ -220,5 +220,6 @@ bool Stage::IsFinished()
     {
         return true;
     }
+    return false;
 #endif // _DEBUG
 }

@@ -14,6 +14,10 @@
 #define JSONMGR_WITH_IMGUI
 #include "Utils/Json/JsonManager.h"
 
+/// <summary>
+/// ゲーム内の1ステージを管理するクラス。
+/// レール移動、プレイヤー、敵マネージャ、スコア・コンボ管理を統合してゲーム進行を行う。
+/// </summary>
 class Stage
 {
 public:

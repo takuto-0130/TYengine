@@ -6,6 +6,9 @@ namespace TYEngine
 {
 	namespace AudioSystem
 	{
+		/// <summary>
+		/// 音声データ（WAV波形データ）を解析し、自動でBPM（1分間あたりの拍数）を推定算出するクラス。
+		/// </summary>
 		class BPMDetector
 		{
 		public:

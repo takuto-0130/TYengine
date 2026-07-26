@@ -6,6 +6,7 @@ namespace TYEngine
 {
     namespace AudioSystem
     {
+        /// <summary>デジタルイコライザ・フィルタの特性種別列挙型。</summary>
         enum class FilterType
         {
             LowPassFilter,
@@ -16,6 +17,10 @@ namespace TYEngine
             Peaking
         };
 
+        /// <summary>
+        /// 2次IIR（Biquad）デジタルフィルタ演算クラス。
+        /// ローパス、ハイパス、バンドパス、シェルビング等の周波数特性フィルタリング処理を提供する。
+        /// </summary>
         class BiquadFilter
         {
         public:

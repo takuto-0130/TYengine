@@ -5,6 +5,10 @@
 #include <string>
 #include <memory>
 
+/// <summary>
+/// UIエレメント管理マネージャクラス。
+/// アプリケーション全体のUIの登録・取得・一括更新・一括描画を管理する。
+/// </summary>
 class UIManager : public TYEngine::Utility::SingletonObject<UIManager>
 {
 	friend class TYEngine::Utility::SingletonObject<UIManager>;

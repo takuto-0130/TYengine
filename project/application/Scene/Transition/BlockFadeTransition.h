@@ -12,6 +12,9 @@ namespace TYEngine::Graphics
 	class Sprite;
 }
 
+/// <summary>
+/// ブロックフェード遷移アニメーションの行数・列数・時間長・プロシージャル形状パラメータを保持する構造体。
+/// </summary>
 struct BlockFadeConfig
 {
 	int   cols = 32;
@@ -37,6 +40,9 @@ class BlockFadeTransitionStateEntering;
 class BlockFadeTransitionStateHold;
 class BlockFadeTransitionStateExiting;
 
+/// <summary>
+/// グリッド状の2Dタイルブロックアニメーションを用いて画面切替を行う遷移エフェクトクラス。
+/// </summary>
 class BlockFadeTransition : public StateMachineTransition<BlockFadeTransition>
 {
 	friend class BlockFadeTransitionStateIdle;

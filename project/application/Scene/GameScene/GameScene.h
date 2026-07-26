@@ -53,7 +53,8 @@ class GameSceneStateFadeOut;
 class GameSceneStateDebugEdit;
 
 /// <summary>
-/// ゲームシーン
+/// ゲーム本編メインシーンクラス。
+/// 状態マシン（GameSceneState）によってロード、フェードイン、ゲームプレイ、ポーズ、死亡、クリア、リザルト等の各状態遷移を管理する。
 /// </summary>
 class GameScene : 
 	public TYEngine::Framework::IScene

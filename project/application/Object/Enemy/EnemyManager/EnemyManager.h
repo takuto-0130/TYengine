@@ -43,18 +43,40 @@ public:
 	void Pop();
 
 public:
+	/// <summary>ターゲット（プレイヤー等）のワールド位置座標ポインタを設定する。</summary>
+	/// <param name="pos">ワールド位置ベクトルポインタ。</param>
 	void SetTargetPos(TYEngine::Utility::Vector3* pos);
 
+	/// <summary>ビート解析クラスを設定する。</summary>
+	/// <param name="beatAnalyzer">BeatAnalyzer ポインタ。</param>
 	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
 
+	/// <summary>ゲーム中フラグを設定する。</summary>
+	/// <param name="is">ゲーム中なら true。</param>
 	void SetIsInGame(bool is) { isInGame_ = is; }
 
-	/// <summary>レティクルに最も近い未ロックオンの敵を取得する</summary>
+	/// <summary>
+	/// レティクルに最も近い未ロックオンの敵を取得する。
+	/// </summary>
+	/// <param name="camera">カメラポインタ。</param>
+	/// <param name="reticleNDC">レティクルの NDC 座標。</param>
+	/// <param name="lockRadiusNDC">ロックオン検索半径（NDC 単位）。</param>
+	/// <param name="alreadyLockedEnemies">既にロックオン済みの敵リスト。</param>
+	/// <returns>最適なターゲット敵のポインタ（無ければ nullptr）。</returns>
 	Enemy* GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera, const TYEngine::Utility::Vector2& reticleNDC, float lockRadiusNDC, const std::vector<Enemy*>& alreadyLockedEnemies);
 
-	/// <summary>ポインタが現在も有効（生存しているか）確認する</summary>
+	/// <summary>
+	/// 指定した敵ポインタが現在も生存・有効か確認する。
+	/// </summary>
+	/// <param name="enemyPtr">判定対象の敵ポインタ。</param>
+	/// <returns>有効であれば true。</returns>
 	bool IsValidEnemy(const Enemy* enemyPtr) const;
 
+	/// <summary>
+	/// 敵がアクティブ状態（攻撃・移動可能）かを判定する。
+	/// </summary>
+	/// <param name="enemyPtr">判定対象の敵ポインタ。</param>
+	/// <returns>アクティブなら true。</returns>
 	bool IsActive(Enemy* enemyPtr) const
 	{
 		if (enemyPtr->GetStateMachine().GetCurrentState() == EnemyState::ACTIVE)
@@ -64,8 +86,11 @@ public:
 		return false;
 	}
 
+	/// <summary>敵の自然ポップ（スポーン）フラグを無効化する。</summary>
 	void DisablePopFlag() { isPopFlag_ = false; }
 
+	/// <summary>レール移動マネージャを設定する。</summary>
+	/// <param name="railManager">RailManager ポインタ。</param>
 	void SetRailManager(RailManager* railManager) { railManager_ = railManager; }
 
 private:
@@ -95,12 +120,12 @@ private:
 	/// <summary>敵の出現深度（最大）。</summary>
 	float enemyPopDepthMax_ = 0.0f;
 	/// <summary>横移動の最大幅（出現範囲）。</summary>
-	float xRange = 0.0f;
+	float xRange_ = 0.0f;
 	/// <summary>縦移動の最大高さ（出現範囲）。</summary>
-	float yRange = 0.0f;
+	float yRange_ = 0.0f;
 
 	/// <summary>乱数生成器。</summary>
-	std::random_device rd;
+	std::random_device rd_;
 
 	/// <summary>出現タイマー。</summary>
 	float timer_ = 0.0f;

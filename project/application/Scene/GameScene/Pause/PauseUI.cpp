@@ -1,7 +1,7 @@
 #include "PauseUI.h"
 #include "Sprite.h"
 #include "TextureManager.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Timer.h"
 #include "Ease.h"
 #include "imgui.h"

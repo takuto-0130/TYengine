@@ -1,4 +1,5 @@
 #include "TYFrameWork.h"
+#include "EngineConfig.h"
 
 namespace TYEngine
 {
@@ -10,7 +11,7 @@ namespace TYEngine
 		using namespace Core;
 		using namespace Graphics;
 
-		void TYFrameWork::run()
+		void TYFramework::Run()
 		{
 			// 初期化
 			Initialize();
@@ -32,8 +33,11 @@ namespace TYEngine
 			Finalize();
 		}
 
-		void TYFrameWork::Initialize()
+		void TYFramework::Initialize()
 		{
+			// エンジン設定のロード
+			EngineConfig::Load();
+
 #pragma region // 基盤システム初期化
 
 			// ウィンドウズアプリケーション
@@ -55,13 +59,13 @@ namespace TYEngine
 #pragma endregion
 		}
 
-		void TYFrameWork::Finalize()
+		void TYFramework::Finalize()
 		{
 			imgui_->Finalize();
 			windowsApp_->Finalize();
 		}
 
-		void TYFrameWork::Update()
+		void TYFramework::Update()
 		{
 			input_->Update();
 			sceneManager_->Update();

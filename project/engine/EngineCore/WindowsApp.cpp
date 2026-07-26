@@ -1,7 +1,9 @@
 #include "WindowsApp.h"
+#include "Utils/JSON/JsonManager.h"
 #include "imgui/imgui_impl_dx12.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_win32.h"
+#include <string>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #pragma comment(lib, "winmm.lib")
@@ -36,23 +38,31 @@ namespace TYEngine
 			(void)hr;
 			assert(SUCCEEDED(hr));
 
-			wc.lpfnWndProc = WindowProc;
+			Utility::JsonManager jm;
+			jm.Load("EngineConfig.json");
 
-			wc.lpszClassName = L"TYengineWindowClass";
+			int width = jm.Get<int>("window.width", kClientWidth);
+			int height = jm.Get<int>("window.height", kClientHeight);
+			std::string titleStr = jm.Get<std::string>("window.title", "TYEngine");
+			std::wstring title(titleStr.begin(), titleStr.end());
 
-			wc.hInstance = GetModuleHandle(nullptr);
+			wc_.lpfnWndProc = WindowProc;
 
-			wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+			wc_.lpszClassName = L"TYengineWindowClass";
 
-			RegisterClass(&wc);
+			wc_.hInstance = GetModuleHandle(nullptr);
 
-			RECT wrc = { 0, 0, kClientWidth, kClientHeight };
+			wc_.hCursor = LoadCursor(nullptr, IDC_ARROW);
+
+			RegisterClass(&wc_);
+
+			RECT wrc = { 0, 0, width, height };
 
 			AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
-			hwnd = CreateWindow(
-				wc.lpszClassName,
-				L"TYengine",
+			hwnd_ = CreateWindow(
+				wc_.lpszClassName,
+				title.c_str(),
 				WS_OVERLAPPEDWINDOW,
 				CW_USEDEFAULT,
 				CW_USEDEFAULT,
@@ -60,11 +70,11 @@ namespace TYEngine
 				wrc.bottom - wrc.top,
 				nullptr,
 				nullptr,
-				wc.hInstance,
+				wc_.hInstance,
 				nullptr);
 
 			// ウィンドウを表示状態にする
-			ShowWindow(hwnd, SW_SHOW);
+			ShowWindow(hwnd_, SW_SHOW);
 
 			// システムタイマーの分解能を上げる（マルチメディアタイマーなどへの影響）
 			timeBeginPeriod(1);
@@ -88,7 +98,7 @@ namespace TYEngine
 
 		void WindowsApp::Finalize()
 		{
-			CloseWindow(hwnd);
+			CloseWindow(hwnd_);
 			CoUninitialize();
 		}
 

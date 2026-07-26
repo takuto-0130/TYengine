@@ -11,7 +11,7 @@ class ReticleCollider :
 {
 public:
 	/// <summary>コンストラクタ。</summary>
-	ReticleCollider(uint32_t typeID, const TYEngine::Utility::Vector3& origin, TYEngine::Utility::Vector3 dir, Reticle* reticle)
+	ReticleCollider(uint32_t typeID, const TYEngine::Utility::Vector3& origin, const TYEngine::Utility::Vector3& dir, Reticle* reticle)
 		: RayCollider(typeID, origin, dir), reticle_(reticle) {
 	}
 

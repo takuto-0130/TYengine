@@ -16,7 +16,7 @@ namespace TYEngine
 		{
 		public: // メンバ関数
 			// コンストラクタ
-			RayCollider(uint32_t typeID, const Vector3& origin, Vector3 dir)
+			RayCollider(uint32_t typeID, const Vector3& origin, const Vector3& dir)
 				: Collider(typeID), ray_(Ray{ origin,dir })
 			{}
 

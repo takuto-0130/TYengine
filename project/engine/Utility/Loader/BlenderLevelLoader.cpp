@@ -51,7 +51,7 @@ namespace TYEngine
 			}
 		}
 
-		void BlenderLevelLoader::ObjectTraversal(LevelData* levelData, json& j, std::string contains)
+		void BlenderLevelLoader::ObjectTraversal(LevelData* levelData, json& j, const std::string& contains)
 		{
 			for (json& object : j[contains])
 			{

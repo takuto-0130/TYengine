@@ -498,7 +498,7 @@ namespace TYEngine
 			}
 		}
 
-		int Audio::Play(const std::string& filename, const bool isLoop, std::string soundCategory)
+		int Audio::Play(const std::string& filename, bool isLoop, const std::string& soundCategory)
 		{
 			HRESULT result;
 

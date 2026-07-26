@@ -197,6 +197,7 @@ private: // メンバ変数
 };
 
 // --- 状態クラスの定義 ---
+/// <summary>ゲームシーンのリソース非同期/事前ロード状態クラス。</summary>
 class GameSceneStateLoad : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -206,6 +207,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンの開始フェードイン状態クラス。</summary>
 class GameSceneStateFadeIn : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -215,6 +217,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのカウントダウン準備演出状態クラス。</summary>
 class GameSceneStateReady : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -224,6 +227,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのメインゲームプレイ進行状態クラス。</summary>
 class GameSceneStatePlay : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -233,6 +237,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのポーズ（一時停止）状態クラス。</summary>
 class GameSceneStatePause : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -242,6 +247,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンの自機撃滅・ゲームオーバー演出状態クラス。</summary>
 class GameSceneStateDead : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -251,6 +257,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのステージクリア演出状態クラス。</summary>
 class GameSceneStateClear : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -260,6 +267,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのリザルト画面表示状態クラス。</summary>
 class GameSceneStateResult : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -269,6 +277,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのリトライ待ち・準備状態クラス。</summary>
 class GameSceneStateRetry : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -278,6 +287,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンの終了フェードアウト状態クラス。</summary>
 class GameSceneStateFadeOut : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -287,6 +297,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのデバッグ用レール・敵配置エディタ状態クラス。</summary>
 class GameSceneStateDebugEdit : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:

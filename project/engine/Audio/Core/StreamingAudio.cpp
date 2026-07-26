@@ -268,7 +268,7 @@ namespace TYEngine
 			return true;
 		}
 
-		bool StreamingAudio::ReadWavHeader(std::string filename, WAVHeader& header)
+		bool StreamingAudio::ReadWavHeader(const std::string& filename, WAVHeader& header)
 		{
 			std::ifstream file(filename, std::ios::binary);
 			if (!file) return false;

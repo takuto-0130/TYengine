@@ -134,6 +134,7 @@ private:
 };
 
 // --- 状態クラスの定義 ---
+/// <summary>タイトルシーンのフェードイン状態クラス。</summary>
 class TitleSceneStateFadeIn : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:
@@ -143,6 +144,7 @@ public:
 	void Exit(TitleScene& owner) override;
 };
 
+/// <summary>タイトルシーンの開始準備・演出待機状態クラス。</summary>
 class TitleSceneStateReady : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:
@@ -152,6 +154,7 @@ public:
 	void Exit(TitleScene& owner) override;
 };
 
+/// <summary>タイトルシーンのメインループ・入力待ち状態クラス。</summary>
 class TitleSceneStatePlay : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:
@@ -161,6 +164,7 @@ public:
 	void Exit(TitleScene& owner) override;
 };
 
+/// <summary>タイトルシーンの一時停止状態クラス。</summary>
 class TitleSceneStatePause : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:
@@ -170,6 +174,7 @@ public:
 	void Exit(TitleScene&) override {}
 };
 
+/// <summary>タイトルシーンのフェードアウト状態クラス。</summary>
 class TitleSceneStateFadeOut : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:

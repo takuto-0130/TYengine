@@ -1,4 +1,4 @@
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Matrix4x4Func.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -48,7 +48,7 @@ namespace TYEngine
 			return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 		}
 
-		Vector3 Subtruct(const Vector3& v1, const Vector3& v2)
+		Vector3 Subtract(const Vector3& v1, const Vector3& v2)
 		{
 			return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 		}
@@ -441,7 +441,7 @@ namespace TYEngine
 			return result;
 		}
 
-		Vector4 operator*(const Vector4& v, const float& s)
+		Vector4 operator*(const Vector4& v, float s)
 		{
 			Vector4 result;
 			result.x = v.x * s;
@@ -451,7 +451,7 @@ namespace TYEngine
 			return result;
 		}
 
-		Vector4 operator*(const float& s, const Vector4& v)
+		Vector4 operator*(float s, const Vector4& v)
 		{
 			Vector4 result;
 			result.x = v.x * s;
@@ -471,7 +471,7 @@ namespace TYEngine
 			return result;
 		}
 
-		Vector4 operator/(const Vector4& v, const float& s)
+		Vector4 operator/(const Vector4& v, float s)
 		{
 			Vector4 result;
 			result.x = v.x / s;

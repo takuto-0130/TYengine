@@ -2,7 +2,7 @@
 #include "Sprite.h"
 #include "TextureManager.h"
 #include "Timer.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
@@ -19,8 +19,8 @@ void StartUI::Init()
 	sprites_[GO]->Initialize("Resources/Texture/Go.png");
 	sprites_[GO]->SetPosition(jm_->Get<Vector2>("StartUI.Texture.Go.Position"));
 
-	timer_ = jm_->Get<float>("RetryUI.timer.reset");
-	maxTime_ = jm_->Get<float>("RetryUI.timer.max");
+	timer_ = jm_->Get<float>("StartUI.timer.reset", -1.0f);
+	maxTime_ = jm_->Get<float>("StartUI.timer.max", 3.0f);
 }
 
 void StartUI::SetGOAlpha(float t)
@@ -36,7 +36,7 @@ void StartUI::Reset()
 {
 	sprites_[READY]->SetPosition(jm_->Get<Vector2>("StartUI.Texture.Ready.Position"));
 	sprites_[GO]->SetPosition(jm_->Get<Vector2>("StartUI.Texture.Go.Position"));
-	timer_ = jm_->Get<float>("RetryUI.timer.reset");
+	timer_ = jm_->Get<float>("StartUI.timer.reset", -1.0f);
 }
 
 void StartUI::Update()
@@ -97,6 +97,6 @@ void StartUI::Move()
 	}
 	else
 	{
-		timer_ = jm_->Get<float>("RetryUI.timer.reset");
+		timer_ = jm_->Get<float>("StartUI.timer.reset", -1.0f);
 	}
 }

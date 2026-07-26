@@ -9,7 +9,8 @@ class Player;
 namespace PlayerAttack
 {
     /// <summary>
-    /// 敵の攻撃行動（ストラテジーパターン）の基底インターフェース。
+    /// プレイヤーの攻撃行動（StrategyPattern）の抽象基底インターフェース。
+    /// 弾の発射方法や攻撃パターンのアルゴリズムをカプセル化する。
     /// </summary>
     class IPAttackStrategy
     {

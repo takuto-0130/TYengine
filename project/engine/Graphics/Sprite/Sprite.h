@@ -25,7 +25,7 @@ namespace TYEngine
 			/// 指定したテクスチャを読み込み、頂点・マテリアル・行列バッファを生成する。
 			/// </summary>
 			/// <param name="textureFilePath">使用するテクスチャファイルのパス。</param>
-			void Initialize(std::string textureFilePath);
+			void Initialize(const std::string& textureFilePath);
 
 			/// <summary>
 			/// スプライトの毎フレーム更新処理。  
@@ -92,9 +92,9 @@ namespace TYEngine
 			/// <summary>アンカーポイント（中心点）を取得する。</summary>
 			const Utility::Vector2& GetAnchorPoint() const { return anchorPoint_; }
 			/// <summary>左右反転フラグを取得する。</summary>
-			const bool& GetIsFlipX() const { return isFlipX_; }
+			bool GetIsFlipX() const { return isFlipX_; }
 			/// <summary>上下反転フラグを取得する。</summary>
-			const bool& GetIsFlipY() const { return isFlipY_; }
+			bool GetIsFlipY() const { return isFlipY_; }
 			/// <summary>スケール（倍率）を取得する。</summary>
 			const Utility::Vector2& GetScale() const { return scale_; }
 
@@ -105,11 +105,11 @@ namespace TYEngine
 			/// <summary>座標を設定する。</summary>
 			void SetPosition(const Utility::Vector2& position) { position_ = position; }
 			/// <summary>回転角（ラジアン）を設定する。</summary>
-			void SetRotation(const float& rotation) { rotation_ = rotation; }
+			void SetRotation(float rotation) { rotation_ = rotation; }
 			/// <summary>色（RGBA）を設定する。</summary>
 			void SetColor(const Utility::Vector4& color) { materialData_->color = color; }
 			/// <summary>透明度（Alpha）を設定する。</summary>
-			void SetAlpha(const float& alpha) { materialData_->color.w = alpha; }
+			void SetAlpha(float alpha) { materialData_->color.w = alpha; }
 			/// <summary>サイズ（幅・高さ）を設定する。</summary>
 			void SetSize(const Utility::Vector2& size) { size_ = size; }
 			/// <summary>テクスチャ切り出し位置（左上）を設定する。</summary>

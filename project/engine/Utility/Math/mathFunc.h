@@ -40,7 +40,7 @@ namespace TYEngine
 		/// <summary>
 		/// 3次元ベクトルの減算を行う (v1 - v2)
 		/// </summary>
-		Vector3 Subtruct(const Vector3& v1, const Vector3& v2);
+		Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 
 		/// <summary>
 		/// 3次元ベクトルの加算を行う (v1 + v2)
@@ -204,13 +204,13 @@ namespace TYEngine
 
 		Vector4 operator*(const Vector4& a, const Vector4& b);
 
-		Vector4 operator*(const Vector4& v, const float& s);
+		Vector4 operator*(const Vector4& v, float s);
 
-		Vector4 operator*(const float& s, const Vector4& v);
+		Vector4 operator*(float s, const Vector4& v);
 
 		Vector4 operator/(const Vector4& a, const Vector4& b);
 
-		Vector4 operator/(const Vector4& v, const float& s);
+		Vector4 operator/(const Vector4& v, float s);
 
 	} // namespace Utility
 } // namespace TYEngine

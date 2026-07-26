@@ -183,7 +183,7 @@ namespace TYEngine
 			/// <param name="isLoop">ループ再生を行うか（デフォルト: false）。</param>
 			/// <param name="soundCategory">再生するカテゴリー（省略時は無し）。</param>
 			/// <returns>再生ハンドル（リソース番号）。エラー時は -1。</returns>
-			int Play(const std::string& filename, const bool isLoop = false, std::string soundCategory = "");
+			int Play(const std::string& filename, bool isLoop = false, const std::string& soundCategory = "");
 
 			Microsoft::WRL::ComPtr<MyAnalyzerXAPO> GetAnalyzerXAPO(const std::string& soundCategory = "");
 

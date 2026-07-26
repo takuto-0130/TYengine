@@ -2,7 +2,7 @@
 #include <fstream>
 #include "struct.h"
 #include "Matrix4x4Func.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Model.h"
 #include "ModelManager.h"
 #include "Camera.h"
@@ -127,7 +127,7 @@ namespace TYEngine
 
 			/// <summary>現在の透明度を取得する。</summary>
 			/// <returns>alpha 透明度。</returns>
-			const float& GetAlpha() const { return materialData_->color.w; }
+			float GetAlpha() const { return materialData_->color.w; }
 
 			/// <summary>透明度を設定する。</summary>
 			/// <param name="alpha">alpha 透明度。</param>
@@ -143,11 +143,11 @@ namespace TYEngine
 
 			/// <summary>ライティング有効フラグを取得する。</summary>
 			/// <returns>true でライティング有効。</returns>
-			const bool& GetIsLighting() const { return materialData_->enableLighting; }
+			bool GetIsLighting() const { return materialData_->enableLighting; }
 
 			/// <summary>ライティングの有効・無効を設定する。</summary>
 			/// <param name="isLighting">true で有効、false で無効。</param>
-			void SetIsLighting(const bool isLighting) { materialData_->enableLighting = isLighting; }
+			void SetIsLighting(bool isLighting) { materialData_->enableLighting = isLighting; }
 
 			/// <summary>環境マップ反射係数を設定する（0～1）。</summary>
 			/// <param name="environmentCoefficient">反射係数。</param>

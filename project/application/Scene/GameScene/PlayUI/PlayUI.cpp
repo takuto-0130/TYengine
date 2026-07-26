@@ -1,6 +1,6 @@
 #include "PlayUI.h"
 #include "Input.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "TextureManager.h"
 #include "../../../ScoreUI/ScoreUI.h"
 #include <AppSystem/Audio/GameAudio.h>
@@ -16,21 +16,23 @@ void PlayUI::Init()
 	input_ = Input::GetInstance();
 	shakeTime_ = jm_->Get<float>("PlayUI.UIShake");
 
+	Vector2 centerPos = jm_->Get<Vector2>("PlayUI.Texture.reticle.PositionCenter", { 640.0f, 620.0f });
+
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/RhythmBar1.png");
 	reticle_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
-	reticle_->SetPosition({ 640.0f,620.0f});
+	reticle_->SetPosition(centerPos);
 
 	reticle2_ = std::make_unique<Sprite>();
 	reticle2_->Initialize("Resources/Texture/RhythmBar2.png");
 	reticle2_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
-	reticle2_->SetPosition({ 640.0f,620.0f });
+	reticle2_->SetPosition(centerPos);
 	reticle2_->SetColor({ 1,0,0,1 });
 
 	reticle3_ = std::make_unique<Sprite>();
 	reticle3_->Initialize("Resources/Texture/RhythmBar2.png");
 	reticle3_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
-	reticle3_->SetPosition({ 640.0f,620.0f });
+	reticle3_->SetPosition(centerPos);
 	reticle3_->SetColor({ 1,0,0,1 });
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ComboText.png");
@@ -117,8 +119,11 @@ void PlayUI::Update()
 #ifdef _DEBUG
 	DebugJMApply();
 #endif // _DEBUG
-	reticle2_->SetPosition(Lerp(Vector2{ 360.0f,620.0f }, Vector2{ 640.0f,620.0f }, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
-	reticle3_->SetPosition(Lerp(Vector2{ 920.0f,620.0f }, Vector2{ 640.0f,620.0f }, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
+	Vector2 leftPos = jm_->Get<Vector2>("PlayUI.Texture.reticle.PositionLeft", { 360.0f, 620.0f });
+	Vector2 centerPos = jm_->Get<Vector2>("PlayUI.Texture.reticle.PositionCenter", { 640.0f, 620.0f });
+	Vector2 rightPos = jm_->Get<Vector2>("PlayUI.Texture.reticle.PositionRight", { 920.0f, 620.0f });
+	reticle2_->SetPosition(Lerp(leftPos, centerPos, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
+	reticle3_->SetPosition(Lerp(rightPos, centerPos, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
 	//reticle2_->SetScale(1.0f + (1.0f - GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
 
 	for (auto& sprite : sprites_)
@@ -135,7 +140,7 @@ void PlayUI::Draw()
 	reticle2_->Draw();
 	reticle3_->Draw();
 
-	for (int i = 0; i < SpriteNum; ++i)
+	for (int i = 0; i < kSpriteNum; ++i)
 	{
 		if (i != OUTLINE && i != SHIFT)
 		{

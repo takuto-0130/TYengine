@@ -62,7 +62,7 @@ namespace TYEngine
 		/// <param name="vec">回転軸（正規化されている必要あり）。</param>
 		/// <param name="theta">回転角度（ラジアン）。</param>
 		/// <returns>生成されたクォータニオン。</returns>
-		Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, const float theta);
+		Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, float theta);
 
 
 		/// <summary>

@@ -1,4 +1,7 @@
 {
+  "Confetti": {
+    "gravity": 300.0
+  },
   "Pause": {
     "PauseText": {
       "Position": {
@@ -94,6 +97,18 @@
         "AnchorPoint": {
           "x": 0.5,
           "y": 0.5
+        },
+        "PositionCenter": {
+          "x": 640.0,
+          "y": 620.0
+        },
+        "PositionLeft": {
+          "x": 360.0,
+          "y": 620.0
+        },
+        "PositionRight": {
+          "x": 920.0,
+          "y": 620.0
         }
       }
     },

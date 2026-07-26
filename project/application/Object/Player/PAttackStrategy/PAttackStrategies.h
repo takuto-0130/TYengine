@@ -24,6 +24,11 @@ namespace PlayerAttack
 	{
 		manager->Fire(type, pos, dir);
 	}
+
+    /// <summary>
+    /// プレイヤーのホーミング（ロックオン）射撃攻撃ストラテジー。
+    /// 敵のターゲットロックオンおよびホーミング弾一括発射を制御する。
+    /// </summary>
     class PHomingAttackStrategy : public IPAttackStrategy
     {
     public:

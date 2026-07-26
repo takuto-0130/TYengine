@@ -45,20 +45,30 @@ public:
     /// <returns>終了なら true。</returns>
     bool IsFinished() { return GetCurrentStage()->IsFinished(); }
 
+    /// <summary>コンボ計算マネージャを取得する。</summary>
+    /// <returns>HitStreakManager ポインタ。</returns>
     HitStreakManager* GetComboManager() 
     {
         return GetCurrentStage() ? GetCurrentStage()->GetComboManager() : nullptr;
     }
 
+    /// <summary>スコア計算マネージャを取得する。</summary>
+    /// <returns>ScoreManager ポインタ。</returns>
     ScoreManager* GetScoreManager()
     {
         return GetCurrentStage() ? GetCurrentStage()->GetScoreManager() : nullptr;
     }
 
+    /// <summary>プレイヤーオブジェクトを取得する。</summary>
+    /// <returns>Player ポインタ。</returns>
     Player* GetPlayer() { return GetCurrentStage()->GetPlayer(); }
 
+    /// <summary>レール移動マネージャを取得する。</summary>
+    /// <returns>RailManager ポインタ。</returns>
     RailManager* GetRailManager() { return GetCurrentStage()->GetRailManager(); }
 
+    /// <summary>全ステージ関連コンポーネントへBGM再生ハンドルを一括設定する。</summary>
+    /// <param name="handle">オーディオ再生ハンドル。</param>
     void SetBGMHandle(int handle) 
     { 
         GetPlayer()->SetBGMHandle(handle);

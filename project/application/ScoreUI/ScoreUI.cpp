@@ -1,7 +1,7 @@
 #include "ScoreUI.h"
 #include "SpriteBasis.h"
 #include "TextureManager.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Ease.h"
 #include "Timer.h"
 #include "Random.h"

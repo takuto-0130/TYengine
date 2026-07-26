@@ -113,7 +113,7 @@ public:
 	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
 
 private:
-	void StageObjectBeatScale();
+	void UpdateStageObjectBeatScale();
 
 	void DebugUI();
 

@@ -93,7 +93,7 @@ void Stage::Update()
     enemyMgr_.SetTargetPos(&pos);
     enemyMgr_.Update();
 
-    StageObjectBeatScale();
+    UpdateStageObjectBeatScale();
     for (auto&& o : stageObject_)
     {
         o->Update();
@@ -153,7 +153,7 @@ void Stage::FromJson(const nlohmann::json& j) {
     railManager_->Reset();
 }
 
-void Stage::StageObjectBeatScale()
+void Stage::UpdateStageObjectBeatScale()
 {
     float beatScale = jsonManager_->Get<float>("beatScale", 1.05f);
 

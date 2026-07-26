@@ -95,13 +95,13 @@ void Player::Update()
 	deltaTime_ = Timer::GetInstance()->GetDeltaTime();
 
 #ifdef _DEBUG
-	ImGui::Begin("Player State Debug");
+	/*ImGui::Begin("Player State Debug");
 	if (ImGui::Button("Reset"))
 	{
 		Reset();
 	}
 	stateMachine_.DebugImGui("Player");
-	ImGui::End();
+	ImGui::End();*/
 #endif // _DEBUG
 
 	DebugUpdate();
@@ -390,7 +390,7 @@ void Player::DebugUpdate()
 void Player::DebugGUI()
 {
 #ifdef _DEBUG
-	ImGui::Begin("Player");
+	/*ImGui::Begin("Player");
 
 	ImGui::Text("hp : %d", status_.hitPoint);
 
@@ -410,7 +410,7 @@ void Player::DebugGUI()
 
 	Vector3 target = reticle_->GetTarget();
 	ImGui::DragFloat3("target", &target.x);
-	ImGui::End();
+	ImGui::End();*/
 #endif // _DEBUG
 }
 

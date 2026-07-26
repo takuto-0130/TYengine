@@ -12,8 +12,8 @@ using namespace AudioSystem;
 void TitleScene::DebugUpdate()
 {
 #ifdef _DEBUG
-	audioAnalyzer_.Draw();
-	gameAudio_->GetBeatAnalyzer().Draw();
+	/*audioAnalyzer_.Draw();
+	gameAudio_->GetBeatAnalyzer().Draw();*/
 	
 	ImGui::Begin("EQ");
 	static float health = 1.0f;
@@ -21,7 +21,7 @@ void TitleScene::DebugUpdate()
 	{
 		gameAudio_->SetHPPerf(health);
 	}
-	gameAudio_->GetAnalyzer().DrawEQControl();
+	//gameAudio_->GetAnalyzer().DrawEQControl();
 	ImGui::End();
 
 	stateMachine_.DebugImGui();

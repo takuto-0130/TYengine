@@ -825,230 +825,230 @@ if exist "externals\dxil.dll" (
 ============================================================
 File Path: project/TYengine.vcxproj.filters
 ============================================================
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="application">
-      <UniqueIdentifier>{1b29340a-04d9-4459-8020-46953104d6da}</UniqueIdentifier>
+      <UniqueIdentifier>{3eeb71a6-cc5f-4d7e-80f5-4d5244f2101a}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem">
-      <UniqueIdentifier>{6a11d208-00cf-4490-99f3-1b1dfbb76aed}</UniqueIdentifier>
+      <UniqueIdentifier>{0656b126-78e4-4e20-9f14-6f17ca9cf687}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Audio">
-      <UniqueIdentifier>{ba8bd67f-87fd-4c24-a5bd-4c8814cf1bc3}</UniqueIdentifier>
+      <UniqueIdentifier>{468a1f23-990f-47b4-9cad-e1805791d8eb}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Combo">
-      <UniqueIdentifier>{8a28f2a2-129d-4d76-ab7d-031074c194ef}</UniqueIdentifier>
+      <UniqueIdentifier>{a0515779-c867-498d-b1d0-17f0cb3614a5}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener">
-      <UniqueIdentifier>{8fa7513a-999e-4c08-be39-bc86c21da8d2}</UniqueIdentifier>
+      <UniqueIdentifier>{ecc271ed-ef85-4fb5-b939-80da565538a7}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\EventListener\EnemyEvent">
-      <UniqueIdentifier>{db059264-cf45-4162-a9db-8ec2a549653c}</UniqueIdentifier>
+      <UniqueIdentifier>{2663e328-df9f-4c9f-a0c8-cd4cf6577cbc}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\RailGenerator">
-      <UniqueIdentifier>{6e8e24f6-cee0-4fb7-ad42-de90af7ad806}</UniqueIdentifier>
+      <UniqueIdentifier>{ea9e8741-4aa2-4ee4-81a2-566a37bd82c0}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\Score">
-      <UniqueIdentifier>{edabb84e-6548-4f30-ac0e-f52d4bf13c5c}</UniqueIdentifier>
+      <UniqueIdentifier>{70842d29-eedf-41ae-8c43-801f179a824e}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\AppSystem\UI">
-      <UniqueIdentifier>{5eeecd8f-2832-479f-affb-9bb6697b7651}</UniqueIdentifier>
+      <UniqueIdentifier>{7e047943-128c-40d1-b613-0b2ef538b8a8}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object">
-      <UniqueIdentifier>{dcaaf621-13e7-414d-9c4e-dcb36ea8dbdd}</UniqueIdentifier>
+      <UniqueIdentifier>{ac67c0dd-23ca-4329-a66d-e34b0317cad2}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseBullet">
-      <UniqueIdentifier>{d5852f80-8bc3-400f-8353-78ecff32c4c1}</UniqueIdentifier>
+      <UniqueIdentifier>{5ba698e1-ba1d-425a-92c7-b138e79a6ba6}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\BaseCharacter">
-      <UniqueIdentifier>{7350c5dd-5860-4339-9848-9a3a22af3590}</UniqueIdentifier>
+      <UniqueIdentifier>{e2e07e1d-8f7f-44d4-8879-925a0409bf62}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\ColliderTypeID">
-      <UniqueIdentifier>{fd7a19a6-b0ca-49e0-af94-946fda24e66f}</UniqueIdentifier>
+      <UniqueIdentifier>{edc2e14e-6c6a-4c37-b0eb-39d7c635dd46}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy">
-      <UniqueIdentifier>{de98db8a-ccc3-4363-9b64-01439a4219ff}</UniqueIdentifier>
+      <UniqueIdentifier>{02dacd94-bce9-4a72-9f2b-2b2427b92f49}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\AttackStrategy">
-      <UniqueIdentifier>{422cae80-498b-49df-bfe8-0c19e26491cf}</UniqueIdentifier>
+      <UniqueIdentifier>{3edf2204-3651-4717-b206-9d1453d9f63d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet">
-      <UniqueIdentifier>{64e5a576-c8a0-44da-a7ee-dacce666eba1}</UniqueIdentifier>
+      <UniqueIdentifier>{f907a9c1-d6c4-4f87-89ba-bb3d810a1a4c}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyBullet\Linear">
-      <UniqueIdentifier>{46949882-49c6-435c-9259-13effa0a92f8}</UniqueIdentifier>
+      <UniqueIdentifier>{f3b2928b-236b-462c-a1ab-a8fbdd22727b}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Enemy\EnemyManager">
-      <UniqueIdentifier>{eddc54b0-927f-46f1-9201-b7674975a8d1}</UniqueIdentifier>
+      <UniqueIdentifier>{c72e8557-fa38-44bb-9581-a071698d6e9f}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player">
-      <UniqueIdentifier>{efe9640a-2f32-4122-85f7-6d5d8b102af6}</UniqueIdentifier>
+      <UniqueIdentifier>{08de5c78-01b5-4509-8f24-215fd2c2b94f}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PAttackStrategy">
-      <UniqueIdentifier>{e0553585-5d97-4970-afdd-a3270c6c23dd}</UniqueIdentifier>
+      <UniqueIdentifier>{d4e1dcbe-167a-4128-be50-1565a716ef7d}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet">
-      <UniqueIdentifier>{cd5d5f05-f1af-4546-8d8a-d1144ae0db16}</UniqueIdentifier>
+      <UniqueIdentifier>{e044a314-fd1a-473a-8aea-ccb342d76b29}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet\HomingBullet">
-      <UniqueIdentifier>{29cf2356-a06c-4b2d-8e63-b61702640e92}</UniqueIdentifier>
+      <UniqueIdentifier>{a7285ef8-c534-4519-bce3-faf2cfc2396e}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerBullet\NormalBullet">
-      <UniqueIdentifier>{67880b51-ca31-40fe-b70c-205772703ab2}</UniqueIdentifier>
+      <UniqueIdentifier>{cb8d0966-449a-4d5e-8683-713bd8ca84ef}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\PlayerState">
-      <UniqueIdentifier>{9b1b3b67-bc69-4d1c-b03c-dd4f605c0e29}</UniqueIdentifier>
+      <UniqueIdentifier>{b1d1792d-e231-4cf6-8590-708fb93022c8}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Player\Reticle">
-      <UniqueIdentifier>{536ec532-2f9a-469b-9f08-179456ab7486}</UniqueIdentifier>
+      <UniqueIdentifier>{d4b168f2-bf81-452f-8d0c-eff6edd5e28e}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Object\Rail">
-      <UniqueIdentifier>{1599637e-e420-4a2f-8630-9d423611449d}</UniqueIdentifier>
+      <UniqueIdentifier>{7926fe4b-db9c-485a-bb36-b7ad7ed64912}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene">
-      <UniqueIdentifier>{a6174a6e-8366-4685-a2b4-04d370b0b3c7}</UniqueIdentifier>
+      <UniqueIdentifier>{7d63bd3c-3dac-4067-9639-21c29f19fc24}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene">
-      <UniqueIdentifier>{2037672e-fd05-40e0-810d-88438c9d35e1}</UniqueIdentifier>
+      <UniqueIdentifier>{3806eb9e-f968-44ea-b7bd-126e5de43bb3}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\GameSceneStates">
-      <UniqueIdentifier>{610cdd65-a63c-4457-b5d6-65699280f2ec}</UniqueIdentifier>
+      <UniqueIdentifier>{6c204b47-cd47-421e-9e2b-19f996b27052}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Pause">
-      <UniqueIdentifier>{4f452f29-8e29-43a5-b4ef-a81757196090}</UniqueIdentifier>
+      <UniqueIdentifier>{25254793-6404-40f9-b343-0d2ffe11a43b}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\PlayUI">
-      <UniqueIdentifier>{f6d2fa2b-ccd1-4829-9c2c-28fb5bb487fe}</UniqueIdentifier>
+      <UniqueIdentifier>{591c8b42-3632-4b3d-9486-6cda4cbf20da}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\Result">
-      <UniqueIdentifier>{7bada5a2-668c-4397-8e11-6f7830d89203}</UniqueIdentifier>
+      <UniqueIdentifier>{872b58de-a1ff-4388-8601-c48847923d1e}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\RetryUI">
-      <UniqueIdentifier>{40fd3328-08bf-42b5-8a20-2f09f3608278}</UniqueIdentifier>
+      <UniqueIdentifier>{a1bca67f-5528-4928-8756-7ba5db2cdc70}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\GameScene\StartUI">
-      <UniqueIdentifier>{9e014daa-feb2-45a9-a785-3c64187dabfb}</UniqueIdentifier>
+      <UniqueIdentifier>{311635a2-a588-4fec-90f3-2658427ea768}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\SceneFactory">
-      <UniqueIdentifier>{5c10ae73-e4f9-4f97-b7ab-e76a462997b9}</UniqueIdentifier>
+      <UniqueIdentifier>{b3b15521-44f3-4743-810a-1dde8e798753}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\TitleScene">
-      <UniqueIdentifier>{68c3da24-21c8-4515-aeb1-1bbd4e3fb2e9}</UniqueIdentifier>
+      <UniqueIdentifier>{ca7b42b6-7096-472c-9f66-baca235ea5eb}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\TitleScene\TitleSceneStates">
-      <UniqueIdentifier>{3f479e60-97bf-4db9-908f-099b643abb67}</UniqueIdentifier>
+      <UniqueIdentifier>{dbcb105c-ef9b-44a5-b4c7-4292756b973c}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition">
-      <UniqueIdentifier>{d14634a1-b3f7-4b0b-82ea-6f6e9708810d}</UniqueIdentifier>
+      <UniqueIdentifier>{cee53b1a-05e0-4696-8943-89fba7bbcc79}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\ScoreUI">
-      <UniqueIdentifier>{1640310b-276b-41fe-912b-530a4eef0c02}</UniqueIdentifier>
+      <UniqueIdentifier>{04a0475a-bbb5-4296-a44c-d1978a9f9a8f}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Stage">
-      <UniqueIdentifier>{1420bb3f-3d92-49a1-a12a-6338504ea0c1}</UniqueIdentifier>
+      <UniqueIdentifier>{45f437bc-2f62-4df8-b1ec-38f973898786}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine">
-      <UniqueIdentifier>{f46072df-62e6-4f5c-8479-869a40000b17}</UniqueIdentifier>
+      <UniqueIdentifier>{32493a42-c127-472f-b8a5-7ab5a7d5bcaf}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio">
-      <UniqueIdentifier>{3af2ab70-a361-427b-a574-50a1b3ee1630}</UniqueIdentifier>
+      <UniqueIdentifier>{5e8cb205-2598-4340-a5c0-9aa5b0120118}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio\Analysis">
-      <UniqueIdentifier>{c276db2b-47bd-4bc9-962c-f2e64b5122a3}</UniqueIdentifier>
+      <UniqueIdentifier>{61320bb0-3091-46e4-bc89-85ea15a78792}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio\Core">
-      <UniqueIdentifier>{c66457bd-a19b-4c8c-9cd9-30b9aa681176}</UniqueIdentifier>
+      <UniqueIdentifier>{21e6daf0-f782-47ee-93fc-14416fe30b85}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Audio\DSP">
-      <UniqueIdentifier>{863170e9-2c67-470f-81be-ffd34c51ddf7}</UniqueIdentifier>
+      <UniqueIdentifier>{2644bd61-6a79-4fe0-93ff-ec3cafc6c41c}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Camera">
-      <UniqueIdentifier>{569bea1a-a6d2-4fcd-a8bd-36447bc84864}</UniqueIdentifier>
+      <UniqueIdentifier>{6a625d03-0466-49ba-98cd-39ad60310fc6}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Debugger">
-      <UniqueIdentifier>{0a871fde-ca9b-49bd-806a-ac2001e0b180}</UniqueIdentifier>
+      <UniqueIdentifier>{b3806eb4-6cfc-44d3-bfbd-0b9f9cd293be}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Effect">
-      <UniqueIdentifier>{578774ad-410b-4dd8-b99e-069a8bf6b4a0}</UniqueIdentifier>
+      <UniqueIdentifier>{2ce97c9a-6c4a-4ecd-8c05-5a483683b78d}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\EngineCore">
-      <UniqueIdentifier>{5ab5a5ee-9fe4-444f-bb29-3c9785f31356}</UniqueIdentifier>
+      <UniqueIdentifier>{90a54317-65be-4357-933e-e92cef840662}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework">
-      <UniqueIdentifier>{b1e795b4-61e0-47fa-abce-3ff86ffc77a0}</UniqueIdentifier>
+      <UniqueIdentifier>{ed7ed002-f98d-4836-be85-37e6db312dbf}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\Input">
-      <UniqueIdentifier>{8d42a761-a90d-42c2-b2c1-eb65ca95ea5e}</UniqueIdentifier>
+      <UniqueIdentifier>{f7c13395-d43d-4451-ac1f-bfa86539b089}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\SceneBase">
-      <UniqueIdentifier>{87db6c7a-078b-4ea0-8c7c-b4ea4dbd00d2}</UniqueIdentifier>
+      <UniqueIdentifier>{027292da-2cc2-4cc3-bc15-a33dc66c9af0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Framework\SceneBase\Transition">
-      <UniqueIdentifier>{3c8cb5ea-06ca-4145-9cca-4726c85e4728}</UniqueIdentifier>
+      <UniqueIdentifier>{b25561b2-4b86-4f3e-91e3-30fd5267dc05}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics">
-      <UniqueIdentifier>{011f00ad-2b27-418c-a60b-faca59abf17f}</UniqueIdentifier>
+      <UniqueIdentifier>{13f4287a-804d-4108-bf1a-6b9b2e5afe03}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Cubemap">
-      <UniqueIdentifier>{675bcf55-fb1e-44d0-93f1-25eb052e9c3a}</UniqueIdentifier>
+      <UniqueIdentifier>{01842a56-921b-47d9-b4ff-9899c86f29b0}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Model">
-      <UniqueIdentifier>{a0497f75-1638-431f-96d6-240ec2d204f0}</UniqueIdentifier>
+      <UniqueIdentifier>{93e69725-197c-4327-baa9-f6a2af149550}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\Sprite">
-      <UniqueIdentifier>{32baa76c-7581-4bcc-a7c0-f395e5f01115}</UniqueIdentifier>
+      <UniqueIdentifier>{3712f59a-9425-4162-9b31-c720b1422b64}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Graphics\SRV">
-      <UniqueIdentifier>{8a1fafbd-c6d2-4adf-997b-3ce97c30a924}</UniqueIdentifier>
+      <UniqueIdentifier>{709f1a74-aa77-4f26-b2b7-d2ba31d488cd}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen">
-      <UniqueIdentifier>{a9cc9325-ca5d-47be-83d4-ed58036d12b0}</UniqueIdentifier>
+      <UniqueIdentifier>{222c6323-a000-4868-b857-58a5056fb926}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\OffScreen\PostEffect">
-      <UniqueIdentifier>{2f806d2b-87f2-4b0d-b93c-dedef1b6edac}</UniqueIdentifier>
+      <UniqueIdentifier>{955b9891-63f7-4f0c-9155-53fa2c699e90}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility">
-      <UniqueIdentifier>{75381342-3c3c-409c-90ca-ff0b043320d4}</UniqueIdentifier>
+      <UniqueIdentifier>{22d7ca04-9f2c-4245-9b34-7e0383d34a14}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider">
-      <UniqueIdentifier>{218885b9-4c71-464b-b89c-a42fab007c07}</UniqueIdentifier>
+      <UniqueIdentifier>{88452f2b-be87-4809-ad1c-0d60405052bf}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\2DCollider">
-      <UniqueIdentifier>{4a4f8444-48a3-4cc7-b3ff-5c017cce7b61}</UniqueIdentifier>
+      <UniqueIdentifier>{fea7a2f3-be9c-4bc5-b609-c48393f927ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Ray">
-      <UniqueIdentifier>{1819cb92-6117-44d7-ad57-1aa51bbd3861}</UniqueIdentifier>
+      <UniqueIdentifier>{e24d018e-a213-4497-8f13-11055da13e1a}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Collider\Sphere">
-      <UniqueIdentifier>{c60df5c5-0c68-4712-9f6d-ef101caa2113}</UniqueIdentifier>
+      <UniqueIdentifier>{67d8ecd9-516f-485c-af9a-e173deef06ea}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Loader">
-      <UniqueIdentifier>{bafbcee8-a403-4722-941a-1ada88d511a7}</UniqueIdentifier>
+      <UniqueIdentifier>{1eaa9b57-a4b7-4c61-9939-06997df4f5cd}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Math">
-      <UniqueIdentifier>{fc773959-93c8-4d47-b069-dd984adc35a1}</UniqueIdentifier>
+      <UniqueIdentifier>{d51460f5-d047-4283-8836-c424547b6775}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\ObjectBasis">
-      <UniqueIdentifier>{fb4756c3-77bd-45a8-8729-f17b6fb090e3}</UniqueIdentifier>
+      <UniqueIdentifier>{2b3902a7-cc44-4b3c-ae3e-70084d5df248}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\SceneObjects">
-      <UniqueIdentifier>{de4e8bc0-6745-4ce0-9094-63700f7a22db}</UniqueIdentifier>
+      <UniqueIdentifier>{756eae99-7635-48e2-b7f5-645ac920ff09}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils">
-      <UniqueIdentifier>{8f8a121e-8ca7-4788-8912-c56420ff5680}</UniqueIdentifier>
+      <UniqueIdentifier>{8f52786d-8271-4641-af1c-a47f83249ac6}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\JSON">
-      <UniqueIdentifier>{004a6747-e660-41bb-80c0-0661166ee75e}</UniqueIdentifier>
+      <UniqueIdentifier>{87e41f88-3cc8-4f04-ab95-37d6dbe7ba6c}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\Utility\Utils\Time">
-      <UniqueIdentifier>{5ed83ca9-1af4-425d-a702-305549cc914b}</UniqueIdentifier>
+      <UniqueIdentifier>{48816aac-fef5-483c-98ad-f6ef6ae02f15}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals">
-      <UniqueIdentifier>{ed17320a-689f-42a4-b53e-9e193ba03008}</UniqueIdentifier>
+      <UniqueIdentifier>{75dd9caa-c057-4bd3-bf2b-74594f911621}</UniqueIdentifier>
     </Filter>
     <Filter Include="externals\imgui">
-      <UniqueIdentifier>{c7abb37f-ee56-41da-a7cd-efad4830cf17}</UniqueIdentifier>
+      <UniqueIdentifier>{91ec10a2-1a9f-46c1-81b7-a411a7a731a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1925,7 +1925,6 @@ File Path: project/TYengine.vcxproj.filters
     </Text>
   </ItemGroup>
 </Project>
-
 
 ============================================================
 File Path: project/application/AppSystem/Audio/CriticalHealthAudioEffect.cpp
@@ -3055,6 +3054,10 @@ File Path: project/application/AppSystem/UI/BaseUI.h
 #pragma once
 #include "Utils/Json/JsonManager.h"
 
+/// <summary>
+/// 全てのUIエレメントの抽象基底クラス。
+/// 画面UIの初期化・更新・描画およびJSON設定マネージャの管理インターフェースを規定する。
+/// </summary>
 class BaseUI
 {
 public:
@@ -3129,6 +3132,10 @@ File Path: project/application/AppSystem/UI/UIManager.h
 #include <string>
 #include <memory>
 
+/// <summary>
+/// UIエレメント管理マネージャクラス。
+/// アプリケーション全体のUIの登録・取得・一括更新・一括描画を管理する。
+/// </summary>
 class UIManager : public TYEngine::Utility::SingletonObject<UIManager>
 {
 	friend class TYEngine::Utility::SingletonObject<UIManager>;
@@ -9633,7 +9640,8 @@ class GameSceneStateFadeOut;
 class GameSceneStateDebugEdit;
 
 /// <summary>
-/// ゲームシーン
+/// ゲーム本編メインシーンクラス。
+/// 状態マシン（GameSceneState）によってロード、フェードイン、ゲームプレイ、ポーズ、死亡、クリア、リザルト等の各状態遷移を管理する。
 /// </summary>
 class GameScene : 
 	public TYEngine::Framework::IScene
@@ -11541,6 +11549,9 @@ File Path: project/application/Scene/GameScene/Result/ConfettiParticle.h
 #include "Sprite.h"
 #include "struct.h"
 
+/// <summary>
+/// 紙吹雪演出用パーティクルの物理運動パラメータ（位置・速度・回転・寿命・風効果）および描画スプライトを保持する構造体。
+/// </summary>
 struct ConfettiParticle
 {
     TYEngine::Graphics::Sprite  sprite;
@@ -13425,6 +13436,9 @@ namespace TYEngine::Graphics
 	class Sprite;
 }
 
+/// <summary>
+/// ブロックフェード遷移アニメーションの行数・列数・時間長・プロシージャル形状パラメータを保持する構造体。
+/// </summary>
 struct BlockFadeConfig
 {
 	int   cols = 32;
@@ -13450,6 +13464,9 @@ class BlockFadeTransitionStateEntering;
 class BlockFadeTransitionStateHold;
 class BlockFadeTransitionStateExiting;
 
+/// <summary>
+/// グリッド状の2Dタイルブロックアニメーションを用いて画面切替を行う遷移エフェクトクラス。
+/// </summary>
 class BlockFadeTransition : public StateMachineTransition<BlockFadeTransition>
 {
 	friend class BlockFadeTransitionStateIdle;
@@ -14267,6 +14284,10 @@ File Path: project/application/Stage/Stage.h
 #define JSONMGR_WITH_IMGUI
 #include "Utils/Json/JsonManager.h"
 
+/// <summary>
+/// ゲーム内の1ステージを管理するクラス。
+/// レール移動、プレイヤー、敵マネージャ、スコア・コンボ管理を統合してゲーム進行を行う。
+/// </summary>
 class Stage
 {
 public:
@@ -15492,6 +15513,9 @@ namespace TYEngine
 {
 	namespace AudioSystem
 	{
+		/// <summary>
+		/// 音声データ（WAV波形データ）を解析し、自動でBPM（1分間あたりの拍数）を推定算出するクラス。
+		/// </summary>
 		class BPMDetector
 		{
 		public:
@@ -17627,6 +17651,7 @@ namespace TYEngine
 {
     namespace AudioSystem
     {
+        /// <summary>デジタルイコライザ・フィルタの特性種別列挙型。</summary>
         enum class FilterType
         {
             LowPassFilter,
@@ -17637,6 +17662,10 @@ namespace TYEngine
             Peaking
         };
 
+        /// <summary>
+        /// 2次IIR（Biquad）デジタルフィルタ演算クラス。
+        /// ローパス、ハイパス、バンドパス、シェルビング等の周波数特性フィルタリング処理を提供する。
+        /// </summary>
         class BiquadFilter
         {
         public:
@@ -19086,6 +19115,9 @@ namespace TYEngine
 	namespace Effect
 	{
 
+		/// <summary>
+		/// 爆発時のリング状（衝撃波）パーティクルの急速拡大・アルファ減衰挙動を更新するビヘイビアクラス。
+		/// </summary>
 		class ExplosionRingBehaviour : public IParticleBehaviour
 		{
 		public:
@@ -22052,6 +22084,7 @@ File Path: project/engine/Framework/SceneBase/Transition/StateMachineTransition.
 #include "ITransition.h"
 #include "StateMachine.h"
 
+/// <summary>画面遷移アニメーションの実行フェード段階を表す列挙型。</summary>
 enum class TransitionStage
 {
 	IDLE,       // 待機中/処理なし
@@ -22060,8 +22093,10 @@ enum class TransitionStage
 	EXITING,	// 遷移終了（シーンを出る）
 };
 
-// ステートマシン遷移テンプレート
-// 'Class' = 継承先クラス（例：FadeTransition）
+/// <summary>
+/// ステートマシン（StateMachine）を組み込んで段階的な画面遷移（イン/ホールド/アウト）を実現する遷移基底テンプレートクラス。
+/// </summary>
+/// <typeparam name="Class">派生画面遷移クラス。</typeparam>
 template<typename Class>
 class StateMachineTransition : 
      public ITransition
@@ -32054,7 +32089,7 @@ namespace TYEngine
 	namespace Utility
 	{
 
-		// 2次元ベクトル
+		/// <summary>2次元ベクトル構造体。</summary>
 		struct Vector2
 		{
 			float x;
@@ -32094,7 +32129,7 @@ namespace TYEngine
 			}
 		};
 
-		// 3次元ベクトル
+		/// <summary>3次元ベクトル構造体。</summary>
 		struct Vector3
 		{
 			float x;
@@ -32139,8 +32174,7 @@ namespace TYEngine
 			}
 		};
 
-
-		// 4次元ベクトル
+		/// <summary>4次元ベクトル（カラーRGBA・同次座標）構造体。</summary>
 		struct Vector4
 		{
 			float x;
@@ -32190,11 +32224,13 @@ namespace TYEngine
 			}
 		};
 
+		/// <summary>4x4 変換行列構造体。</summary>
 		struct Matrix4x4
 		{
 			std::array<std::array<float, 4>, 4> m;
 		};
 
+		/// <summary>四元数（クォータニオン）回転構造体。</summary>
 		struct Quaternion
 		{
 			float x;
@@ -32203,6 +32239,7 @@ namespace TYEngine
 			float w;
 		};
 
+		/// <summary>トランスフォーム（拡大・回転・移動）構造体。</summary>
 		struct Transform
 		{
 			Vector3 scale;
@@ -32210,47 +32247,55 @@ namespace TYEngine
 			Vector3 translate;
 		};
 
+		/// <summary>球体（Sphere）衝突境界構造体。</summary>
 		struct Sphere
 		{
 			Vector3 center;
 			float radius;
 		};
 
+		/// <summary>直線（Line）構造体。</summary>
 		struct Line
 		{
 			Vector3 origin;
 			Vector3 diff;
 		};
 
+		/// <summary>半直線（Ray）構造体。</summary>
 		struct Ray
 		{
 			Vector3 origin;
 			Vector3 diff;
 		};
 
+		/// <summary>線分（Segment）構造体。</summary>
 		struct Segment
 		{
 			Vector3 origin;
 			Vector3 diff;
 		};
 
+		/// <summary>平面（Plane）構造体。</summary>
 		struct Plane
 		{
 			Vector3 normal;
 			float distance;
 		};
 
+		/// <summary>三角形（Triangle）構造体。</summary>
 		struct Triangle
 		{
 			Vector3 vertices[3];
 		};
 
+		/// <summary>軸並行境界ボックス（AABB）構造体。</summary>
 		struct AABB
 		{
 			Vector3 min;
 			Vector3 max;
 		};
 
+		/// <summary>有向境界ボックス（OBB）構造体。</summary>
 		struct OBB
 		{
 			Vector3 center;
@@ -33608,6 +33653,11 @@ namespace TYEngine
 	namespace Utility
 	{
 
+		/// <summary>
+		/// スレッドセーフな Singleton デザインパターンを提供する抽象テンプレートクラス。
+		/// 派生クラスの単一インスタンス生成・安全なアクセス・明示的破棄機能を提供する。
+		/// </summary>
+		/// <typeparam name="T">シングルトン化するターゲットクラス。</typeparam>
 		template <typename T>
 		class SingletonObject
 		{

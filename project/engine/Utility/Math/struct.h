@@ -9,7 +9,7 @@ namespace TYEngine
 	namespace Utility
 	{
 
-		// 2次元ベクトル
+		/// <summary>2次元ベクトル構造体。</summary>
 		struct Vector2
 		{
 			float x;
@@ -49,7 +49,7 @@ namespace TYEngine
 			}
 		};
 
-		// 3次元ベクトル
+		/// <summary>3次元ベクトル構造体。</summary>
 		struct Vector3
 		{
 			float x;
@@ -94,8 +94,7 @@ namespace TYEngine
 			}
 		};
 
-
-		// 4次元ベクトル
+		/// <summary>4次元ベクトル（カラーRGBA・同次座標）構造体。</summary>
 		struct Vector4
 		{
 			float x;
@@ -145,11 +144,13 @@ namespace TYEngine
 			}
 		};
 
+		/// <summary>4x4 変換行列構造体。</summary>
 		struct Matrix4x4
 		{
 			std::array<std::array<float, 4>, 4> m;
 		};
 
+		/// <summary>四元数（クォータニオン）回転構造体。</summary>
 		struct Quaternion
 		{
 			float x;
@@ -158,6 +159,7 @@ namespace TYEngine
 			float w;
 		};
 
+		/// <summary>トランスフォーム（拡大・回転・移動）構造体。</summary>
 		struct Transform
 		{
 			Vector3 scale;
@@ -165,47 +167,55 @@ namespace TYEngine
 			Vector3 translate;
 		};
 
+		/// <summary>球体（Sphere）衝突境界構造体。</summary>
 		struct Sphere
 		{
 			Vector3 center;
 			float radius;
 		};
 
+		/// <summary>直線（Line）構造体。</summary>
 		struct Line
 		{
 			Vector3 origin;
 			Vector3 diff;
 		};
 
+		/// <summary>半直線（Ray）構造体。</summary>
 		struct Ray
 		{
 			Vector3 origin;
 			Vector3 diff;
 		};
 
+		/// <summary>線分（Segment）構造体。</summary>
 		struct Segment
 		{
 			Vector3 origin;
 			Vector3 diff;
 		};
 
+		/// <summary>平面（Plane）構造体。</summary>
 		struct Plane
 		{
 			Vector3 normal;
 			float distance;
 		};
 
+		/// <summary>三角形（Triangle）構造体。</summary>
 		struct Triangle
 		{
 			Vector3 vertices[3];
 		};
 
+		/// <summary>軸並行境界ボックス（AABB）構造体。</summary>
 		struct AABB
 		{
 			Vector3 min;
 			Vector3 max;
 		};
 
+		/// <summary>有向境界ボックス（OBB）構造体。</summary>
 		struct OBB
 		{
 			Vector3 center;

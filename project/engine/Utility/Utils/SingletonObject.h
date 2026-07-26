@@ -8,6 +8,11 @@ namespace TYEngine
 	namespace Utility
 	{
 
+		/// <summary>
+		/// スレッドセーフな Singleton デザインパターンを提供する抽象テンプレートクラス。
+		/// 派生クラスの単一インスタンス生成・安全なアクセス・明示的破棄機能を提供する。
+		/// </summary>
+		/// <typeparam name="T">シングルトン化するターゲットクラス。</typeparam>
 		template <typename T>
 		class SingletonObject
 		{

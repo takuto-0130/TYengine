@@ -3,6 +3,9 @@
 #include "Sprite.h"
 #include "struct.h"
 
+/// <summary>
+/// 紙吹雪演出用パーティクルの物理運動パラメータ（位置・速度・回転・寿命・風効果）および描画スプライトを保持する構造体。
+/// </summary>
 struct ConfettiParticle
 {
     TYEngine::Graphics::Sprite  sprite;

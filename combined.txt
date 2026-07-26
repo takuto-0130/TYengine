@@ -453,15 +453,15 @@ File Path: project/TYengine.vcxproj
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>:: プロジェクトディレクトリを基準に移動
+      <Command>:: プロジェクトディレクトリを基準に移勁E
 cd /d $(ProjectDir)
 
-:: 出力先フォルダが無ければ作成
+:: 出力�Eフォルダが無ければ作�E
 if not exist "..\generated\outputs\$(Configuration)\" (
     mkdir "..\generated\outputs\$(Configuration)\"
 )
 
-:: DLLをコピー
+:: DLLをコピ�E
 if exist "externals\dxcompiler.dll" (
     xcopy /Y /D /R "externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
 )
@@ -499,15 +499,15 @@ if exist "externals\dxil.dll" (
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>:: プロジェクトディレクトリを基準に移動
+      <Command>:: プロジェクトディレクトリを基準に移勁E
 cd /d $(ProjectDir)
 
-:: 出力先フォルダが無ければ作成
+:: 出力�Eフォルダが無ければ作�E
 if not exist "..\generated\outputs\$(Configuration)\" (
     mkdir "..\generated\outputs\$(Configuration)\"
 )
 
-:: DLLをコピー
+:: DLLをコピ�E
 if exist "externals\dxcompiler.dll" (
     xcopy /Y /D /R "externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
 )
@@ -545,12 +545,12 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneClear.cpp" />
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeIn.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeOut.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleScenePlay.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneReady.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneDebug.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneFadeIn.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneFadeOut.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneLoad.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleScenePlay.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneReady.cpp" />
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
@@ -600,7 +600,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\Graphics\Sprite\TextureManager.cpp" />
     <ClCompile Include="engine\Graphics\SRV\SrvManager.cpp" />
     <ClCompile Include="engine\Framework\Input\Input.cpp" />
-    <ClCompile Include="engine\Utility\Math\mathFunc.cpp" />
+    <ClCompile Include="engine\Utility\Math\MathFunc.cpp" />
     <ClCompile Include="engine\Utility\Math\Matrix4x4Func.cpp" />
     <ClCompile Include="engine\Utility\Utils\StringUtility.cpp" />
     <ClCompile Include="engine\Utility\Math\WorldTransform.cpp" />
@@ -744,7 +744,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Graphics\Sprite\TextureManager.h" />
     <ClInclude Include="engine\Graphics\SRV\SrvManager.h" />
     <ClInclude Include="engine\Framework\Input\Input.h" />
-    <ClInclude Include="engine\Utility\Math\mathFunc.h" />
+    <ClInclude Include="engine\Utility\Math\MathFunc.h" />
     <ClInclude Include="engine\Utility\Math\Matrix4x4Func.h" />
     <ClInclude Include="engine\Utility\Utils\StateMachine.h" />
     <ClInclude Include="engine\Utility\Utils\StringUtility.h" />
@@ -821,10 +821,11 @@ if exist "externals\dxil.dll" (
   </ImportGroup>
 </Project>
 
+
 ============================================================
 File Path: project/TYengine.vcxproj.filters
 ============================================================
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="application">
@@ -935,7 +936,7 @@ File Path: project/TYengine.vcxproj.filters
     <Filter Include="application\Scene\TitleScene">
       <UniqueIdentifier>{68c3da24-21c8-4515-aeb1-1bbd4e3fb2e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="application\Scene\TitleScene\TItleSceneStates">
+    <Filter Include="application\Scene\TitleScene\TitleSceneStates">
       <UniqueIdentifier>{3f479e60-97bf-4db9-908f-099b643abb67}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition">
@@ -1135,23 +1136,23 @@ File Path: project/TYengine.vcxproj.filters
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp">
       <Filter>application\Scene\GameScene\Result</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneDebug.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeIn.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneFadeIn.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeOut.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneFadeOut.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneLoad.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleScenePlay.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleScenePlay.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneReady.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneReady.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp">
       <Filter>application\ScoreUI</Filter>
@@ -1300,7 +1301,7 @@ File Path: project/TYengine.vcxproj.filters
     <ClCompile Include="engine\Framework\Input\Input.cpp">
       <Filter>engine\Framework\Input</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Utility\Math\mathFunc.cpp">
+    <ClCompile Include="engine\Utility\Math\MathFunc.cpp">
       <Filter>engine\Utility\Math</Filter>
     </ClCompile>
     <ClCompile Include="engine\Utility\Math\Matrix4x4Func.cpp">
@@ -1728,7 +1729,7 @@ File Path: project/TYengine.vcxproj.filters
     <ClInclude Include="engine\Framework\Input\Input.h">
       <Filter>engine\Framework\Input</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\Math\mathFunc.h">
+    <ClInclude Include="engine\Utility\Math\MathFunc.h">
       <Filter>engine\Utility\Math</Filter>
     </ClInclude>
     <ClInclude Include="engine\Utility\Math\Matrix4x4Func.h">
@@ -1924,6 +1925,7 @@ File Path: project/TYengine.vcxproj.filters
     </Text>
   </ItemGroup>
 </Project>
+
 
 ============================================================
 File Path: project/application/AppSystem/Audio/CriticalHealthAudioEffect.cpp
@@ -2157,6 +2159,13 @@ private:
     void OnInit() override;
 
 public:
+    /// <summary>
+    /// 音声を再生し、BGMカテゴリの場合はアナライザーへ再生ハンドルを登録する。
+    /// </summary>
+    /// <param name="filename">再生する音声ファイル名。</param>
+    /// <param name="isLoop">ループ再生するかどうか。</param>
+    /// <param name="category">サウンドカテゴリ（BGM, SE, UI）。</param>
+    /// <returns>再生リソースハンドル。</returns>
     int Play(const std::string& filename, bool isLoop, SoundCategory category)
     {
         int handle = TYEngine::AudioSystem::AudioSystemBase<SoundCategory>::Play(filename, isLoop, category);
@@ -2167,32 +2176,53 @@ public:
         return handle;
     }
 
+    /// <summary>オーディオ解析およびエフェクトの毎フレーム更新処理。</summary>
     void Update();
 
+    /// <summary>
+    /// ビートアナライザー（BPM・リズム解析モジュール）の初期化を行う。
+    /// </summary>
+    /// <param name="filename">解析対象の音声ファイル名。</param>
+    /// <param name="soundCategory">サウンドカテゴリ。</param>
     void InitBeatAnalyzer(const std::string& filename, SoundCategory soundCategory = SoundCategory::BGM);
 
+    /// <summary>指定されたハンドルの音声再生を停止する。</summary>
+    /// <param name="resourceNum">再生リソースハンドル。</param>
     void Stop(int resourceNum)
     {
         GetAudio()->Stop(resourceNum);
     }
+    /// <summary>指定されたハンドルの音声再生を一時停止する。</summary>
+    /// <param name="resourceNum">再生リソースハンドル。</param>
     void Pause(int resourceNum)
     {
         GetAudio()->Pause(resourceNum);
     }
+    /// <summary>一時停止中の音声を再開する。</summary>
+    /// <param name="resourceNum">再生リソースハンドル。</param>
     void Resume(int resourceNum)
     {
         GetAudio()->Resume(resourceNum);
     }
 
+    /// <summary>音波のピッチ（周波数倍率）を変更する。</summary>
+    /// <param name="resourceNum">再生リソースハンドル。</param>
+    /// <param name="pitch">ピッチ値（1.0fが標準）。</param>
     void Pitch(int resourceNum, float pitch)
     {
         GetAudio()->Pitch(resourceNum, pitch);
     }
 
+    /// <summary>ビート解析モジュールを取得する。</summary>
+    /// <returns>BeatAnalyzer 参照。</returns>
     TYEngine::AudioSystem::BeatAnalyzer& GetBeatAnalyzer() { return beatAnalyzer_; }
 
+    /// <summary>オーディオ解析モジュールを取得する。</summary>
+    /// <returns>AudioAnalyzer 参照。</returns>
     TYEngine::AudioSystem::AudioAnalyzer& GetAnalyzer() { return audioAnalyzer_; }
 
+    /// <summary>波形データへの参照を取得する。</summary>
+    /// <returns>波形サンプルデータ値参照。</returns>
     float& GetWaveform() { return const_cast<float&>(audioAnalyzer_.GetWaveform()[0]); }
 
     void SetHPPerf(float perf) { hpPerf_ = perf; }
@@ -3161,6 +3191,7 @@ File Path: project/application/GameCore.cpp
 #include "ColliderManager.h"
 #include "CubemapBasis.h"
 #include "Timer.h"
+#include "Utils/Json/JsonManager.h"
 
 #include "PlaneParticle.h"
 #include "RingParticle.h"
@@ -3198,92 +3229,101 @@ using namespace TYEngine::AudioSystem;
 
 void GameCore::Initialize()
 {
-	// フレームワーク基盤の初期化（Window, DirectXなど）
-	TYFrameWork::Initialize();
+#pragma region // フレームワーク基盤・主要マネージャの初期化
+	// 1. フレームワーク基盤の初期化（Window, DirectXなど）
+	TYFramework::Initialize();
 
-	// タイマーの開始
+	// 2. タイマーの開始
 	Timer::GetInstance()->Start();
 
-	// ImGuiマネージャの初期化
+	// 3. ImGuiマネージャの初期化
 	imgui_ = ImGuiManager::GetInstance();
 	imgui_->Initialize(windowsApp_.get(), directXBasis_);
 
-	// スプライト基盤の初期化
+	// 4. 2Dスプライト基盤の初期化
 	spriteBasis_ = SpriteBasis::GetInstance();
 	spriteBasis_->Initialize(directXBasis_);
 
-	// カメラの生成
+	// 5. メインカメラの生成
 	camera_ = std::make_unique<Camera>();
 
-	// 3Dオブジェクト基盤の初期化とカメラ設定
+	// 6. 3Dオブジェクト基盤の初期化とカメラ設定
 	object3dBasis_ = Object3dBasis::GetInstance();
 	object3dBasis_->Initialize(directXBasis_);
 	object3dBasis_->SetDefaultCamera(camera_.get());
 
-	// モデルマネージャの初期化
+	// 7. 3Dモデルマネージャの初期化
 	modelManager_ = ModelManager::GetInstance();
 	modelManager_->Initialize(directXBasis_, srvManager_.get());
 
-	// オーディオシステムの初期化
+	// 8. オーディオシステムの初期化
 	Audio::GetInstance()->Initialize();
 	GameAudio::GetInstance()->Init();
 
-	// シーンファクトリの生成と初期シーンの設定
+	// 9. シーンファクトリの生成と初期シーン（タイトル）の設定
 	sceneFactory_ = std::make_unique<SceneFactory>();
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 	sceneManager_->ChangeScene("TITLE");
+#pragma endregion
 
-	// パーティクルマネージャの初期化と各挙動（ビヘイビア）の設定
+#pragma region // パーティクルシステムの構築・登録
 	particleManager_ = ParticleManager::GetInstance();
 
 	auto plane = std::make_unique<PlaneParticle>();
 	auto ring = std::make_unique<RingParticle>();
 	auto cylinder = std::make_unique<CylinderParticle>();
 
-	// リング状爆発エフェクト設定
-	ring->SetBehaviour(std::make_unique<ExplosionRingBehaviour>());//
+	// 各種エフェクト挙動（ビヘイビア）の設定
+	ring->SetBehaviour(std::make_unique<ExplosionRingBehaviour>());
 
-	auto contrail = std::make_unique<PlaneParticle>();  // 板ポリ形状
-	contrail->SetBehaviour(std::make_unique<ContrailBehaviour>()); // コントレイル挙動を設定
+	auto contrail = std::make_unique<PlaneParticle>();
+	contrail->SetBehaviour(std::make_unique<ContrailBehaviour>());
 
-	auto explosion = std::make_unique<PlaneParticle>(); // 爆発
+	auto explosion = std::make_unique<PlaneParticle>();
 	explosion->SetBehaviour(std::make_unique<ExplosionBehaviour>());
 
-	auto debris = std::make_unique<PlaneParticle>(); // 破片
+	auto debris = std::make_unique<PlaneParticle>();
 	debris->SetBehaviour(std::make_unique<DebrisBehaviour>());
 
-	// パーティクルの登録
-	int index = particleManager_->Add(std::move(plane));	// 0
-	int indexRing = particleManager_->Add(std::move(ring));	// 1
-	particleManager_->Add(std::move(cylinder));				// 2
-	particleManager_->Add(std::move(contrail));				// 3
-	particleManager_->Add(std::move(explosion));			// 4
-	particleManager_->Add(std::move(debris));				// 5
+	// パーティクルタイプリストへの登録
+	int index = particleManager_->Add(std::move(plane));	// 0: Normal
+	int indexRing = particleManager_->Add(std::move(ring));	// 1: Ring
+	particleManager_->Add(std::move(cylinder));				// 2: Cylinder
+	particleManager_->Add(std::move(contrail));				// 3: Contrail
+	particleManager_->Add(std::move(explosion));			// 4: Explosion
+	particleManager_->Add(std::move(debris));				// 5: Debris
 
-	// 全パーティクルの一括初期化
+	// 全パーティクルの一括初期化とエミッター初期値設定
 	particleManager_->InitializeAll(directXBasis_, srvManager_.get(), camera_.get());
 	
-	// 初期エミッター設定
 	IParticleRenderer::Emitter emitter{};
 	particleManager_->SetEmitter(index, emitter);
 
 	IParticleRenderer::Emitter emitterRing{};
 	particleManager_->SetEmitter(indexRing, emitterRing);
+#pragma endregion
 
-
+#pragma region // 衝突判定・オフスクリーンレンダーターゲット・ポストエフェクトの構築
 	// コライダーマネージャのインスタンス確保
 	ColliderManager::GetInstance();
 
+	// 解像度・クリアカラー設定のロード
+	JsonManager engineJM;
+	engineJM.Load("EngineConfig.json");
+	uint32_t rtWidth = engineJM.Get<uint32_t>("window.width", WindowsApp::kClientWidth);
+	uint32_t rtHeight = engineJM.Get<uint32_t>("window.height", WindowsApp::kClientHeight);
+	Vector4 mainClearColor = engineJM.Get<Vector4>("graphics.mainClearColor", Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	Vector4 defaultClearColor = engineJM.Get<Vector4>("graphics.clearColor", Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	// レンダリング用テクスチャの生成（メイン、一時用、アウトライン用）
 	renderTexture_ = std::make_unique<RenderTexture>();
-	renderTexture_->Initialize(directXBasis_, srvManager_.get(), WindowsApp::kClientWidth, WindowsApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 1, 0, 0, 1 });
+	renderTexture_->Initialize(directXBasis_, srvManager_.get(), rtWidth, rtHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, mainClearColor);
 	
 	tempTexture_ = std::make_unique<RenderTexture>();
-	tempTexture_->Initialize(directXBasis_, srvManager_.get(), WindowsApp::kClientWidth, WindowsApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+	tempTexture_->Initialize(directXBasis_, srvManager_.get(), rtWidth, rtHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, defaultClearColor);
 
 	outlineTexture_ = std::make_unique<RenderTexture>();
-	outlineTexture_->Initialize(directXBasis_, srvManager_.get(), WindowsApp::kClientWidth, WindowsApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, { 0, 0, 0, 1 });
+	outlineTexture_->Initialize(directXBasis_, srvManager_.get(), rtWidth, rtHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, defaultClearColor);
 
 	// ポストエフェクトマネージャの初期化とレンダーターゲット設定
 	postEffectManager_ = PostEffectManager::GetInstance();
@@ -3291,7 +3331,7 @@ void GameCore::Initialize()
 	postEffectManager_->SetTempRenderTexture(std::move(tempTexture_));
 	postEffectManager_->SetOutlineRenderTexture(std::move(outlineTexture_));
 
-	// 適用するエフェクトを追加（順番に処理される）
+	// 適用する全ポストエフェクトの追加
 	postEffectManager_->AddEffect("LuminanceBasedOutline", std::make_unique<LuminanceBasedOutlineEffect>());
 	postEffectManager_->AddEffect("Grayscale", std::make_unique<GrayscaleEffect>());
 	postEffectManager_->AddEffect("Vignette", std::make_unique<VignetteEffect>());
@@ -3300,16 +3340,15 @@ void GameCore::Initialize()
 	postEffectManager_->AddEffect("RadialBlur", std::make_unique<RadialBlurEffect>());
 	postEffectManager_->AddEffect("Random", std::make_unique<RandomEffect>());
 	postEffectManager_->AddEffect("Dissolve", std::make_unique<DissolveEffect>());
-
 	postEffectManager_->AddEffect("HealthVignette", std::make_unique<VignetteEffect>());
 	
 	// 初期状態では全エフェクトを無効化
 	postEffectManager_->EffectAllDisable();
 
-
 	// キューブマップ（スカイボックス）基盤の初期化
 	CubemapBasis::GetInstance()->Initialize(directXBasis_);
 	CubemapBasis::GetInstance()->SetDefaultCamera(camera_.get());
+#pragma endregion
 }
 
 void GameCore::Finalize()
@@ -3317,7 +3356,7 @@ void GameCore::Finalize()
 	// オーディオの解放
 	GameAudio::GetInstance()->Destroy();;
 	// 基盤システムの終了処理
-	TYFrameWork::Finalize();
+	TYFramework::Finalize();
 }
 
 void GameCore::Update()
@@ -3335,7 +3374,7 @@ void GameCore::Update()
 		Timer::GetInstance()->Update();
 		GameAudio::GetInstance()->Update();
 		Audio::GetInstance()->Update();
-		TYFrameWork::Update(); // 入力系などの更新
+		TYFramework::Update(); // 入力系などの更新
 		particleManager_->UpdateAll();
 		camera_->Update();
 		postEffectManager_->Update();
@@ -3389,7 +3428,7 @@ File Path: project/application/GameCore.h
 /// ゲーム全体のメインエントリーポイント。  
 /// TYFrameWork を継承し、ゲーム特有の初期化・更新・描画ロジックを実装する。
 /// </summary>
-class GameCore : public TYEngine::Framework::TYFrameWork
+class GameCore : public TYEngine::Framework::TYFramework
 {
 public:
     /// <summary>
@@ -4403,6 +4442,7 @@ private:
 };
 
 // --- 状態クラスの定義 ---
+/// <summary>敵の画面外待機状態クラス（スポーン前）。</summary>
 class EnemyStatePreEnter : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -4412,6 +4452,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵の出現演出状態クラス（画面内へのイージング入場）。</summary>
 class EnemyStateEntering : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -4421,6 +4462,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵のアクティブ状態クラス（攻撃・標準移動）。</summary>
 class EnemyStateActive : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -4430,6 +4472,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵の退場演出状態クラス（画面外への撤退）。</summary>
 class EnemyStateExiting : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -4439,6 +4482,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵の被弾ダメージ状態クラス。</summary>
 class EnemyStateDamaged : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -4448,6 +4492,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵の撃破・消滅状態クラス（撃ち落とし演出およびスコア加算）。</summary>
 class EnemyStateDespawned : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -4928,8 +4973,8 @@ void EnemyManager::Init(CameraSystem::Camera* camera)
 
 	float xCoeff = jsonManager_->Get<float>("enemyManager.xRangeCoeff", 16.0f);
 	float yCoeff = jsonManager_->Get<float>("enemyManager.yRangeCoeff", 9.0f);
-	xRange = xCoeff * 0.09f * 2.0f;
-	yRange = yCoeff * 0.085f * 2.0f;
+	xRange_ = xCoeff * 0.09f * 2.0f;
+	yRange_ = yCoeff * 0.085f * 2.0f;
 
 	spawnReadyTimer_ = jsonManager_->Get<float>("enemyManager.spawnReadyTimer", 0.8f);
 	spawnNum_ = jsonManager_->Get<int>("enemyManager.spawnNum", 15);
@@ -4960,8 +5005,8 @@ void EnemyManager::Update()
 	enemyPopDepthMax_ = jsonManager_->Get<float>("enemyManager.popDepthMax", 40.0f);
 	float xCoeff = jsonManager_->Get<float>("enemyManager.xRangeCoeff", 16.0f);
 	float yCoeff = jsonManager_->Get<float>("enemyManager.yRangeCoeff", 9.0f);
-	xRange = xCoeff * 0.09f * 2.0f;
-	yRange = yCoeff * 0.085f * 2.0f;
+	xRange_ = xCoeff * 0.09f * 2.0f;
+	yRange_ = yCoeff * 0.085f * 2.0f;
 	spawnReadyTimer_ = jsonManager_->Get<float>("enemyManager.spawnReadyTimer", 0.8f);
 	spawnNum_ = jsonManager_->Get<int>("enemyManager.spawnNum", 15);
 	minX_ = jsonManager_->Get<float>("enemyManager.minX", 0.5f);
@@ -5096,93 +5141,83 @@ Vector3 EnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 	Vector3 camRight = camera_->GetRight();
 	Vector3 camUp = camera_->GetUp();
 
-	std::mt19937 gen(rd());
+	std::mt19937 gen(rd_());
 	std::uniform_real_distribution<float> dist(enemyPopDepthMin_, enemyPopDepthMax_);
 
 	float depth = dist(gen);
 
 	return camPos
 		+ camForward * depth
-		+ camRight * (offset.x * xRange)
-		+ camUp * (offset.y * yRange);
+		+ camRight * (offset.x * xRange_)
+		+ camUp * (offset.y * yRange_);
 }
 
 void EnemyManager::Pop()
 {
+#pragma region // コンボ連動スポーン処理
 	if(hitStreakManager_)
 	{
+		// コンボ数に応じて同時スポーン数を段階的に拡張
 		for (int i = 0; i < 1 + (hitStreakManager_->GetComboCount() / comboStep_); i++)
 		{
 			if (isPopFlag_)
 			{
+				// 1. 敵インスタンスの生成と初期化
 				std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
 				enemy->Init();
 
-				// 画面座標系でのランダムな出現位置決定
-				std::mt19937 gen(rd());
+				// 2. 画面座標系（-1.0～1.0）でのランダム出現位置決定
+				std::mt19937 gen(rd_());
 				std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
-				// 元となる -1.0 ～ 1.0 の乱数を取得
 				float rawX = dist(gen);
 				float rawY = dist(gen);
 
-				// 中心部を避けて左右に広げる処理
+				// 中央エリアを回避して画面左右へ分散配置する計算
 				float finalX = 0.0f;
-				float minX = minX_;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
-				float maxX = maxX_;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
+				float minX = minX_;
+				float maxX = maxX_;
 
 				if (rawX >= 0.0f)
 				{
-					// 右側にスポーン（minX ～ maxX の範囲に変換）
+					// 右側領域へマッピング
 					finalX = minX + rawX * (maxX - minX);
 				}
 				else
 				{
-					// 左側にスポーン（-minX ～ -maxX の範囲に変換）
-					// rawXは負の数なので、(maxX - minX) を掛けてマイナス方向に引き延ばす
+					// 左側領域へマッピング
 					finalX = -minX + rawX * (maxX - minX);
 				}
 
-				// 補正したスクリーン座標を設定
+				// 3. スクリーンオフセットからワールド座標へ変換
 				enemy->SetScreenPos({ finalX, rawY });
-
-				// スクリーン座標をワールド座標へ変換
 				Vector3 spawnPos = ConvertScreenOffsetToWorld(enemy->GetScreenPos());
 
-				// --- 【ここから変更】地面基準でY座標をランダムな高さに設定 ---
+				// 4. レール地形データから高さ（Y）を判定し、地上浮遊高度を上書き
 				if (railManager_)
 				{
 					float terrainY = railManager_->GetTerrainHeight(spawnPos);
+					float minHeightOffset = minHeightOffset_;
+					float maxHeightOffset = maxHeightOffset_;
 
-					// 地面からどれくらい浮かせるかのランダムな範囲
-					float minHeightOffset = minHeightOffset_; // 最小の浮遊高度
-					float maxHeightOffset = maxHeightOffset_; // 最大の浮遊高度
-
-					// 新しく高さ用の乱数を生成
 					std::uniform_real_distribution<float> heightDist(minHeightOffset, maxHeightOffset);
 					float randomHeight = heightDist(gen);
-
-					// ConvertScreenOffsetToWorldで計算したY座標を捨てて、地面基準の高さで上書きする
 					spawnPos.y = terrainY + randomHeight;
 				}
-				// --- 【ここまで変更】 ---
 
-				// 補正した座標を設定
+				// 5. 確定位置の設定・依存関係注入・アクティブ化
 				enemy->SetAndApplyPos(spawnPos);
-
-				// 依存関係の注入
 				enemy->SetEnemyBulletManager(&bulletManager_);
 				enemy->SetEventListener(comboAndScoreHandler_.get());
 				enemy->SetIsInGame(isInGame_);
 				enemy->SetCamera(camera_);
-
-				// 出現演出開始等
 				enemy->Pop();
 
 				enemies_.push_back(std::move(enemy));
 			}
 		}
 	}
+#pragma endregion
 	else
 	{
 		if (isPopFlag_)
@@ -5191,7 +5226,7 @@ void EnemyManager::Pop()
 			enemy->Init();
 
 			// 画面座標系でのランダムな出現位置決定
-			std::mt19937 gen(rd());
+			std::mt19937 gen(rd_());
 			std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
 			// 元となる -1.0 ～ 1.0 の乱数を取得
@@ -5305,18 +5340,40 @@ public:
 	void Pop();
 
 public:
+	/// <summary>ターゲット（プレイヤー等）のワールド位置座標ポインタを設定する。</summary>
+	/// <param name="pos">ワールド位置ベクトルポインタ。</param>
 	void SetTargetPos(TYEngine::Utility::Vector3* pos);
 
+	/// <summary>ビート解析クラスを設定する。</summary>
+	/// <param name="beatAnalyzer">BeatAnalyzer ポインタ。</param>
 	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
 
+	/// <summary>ゲーム中フラグを設定する。</summary>
+	/// <param name="is">ゲーム中なら true。</param>
 	void SetIsInGame(bool is) { isInGame_ = is; }
 
-	/// <summary>レティクルに最も近い未ロックオンの敵を取得する</summary>
+	/// <summary>
+	/// レティクルに最も近い未ロックオンの敵を取得する。
+	/// </summary>
+	/// <param name="camera">カメラポインタ。</param>
+	/// <param name="reticleNDC">レティクルの NDC 座標。</param>
+	/// <param name="lockRadiusNDC">ロックオン検索半径（NDC 単位）。</param>
+	/// <param name="alreadyLockedEnemies">既にロックオン済みの敵リスト。</param>
+	/// <returns>最適なターゲット敵のポインタ（無ければ nullptr）。</returns>
 	Enemy* GetBestLockOnTarget(TYEngine::CameraSystem::Camera* camera, const TYEngine::Utility::Vector2& reticleNDC, float lockRadiusNDC, const std::vector<Enemy*>& alreadyLockedEnemies);
 
-	/// <summary>ポインタが現在も有効（生存しているか）確認する</summary>
+	/// <summary>
+	/// 指定した敵ポインタが現在も生存・有効か確認する。
+	/// </summary>
+	/// <param name="enemyPtr">判定対象の敵ポインタ。</param>
+	/// <returns>有効であれば true。</returns>
 	bool IsValidEnemy(const Enemy* enemyPtr) const;
 
+	/// <summary>
+	/// 敵がアクティブ状態（攻撃・移動可能）かを判定する。
+	/// </summary>
+	/// <param name="enemyPtr">判定対象の敵ポインタ。</param>
+	/// <returns>アクティブなら true。</returns>
 	bool IsActive(Enemy* enemyPtr) const
 	{
 		if (enemyPtr->GetStateMachine().GetCurrentState() == EnemyState::ACTIVE)
@@ -5326,8 +5383,11 @@ public:
 		return false;
 	}
 
+	/// <summary>敵の自然ポップ（スポーン）フラグを無効化する。</summary>
 	void DisablePopFlag() { isPopFlag_ = false; }
 
+	/// <summary>レール移動マネージャを設定する。</summary>
+	/// <param name="railManager">RailManager ポインタ。</param>
 	void SetRailManager(RailManager* railManager) { railManager_ = railManager; }
 
 private:
@@ -5357,12 +5417,12 @@ private:
 	/// <summary>敵の出現深度（最大）。</summary>
 	float enemyPopDepthMax_ = 0.0f;
 	/// <summary>横移動の最大幅（出現範囲）。</summary>
-	float xRange = 0.0f;
+	float xRange_ = 0.0f;
 	/// <summary>縦移動の最大高さ（出現範囲）。</summary>
-	float yRange = 0.0f;
+	float yRange_ = 0.0f;
 
 	/// <summary>乱数生成器。</summary>
-	std::random_device rd;
+	std::random_device rd_;
 
 	/// <summary>出現タイマー。</summary>
 	float timer_ = 0.0f;
@@ -5471,7 +5531,8 @@ class Player;
 namespace PlayerAttack
 {
     /// <summary>
-    /// 敵の攻撃行動（ストラテジーパターン）の基底インターフェース。
+    /// プレイヤーの攻撃行動（StrategyPattern）の抽象基底インターフェース。
+    /// 弾の発射方法や攻撃パターンのアルゴリズムをカプセル化する。
     /// </summary>
     class IPAttackStrategy
     {
@@ -5524,6 +5585,11 @@ namespace PlayerAttack
 	{
 		manager->Fire(type, pos, dir);
 	}
+
+    /// <summary>
+    /// プレイヤーのホーミング（ロックオン）射撃攻撃ストラテジー。
+    /// 敵のターゲットロックオンおよびホーミング弾一括発射を制御する。
+    /// </summary>
     class PHomingAttackStrategy : public IPAttackStrategy
     {
     public:
@@ -6238,6 +6304,11 @@ class PlayerStateBarrelRoll;
 class PlayerStateTakeDamage;
 class PlayerStateDead;
 
+/// <summary>
+/// プレイヤー自機キャラクタークラス。  
+/// StatePattern による行動管理（Idle, Route, Boost, BarrelRoll, TakeDamage, Dead）および  
+/// StrategyPattern による攻撃処理（IPAttackStrategy）を備え、移動・入力・攻撃・被弾処理を制御する。
+/// </summary>
 class Player :
 	public BaseCharacter
 {
@@ -6317,25 +6388,43 @@ public:
 	void TakeDamage();
 
 	/// <summary>現在のHPを取得する。</summary>
+	/// <returns>ヒットポイント。</returns>
 	int GetHP() { return status_.hitPoint; }
 
 	/// <summary>現在の画面内オフセットを取得する。</summary>
+	/// <returns>画面座標オフセット参照。</returns>
 	TYEngine::Utility::Vector2& GetScreenOffset() { return screenOffset_; }
 
+	/// <summary>プレイヤーの状態マシンを取得する。</summary>
+	/// <returns>ステートマシン参照。</returns>
 	StateMachineType& GetStateMachine() { return stateMachine_; }
 
+	/// <summary>ロックオン情報を取得する。</summary>
+	/// <returns>ロックオンパラメータ構造体参照。</returns>
 	PlayerLockOn& GetLockOn() { return lockOn_; }
 
+	/// <summary>弾丸管理パラメータを取得する。</summary>
+	/// <returns>弾丸パラメータ構造体参照。</returns>
 	PlayerBullets& GetBullets() { return  bullets_; }
 
+	/// <summary>ステータス情報を取得する。</summary>
+	/// <returns>プレイヤーステータス参照。</returns>
 	PlayerStatus& GetStatus() { return status_; }
 
+	/// <summary>照準（レティクル）を取得する。</summary>
+	/// <returns>Reticle ポインタ。</returns>
 	Reticle* GetReticle() { return  reticle_.get(); }
 
+	/// <summary>入力管理クラスを取得する。</summary>
+	/// <returns>Input ポインタ。</returns>
 	TYEngine::Framework::Input* GetInput() { return input_; }
 
+	/// <summary>カメラを取得する。</summary>
+	/// <returns>Camera ポインタ。</returns>
 	TYEngine::CameraSystem::Camera* GetCamera() { return camera_; }
 
+	/// <summary>ビート解析クラスを取得する。</summary>
+	/// <returns>BeatAnalyzer ポインタ。</returns>
 	TYEngine::AudioSystem::BeatAnalyzer* GetBeatAnalyzer() { return beatAnalyzer_; }
 
 	/// <summary>
@@ -6344,12 +6433,20 @@ public:
 	/// </summary>
 	void OnCollision() override;
 
+	/// <summary>BGM再生ハンドルを設定する。</summary>
+	/// <param name="handle">オーディオ再生ハンドル。</param>
 	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
 
+	/// <summary>敵管理クラスを設定する（ロックオン用）。</summary>
+	/// <param name="manager">EnemyManager ポインタ。</param>
 	void SetEnemyManager(EnemyManager* manager) { lockOn_.enemyManager = manager; }
 
+	/// <summary>ゲーム中フラグを設定する。</summary>
+	/// <param name="isInGame">ゲーム中なら true。</param>
 	void SetIsInGame(bool isInGame) { isInGame_ = isInGame; }
 
+	/// <summary>ビート解析クラスを設定する。</summary>
+	/// <param name="beatAnalyzer">BeatAnalyzer ポインタ。</param>
 	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
 
 	/// <summary>
@@ -6467,6 +6564,7 @@ private:
 };
 
 // --- 状態クラスの定義 ---
+/// <summary>プレイヤーの通常待機状態クラス。</summary>
 class PlayerStateIdle : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -6476,6 +6574,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーのルート移動（自動前進・レール移動）状態クラス。</summary>
 class PlayerStateRoute : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -6485,6 +6584,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーのブースト加速状態クラス。</summary>
 class PlayerStateBoost : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -6494,6 +6594,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーのバレルロール（ローリング無敵・回避）状態クラス。</summary>
 class PlayerStateBarrelRoll : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -6503,6 +6604,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーの被弾ダメージ状態クラス。</summary>
 class PlayerStateTakeDamage : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -6512,6 +6614,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーの死亡状態クラス。</summary>
 class PlayerStateDead : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -8291,7 +8394,7 @@ class ReticleCollider :
 {
 public:
 	/// <summary>コンストラクタ。</summary>
-	ReticleCollider(uint32_t typeID, const TYEngine::Utility::Vector3& origin, TYEngine::Utility::Vector3 dir, Reticle* reticle)
+	ReticleCollider(uint32_t typeID, const TYEngine::Utility::Vector3& origin, const TYEngine::Utility::Vector3& dir, Reticle* reticle)
 		: RayCollider(typeID, origin, dir), reticle_(reticle) {
 	}
 
@@ -9674,6 +9777,7 @@ private: // メンバ変数
 };
 
 // --- 状態クラスの定義 ---
+/// <summary>ゲームシーンのリソース非同期/事前ロード状態クラス。</summary>
 class GameSceneStateLoad : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9683,6 +9787,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンの開始フェードイン状態クラス。</summary>
 class GameSceneStateFadeIn : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9692,6 +9797,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのカウントダウン準備演出状態クラス。</summary>
 class GameSceneStateReady : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9701,6 +9807,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのメインゲームプレイ進行状態クラス。</summary>
 class GameSceneStatePlay : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9710,6 +9817,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのポーズ（一時停止）状態クラス。</summary>
 class GameSceneStatePause : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9719,6 +9827,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンの自機撃滅・ゲームオーバー演出状態クラス。</summary>
 class GameSceneStateDead : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9728,6 +9837,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのステージクリア演出状態クラス。</summary>
 class GameSceneStateClear : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9737,6 +9847,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのリザルト画面表示状態クラス。</summary>
 class GameSceneStateResult : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9746,6 +9857,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのリトライ待ち・準備状態クラス。</summary>
 class GameSceneStateRetry : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9755,6 +9867,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンの終了フェードアウト状態クラス。</summary>
 class GameSceneStateFadeOut : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -9764,6 +9877,7 @@ public:
 	void Exit(GameScene& owner) override;
 };
 
+/// <summary>ゲームシーンのデバッグ用レール・敵配置エディタ状態クラス。</summary>
 class GameSceneStateDebugEdit : public TYEngine::Utility::State<GameSceneState, GameScene>
 {
 public:
@@ -10579,7 +10693,7 @@ File Path: project/application/Scene/GameScene/Pause/PauseUI.cpp
 #include "PauseUI.h"
 #include "Sprite.h"
 #include "TextureManager.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Timer.h"
 #include "Ease.h"
 #include "imgui.h"
@@ -11111,7 +11225,7 @@ File Path: project/application/Scene/GameScene/PlayUI/PlayUI.cpp
 ============================================================
 #include "PlayUI.h"
 #include "Input.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "TextureManager.h"
 #include "../../../ScoreUI/ScoreUI.h"
 #include <AppSystem/Audio/GameAudio.h>
@@ -11127,21 +11241,23 @@ void PlayUI::Init()
 	input_ = Input::GetInstance();
 	shakeTime_ = jm_->Get<float>("PlayUI.UIShake");
 
+	Vector2 centerPos = jm_->Get<Vector2>("PlayUI.Texture.reticle.PositionCenter", { 640.0f, 620.0f });
+
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Resources/Texture/RhythmBar1.png");
 	reticle_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
-	reticle_->SetPosition({ 640.0f,620.0f});
+	reticle_->SetPosition(centerPos);
 
 	reticle2_ = std::make_unique<Sprite>();
 	reticle2_->Initialize("Resources/Texture/RhythmBar2.png");
 	reticle2_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
-	reticle2_->SetPosition({ 640.0f,620.0f });
+	reticle2_->SetPosition(centerPos);
 	reticle2_->SetColor({ 1,0,0,1 });
 
 	reticle3_ = std::make_unique<Sprite>();
 	reticle3_->Initialize("Resources/Texture/RhythmBar2.png");
 	reticle3_->SetAnchorPoint(jm_->Get<Vector2>("PlayUI.Texture.reticle.AnchorPoint"));
-	reticle3_->SetPosition({ 640.0f,620.0f });
+	reticle3_->SetPosition(centerPos);
 	reticle3_->SetColor({ 1,0,0,1 });
 
 	TextureManager::GetInstance()->LoadTexture("Resources/Texture/ComboText.png");
@@ -11228,8 +11344,11 @@ void PlayUI::Update()
 #ifdef _DEBUG
 	DebugJMApply();
 #endif // _DEBUG
-	reticle2_->SetPosition(Lerp(Vector2{ 360.0f,620.0f }, Vector2{ 640.0f,620.0f }, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
-	reticle3_->SetPosition(Lerp(Vector2{ 920.0f,620.0f }, Vector2{ 640.0f,620.0f }, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
+	Vector2 leftPos = jm_->Get<Vector2>("PlayUI.Texture.reticle.PositionLeft", { 360.0f, 620.0f });
+	Vector2 centerPos = jm_->Get<Vector2>("PlayUI.Texture.reticle.PositionCenter", { 640.0f, 620.0f });
+	Vector2 rightPos = jm_->Get<Vector2>("PlayUI.Texture.reticle.PositionRight", { 920.0f, 620.0f });
+	reticle2_->SetPosition(Lerp(leftPos, centerPos, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
+	reticle3_->SetPosition(Lerp(rightPos, centerPos, GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
 	//reticle2_->SetScale(1.0f + (1.0f - GameAudio::GetInstance()->GetBeatAnalyzer().GetBeatCloseness()));
 
 	for (auto& sprite : sprites_)
@@ -11246,7 +11365,7 @@ void PlayUI::Draw()
 	reticle2_->Draw();
 	reticle3_->Draw();
 
-	for (int i = 0; i < SpriteNum; ++i)
+	for (int i = 0; i < kSpriteNum; ++i)
 	{
 		if (i != OUTLINE && i != SHIFT)
 		{
@@ -11387,11 +11506,11 @@ private:
 		OUTLINE,
 		PAUSE,
 		SHIFT,
-		SpriteNum
+		kSpriteNum
 	};
 
 	/// <summary>UIスプライト群。</summary>
-	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, SpriteNum> sprites_;
+	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, kSpriteNum> sprites_;
 
 	/// <summary>レティクルスプライト。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> reticle_;
@@ -11497,11 +11616,20 @@ void ConfettiSystem::Emit(int countPerFrame)
     }
 }
 
+#include "Utils/Json/JsonManager.h"
+
 void ConfettiSystem::Update(float dt)
 {
     globalTime_ += dt;
 
-    const float gravity = 300.0f;
+    static JsonManager jm;
+    static bool loaded = false;
+    if (!loaded)
+    {
+        jm.Load("GameUI.json");
+        loaded = true;
+    }
+    const float gravity = jm.Get<float>("Confetti.gravity", 300.0f);
 
     for (auto& p : particles_)
     {
@@ -11853,7 +11981,7 @@ File Path: project/application/Scene/GameScene/Result/ResultUI.cpp
 #include "Sprite.h"
 #include "TextureManager.h"
 #include "Timer.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Ease.h"
 
 using namespace TYEngine::Utility;
@@ -12031,7 +12159,7 @@ File Path: project/application/Scene/GameScene/RetryUI/RetryUI.cpp
 #include "Sprite.h"
 #include "TextureManager.h"
 #include "Timer.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Ease.h"
 
 using namespace TYEngine::Utility;
@@ -12184,7 +12312,7 @@ File Path: project/application/Scene/GameScene/StartUI/StartUI.cpp
 #include "Sprite.h"
 #include "TextureManager.h"
 #include "Timer.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 using namespace TYEngine::Utility;
 using namespace TYEngine::Graphics;
@@ -12201,8 +12329,8 @@ void StartUI::Init()
 	sprites_[GO]->Initialize("Resources/Texture/Go.png");
 	sprites_[GO]->SetPosition(jm_->Get<Vector2>("StartUI.Texture.Go.Position"));
 
-	timer_ = jm_->Get<float>("RetryUI.timer.reset");
-	maxTime_ = jm_->Get<float>("RetryUI.timer.max");
+	timer_ = jm_->Get<float>("StartUI.timer.reset", -1.0f);
+	maxTime_ = jm_->Get<float>("StartUI.timer.max", 3.0f);
 }
 
 void StartUI::SetGOAlpha(float t)
@@ -12218,7 +12346,7 @@ void StartUI::Reset()
 {
 	sprites_[READY]->SetPosition(jm_->Get<Vector2>("StartUI.Texture.Ready.Position"));
 	sprites_[GO]->SetPosition(jm_->Get<Vector2>("StartUI.Texture.Go.Position"));
-	timer_ = jm_->Get<float>("RetryUI.timer.reset");
+	timer_ = jm_->Get<float>("StartUI.timer.reset", -1.0f);
 }
 
 void StartUI::Update()
@@ -12279,7 +12407,7 @@ void StartUI::Move()
 	}
 	else
 	{
-		timer_ = jm_->Get<float>("RetryUI.timer.reset");
+		timer_ = jm_->Get<float>("StartUI.timer.reset", -1.0f);
 	}
 }
 
@@ -12953,6 +13081,7 @@ private:
 };
 
 // --- 状態クラスの定義 ---
+/// <summary>タイトルシーンのフェードイン状態クラス。</summary>
 class TitleSceneStateFadeIn : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:
@@ -12962,6 +13091,7 @@ public:
 	void Exit(TitleScene& owner) override;
 };
 
+/// <summary>タイトルシーンの開始準備・演出待機状態クラス。</summary>
 class TitleSceneStateReady : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:
@@ -12971,6 +13101,7 @@ public:
 	void Exit(TitleScene& owner) override;
 };
 
+/// <summary>タイトルシーンのメインループ・入力待ち状態クラス。</summary>
 class TitleSceneStatePlay : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:
@@ -12980,6 +13111,7 @@ public:
 	void Exit(TitleScene& owner) override;
 };
 
+/// <summary>タイトルシーンの一時停止状態クラス。</summary>
 class TitleSceneStatePause : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:
@@ -12989,6 +13121,7 @@ public:
 	void Exit(TitleScene&) override {}
 };
 
+/// <summary>タイトルシーンのフェードアウト状態クラス。</summary>
 class TitleSceneStateFadeOut : public TYEngine::Utility::State<TitleSceneState, TitleScene>
 {
 public:
@@ -13612,7 +13745,7 @@ File Path: project/application/ScoreUI/ScoreUI.cpp
 #include "ScoreUI.h"
 #include "SpriteBasis.h"
 #include "TextureManager.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Ease.h"
 #include "Timer.h"
 #include "Random.h"
@@ -13983,7 +14116,7 @@ void Stage::Update()
     enemyMgr_.SetTargetPos(&pos);
     enemyMgr_.Update();
 
-    StageObjectBeatScale();
+    UpdateStageObjectBeatScale();
     for (auto&& o : stageObject_)
     {
         o->Update();
@@ -14043,7 +14176,7 @@ void Stage::FromJson(const nlohmann::json& j) {
     railManager_->Reset();
 }
 
-void Stage::StageObjectBeatScale()
+void Stage::UpdateStageObjectBeatScale()
 {
     float beatScale = jsonManager_->Get<float>("beatScale", 1.05f);
 
@@ -14232,7 +14365,7 @@ public:
 	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
 
 private:
-	void StageObjectBeatScale();
+	void UpdateStageObjectBeatScale();
 
 	void DebugUI();
 
@@ -14398,20 +14531,30 @@ public:
     /// <returns>終了なら true。</returns>
     bool IsFinished() { return GetCurrentStage()->IsFinished(); }
 
+    /// <summary>コンボ計算マネージャを取得する。</summary>
+    /// <returns>HitStreakManager ポインタ。</returns>
     HitStreakManager* GetComboManager() 
     {
         return GetCurrentStage() ? GetCurrentStage()->GetComboManager() : nullptr;
     }
 
+    /// <summary>スコア計算マネージャを取得する。</summary>
+    /// <returns>ScoreManager ポインタ。</returns>
     ScoreManager* GetScoreManager()
     {
         return GetCurrentStage() ? GetCurrentStage()->GetScoreManager() : nullptr;
     }
 
+    /// <summary>プレイヤーオブジェクトを取得する。</summary>
+    /// <returns>Player ポインタ。</returns>
     Player* GetPlayer() { return GetCurrentStage()->GetPlayer(); }
 
+    /// <summary>レール移動マネージャを取得する。</summary>
+    /// <returns>RailManager ポインタ。</returns>
     RailManager* GetRailManager() { return GetCurrentStage()->GetRailManager(); }
 
+    /// <summary>全ステージ関連コンポーネントへBGM再生ハンドルを一括設定する。</summary>
+    /// <param name="handle">オーディオ再生ハンドル。</param>
     void SetBGMHandle(int handle) 
     { 
         GetPlayer()->SetBGMHandle(handle);
@@ -14444,10 +14587,10 @@ File Path: project/application/main.cpp
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) 
 {
 	// ゲーム本体のインスタンス作成
-	std::unique_ptr<TYEngine::Framework::TYFrameWork> game = std::make_unique<GameCore>();
+	std::unique_ptr<TYEngine::Framework::TYFramework> game = std::make_unique<GameCore>();
 
 	// メインループ実行
-	game->run();
+	game->Run();
 	
 	return 0;
 }
@@ -16213,7 +16356,7 @@ namespace TYEngine
 			}
 		}
 
-		int Audio::Play(const std::string& filename, const bool isLoop, std::string soundCategory)
+		int Audio::Play(const std::string& filename, bool isLoop, const std::string& soundCategory)
 		{
 			HRESULT result;
 
@@ -16591,7 +16734,7 @@ namespace TYEngine
 			/// <param name="isLoop">ループ再生を行うか（デフォルト: false）。</param>
 			/// <param name="soundCategory">再生するカテゴリー（省略時は無し）。</param>
 			/// <returns>再生ハンドル（リソース番号）。エラー時は -1。</returns>
-			int Play(const std::string& filename, const bool isLoop = false, std::string soundCategory = "");
+			int Play(const std::string& filename, bool isLoop = false, const std::string& soundCategory = "");
 
 			Microsoft::WRL::ComPtr<MyAnalyzerXAPO> GetAnalyzerXAPO(const std::string& soundCategory = "");
 
@@ -17139,7 +17282,7 @@ namespace TYEngine
 			return true;
 		}
 
-		bool StreamingAudio::ReadWavHeader(std::string filename, WAVHeader& header)
+		bool StreamingAudio::ReadWavHeader(const std::string& filename, WAVHeader& header)
 		{
 			std::ifstream file(filename, std::ios::binary);
 			if (!file) return false;
@@ -17313,7 +17456,7 @@ namespace TYEngine
 			bool ReadAudioData(std::ifstream& file, std::vector<BYTE>& buffer);
 
 			// WAVファイルのヘッダーを読み込む
-			bool ReadWavHeader(std::string filename, WAVHeader& header);
+			bool ReadWavHeader(const std::string& filename, WAVHeader& header);
 
 		public:
 			uint32_t GetId() { return id_; }
@@ -17959,6 +18102,7 @@ File Path: project/engine/Camera/Camera.cpp
 ============================================================
 #include "Camera.h"
 #include "Timer.h"
+#include "Utils/JSON/JsonManager.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
@@ -17973,16 +18117,27 @@ namespace TYEngine
 		using namespace TYEngine::Core;
 
 		Camera::Camera()
-			: transform_({ {1.0f,1.0f,1.0f},{0.3f,0.0f,0.0f},{0.0f,4.0f,-10.0f} })
-			, horizontalFOV_(0.45f)
-			, aspectRatio_(float(WindowsApp::kClientWidth) / float(WindowsApp::kClientHeight))
-			, nearClip_(2.0f)
-			, farClip_(500.0f)
-			, worldMatrix_(MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate))
-			, viewMatrix_(Inverse(worldMatrix_))
-			, projectionMatrix_(MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_))
-			, worldViewProjectionMatrix_(viewMatrix_* projectionMatrix_)
 		{
+			JsonManager jm;
+			jm.Load("EngineConfig.json");
+
+			transform_.scale = jm.Get<Vector3>("camera.defaultScale", Vector3(1.0f, 1.0f, 1.0f));
+			transform_.rotate = jm.Get<Vector3>("camera.defaultRotate", Vector3(0.3f, 0.0f, 0.0f));
+			transform_.translate = jm.Get<Vector3>("camera.defaultPosition", Vector3(0.0f, 4.0f, -10.0f));
+
+			horizontalFOV_ = jm.Get<float>("camera.horizontalFOV", 0.45f);
+			aspectRatio_ = float(WindowsApp::kClientWidth) / float(WindowsApp::kClientHeight);
+			nearClip_ = jm.Get<float>("camera.nearClip", 2.0f);
+			farClip_ = jm.Get<float>("camera.farClip", 500.0f);
+
+			followCameraOffsetPosition_ = jm.Get<Vector3>("camera.followOffsetPosition", Vector3(0.0f, 20.0f, -35.0f));
+			followCameraOffsetRotate_ = jm.Get<Vector3>("camera.followOffsetRotate", Vector3(0.51f, 0.0f, 0.0f));
+
+			worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+			viewMatrix_ = Inverse(worldMatrix_);
+			projectionMatrix_ = MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_);
+			worldViewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
+
 			prevTranslate_ = transform_.translate;
 			deltaTranslate_ = Vector3{};
 		}
@@ -18058,7 +18213,7 @@ File Path: project/engine/Camera/Camera.h
 ============================================================
 #pragma once
 #include "Matrix4x4Func.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "WindowsApp.h"
 #include "CameraShake.h"
 
@@ -18230,7 +18385,7 @@ namespace TYEngine
 File Path: project/engine/Camera/CameraShake.h
 ============================================================
 #pragma once
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include <random>
 
 namespace TYEngine
@@ -18741,7 +18896,7 @@ namespace TYEngine
 File Path: project/engine/Effect/DebrisBehaviour.cpp
 ============================================================
 #include "DebrisBehaviour.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 namespace TYEngine
 {
@@ -18812,7 +18967,7 @@ namespace TYEngine
 File Path: project/engine/Effect/ExplosionBehaviour.cpp
 ============================================================
 #include "ExplosionBehaviour.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 namespace TYEngine
 {
@@ -18880,7 +19035,7 @@ namespace TYEngine
 File Path: project/engine/Effect/ExplosionRingBehaviour.cpp
 ============================================================
 #include "ExplosionRingBehaviour.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 namespace TYEngine
 {
@@ -20812,25 +20967,43 @@ namespace TYEngine
 File Path: project/engine/EngineCore/EngineConfig.h
 ============================================================
 #pragma once
+#include "Utils/JSON/JsonManager.h"
 
 namespace TYEngine
 {
 	namespace Core
 	{
+		/// <summary>
+		/// エンジン全体の静的設定項目（FPS上限など）のロードおよび保持を行う設定モジュール。
+		/// </summary>
 		namespace EngineConfig
 		{
-			static float fps_ = 60.0f;
+			/// <summary>設定されたターゲットFPS（デフォルト: 60.0f）。</summary>
+			inline float fps_ = 60.0f;
+
+			/// <summary>EngineConfig.json からエンジン設定をロードする。</summary>
+			inline void Load()
+			{
+				Utility::JsonManager jm;
+				if (jm.Load("EngineConfig.json"))
+				{
+					fps_ = jm.Get<float>("graphics.fps", 60.0f);
+				}
+			}
 		}
 	} // namespace Core
 } // namespace TYEngine
+
 
 ============================================================
 File Path: project/engine/EngineCore/WindowsApp.cpp
 ============================================================
 #include "WindowsApp.h"
+#include "Utils/JSON/JsonManager.h"
 #include "imgui/imgui_impl_dx12.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_win32.h"
+#include <string>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #pragma comment(lib, "winmm.lib")
@@ -20865,23 +21038,31 @@ namespace TYEngine
 			(void)hr;
 			assert(SUCCEEDED(hr));
 
-			wc.lpfnWndProc = WindowProc;
+			Utility::JsonManager jm;
+			jm.Load("EngineConfig.json");
 
-			wc.lpszClassName = L"TYengineWindowClass";
+			int width = jm.Get<int>("window.width", kClientWidth);
+			int height = jm.Get<int>("window.height", kClientHeight);
+			std::string titleStr = jm.Get<std::string>("window.title", "TYEngine");
+			std::wstring title(titleStr.begin(), titleStr.end());
 
-			wc.hInstance = GetModuleHandle(nullptr);
+			wc_.lpfnWndProc = WindowProc;
 
-			wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+			wc_.lpszClassName = L"TYengineWindowClass";
 
-			RegisterClass(&wc);
+			wc_.hInstance = GetModuleHandle(nullptr);
 
-			RECT wrc = { 0, 0, kClientWidth, kClientHeight };
+			wc_.hCursor = LoadCursor(nullptr, IDC_ARROW);
+
+			RegisterClass(&wc_);
+
+			RECT wrc = { 0, 0, width, height };
 
 			AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
-			hwnd = CreateWindow(
-				wc.lpszClassName,
-				L"TYengine",
+			hwnd_ = CreateWindow(
+				wc_.lpszClassName,
+				title.c_str(),
 				WS_OVERLAPPEDWINDOW,
 				CW_USEDEFAULT,
 				CW_USEDEFAULT,
@@ -20889,11 +21070,11 @@ namespace TYEngine
 				wrc.bottom - wrc.top,
 				nullptr,
 				nullptr,
-				wc.hInstance,
+				wc_.hInstance,
 				nullptr);
 
 			// ウィンドウを表示状態にする
-			ShowWindow(hwnd, SW_SHOW);
+			ShowWindow(hwnd_, SW_SHOW);
 
 			// システムタイマーの分解能を上げる（マルチメディアタイマーなどへの影響）
 			timeBeginPeriod(1);
@@ -20917,7 +21098,7 @@ namespace TYEngine
 
 		void WindowsApp::Finalize()
 		{
-			CloseWindow(hwnd);
+			CloseWindow(hwnd_);
 			CoUninitialize();
 		}
 
@@ -20972,13 +21153,13 @@ namespace TYEngine
 			/// 生成されたウィンドウのハンドルを取得する。
 			/// </summary>
 			/// <returns>HWND ハンドル。</returns>
-			HWND GetHwnd() const { return hwnd; }
+			HWND GetHwnd() const { return hwnd_; }
 
 			/// <summary>
 			/// アプリケーションインスタンスハンドルを取得する。
 			/// </summary>
 			/// <returns>HINSTANCE ハンドル。</returns>
-			HINSTANCE GetHInstance() const { return wc.hInstance; }
+			HINSTANCE GetHInstance() const { return wc_.hInstance; }
 
 			/// <summary>
 			/// 終了処理。
@@ -20994,9 +21175,9 @@ namespace TYEngine
 
 		private:
 			/// <summary>管理しているウィンドウハンドル。</summary>
-			HWND hwnd = nullptr;
+			HWND hwnd_ = nullptr;
 			/// <summary>ウィンドウクラス設定構造体。</summary>
-			WNDCLASS wc{};
+			WNDCLASS wc_{};
 		};
 
 	} // namespace Core
@@ -22034,6 +22215,7 @@ private:
 File Path: project/engine/Framework/TYFrameWork.cpp
 ============================================================
 #include "TYFrameWork.h"
+#include "EngineConfig.h"
 
 namespace TYEngine
 {
@@ -22045,7 +22227,7 @@ namespace TYEngine
 		using namespace Core;
 		using namespace Graphics;
 
-		void TYFrameWork::run()
+		void TYFramework::Run()
 		{
 			// 初期化
 			Initialize();
@@ -22067,8 +22249,11 @@ namespace TYEngine
 			Finalize();
 		}
 
-		void TYFrameWork::Initialize()
+		void TYFramework::Initialize()
 		{
+			// エンジン設定のロード
+			EngineConfig::Load();
+
 #pragma region // 基盤システム初期化
 
 			// ウィンドウズアプリケーション
@@ -22090,13 +22275,13 @@ namespace TYEngine
 #pragma endregion
 		}
 
-		void TYFrameWork::Finalize()
+		void TYFramework::Finalize()
 		{
 			imgui_->Finalize();
 			windowsApp_->Finalize();
 		}
 
-		void TYFrameWork::Update()
+		void TYFramework::Update()
 		{
 			input_->Update();
 			sceneManager_->Update();
@@ -22150,17 +22335,17 @@ namespace TYEngine
 		/// 各種マネージャ（DirectX・描画・入力・シーンなど）を統括し、  
 		/// ゲームアプリケーションのライフサイクルを制御する。
 		/// </summary>
-		class TYFrameWork
+		class TYFramework
 		{
 		public:
 			/// <summary>仮想デストラクタ。</summary>
-			virtual ~TYFrameWork() = default;
+			virtual ~TYFramework() = default;
 
 			/// <summary>
 			/// メインループを実行する。  
 			/// Initialize → Update → Draw → Finalize の順に処理を行う。
 			/// </summary>
-			void run();
+			void Run();
 
 			/// <summary>
 			/// 初期化処理。  
@@ -22547,7 +22732,7 @@ namespace TYEngine
 File Path: project/engine/Graphics/Cubemap/ObjectCubemap.cpp
 ============================================================
 #include "ObjectCubemap.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 namespace TYEngine
 {
@@ -22874,7 +23059,7 @@ namespace TYEngine
 File Path: project/engine/Graphics/Model/Model.cpp
 ============================================================
 #include "Model.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Matrix4x4Func.h"
 #include "TextureManager.h"
 #include "struct.h"
@@ -23548,7 +23733,7 @@ File Path: project/engine/Graphics/Model/Object3d.h
 #include <fstream>
 #include "struct.h"
 #include "Matrix4x4Func.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Model.h"
 #include "ModelManager.h"
 #include "Camera.h"
@@ -23673,7 +23858,7 @@ namespace TYEngine
 
 			/// <summary>現在の透明度を取得する。</summary>
 			/// <returns>alpha 透明度。</returns>
-			const float& GetAlpha() const { return materialData_->color.w; }
+			float GetAlpha() const { return materialData_->color.w; }
 
 			/// <summary>透明度を設定する。</summary>
 			/// <param name="alpha">alpha 透明度。</param>
@@ -23689,11 +23874,11 @@ namespace TYEngine
 
 			/// <summary>ライティング有効フラグを取得する。</summary>
 			/// <returns>true でライティング有効。</returns>
-			const bool& GetIsLighting() const { return materialData_->enableLighting; }
+			bool GetIsLighting() const { return materialData_->enableLighting; }
 
 			/// <summary>ライティングの有効・無効を設定する。</summary>
 			/// <param name="isLighting">true で有効、false で無効。</param>
-			void SetIsLighting(const bool isLighting) { materialData_->enableLighting = isLighting; }
+			void SetIsLighting(bool isLighting) { materialData_->enableLighting = isLighting; }
 
 			/// <summary>環境マップ反射係数を設定する（0～1）。</summary>
 			/// <param name="environmentCoefficient">反射係数。</param>
@@ -24307,7 +24492,7 @@ namespace TYEngine
 		using namespace Core;
 		using namespace Utility;
 
-		void Sprite::Initialize(std::string textureFilePath)
+		void Sprite::Initialize(const std::string& textureFilePath)
 		{
 			spriteBasis_ = SpriteBasis::GetInstance();
 			textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
@@ -24578,7 +24763,7 @@ namespace TYEngine
 			/// 指定したテクスチャを読み込み、頂点・マテリアル・行列バッファを生成する。
 			/// </summary>
 			/// <param name="textureFilePath">使用するテクスチャファイルのパス。</param>
-			void Initialize(std::string textureFilePath);
+			void Initialize(const std::string& textureFilePath);
 
 			/// <summary>
 			/// スプライトの毎フレーム更新処理。  
@@ -24645,9 +24830,9 @@ namespace TYEngine
 			/// <summary>アンカーポイント（中心点）を取得する。</summary>
 			const Utility::Vector2& GetAnchorPoint() const { return anchorPoint_; }
 			/// <summary>左右反転フラグを取得する。</summary>
-			const bool& GetIsFlipX() const { return isFlipX_; }
+			bool GetIsFlipX() const { return isFlipX_; }
 			/// <summary>上下反転フラグを取得する。</summary>
-			const bool& GetIsFlipY() const { return isFlipY_; }
+			bool GetIsFlipY() const { return isFlipY_; }
 			/// <summary>スケール（倍率）を取得する。</summary>
 			const Utility::Vector2& GetScale() const { return scale_; }
 
@@ -24658,11 +24843,11 @@ namespace TYEngine
 			/// <summary>座標を設定する。</summary>
 			void SetPosition(const Utility::Vector2& position) { position_ = position; }
 			/// <summary>回転角（ラジアン）を設定する。</summary>
-			void SetRotation(const float& rotation) { rotation_ = rotation; }
+			void SetRotation(float rotation) { rotation_ = rotation; }
 			/// <summary>色（RGBA）を設定する。</summary>
 			void SetColor(const Utility::Vector4& color) { materialData_->color = color; }
 			/// <summary>透明度（Alpha）を設定する。</summary>
-			void SetAlpha(const float& alpha) { materialData_->color.w = alpha; }
+			void SetAlpha(float alpha) { materialData_->color.w = alpha; }
 			/// <summary>サイズ（幅・高さ）を設定する。</summary>
 			void SetSize(const Utility::Vector2& size) { size_ = size; }
 			/// <summary>テクスチャ切り出し位置（左上）を設定する。</summary>
@@ -28572,7 +28757,7 @@ File Path: project/engine/Utility/Collider/Collider.h
 #include <optional>
 #include <utility>
 #include <cstdint>
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 namespace TYEngine
 {
@@ -28958,7 +29143,7 @@ namespace TYEngine
 File Path: project/engine/Utility/Collider/CollisionFunc.cpp
 ============================================================
 #include "CollisionFunc.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Matrix4X4Func.h"
 #include <cmath>
 #include <algorithm>
@@ -29434,7 +29619,7 @@ namespace TYEngine
 		{
 		public: // メンバ関数
 			// コンストラクタ
-			RayCollider(uint32_t typeID, const Vector3& origin, Vector3 dir)
+			RayCollider(uint32_t typeID, const Vector3& origin, const Vector3& dir)
 				: Collider(typeID), ray_(Ray{ origin,dir })
 			{}
 
@@ -29575,7 +29760,7 @@ namespace TYEngine
 			}
 		}
 
-		void BlenderLevelLoader::ObjectTraversal(LevelData* levelData, json& j, std::string contains)
+		void BlenderLevelLoader::ObjectTraversal(LevelData* levelData, json& j, const std::string& contains)
 		{
 			for (json& object : j[contains])
 			{
@@ -29715,7 +29900,7 @@ namespace TYEngine
 
 		private:
 			// オブジェクト走査
-			void ObjectTraversal(LevelData* levelData, nlohmann::json& j, std::string contains);
+			void ObjectTraversal(LevelData* levelData, nlohmann::json& j, const std::string& contains);
 
 		private:
 			/// <summary>JSONファイルのベースディレクトリパス。</summary>
@@ -30548,7 +30733,7 @@ namespace TYEngine
 File Path: project/engine/Utility/Math/Quaternion.cpp
 ============================================================
 #include "Quaternion.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Matrix4x4Func.h"
 #include <cmath>
 
@@ -30603,7 +30788,7 @@ namespace TYEngine
 			return qr;
 		};
 
-		Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, const float theta)
+		Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, float theta)
 		{
 			Quaternion q = IdentityQuaternion();
 			Vector3 n = Normalize(vec);
@@ -30818,7 +31003,7 @@ namespace TYEngine
 		/// <param name="vec">回転軸（正規化されている必要あり）。</param>
 		/// <param name="theta">回転角度（ラジアン）。</param>
 		/// <returns>生成されたクォータニオン。</returns>
-		Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, const float theta);
+		Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, float theta);
 
 
 		/// <summary>
@@ -31032,25 +31217,39 @@ namespace TYEngine
 			//        Setter
 			// ========================
 
+			// ========================
+			//        Setter
+			// ========================
+
 			/// <summary>定数バッファへWVP行列を設定する。</summary>
+			/// <param name="wvp">WVP行列。</param>
 			void SetMapWVP(const Matrix4x4& wvp) { constMap->WVP = wvp; }
 			/// <summary>定数バッファへWorld行列を設定する。</summary>
+			/// <param name="world">ワールド行列。</param>
 			void SetMapWorld(const Matrix4x4& world) { constMap->World = world; }
 			/// <summary>ローカルスケールを設定する。</summary>
+			/// <param name="scale">XYZスケールベクトル。</param>
 			void SetScale(const Vector3& scale) { scale_ = scale; }
-			/// <summary>ローカルスケールを設定する。</summary>
+			/// <summary>全方向一律のローカルスケールを設定する。</summary>
+			/// <param name="scale">スケール値。</param>
 			void SetScale(float scale) { scale_ = { scale,scale,scale }; }
 			/// <summary>ローカル回転（オイラー角）を設定する。</summary>
+			/// <param name="rotate">オイラー角（ラジアン）。</param>
 			void SetRotate(const Vector3& rotate) { rotation_ = rotate; }
 			/// <summary>ローカル座標を設定する。</summary>
+			/// <param name="translation">XYZ位置ベクトル。</param>
 			void SetTranslation(const Vector3& translation) { translation_ = translation; }
 			/// <summary>ローカル回転（クォータニオン）を設定する。</summary>
+			/// <param name="rotationQ">回転クォータニオン。</param>
 			void SetRotateQuaternion(const Quaternion& rotationQ) { rotationQ_ = rotationQ; }
 			/// <summary>クォータニオンによる回転を使用するか設定する。</summary>
+			/// <param name="use">true でクォータニオン回転を有効化。</param>
 			void SetUseQuaternion(bool use) { useQuaternion_ = use; }
 			/// <summary>親となるワールド変換を設定する（親子関係構築）。</summary>
+			/// <param name="parent">親の WorldTransform ポインタ。</param>
 			void SetParentWT(const WorldTransform* parent) { parent_ = parent; }
 			/// <summary>親行列を直接設定する。</summary>
+			/// <param name="parentMatrix">親の Matrix4x4 ポインタ。</param>
 			void SetParentMatrix(const Matrix4x4* parentMatrix) { parentMatrix_ = parentMatrix; }
 
 
@@ -31059,22 +31258,31 @@ namespace TYEngine
 			// ========================
 
 			/// <summary>定数バッファのリソースを取得。</summary>
+			/// <returns>GPU定数バッファリソース参照。</returns>
 			const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
 			/// <summary>ワールド行列を取得。</summary>
+			/// <returns>計算されたワールド変換行列。</returns>
 			const Matrix4x4& GetMatWorld() { return matWorld_; }
 			/// <summary>ローカルスケールを取得。</summary>
+			/// <returns>スケールベクトル。</returns>
 			const Vector3& GetScale() { return scale_; }
 			/// <summary>ローカル回転（オイラー角）を取得。</summary>
+			/// <returns>オイラー角ベクトル。</returns>
 			const Vector3& GetRotate() { return rotation_; }
 			/// <summary>ローカル座標を取得。</summary>
+			/// <returns>位置ベクトル。</returns>
 			const Vector3& GetTranslation() { return translation_; }
 			/// <summary>ローカル回転（クォータニオン）を取得。</summary>
+			/// <returns>回転クォータニオン。</returns>
 			const Quaternion& GetRotateQuaternion() { return rotationQ_; }
 			/// <summary>クォータニオン使用フラグを取得。</summary>
+			/// <returns>有効なら true。</returns>
 			bool GetUseQuaternion() { return useQuaternion_; }
 			/// <summary>親のワールド変換情報を取得。</summary>
+			/// <returns>親の WorldTransform ポインタ。</returns>
 			const WorldTransform* GetParentWT() { return parent_; }
 			/// <summary>親行列ポインタを取得。</summary>
+			/// <returns>親の Matrix4x4 ポインタ。</returns>
 			const Matrix4x4* GetParentMatrix() { return parentMatrix_; }
 
 		private:
@@ -31122,7 +31330,7 @@ namespace TYEngine
 ============================================================
 File Path: project/engine/Utility/Math/mathFunc.cpp
 ============================================================
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Matrix4x4Func.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -31172,7 +31380,7 @@ namespace TYEngine
 			return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 		}
 
-		Vector3 Subtruct(const Vector3& v1, const Vector3& v2)
+		Vector3 Subtract(const Vector3& v1, const Vector3& v2)
 		{
 			return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 		}
@@ -31565,7 +31773,7 @@ namespace TYEngine
 			return result;
 		}
 
-		Vector4 operator*(const Vector4& v, const float& s)
+		Vector4 operator*(const Vector4& v, float s)
 		{
 			Vector4 result;
 			result.x = v.x * s;
@@ -31575,7 +31783,7 @@ namespace TYEngine
 			return result;
 		}
 
-		Vector4 operator*(const float& s, const Vector4& v)
+		Vector4 operator*(float s, const Vector4& v)
 		{
 			Vector4 result;
 			result.x = v.x * s;
@@ -31595,7 +31803,7 @@ namespace TYEngine
 			return result;
 		}
 
-		Vector4 operator/(const Vector4& v, const float& s)
+		Vector4 operator/(const Vector4& v, float s)
 		{
 			Vector4 result;
 			result.x = v.x / s;
@@ -31654,7 +31862,7 @@ namespace TYEngine
 		/// <summary>
 		/// 3次元ベクトルの減算を行う (v1 - v2)
 		/// </summary>
-		Vector3 Subtruct(const Vector3& v1, const Vector3& v2);
+		Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 
 		/// <summary>
 		/// 3次元ベクトルの加算を行う (v1 + v2)
@@ -31818,13 +32026,13 @@ namespace TYEngine
 
 		Vector4 operator*(const Vector4& a, const Vector4& b);
 
-		Vector4 operator*(const Vector4& v, const float& s);
+		Vector4 operator*(const Vector4& v, float s);
 
-		Vector4 operator*(const float& s, const Vector4& v);
+		Vector4 operator*(float s, const Vector4& v);
 
 		Vector4 operator/(const Vector4& a, const Vector4& b);
 
-		Vector4 operator/(const Vector4& v, const float& s);
+		Vector4 operator/(const Vector4& v, float s);
 
 	} // namespace Utility
 } // namespace TYEngine

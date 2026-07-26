@@ -53,25 +53,39 @@ namespace TYEngine
 			//        Setter
 			// ========================
 
+			// ========================
+			//        Setter
+			// ========================
+
 			/// <summary>定数バッファへWVP行列を設定する。</summary>
+			/// <param name="wvp">WVP行列。</param>
 			void SetMapWVP(const Matrix4x4& wvp) { constMap->WVP = wvp; }
 			/// <summary>定数バッファへWorld行列を設定する。</summary>
+			/// <param name="world">ワールド行列。</param>
 			void SetMapWorld(const Matrix4x4& world) { constMap->World = world; }
 			/// <summary>ローカルスケールを設定する。</summary>
+			/// <param name="scale">XYZスケールベクトル。</param>
 			void SetScale(const Vector3& scale) { scale_ = scale; }
-			/// <summary>ローカルスケールを設定する。</summary>
+			/// <summary>全方向一律のローカルスケールを設定する。</summary>
+			/// <param name="scale">スケール値。</param>
 			void SetScale(float scale) { scale_ = { scale,scale,scale }; }
 			/// <summary>ローカル回転（オイラー角）を設定する。</summary>
+			/// <param name="rotate">オイラー角（ラジアン）。</param>
 			void SetRotate(const Vector3& rotate) { rotation_ = rotate; }
 			/// <summary>ローカル座標を設定する。</summary>
+			/// <param name="translation">XYZ位置ベクトル。</param>
 			void SetTranslation(const Vector3& translation) { translation_ = translation; }
 			/// <summary>ローカル回転（クォータニオン）を設定する。</summary>
+			/// <param name="rotationQ">回転クォータニオン。</param>
 			void SetRotateQuaternion(const Quaternion& rotationQ) { rotationQ_ = rotationQ; }
 			/// <summary>クォータニオンによる回転を使用するか設定する。</summary>
+			/// <param name="use">true でクォータニオン回転を有効化。</param>
 			void SetUseQuaternion(bool use) { useQuaternion_ = use; }
 			/// <summary>親となるワールド変換を設定する（親子関係構築）。</summary>
+			/// <param name="parent">親の WorldTransform ポインタ。</param>
 			void SetParentWT(const WorldTransform* parent) { parent_ = parent; }
 			/// <summary>親行列を直接設定する。</summary>
+			/// <param name="parentMatrix">親の Matrix4x4 ポインタ。</param>
 			void SetParentMatrix(const Matrix4x4* parentMatrix) { parentMatrix_ = parentMatrix; }
 
 
@@ -80,22 +94,31 @@ namespace TYEngine
 			// ========================
 
 			/// <summary>定数バッファのリソースを取得。</summary>
+			/// <returns>GPU定数バッファリソース参照。</returns>
 			const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
 			/// <summary>ワールド行列を取得。</summary>
+			/// <returns>計算されたワールド変換行列。</returns>
 			const Matrix4x4& GetMatWorld() { return matWorld_; }
 			/// <summary>ローカルスケールを取得。</summary>
+			/// <returns>スケールベクトル。</returns>
 			const Vector3& GetScale() { return scale_; }
 			/// <summary>ローカル回転（オイラー角）を取得。</summary>
+			/// <returns>オイラー角ベクトル。</returns>
 			const Vector3& GetRotate() { return rotation_; }
 			/// <summary>ローカル座標を取得。</summary>
+			/// <returns>位置ベクトル。</returns>
 			const Vector3& GetTranslation() { return translation_; }
 			/// <summary>ローカル回転（クォータニオン）を取得。</summary>
+			/// <returns>回転クォータニオン。</returns>
 			const Quaternion& GetRotateQuaternion() { return rotationQ_; }
 			/// <summary>クォータニオン使用フラグを取得。</summary>
+			/// <returns>有効なら true。</returns>
 			bool GetUseQuaternion() { return useQuaternion_; }
 			/// <summary>親のワールド変換情報を取得。</summary>
+			/// <returns>親の WorldTransform ポインタ。</returns>
 			const WorldTransform* GetParentWT() { return parent_; }
 			/// <summary>親行列ポインタを取得。</summary>
+			/// <returns>親の Matrix4x4 ポインタ。</returns>
 			const Matrix4x4* GetParentMatrix() { return parentMatrix_; }
 
 		private:

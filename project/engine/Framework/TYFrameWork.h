@@ -39,17 +39,17 @@ namespace TYEngine
 		/// 各種マネージャ（DirectX・描画・入力・シーンなど）を統括し、  
 		/// ゲームアプリケーションのライフサイクルを制御する。
 		/// </summary>
-		class TYFrameWork
+		class TYFramework
 		{
 		public:
 			/// <summary>仮想デストラクタ。</summary>
-			virtual ~TYFrameWork() = default;
+			virtual ~TYFramework() = default;
 
 			/// <summary>
 			/// メインループを実行する。  
 			/// Initialize → Update → Draw → Finalize の順に処理を行う。
 			/// </summary>
-			void run();
+			void Run();
 
 			/// <summary>
 			/// 初期化処理。  

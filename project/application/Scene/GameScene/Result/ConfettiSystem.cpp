@@ -39,11 +39,20 @@ void ConfettiSystem::Emit(int countPerFrame)
     }
 }
 
+#include "Utils/Json/JsonManager.h"
+
 void ConfettiSystem::Update(float dt)
 {
     globalTime_ += dt;
 
-    const float gravity = 300.0f;
+    static JsonManager jm;
+    static bool loaded = false;
+    if (!loaded)
+    {
+        jm.Load("GameUI.json");
+        loaded = true;
+    }
+    const float gravity = jm.Get<float>("Confetti.gravity", 300.0f);
 
     for (auto& p : particles_)
     {

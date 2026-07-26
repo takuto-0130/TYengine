@@ -1,5 +1,5 @@
 #include "ObjectCubemap.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 namespace TYEngine
 {

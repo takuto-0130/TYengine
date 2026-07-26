@@ -1,5 +1,5 @@
 #pragma once
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include <random>
 
 namespace TYEngine

@@ -154,7 +154,7 @@ namespace TYEngine
 			bool ReadAudioData(std::ifstream& file, std::vector<BYTE>& buffer);
 
 			// WAVファイルのヘッダーを読み込む
-			bool ReadWavHeader(std::string filename, WAVHeader& header);
+			bool ReadWavHeader(const std::string& filename, WAVHeader& header);
 
 		public:
 			uint32_t GetId() { return id_; }

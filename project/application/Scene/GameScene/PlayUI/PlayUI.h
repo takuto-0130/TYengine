@@ -82,11 +82,11 @@ private:
 		OUTLINE,
 		PAUSE,
 		SHIFT,
-		SpriteNum
+		kSpriteNum
 	};
 
 	/// <summary>UIスプライト群。</summary>
-	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, SpriteNum> sprites_;
+	std::array<std::unique_ptr<TYEngine::Graphics::Sprite>, kSpriteNum> sprites_;
 
 	/// <summary>レティクルスプライト。</summary>
 	std::unique_ptr<TYEngine::Graphics::Sprite> reticle_;

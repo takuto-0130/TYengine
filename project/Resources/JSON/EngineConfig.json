@@ -1,0 +1,27 @@
+{
+  "window": {
+    "width": 1280,
+    "height": 720,
+    "title": "TYEngine"
+  },
+  "graphics": {
+    "fps": 60.0,
+    "clearColor": [0.0, 0.0, 0.0, 1.0],
+    "mainClearColor": [1.0, 0.0, 0.0, 1.0]
+  },
+  "camera": {
+    "horizontalFOV": 0.45,
+    "nearClip": 2.0,
+    "farClip": 500.0,
+    "defaultPosition": [0.0, 4.0, -10.0],
+    "defaultRotate": [0.3, 0.0, 0.0],
+    "defaultScale": [1.0, 1.0, 1.0],
+    "followOffsetPosition": [0.0, 20.0, -35.0],
+    "followOffsetRotate": [0.51, 0.0, 0.0],
+    "ndcNearW": 0.1
+  },
+  "time": {
+    "maxDeltaTime": 0.1,
+    "targetFps": 60.0
+  }
+}

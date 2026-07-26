@@ -68,7 +68,7 @@ namespace TYEngine
 
 		private:
 			// オブジェクト走査
-			void ObjectTraversal(LevelData* levelData, nlohmann::json& j, std::string contains);
+			void ObjectTraversal(LevelData* levelData, nlohmann::json& j, const std::string& contains);
 
 		private:
 			/// <summary>JSONファイルのベースディレクトリパス。</summary>

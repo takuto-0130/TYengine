@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="application">
@@ -109,7 +109,7 @@
     <Filter Include="application\Scene\TitleScene">
       <UniqueIdentifier>{68c3da24-21c8-4515-aeb1-1bbd4e3fb2e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="application\Scene\TitleScene\TItleSceneStates">
+    <Filter Include="application\Scene\TitleScene\TitleSceneStates">
       <UniqueIdentifier>{3f479e60-97bf-4db9-908f-099b643abb67}</UniqueIdentifier>
     </Filter>
     <Filter Include="application\Scene\Transition">
@@ -309,23 +309,23 @@
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp">
       <Filter>application\Scene\GameScene\Result</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneDebug.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeIn.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneFadeIn.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeOut.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneFadeOut.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneLoad.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleScenePlay.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleScenePlay.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneReady.cpp">
-      <Filter>application\Scene\TitleScene\TItleSceneStates</Filter>
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneReady.cpp">
+      <Filter>application\Scene\TitleScene\TitleSceneStates</Filter>
     </ClCompile>
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp">
       <Filter>application\ScoreUI</Filter>
@@ -474,7 +474,7 @@
     <ClCompile Include="engine\Framework\Input\Input.cpp">
       <Filter>engine\Framework\Input</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Utility\Math\mathFunc.cpp">
+    <ClCompile Include="engine\Utility\Math\MathFunc.cpp">
       <Filter>engine\Utility\Math</Filter>
     </ClCompile>
     <ClCompile Include="engine\Utility\Math\Matrix4x4Func.cpp">
@@ -902,7 +902,7 @@
     <ClInclude Include="engine\Framework\Input\Input.h">
       <Filter>engine\Framework\Input</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Utility\Math\mathFunc.h">
+    <ClInclude Include="engine\Utility\Math\MathFunc.h">
       <Filter>engine\Utility\Math</Filter>
     </ClInclude>
     <ClInclude Include="engine\Utility\Math\Matrix4x4Func.h">

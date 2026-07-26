@@ -78,15 +78,15 @@
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>:: プロジェクトディレクトリを基準に移動
+      <Command>:: プロジェクトディレクトリを基準に移勁E
 cd /d $(ProjectDir)
 
-:: 出力先フォルダが無ければ作成
+:: 出力�Eフォルダが無ければ作�E
 if not exist "..\generated\outputs\$(Configuration)\" (
     mkdir "..\generated\outputs\$(Configuration)\"
 )
 
-:: DLLをコピー
+:: DLLをコピ�E
 if exist "externals\dxcompiler.dll" (
     xcopy /Y /D /R "externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
 )
@@ -124,15 +124,15 @@ if exist "externals\dxil.dll" (
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>:: プロジェクトディレクトリを基準に移動
+      <Command>:: プロジェクトディレクトリを基準に移勁E
 cd /d $(ProjectDir)
 
-:: 出力先フォルダが無ければ作成
+:: 出力�Eフォルダが無ければ作�E
 if not exist "..\generated\outputs\$(Configuration)\" (
     mkdir "..\generated\outputs\$(Configuration)\"
 )
 
-:: DLLをコピー
+:: DLLをコピ�E
 if exist "externals\dxcompiler.dll" (
     xcopy /Y /D /R "externals\dxcompiler.dll" "..\generated\outputs\$(Configuration)\"
 )
@@ -170,12 +170,12 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneUI.cpp" />
     <ClCompile Include="application\Scene\GameScene\GameSceneStates\GameSceneClear.cpp" />
     <ClCompile Include="application\Scene\GameScene\Result\ConfettiSystem.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneDebug.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeIn.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneFadeOut.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneLoad.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleScenePlay.cpp" />
-    <ClCompile Include="application\Scene\TitleScene\TItleSceneStates\TitleSceneReady.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneDebug.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneFadeIn.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneFadeOut.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneLoad.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleScenePlay.cpp" />
+    <ClCompile Include="application\Scene\TitleScene\TitleSceneStates\TitleSceneReady.cpp" />
     <ClCompile Include="application\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="application\Object\Enemy\Enemy.cpp" />
     <ClCompile Include="application\Object\Enemy\EnemyCollider.cpp" />
@@ -225,7 +225,7 @@ if exist "externals\dxil.dll" (
     <ClCompile Include="engine\Graphics\Sprite\TextureManager.cpp" />
     <ClCompile Include="engine\Graphics\SRV\SrvManager.cpp" />
     <ClCompile Include="engine\Framework\Input\Input.cpp" />
-    <ClCompile Include="engine\Utility\Math\mathFunc.cpp" />
+    <ClCompile Include="engine\Utility\Math\MathFunc.cpp" />
     <ClCompile Include="engine\Utility\Math\Matrix4x4Func.cpp" />
     <ClCompile Include="engine\Utility\Utils\StringUtility.cpp" />
     <ClCompile Include="engine\Utility\Math\WorldTransform.cpp" />
@@ -369,7 +369,7 @@ if exist "externals\dxil.dll" (
     <ClInclude Include="engine\Graphics\Sprite\TextureManager.h" />
     <ClInclude Include="engine\Graphics\SRV\SrvManager.h" />
     <ClInclude Include="engine\Framework\Input\Input.h" />
-    <ClInclude Include="engine\Utility\Math\mathFunc.h" />
+    <ClInclude Include="engine\Utility\Math\MathFunc.h" />
     <ClInclude Include="engine\Utility\Math\Matrix4x4Func.h" />
     <ClInclude Include="engine\Utility\Utils\StateMachine.h" />
     <ClInclude Include="engine\Utility\Utils\StringUtility.h" />

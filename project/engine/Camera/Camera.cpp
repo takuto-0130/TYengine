@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Timer.h"
+#include "Utils/JSON/JsonManager.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
@@ -14,16 +15,27 @@ namespace TYEngine
 		using namespace TYEngine::Core;
 
 		Camera::Camera()
-			: transform_({ {1.0f,1.0f,1.0f},{0.3f,0.0f,0.0f},{0.0f,4.0f,-10.0f} })
-			, horizontalFOV_(0.45f)
-			, aspectRatio_(float(WindowsApp::kClientWidth) / float(WindowsApp::kClientHeight))
-			, nearClip_(2.0f)
-			, farClip_(500.0f)
-			, worldMatrix_(MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate))
-			, viewMatrix_(Inverse(worldMatrix_))
-			, projectionMatrix_(MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_))
-			, worldViewProjectionMatrix_(viewMatrix_* projectionMatrix_)
 		{
+			JsonManager jm;
+			jm.Load("EngineConfig.json");
+
+			transform_.scale = jm.Get<Vector3>("camera.defaultScale", Vector3(1.0f, 1.0f, 1.0f));
+			transform_.rotate = jm.Get<Vector3>("camera.defaultRotate", Vector3(0.3f, 0.0f, 0.0f));
+			transform_.translate = jm.Get<Vector3>("camera.defaultPosition", Vector3(0.0f, 4.0f, -10.0f));
+
+			horizontalFOV_ = jm.Get<float>("camera.horizontalFOV", 0.45f);
+			aspectRatio_ = float(WindowsApp::kClientWidth) / float(WindowsApp::kClientHeight);
+			nearClip_ = jm.Get<float>("camera.nearClip", 2.0f);
+			farClip_ = jm.Get<float>("camera.farClip", 500.0f);
+
+			followCameraOffsetPosition_ = jm.Get<Vector3>("camera.followOffsetPosition", Vector3(0.0f, 20.0f, -35.0f));
+			followCameraOffsetRotate_ = jm.Get<Vector3>("camera.followOffsetRotate", Vector3(0.51f, 0.0f, 0.0f));
+
+			worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+			viewMatrix_ = Inverse(worldMatrix_);
+			projectionMatrix_ = MakePerspectiveFovMatrix(horizontalFOV_, aspectRatio_, nearClip_, farClip_);
+			worldViewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
+
 			prevTranslate_ = transform_.translate;
 			deltaTranslate_ = Vector3{};
 		}

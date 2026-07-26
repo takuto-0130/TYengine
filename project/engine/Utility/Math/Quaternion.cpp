@@ -1,5 +1,5 @@
 #include "Quaternion.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Matrix4x4Func.h"
 #include <cmath>
 
@@ -54,7 +54,7 @@ namespace TYEngine
 			return qr;
 		};
 
-		Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, const float theta)
+		Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vec, float theta)
 		{
 			Quaternion q = IdentityQuaternion();
 			Vector3 n = Normalize(vec);

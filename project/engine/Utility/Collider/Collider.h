@@ -3,7 +3,7 @@
 #include <optional>
 #include <utility>
 #include <cstdint>
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 namespace TYEngine
 {

@@ -272,6 +272,7 @@ private:
 };
 
 // --- 状態クラスの定義 ---
+/// <summary>敵の画面外待機状態クラス（スポーン前）。</summary>
 class EnemyStatePreEnter : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -281,6 +282,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵の出現演出状態クラス（画面内へのイージング入場）。</summary>
 class EnemyStateEntering : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -290,6 +292,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵のアクティブ状態クラス（攻撃・標準移動）。</summary>
 class EnemyStateActive : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -299,6 +302,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵の退場演出状態クラス（画面外への撤退）。</summary>
 class EnemyStateExiting : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -308,6 +312,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵の被弾ダメージ状態クラス。</summary>
 class EnemyStateDamaged : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:
@@ -317,6 +322,7 @@ public:
 	void Exit(Enemy& owner) override;
 };
 
+/// <summary>敵の撃破・消滅状態クラス（撃ち落とし演出およびスコア加算）。</summary>
 class EnemyStateDespawned : public TYEngine::Utility::State<EnemyState, Enemy>
 {
 public:

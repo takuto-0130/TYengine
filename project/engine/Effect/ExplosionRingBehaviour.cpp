@@ -1,5 +1,5 @@
 #include "ExplosionRingBehaviour.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 namespace TYEngine
 {

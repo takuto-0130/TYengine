@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Matrix4x4Func.h"
 #include "TextureManager.h"
 #include "struct.h"

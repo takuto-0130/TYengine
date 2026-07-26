@@ -1,5 +1,5 @@
 #include "CollisionFunc.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Matrix4X4Func.h"
 #include <cmath>
 #include <algorithm>

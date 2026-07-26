@@ -37,6 +37,11 @@ class PlayerStateBarrelRoll;
 class PlayerStateTakeDamage;
 class PlayerStateDead;
 
+/// <summary>
+/// プレイヤー自機キャラクタークラス。  
+/// StatePattern による行動管理（Idle, Route, Boost, BarrelRoll, TakeDamage, Dead）および  
+/// StrategyPattern による攻撃処理（IPAttackStrategy）を備え、移動・入力・攻撃・被弾処理を制御する。
+/// </summary>
 class Player :
 	public BaseCharacter
 {
@@ -116,25 +121,43 @@ public:
 	void TakeDamage();
 
 	/// <summary>現在のHPを取得する。</summary>
+	/// <returns>ヒットポイント。</returns>
 	int GetHP() { return status_.hitPoint; }
 
 	/// <summary>現在の画面内オフセットを取得する。</summary>
+	/// <returns>画面座標オフセット参照。</returns>
 	TYEngine::Utility::Vector2& GetScreenOffset() { return screenOffset_; }
 
+	/// <summary>プレイヤーの状態マシンを取得する。</summary>
+	/// <returns>ステートマシン参照。</returns>
 	StateMachineType& GetStateMachine() { return stateMachine_; }
 
+	/// <summary>ロックオン情報を取得する。</summary>
+	/// <returns>ロックオンパラメータ構造体参照。</returns>
 	PlayerLockOn& GetLockOn() { return lockOn_; }
 
+	/// <summary>弾丸管理パラメータを取得する。</summary>
+	/// <returns>弾丸パラメータ構造体参照。</returns>
 	PlayerBullets& GetBullets() { return  bullets_; }
 
+	/// <summary>ステータス情報を取得する。</summary>
+	/// <returns>プレイヤーステータス参照。</returns>
 	PlayerStatus& GetStatus() { return status_; }
 
+	/// <summary>照準（レティクル）を取得する。</summary>
+	/// <returns>Reticle ポインタ。</returns>
 	Reticle* GetReticle() { return  reticle_.get(); }
 
+	/// <summary>入力管理クラスを取得する。</summary>
+	/// <returns>Input ポインタ。</returns>
 	TYEngine::Framework::Input* GetInput() { return input_; }
 
+	/// <summary>カメラを取得する。</summary>
+	/// <returns>Camera ポインタ。</returns>
 	TYEngine::CameraSystem::Camera* GetCamera() { return camera_; }
 
+	/// <summary>ビート解析クラスを取得する。</summary>
+	/// <returns>BeatAnalyzer ポインタ。</returns>
 	TYEngine::AudioSystem::BeatAnalyzer* GetBeatAnalyzer() { return beatAnalyzer_; }
 
 	/// <summary>
@@ -143,12 +166,20 @@ public:
 	/// </summary>
 	void OnCollision() override;
 
+	/// <summary>BGM再生ハンドルを設定する。</summary>
+	/// <param name="handle">オーディオ再生ハンドル。</param>
 	void SetBGMHandle(int handle) { BGMHandle_ = handle; }
 
+	/// <summary>敵管理クラスを設定する（ロックオン用）。</summary>
+	/// <param name="manager">EnemyManager ポインタ。</param>
 	void SetEnemyManager(EnemyManager* manager) { lockOn_.enemyManager = manager; }
 
+	/// <summary>ゲーム中フラグを設定する。</summary>
+	/// <param name="isInGame">ゲーム中なら true。</param>
 	void SetIsInGame(bool isInGame) { isInGame_ = isInGame; }
 
+	/// <summary>ビート解析クラスを設定する。</summary>
+	/// <param name="beatAnalyzer">BeatAnalyzer ポインタ。</param>
 	void SetBeatAnalyzer(TYEngine::AudioSystem::BeatAnalyzer* beatAnalyzer) { beatAnalyzer_ = beatAnalyzer; }
 
 	/// <summary>
@@ -266,6 +297,7 @@ private:
 };
 
 // --- 状態クラスの定義 ---
+/// <summary>プレイヤーの通常待機状態クラス。</summary>
 class PlayerStateIdle : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -275,6 +307,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーのルート移動（自動前進・レール移動）状態クラス。</summary>
 class PlayerStateRoute : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -284,6 +317,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーのブースト加速状態クラス。</summary>
 class PlayerStateBoost : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -293,6 +327,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーのバレルロール（ローリング無敵・回避）状態クラス。</summary>
 class PlayerStateBarrelRoll : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -302,6 +337,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーの被弾ダメージ状態クラス。</summary>
 class PlayerStateTakeDamage : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:
@@ -311,6 +347,7 @@ public:
 	void Exit(Player& owner) override;
 };
 
+/// <summary>プレイヤーの死亡状態クラス。</summary>
 class PlayerStateDead : public TYEngine::Utility::State<PlayerState, Player>
 {
 public:

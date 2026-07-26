@@ -1,5 +1,5 @@
 #include "ExplosionBehaviour.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 
 namespace TYEngine
 {

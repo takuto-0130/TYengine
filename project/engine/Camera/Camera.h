@@ -1,6 +1,6 @@
 #pragma once
 #include "Matrix4x4Func.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "WindowsApp.h"
 #include "CameraShake.h"
 

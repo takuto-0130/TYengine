@@ -42,13 +42,13 @@ namespace TYEngine
 			/// 生成されたウィンドウのハンドルを取得する。
 			/// </summary>
 			/// <returns>HWND ハンドル。</returns>
-			HWND GetHwnd() const { return hwnd; }
+			HWND GetHwnd() const { return hwnd_; }
 
 			/// <summary>
 			/// アプリケーションインスタンスハンドルを取得する。
 			/// </summary>
 			/// <returns>HINSTANCE ハンドル。</returns>
-			HINSTANCE GetHInstance() const { return wc.hInstance; }
+			HINSTANCE GetHInstance() const { return wc_.hInstance; }
 
 			/// <summary>
 			/// 終了処理。
@@ -64,9 +64,9 @@ namespace TYEngine
 
 		private:
 			/// <summary>管理しているウィンドウハンドル。</summary>
-			HWND hwnd = nullptr;
+			HWND hwnd_ = nullptr;
 			/// <summary>ウィンドウクラス設定構造体。</summary>
-			WNDCLASS wc{};
+			WNDCLASS wc_{};
 		};
 
 	} // namespace Core

@@ -20,8 +20,8 @@ void EnemyManager::Init(CameraSystem::Camera* camera)
 
 	float xCoeff = jsonManager_->Get<float>("enemyManager.xRangeCoeff", 16.0f);
 	float yCoeff = jsonManager_->Get<float>("enemyManager.yRangeCoeff", 9.0f);
-	xRange = xCoeff * 0.09f * 2.0f;
-	yRange = yCoeff * 0.085f * 2.0f;
+	xRange_ = xCoeff * 0.09f * 2.0f;
+	yRange_ = yCoeff * 0.085f * 2.0f;
 
 	spawnReadyTimer_ = jsonManager_->Get<float>("enemyManager.spawnReadyTimer", 0.8f);
 	spawnNum_ = jsonManager_->Get<int>("enemyManager.spawnNum", 15);
@@ -52,8 +52,8 @@ void EnemyManager::Update()
 	enemyPopDepthMax_ = jsonManager_->Get<float>("enemyManager.popDepthMax", 40.0f);
 	float xCoeff = jsonManager_->Get<float>("enemyManager.xRangeCoeff", 16.0f);
 	float yCoeff = jsonManager_->Get<float>("enemyManager.yRangeCoeff", 9.0f);
-	xRange = xCoeff * 0.09f * 2.0f;
-	yRange = yCoeff * 0.085f * 2.0f;
+	xRange_ = xCoeff * 0.09f * 2.0f;
+	yRange_ = yCoeff * 0.085f * 2.0f;
 	spawnReadyTimer_ = jsonManager_->Get<float>("enemyManager.spawnReadyTimer", 0.8f);
 	spawnNum_ = jsonManager_->Get<int>("enemyManager.spawnNum", 15);
 	minX_ = jsonManager_->Get<float>("enemyManager.minX", 0.5f);
@@ -188,93 +188,83 @@ Vector3 EnemyManager::ConvertScreenOffsetToWorld(const Vector2& offset)
 	Vector3 camRight = camera_->GetRight();
 	Vector3 camUp = camera_->GetUp();
 
-	std::mt19937 gen(rd());
+	std::mt19937 gen(rd_());
 	std::uniform_real_distribution<float> dist(enemyPopDepthMin_, enemyPopDepthMax_);
 
 	float depth = dist(gen);
 
 	return camPos
 		+ camForward * depth
-		+ camRight * (offset.x * xRange)
-		+ camUp * (offset.y * yRange);
+		+ camRight * (offset.x * xRange_)
+		+ camUp * (offset.y * yRange_);
 }
 
 void EnemyManager::Pop()
 {
+#pragma region // コンボ連動スポーン処理
 	if(hitStreakManager_)
 	{
+		// コンボ数に応じて同時スポーン数を段階的に拡張
 		for (int i = 0; i < 1 + (hitStreakManager_->GetComboCount() / comboStep_); i++)
 		{
 			if (isPopFlag_)
 			{
+				// 1. 敵インスタンスの生成と初期化
 				std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
 				enemy->Init();
 
-				// 画面座標系でのランダムな出現位置決定
-				std::mt19937 gen(rd());
+				// 2. 画面座標系（-1.0～1.0）でのランダム出現位置決定
+				std::mt19937 gen(rd_());
 				std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
-				// 元となる -1.0 ～ 1.0 の乱数を取得
 				float rawX = dist(gen);
 				float rawY = dist(gen);
 
-				// 中心部を避けて左右に広げる処理
+				// 中央エリアを回避して画面左右へ分散配置する計算
 				float finalX = 0.0f;
-				float minX = minX_;  // 中心部をどれだけ避けるか（0.0で中央、値を大きくするほど中央が空く）
-				float maxX = maxX_;  // 左右にどれだけ広げるか（1.0より大きくすると画面外側まで広がる）
+				float minX = minX_;
+				float maxX = maxX_;
 
 				if (rawX >= 0.0f)
 				{
-					// 右側にスポーン（minX ～ maxX の範囲に変換）
+					// 右側領域へマッピング
 					finalX = minX + rawX * (maxX - minX);
 				}
 				else
 				{
-					// 左側にスポーン（-minX ～ -maxX の範囲に変換）
-					// rawXは負の数なので、(maxX - minX) を掛けてマイナス方向に引き延ばす
+					// 左側領域へマッピング
 					finalX = -minX + rawX * (maxX - minX);
 				}
 
-				// 補正したスクリーン座標を設定
+				// 3. スクリーンオフセットからワールド座標へ変換
 				enemy->SetScreenPos({ finalX, rawY });
-
-				// スクリーン座標をワールド座標へ変換
 				Vector3 spawnPos = ConvertScreenOffsetToWorld(enemy->GetScreenPos());
 
-				// --- 【ここから変更】地面基準でY座標をランダムな高さに設定 ---
+				// 4. レール地形データから高さ（Y）を判定し、地上浮遊高度を上書き
 				if (railManager_)
 				{
 					float terrainY = railManager_->GetTerrainHeight(spawnPos);
+					float minHeightOffset = minHeightOffset_;
+					float maxHeightOffset = maxHeightOffset_;
 
-					// 地面からどれくらい浮かせるかのランダムな範囲
-					float minHeightOffset = minHeightOffset_; // 最小の浮遊高度
-					float maxHeightOffset = maxHeightOffset_; // 最大の浮遊高度
-
-					// 新しく高さ用の乱数を生成
 					std::uniform_real_distribution<float> heightDist(minHeightOffset, maxHeightOffset);
 					float randomHeight = heightDist(gen);
-
-					// ConvertScreenOffsetToWorldで計算したY座標を捨てて、地面基準の高さで上書きする
 					spawnPos.y = terrainY + randomHeight;
 				}
-				// --- 【ここまで変更】 ---
 
-				// 補正した座標を設定
+				// 5. 確定位置の設定・依存関係注入・アクティブ化
 				enemy->SetAndApplyPos(spawnPos);
-
-				// 依存関係の注入
 				enemy->SetEnemyBulletManager(&bulletManager_);
 				enemy->SetEventListener(comboAndScoreHandler_.get());
 				enemy->SetIsInGame(isInGame_);
 				enemy->SetCamera(camera_);
-
-				// 出現演出開始等
 				enemy->Pop();
 
 				enemies_.push_back(std::move(enemy));
 			}
 		}
 	}
+#pragma endregion
 	else
 	{
 		if (isPopFlag_)
@@ -283,7 +273,7 @@ void EnemyManager::Pop()
 			enemy->Init();
 
 			// 画面座標系でのランダムな出現位置決定
-			std::mt19937 gen(rd());
+			std::mt19937 gen(rd_());
 			std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
 
 			// 元となる -1.0 ～ 1.0 の乱数を取得

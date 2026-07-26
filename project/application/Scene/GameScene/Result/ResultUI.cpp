@@ -2,7 +2,7 @@
 #include "Sprite.h"
 #include "TextureManager.h"
 #include "Timer.h"
-#include "mathFunc.h"
+#include "MathFunc.h"
 #include "Ease.h"
 
 using namespace TYEngine::Utility;

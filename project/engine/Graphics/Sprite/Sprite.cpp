@@ -15,7 +15,7 @@ namespace TYEngine
 		using namespace Core;
 		using namespace Utility;
 
-		void Sprite::Initialize(std::string textureFilePath)
+		void Sprite::Initialize(const std::string& textureFilePath)
 		{
 			spriteBasis_ = SpriteBasis::GetInstance();
 			textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
